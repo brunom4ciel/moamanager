@@ -1,0 +1,126 @@
+@CHARSET "UTF-8";
+
+
+		
+ul#nav  {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+    width: 150px;
+    }
+
+ul#nav  li {
+    position: relative;
+    }
+    
+
+
+ul#nav li a {
+    display: block;
+    text-decoration: none;
+    color: #a93529;
+    background: #fff;
+    padding: 5px;
+    border: 1px solid #ccc; 
+}
+
+
+
+ul#nav li a:hover{
+    text-decoration:underline;
+    font-weight: bold;
+    background: #ccc; }
+    
+    
+
+   
+   
+table#table_preview_data{
+	
+	border-top: 1px solid #dddddd;
+	background-color: transparent;
+	max-width: 100%;
+	font-size:11px;
+	
+}
+
+table#table_preview_data thead th{
+	
+	height:100%;
+	text-align:center;
+	vertical-align:bottom;
+}
+
+
+table#table_preview_data thead th p{
+	
+	-webkit-transform: rotate(-90deg);
+        -moz-transform: rotate(-90deg);
+        
+	cursor: vertical-text;
+	width:30px;
+	text-align:center;
+	float:left;
+}
+
+
+
+
+
+table#table_preview_data tbody th{
+	
+	padding-left:2px;
+	padding-right:2px;
+}
+
+
+table#table_preview_data tbody th p{
+	font-size:10px;
+	margin:0px;
+	padding:0px;
+	font-weight: normal;
+}
+	
+	
+	
+	
+	
+	
+	
+#menu_bar ul {
+    list-style-type: none;
+    margin: 0;
+    padding: 0;
+    overflow: hidden;
+    background-color: #333;
+}
+
+#menu_bar ul li {
+    float: left;
+}
+
+#menu_bar ul li a {
+    display: block;
+    color: white;
+    text-align: center;
+    padding: 14px 16px;
+    text-decoration: none;
+}
+
+/* Change the link color to #111 (black) on hover */
+#menu_bar ul li a:hover {
+    background-color: #111;
+}	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+    
+    
+    

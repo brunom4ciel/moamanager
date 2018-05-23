@@ -1,0 +1,1118 @@
+@CHARSET "UTF-8";
+
+
+.lockup, .lockup a {
+    height: 236px;
+    width: 166px;
+}
+.lockup {
+    border: 1px solid #a4a4a4;
+    margin: 0 24px 24px 0;
+    position: relative;
+}
+.lockup > .boxart {
+    border: 0 none;
+    display: block;
+}
+.gallery > .lockup, .lockup > .playHover {
+    display: inline-block;
+}
+.lockup > .playHover {
+    background: rgba(0, 0, 0, 0) none no-repeat scroll 50% 50%;
+    bottom: 0;
+    left: 0;
+    position: absolute;
+    right: 0;
+    top: 0;
+}
+.lockup:hover > .playHover {
+    background-color: rgba(0, 0, 0, 0.3);
+    background-image: url("https://assets.nflxext.com/en_us/buttons/player-add.png");
+}
+.slideshow {
+    background-color: #f3f3f3;
+    color: #4d4d4d;
+    margin: 0 -20px -26px;
+    overflow: hidden;
+    padding-left: 0;
+    padding-right: 0;
+}
+@media only screen and (max-width: 860px) {
+.slideshow {
+    display: none;
+}
+}
+.slideshow li, .slideshow ul {
+    margin: 0;
+    padding: 0;
+}
+.slideshow .ss_viewport {
+    margin: 0 20px;
+    overflow: hidden;
+    text-align: left;
+}
+.slideshow .ss_container {
+    width: 400%;
+}
+.slideshow .ss_container .ss_item {
+    background: rgba(0, 0, 0, 0) url("https://assets.nflxext.com/en_us/UmaTest/Benefits_Master_3.png") no-repeat scroll right top;
+    box-sizing: border-box;
+    display: inline-block;
+    height: 140px;
+    padding: 30px 220px 30px 0;
+    width: 25%;
+}
+.slideshow.d1 .nav.dots a.d1, .slideshow.d2 .nav.dots a.d2, .slideshow.d3 .nav.dots a.d3, .slideshow.d4 .nav.dots a.d4 {
+    background-color: #999;
+}
+.slideshow .ss_container .ss_item h3 {
+    font-size: 20px;
+}
+.slideshow .ss_container .ss_item.d2 {
+    background-position: right -130px;
+    padding-right: 250px;
+}
+.slideshow .ss_container .ss_item.d3 {
+    background-position: right -260px;
+}
+.slideshow .ss_container .ss_item.d4 {
+    background-position: right -400px;
+}
+.slideshow .nav.dots {
+    text-align: center;
+}
+.slideshow .nav.dots a {
+    border: 1px solid #999;
+    border-radius: 50%;
+    display: inline-block;
+    height: 8px;
+    margin: 0 2px;
+    outline: 0 none;
+    text-indent: -999em;
+    width: 8px;
+}
+.slideshow.d1 .ss_container {
+    margin-left: 0;
+}
+.slideshow.d2 .ss_container {
+    margin-left: -100%;
+}
+.slideshow.d3 .ss_container {
+    margin-left: -200%;
+}
+.slideshow.d4 .ss_container {
+    margin-left: -300%;
+}
+.button-container {
+    box-sizing: border-box;
+    padding: 1em 0;
+    width: 100%;
+}
+.button-container.no-top-padding {
+    padding-top: 0;
+}
+.button-container.button-container-centered {
+    text-align: center;
+}
+.button-container.button-container-left {
+    float: none;
+    text-align: left;
+}
+.button-container.button-container-left .button {
+    margin-left: 0;
+}
+.button-container.button-container-right {
+    text-align: right;
+}
+.button-container.button-container-right .button {
+    margin-right: 0;
+}
+@media only screen and (min-width: 360px) {
+.button-container {
+    text-align: center;
+}
+}
+.button {
+    background: rgba(0, 0, 0, 0) linear-gradient(to bottom, #f2f2f2 0px, #dbdbdb 100%) repeat scroll 0 0;
+    border: 1px solid #ccc;
+    border-radius: 0.2em;
+    box-sizing: border-box;
+    display: inline-block;
+    font-size: 1em;
+    font-weight: 700;
+    margin: 0 0.5em;
+    padding: 0.75em 2em;
+}
+@media only screen and (max-width: 28.6875em) {
+.button {
+    display: block;
+    font-size: 1.2em;
+    margin: 1em auto;
+    padding: 1em;
+    width: 100%;
+}
+}
+.button:hover {
+    cursor: pointer;
+}
+.button.action-button {
+    background: rgba(0, 0, 0, 0) linear-gradient(to bottom, #1b76de 0px, #115aae 100%) repeat scroll 0 0;
+    color: #fff;
+}
+.button.action-button.disabled {
+    background: rgba(0, 0, 0, 0) linear-gradient(to bottom, #8dbaee 0px, #88acd6 100%) repeat scroll 0 0;
+    cursor: default;
+}
+body .bd {
+    margin: 15px 0 0;
+    padding: 0;
+}
+@media only screen and (min-width: 500px) {
+body .bd {
+    margin: 20px 30px 0;
+}
+}
+.responsive-account-container {
+    color: #333;
+    display: block;
+    font-size: 1em;
+    margin: 0 auto;
+    min-height: 400px;
+    min-width: 300px;
+    position: relative;
+    width: 90%;
+}
+.responsive-account-container * {
+    box-sizing: border-box;
+}
+.responsive-account-container + .footer-mount > .member-footer {
+    margin-left: auto;
+    margin-right: auto;
+}
+@media only screen and (min-width: 740px) {
+.responsive-account-container {
+    font-size: 1em;
+    max-width: 1024px;
+    width: 95%;
+}
+}
+.search-wrapper {
+    color: #fff;
+    display: none;
+    float: right;
+    font-weight: 700;
+    height: 70px;
+    margin-right: 25px;
+    position: relative;
+    vertical-align: middle;
+    width: 266px;
+}
+@media only screen and (min-width: 505px) {
+.search-wrapper {
+    display: inline-block;
+}
+}
+.mixed-search-icon {
+    font-family: "Helvetica Neue",Helvetica,Arial,sans-serif;
+}
+.mixed-search-icon.mixed-search-input-icon {
+    left: 5px;
+    position: absolute;
+    top: 7px;
+}
+.mixed-search-icon.mixed-search-input-icon::before {
+    font-size: 16px;
+    font-weight: 400;
+}
+.mixed-search-icon::before {
+    font-family: nf-icon;
+    font-size: 12px;
+    margin-right: 10px;
+}
+.search-icon {
+    height: 100%;
+    position: relative;
+    width: 100%;
+}
+.search-input-wrapper {
+    margin-right: 25px;
+    position: absolute;
+    right: 0;
+    transition: width 0.3s ease 0s;
+}
+.search-input-inner-wrapper {
+    border: 1px solid #fff;
+    display: inline-block;
+    line-height: 32px;
+    margin: 0;
+    max-width: 266px;
+    padding: 0 3px 0 25px;
+    position: relative;
+    width: 100%;
+}
+.search-toggle {
+    opacity: 0;
+    position: absolute;
+}
+.mixed-search-input {
+    background: #000 none repeat scroll 0 0;
+    border: medium none;
+    color: #fff;
+    font-size: 14px;
+    font-weight: 400;
+    max-width: 212px;
+    width: 100%;
+}
+.mixed-search-input:focus {
+    outline: 0 none;
+}
+.search-text {
+    cursor: pointer;
+    display: inline-block;
+    line-height: 50px;
+    padding-left: 33px;
+    position: absolute;
+    right: 0;
+    vertical-align: middle;
+}
+@media only screen and (min-width: 740px) {
+.search-text {
+    line-height: 70px;
+}
+}
+.search-toggle:checked ~ .search-text {
+    display: none;
+}
+.search-toggle:checked ~ .search-input-wrapper {
+    display: inline-block;
+    opacity: 1;
+    width: 266px;
+}
+.search-toggle ~ .search-text {
+    display: inline-block;
+}
+.search-toggle ~ .search-input-wrapper {
+    opacity: 0;
+    width: 0;
+}
+html {
+    cursor: default;
+}
+.overflow-hidden {
+    overflow: hidden;
+}
+h2 {
+    font-size: 1.25em;
+    font-weight: 400;
+}
+@media only screen and (max-width: 740px) {
+h1 {
+    font-size: 1.5em;
+}
+}
+.account-form {
+    padding-top: 5px;
+}
+.account-form .ui-message-container {
+    margin-bottom: 25px;
+}
+.account-form .button-container {
+    text-align: center;
+}
+.account-form .button-container .btn {
+    margin: 0 0 5px;
+    width: 100%;
+}
+.account-form fieldset {
+    border: medium none;
+    margin: 2px 0;
+    padding: 0;
+}
+.account-form fieldset legend {
+    color: #333;
+    font-size: 1.125em;
+}
+.account-form fieldset .formStruct {
+    margin: 0;
+    padding: 15px 0 5px;
+}
+.account-form fieldset .formStruct li {
+    list-style-type: none;
+    margin: 0 0 5px;
+}
+.account-form fieldset .formStruct li label {
+    width: 100%;
+}
+.account-form fieldset .formStruct li label em {
+    color: #999;
+    font-size: 0.875em;
+    font-style: normal;
+    font-weight: 400;
+}
+@media screen and (min-width: 740px) {
+.account-form {
+    padding-top: 0;
+}
+.account-form fieldset legend {
+    font-size: 1.375em;
+}
+.account-form fieldset .formStruct {
+    padding: 15px 0 10px;
+}
+}
+@media screen and (min-width: 500px) {
+.account-form .button-container {
+    text-align: left;
+}
+.account-form .button-container .btn {
+    margin: 0 5px 0 0;
+    width: auto;
+}
+}
+.hdlogo::before, .uhdlogo::before {
+    font-family: nf-icon;
+    font-size: 1.2em;
+}
+.hd-logo-wrapper {
+    display: inline-block;
+    vertical-align: middle;
+}
+.hdlogo::before {
+    content: "";
+}
+.uhdlogo::before {
+    content: "";
+}
+.account-section {
+    background: #fff none repeat scroll 0 0;
+    border: 1px solid #999;
+    margin-bottom: 5px;
+    padding: 10px;
+    position: relative;
+}
+@media only screen and (min-width: 500px) {
+.account-section {
+    background-color: inherit;
+    border-color: #999 -moz-use-text-color -moz-use-text-color;
+    border-style: solid none none;
+    border-width: 1px medium medium;
+    padding: 0;
+}
+}
+.account-section-item {
+    margin-bottom: 15px;
+}
+.account-section-item-disabled {
+    color: #999;
+}
+.account-section-divider {
+    margin-top: 30px;
+}
+@media only screen and (min-width: 740px) {
+.account-section-item {
+    margin-bottom: 10px;
+}
+.account-section-divider {
+    margin-top: 0;
+}
+}
+.account-section-link {
+    border-top: 1px solid #ccc;
+    color: #333;
+    display: block;
+    padding: 15px 0 5px;
+    width: 100%;
+}
+.account-section-link.last {
+    border-bottom: 1px solid #ccc;
+    padding-bottom: 15px;
+}
+@media only screen and (min-width: 500px) {
+.account-section-link {
+    border-top: medium none;
+    color: #0080ff;
+    display: inline;
+    padding-right: 0;
+    padding-top: 5px;
+}
+.account-section-link.last {
+    border-bottom: medium none;
+    padding-bottom: 0;
+}
+}
+.account-section-link::after {
+    color: #999;
+    content: "";
+    font-family: nf-icon;
+    position: absolute;
+    right: 10px;
+}
+.account-section-heading {
+    color: #999;
+    font-size: 1.14em;
+    font-weight: 400;
+    margin-bottom: 20px;
+    margin-top: 15px;
+    padding: 0;
+    text-transform: uppercase;
+}
+@media only screen and (min-width: 500px) {
+.account-section-link::after {
+    content: "";
+    display: none;
+}
+.account-section-heading {
+    font-size: 1.125em;
+}
+}
+@media only screen and (min-width: 740px) {
+.account-section-header {
+    left: 0;
+    padding-right: 10px;
+    position: absolute;
+    width: 270px;
+    z-index: 2;
+}
+.account-section-content {
+    margin-top: 15px;
+    padding-left: 270px;
+}
+}
+.account-section-label {
+    font-size: 1em;
+}
+.account-section-body {
+    font-size: 0.875em;
+}
+.account-section-content {
+    position: relative;
+}
+.account-subsection {
+    position: relative;
+}
+.account-subsection ~ .account-subsection {
+    border-top: medium none;
+}
+@media only screen and (min-width: 500px) {
+.account-subsection ~ .account-subsection {
+    border-top: 1px solid #999;
+    padding-top: 15px;
+}
+.account-subsection.account-subsection-borderless {
+    border-top: medium none;
+    padding-top: 0;
+}
+.account-section-group {
+    background-color: inherit;
+    float: left;
+    width: 50%;
+}
+.account-section-group.account-section-group-full {
+    width: 100%;
+}
+.account-section-group + .account-section-group {
+    float: right;
+    text-align: right;
+}
+.account-section-group + .account-section-group.left-align {
+    text-align: left;
+}
+}
+.account-section-profile {
+    display: table;
+    margin-bottom: 15px;
+}
+.profile-name {
+    display: table-cell;
+    padding-left: 15px;
+    vertical-align: middle;
+}
+.icon-payment {
+    margin-right: 5px;
+}
+.text-payment {
+    display: inline-block;
+    font-family: "Helvetica Neue",Helvetica,Arial,sans-serif;
+}
+.mopType {
+    white-space: nowrap;
+}
+.icon-payment .text-payment, .icon-payment-eu_direct_debit .text-payment {
+    text-indent: -9999px;
+}
+.icon-payment-amex::before {
+    content: "";
+    font-size: 11px;
+}
+.icon-payment-visa::before {
+    content: "";
+    font-size: 13px;
+}
+.icon-payment-mastercard::before {
+    content: "";
+    font-size: 18px;
+}
+.icon-payment-discover::before {
+    content: "";
+    font-size: 18px;
+}
+.icon-payment-hsbc::before {
+    content: "";
+}
+.icon-payment-ideal::before {
+    content: "";
+    font-size: 22px;
+}
+.icon-payment-banamex::before {
+    content: "";
+}
+.icon-payment-diners::before {
+    content: "";
+    font-size: 22px;
+}
+.icon-payment-jcb::before {
+    content: "";
+}
+.icon-payment-itau::before {
+    content: "";
+}
+.icon-payment-bradesco::before {
+    content: "";
+}
+.icon-payment-banorte::before {
+    content: "";
+}
+.icon-payment-bbva::before {
+    content: "";
+}
+.icon-payment-elo::before {
+    content: "";
+}
+.icon-payment-banco_santander::before {
+    content: "";
+}
+.icon-payment-paypal::before {
+    content: "";
+}
+.no-payment-type {
+    font-weight: 700;
+}
+.ui-message-container {
+    border-radius: 2px;
+    display: table;
+    margin: 10px 0;
+    width: 100%;
+}
+.ui-message-contents, .ui-message-icon {
+    display: table-cell;
+    vertical-align: middle;
+}
+.ui-message-contents {
+    color: #fff;
+    padding: 20px 10px;
+}
+.ui-message-contents a {
+    color: inherit;
+    text-decoration: underline;
+}
+.ui-message-link {
+    color: #fff;
+    text-decoration: underline;
+}
+.ui-message-icon {
+    color: #fff;
+    width: 53px;
+}
+.ui-message-icon::before {
+    font-family: nf-icon;
+    font-size: 1.5em;
+    line-height: 1.5em;
+    padding-left: 20px;
+}
+.ui-message-info {
+    background: #03aefd none repeat scroll 0 0;
+}
+.ui-message-error, .ui-message-warn {
+    background: #ffa00a none repeat scroll 0 0;
+}
+.ui-message-info > .ui-message-icon::before {
+    content: "";
+}
+.ui-message-wait {
+    text-align: center;
+}
+.ui-message-warn > .ui-message-icon::before {
+    content: "";
+}
+.ui-message-error > .ui-message-icon::before {
+    content: "";
+}
+.ui-message-success {
+    background: #5fa53f none repeat scroll 0 0;
+}
+.ui-message-success > .ui-message-icon::before {
+    content: "";
+}
+.input-message {
+    bottom: 0;
+    color: #999;
+    font-size: 12px;
+    height: 32px;
+    left: 0;
+    position: absolute;
+}
+.input-message.error {
+    color: #b00500;
+}
+.input-message a {
+    color: inherit;
+    text-decoration: underline;
+}
+.ui-label, .ui-label-no-margin {
+    color: grey;
+    display: block;
+    font-size: 1em;
+    font-weight: 400;
+}
+.ui-input-wrapper, .ui-label-no-margin.inline, .ui-label.inline {
+    display: inline-block;
+}
+@media only screen and (max-width: 740px) {
+.ui-label, .ui-label-no-margin {
+    font-size: 0.875em;
+}
+}
+.ui-label-no-margin.inline .ui-text-input, .ui-label.inline .ui-text-input {
+    margin-bottom: 0;
+}
+.ui-label {
+    margin-bottom: 6px;
+}
+.icon-error {
+    color: #b00500;
+}
+.icon-valid {
+    color: #5fa53f;
+}
+.ui-input-wrapper {
+    margin: 0;
+    padding: 0;
+}
+@media only screen and (max-width: 500px) {
+.ui-input-wrapper {
+    display: block;
+}
+}
+.ui-input-label {
+    padding-bottom: 32px;
+    position: relative;
+}
+.ui-readonly-value {
+    color: #333;
+    margin-bottom: 20px;
+    padding: 10px 0;
+}
+.input-password-input, .ui-text-input {
+    -moz-appearance: none;
+    border: 1px solid #b3b3b3;
+    border-radius: 2px;
+    box-sizing: border-box;
+    color: #000;
+    display: block;
+    font-size: 16px;
+    height: 44px;
+    line-height: 18px;
+    max-width: 500px;
+    padding: 10px 11px;
+    width: 100%;
+}
+.input-password-input.large, .ui-text-input.large {
+    line-height: 20px;
+    padding: 14px 11px;
+}
+@media only screen and (max-width: 740px) {
+.input-password-input.large, .ui-text-input.large {
+    font-size: 1em;
+    line-height: 20px;
+    padding: 11px;
+}
+}
+.input-password-input.small, .ui-text-input.small {
+    font-size: 14px;
+    line-height: 18px;
+    padding: 5px 8px;
+}
+@media only screen and (max-width: 740px) {
+.input-password-input.small, .ui-text-input.small {
+    font-size: 1em;
+    padding: 8px 11px;
+}
+}
+.input-password-input:focus, .ui-text-input:focus {
+    border-color: grey;
+    outline: 0 none;
+}
+.error > .input-password-input, .error > .ui-text-input, .input-password-input.error, .input-password-inputerror:focus, .ui-text-input.error, .ui-text-inputerror:focus {
+    border-color: #b00500;
+}
+.input-password-input.valid, .ui-text-input.valid, .valid > .input-password-input, .valid > .ui-text-input {
+    border-color: #5fa53f;
+}
+.input-password-input.inline, .ui-text-input.inline {
+    display: inline-block;
+    margin: 0 12px 0 0;
+    max-width: 100%;
+    vertical-align: middle;
+    width: auto;
+}
+.input-password-input.inline.medium, .ui-text-input.inline.medium {
+    margin-right: 8px;
+}
+.input-password-input.inline.small, .ui-text-input.inline.small {
+    margin-right: 4px;
+}
+.floating-label.ui-input-label {
+    padding-bottom: 0;
+}
+.floating-label span {
+    left: 11px;
+    margin-top: -10px;
+    position: absolute;
+    top: 50%;
+}
+.floating-label.active span {
+    font-size: 0.8em;
+    margin-top: -20px;
+}
+.floating-label .ui-text-input:focus {
+    border-color: #0f84fa;
+}
+.floating-label .ui-text-input.medium {
+    padding: 15px 11px 5px;
+}
+.account-section-email, .payment-type {
+    font-weight: 700;
+}
+.responsive-account-content {
+    font-size: 1em;
+}
+.account-page-header {
+    color: #333;
+    font-size: 1.7em;
+}
+@media only screen and (min-width: 500px) {
+.account-page-header {
+    font-size: 2.26em;
+}
+}
+.btn {
+    display: block;
+    font-size: inherit;
+    width: 95%;
+}
+@media only screen and (min-width: 740px) {
+.btn {
+    display: inline-block;
+    margin-left: 15px;
+    margin-top: -3px;
+    padding: 17px 2em;
+    width: auto;
+}
+}
+.btn.account-cancel-button {
+    bottom: 10px;
+    left: 0;
+    margin-left: 5%;
+    position: absolute;
+    width: 90%;
+}
+@media only screen and (min-width: 500px) {
+.btn.account-cancel-button {
+    display: block;
+    margin: 20px 10px 10px 0;
+    max-width: 200px;
+    position: relative;
+    width: auto;
+}
+}
+.hdlogo {
+    margin-top: -3px;
+}
+.gift-balance {
+    color: #5fa53f;
+    display: inline-block;
+    margin-top: 10px;
+    padding-right: 10px;
+}
+.account-section-group.gifts-link-group {
+    display: block;
+    float: none;
+    text-align: left;
+    width: 100%;
+}
+@media only screen and (min-width: 975px) {
+.account-section-group.gifts-link-group {
+    float: left;
+    text-align: right;
+    width: 50%;
+}
+}
+.membership-section-wrapper {
+    padding-bottom: 80px;
+}
+@media only screen and (min-width: 500px) {
+.membership-section-wrapper {
+    padding-bottom: 10px;
+}
+}
+.gifts-section-group {
+    display: block;
+    float: none;
+    width: 100%;
+}
+@media only screen and (min-width: 975px) {
+.gifts-section-group {
+    float: left;
+    width: 50%;
+}
+}
+.gifts-section-group .ui-input-wrapper {
+    display: block;
+}
+@media only screen and (min-width: 740px) {
+.account-section-manage-profiles {
+    position: absolute;
+    right: 0;
+    top: 10px;
+}
+.gifts-section-group {
+    margin-bottom: 30px;
+}
+.gifts-section-group .ui-input-wrapper {
+    display: inline-block;
+    position: relative;
+}
+}
+.gifts-section-group .ui-text-input {
+    font-size: 16px;
+    margin-bottom: 2px;
+    padding: 10px 11px;
+    width: 100%;
+}
+@media only screen and (min-width: 500px) {
+.gifts-section-group .ui-text-input {
+    margin: 0 auto 10px;
+    width: 250px;
+}
+}
+.gifts-section-group .input-message {
+    margin-top: 2px;
+    position: relative;
+}
+@media only screen and (min-width: 500px) {
+.gifts-section-group .input-message {
+    height: 20px;
+    margin-top: 10px;
+    position: absolute;
+}
+}
+@media only screen and (min-width: 740px) {
+.gifts-section-group .ui-text-input {
+    display: inline-block;
+    margin-left: 0;
+    margin-right: 0;
+}
+.gifts-section-group .input-message {
+    width: 600px;
+}
+}
+.gifts-section-group .gift-redeem-btn {
+    margin-left: auto;
+    margin-right: auto;
+    min-height: 40px;
+    position: relative;
+    text-align: center;
+}
+@media only screen and (min-width: 500px) {
+.gifts-section-group .gift-redeem-btn {
+    margin-left: 10px;
+    margin-top: 0;
+}
+.ui-label {
+    display: inline-block;
+}
+}
+.gift-modal-buttons {
+    margin-bottom: 15px;
+    margin-top: 25px;
+}
+.gift-modal-email-entry {
+    background: #e5e5e5 none repeat scroll 0 0;
+    padding: 10px;
+}
+.gift-modal-email-entry .ui-text-input {
+    margin: 0;
+    width: 150px;
+}
+.gift-redeem-error {
+    color: #b00500;
+}
+.input-message {
+    margin-top: 10px;
+}
+@media only screen and (min-width: 740px) {
+.input-message {
+    margin: 0;
+}
+}
+.account-section-profile {
+    min-height: 36px;
+}
+.bobo-provider {
+    margin-bottom: 10px;
+}
+.ui-message-icon {
+    width: 58px;
+}
+.ui-label {
+    margin-bottom: 0;
+    padding-bottom: 10px;
+}
+.next-plan {
+    margin-top: 10px;
+}
+.account-addendum {
+    margin: 0 0 15px;
+    padding: 0;
+}
+.footer-divider {
+    border-top: 1px solid transparent;
+}
+@media only screen and (min-width: 500px) {
+.footer-divider {
+    border-top: 1px solid #e5e5e5;
+}
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+.gifts-section-group .gift-redeem-btn {
+    margin-left: 10px;
+    margin-top: 0;
+}
+.gifts-section-group .gift-redeem-btn {
+    margin-left: auto;
+    margin-right: auto;
+    min-height: 40px;
+    position: relative;
+    text-align: center;
+}
+.btn.btn-small {
+    display: inline-block;
+    font-size: 13px;
+    line-height: 1em;
+    margin-right: 0.5em;
+    min-height: 37px;
+    min-width: 98px;
+    padding: 12px 1em;
+    width: auto;
+}
+.btn.btn-small {
+    display: block;
+    line-height: 50px;
+    margin: 0.5em auto;
+    padding: 0;
+    width: 100%;
+}
+.btn {
+    display: inline-block;
+    margin-left: 15px;
+    margin-top: -3px;
+    padding: 17px 2em;
+    width: auto;
+}
+.btn {
+    display: block;
+    font-size: inherit;
+    width: 95%;
+}
+.responsive-account-container * {
+    box-sizing: border-box;
+}
+.btn {
+    font-size: 1em;
+    margin: 0.5em 0.5em 0.5em 0;
+    min-height: 50px;
+    min-width: 74px;
+    padding: 24.5px 2em;
+    position: relative;
+}
+.btn-gray, .btn-plain {
+    background-color: #e6e6e6;
+    background-image: linear-gradient(to bottom, #e6e6e6, #ddd);
+    box-shadow: 0 1px 0 rgba(0, 0, 0, 0.2);
+    color: #000;
+}
+.btn {
+    -moz-user-select: none;
+    background-color: #e6e6e6;
+    background-image: linear-gradient(to bottom, #e6e6e6, #ddd);
+    border: 0 none;
+    border-radius: 2px;
+    box-shadow: 0 1px 0 rgba(0, 0, 0, 0.2);
+    box-sizing: border-box;
+    color: #000;
+    cursor: pointer;
+    display: inline-block;
+    font-family: Arial,sans-serif;
+    font-weight: 400;
+    letter-spacing: 0.1px;
+    line-height: 1em;
+    vertical-align: middle;
+}
+.btn, .btn-bar-center {
+    text-align: center;
+}
+.btn, .btn.hover, .btn:hover {
+    text-decoration: none;
+}
+button, html input[type="button"], input[type="reset"], input[type="submit"] {
+    cursor: pointer;
+}
+button, select {
+    text-transform: none;
+}
+button {
+    overflow: visible;
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

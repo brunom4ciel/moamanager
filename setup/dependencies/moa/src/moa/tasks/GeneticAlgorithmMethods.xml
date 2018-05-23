@@ -1,0 +1,220 @@
+<GeneticAlgorithmMethods>
+	<method>
+		<name>ADWINChangeDetector</name>
+		<description>Adwin Method.</description>
+		<parameter>
+			<lowerLimit>0.001</lowerLimit>
+			<upperLimit>1.0</upperLimit>
+			<defaultParameter>0.002</defaultParameter>
+			<parameterType>double</parameterType>
+		</parameter>
+		<parameter>
+			<lowerLimit>1.0</lowerLimit>
+			<upperLimit>300.0</upperLimit>
+			<defaultParameter>32</defaultParameter>
+			<parameterType>int</parameterType>
+		</parameter>
+		<methodCommand>drift.SingleClassifierDrift -l (LEARNER) -d
+			(ADWINChangeDetector -a varDouble -m varInt)</methodCommand>
+	</method>
+
+	<method>
+		<name>DDM</name>
+		<description>DDM Method.</description>
+		<parameter>
+			<lowerLimit>1</lowerLimit>
+			<upperLimit>300</upperLimit>
+			<defaultParameter>30</defaultParameter>
+			<parameterType>int</parameterType>
+		</parameter>
+		<parameter>
+			<lowerLimit>1.0</lowerLimit>
+			<upperLimit>4.0</upperLimit>
+			<defaultParameter>2.0</defaultParameter>
+			<parameterType>double</parameterType>
+		</parameter>
+		<parameter>
+			<lowerLimit>1.0</lowerLimit>
+			<upperLimit>5.0</upperLimit>
+			<defaultParameter>3.0</defaultParameter>
+			<parameterType>double</parameterType>
+		</parameter>
+		<methodCommand>drift.SingleClassifierDrift -l (LEARNER) -d (DDM -n
+			varInt -w varDouble -o varDouble)</methodCommand>
+	</method>
+
+	<method>
+		<name>EDDM</name>
+		<description>EDDM Method.</description>
+		<parameter>
+			<lowerLimit>1</lowerLimit>
+			<upperLimit>300</upperLimit>
+			<defaultParameter>30</defaultParameter>
+			<parameterType>int</parameterType>
+		</parameter>
+		<parameter>
+			<lowerLimit>0.5</lowerLimit>
+			<upperLimit>1.0</upperLimit>
+			<defaultParameter>0.95</defaultParameter>
+			<parameterType>double</parameterType>
+		</parameter>
+		<parameter>
+			<lowerLimit>0.5</lowerLimit>
+			<upperLimit>1.0</upperLimit>
+			<defaultParameter>0.9</defaultParameter>
+			<parameterType>double</parameterType>
+		</parameter>
+		<methodCommand>drift.SingleClassifierDrift -l (LEARNER) -d (EDDM -n
+			varInt -w varDouble -o varDouble)</methodCommand>
+	</method>
+
+	<method>
+		<name>EWMAChartDM</name>
+		<description>EWMAChartDM Method.</description>
+		<parameter>
+			<lowerLimit>1</lowerLimit>
+			<upperLimit>300</upperLimit>
+			<defaultParameter>30</defaultParameter>
+			<parameterType>int</parameterType>
+		</parameter>
+		<parameter>
+			<lowerLimit>0.001</lowerLimit>
+			<upperLimit>5.0</upperLimit>
+			<defaultParameter>0.2</defaultParameter>
+			<parameterType>double</parameterType>
+		</parameter>
+		<methodCommand>drift.SingleClassifierDrift -l (LEARNER) -d
+			(EWMAChartDM -n varInt -l varDouble)</methodCommand>
+	</method>
+
+	<method>
+		<name>HDDM_A_Test</name>
+		<description>HDDM_A_Test Method.</description>
+		<parameter>
+			<lowerLimit>0.00001</lowerLimit>
+			<upperLimit>1.0</upperLimit>
+			<defaultParameter>0.001</defaultParameter>
+			<parameterType>double</parameterType>
+		</parameter>
+		<parameter>
+			<lowerLimit>0.00001</lowerLimit>
+			<upperLimit>1.0</upperLimit>
+			<defaultParameter>0.005</defaultParameter>
+			<parameterType>double</parameterType>
+		</parameter>
+		<parameter>
+			<lowerLimit>0</lowerLimit>
+			<upperLimit>2</upperLimit>
+			<defaultParameter>1</defaultParameter>
+			<parameterType>int</parameterType>
+		</parameter>
+		<methodCommand>drift.SingleClassifierDrift -l (LEARNER) -d
+			(HDDM_A_Test -d varDouble -w varDouble -t varInt)</methodCommand>
+	</method>
+
+	<method>
+		<name>HDDM_W_Test</name>
+		<description>HDDM_W_Test Method.</description>
+		<parameter>
+			<lowerLimit>0.00001</lowerLimit>
+			<upperLimit>1.0</upperLimit>
+			<defaultParameter>0.001</defaultParameter>
+			<parameterType>double</parameterType>
+		</parameter>
+		<parameter>
+			<lowerLimit>0.00001</lowerLimit>
+			<upperLimit>1.0</upperLimit>
+			<defaultParameter>0.005</defaultParameter>
+			<parameterType>double</parameterType>
+		</parameter>
+		<parameter>
+			<lowerLimit>0.00001</lowerLimit>
+			<upperLimit>1.0</upperLimit>
+			<defaultParameter>0.05</defaultParameter>
+			<parameterType>double</parameterType>
+		</parameter>
+		<parameter>
+			<lowerLimit>0</lowerLimit>
+			<upperLimit>2</upperLimit>
+			<defaultParameter>0</defaultParameter>
+			<parameterType>int</parameterType>
+		</parameter>
+		<methodCommand>drift.SingleClassifierDrift -l (LEARNER) -d
+			(HDDM_W_Test -d varDouble -w varDouble -t varInt)</methodCommand>
+	</method>
+
+	<method>
+		<name>PageHinkleyDM</name>
+		<description>PageHinkleyDM Method.</description>
+		<parameter>
+			<lowerLimit>1</lowerLimit>
+			<upperLimit>300</upperLimit>
+			<defaultParameter>30</defaultParameter>
+			<parameterType>int</parameterType>
+		</parameter>
+		<parameter>
+			<lowerLimit>0.001</lowerLimit>
+			<upperLimit>1.0</upperLimit>
+			<defaultParameter>0.005</defaultParameter>
+			<parameterType>double</parameterType>
+		</parameter>
+		<parameter>
+			<lowerLimit>0.001</lowerLimit>
+			<upperLimit>500.0</upperLimit>
+			<defaultParameter>50.0</defaultParameter>
+			<parameterType>double</parameterType>
+		</parameter>
+		<parameter>
+			<lowerLimit>0.0001</lowerLimit>
+			<upperLimit>1.0</upperLimit>
+			<defaultParameter>1.0</defaultParameter>
+			<parameterType>double</parameterType>
+		</parameter>
+		<methodCommand>drift.SingleClassifierDrift -l (LEARNER) -d
+			(PageHinkleyDM -n varInt -d varDouble -l varDouble -a varDouble)</methodCommand>
+	</method>
+
+	<method>
+		<name>STEPD</name>
+		<description>STEPD Method.</description>
+		<parameter>
+			<lowerLimit>10.0</lowerLimit>
+			<upperLimit>600.0</upperLimit>
+			<defaultParameter>30.0</defaultParameter>
+			<parameterType>int</parameterType>
+		</parameter>
+		<parameter>
+			<lowerLimit>0.001</lowerLimit>
+			<upperLimit>0.05</upperLimit>
+			<defaultParameter>0.003</defaultParameter>
+			<parameterType>double</parameterType>
+		</parameter>
+		<parameter>
+			<lowerLimit>0.01</lowerLimit>
+			<upperLimit>0.2</upperLimit>
+			<defaultParameter>0.05</defaultParameter>
+			<parameterType>double</parameterType>
+		</parameter>
+		<methodCommand>drift.SingleClassifierDrift -l (LEARNER) -d (STEPD -r
+			varInt -o varDouble -w varDouble)</methodCommand>
+	</method>
+
+	<method>
+		<name>SeqDrift2ChangeDetector</name>
+		<description>SeqDrift2ChangeDetector Method.</description>
+		<parameter>
+			<lowerLimit>0.0</lowerLimit>
+			<upperLimit>1.0</upperLimit>
+			<defaultParameter>0.01</defaultParameter>
+			<parameterType>double</parameterType>
+		</parameter>
+		<parameter>
+			<lowerLimit>100</lowerLimit>
+			<upperLimit>10000</upperLimit>
+			<defaultParameter>200</defaultParameter>
+			<parameterType>int</parameterType>
+		</parameter>
+		<methodCommand>drift.SingleClassifierDrift -l (LEARNER) -d
+			(SeqDrift2ChangeDetector -d varDouble -b varInt)</methodCommand>
+	</method>
+</GeneticAlgorithmMethods>
