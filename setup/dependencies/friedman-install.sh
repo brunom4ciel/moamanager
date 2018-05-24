@@ -2,45 +2,47 @@
 
 
 # Install script for Latest MOAManager by Bruno Maciel
-
-echo "Install script for Latest MOA by Bruno Maciel\n"
-
 echo "Install friedman-test \n"
 
-dirbase1=$(dirname $(readlink -f $0))
+currentpath=$(dirname $(readlink -f $0))
 
-dirinstall="/opt"
-dirbase="$dirinstall/moamanager"
-dirbase_statistical="$dirbase/statistical"
+dir_opt="/opt"
+dir_opt_moamanager="$dir_opt/moamanager"
+dir_opt_moamanager_statistical="$dir_opt_moamanager/statistical"
 
-dirbase_statistical_friedman="$dirbase/friedman-test"
-dirbase_statistical_friedman_src="$dirbase_statistical_friedman/src"
-dirbase_statistical_friedman_bin="$dirbase_statistical_friedman/bin"
+dir_opt_moamanager_statistical_friedmantest="$dir_opt_moamanager_statistical/friedman-test"
+dir_opt_moamanager_statistical_friedmantest_src="$dir_opt_moamanager_statistical_friedmantest/src"
+dir_opt_moamanager_statistical_friedmantest_bin="$dir_opt_moamanager_statistical_friedmantest/bin"
 
-echo "create folder in path $dirbase"
-mkdir -p $dirbase;
+echo "create folder in path $dir_opt_moamanager"
+mkdir -p $dir_opt_moamanager;
 
-echo "create folder in path $dirbase_statistical"
-mkdir -p $dirbase_statistical;
+echo "create folder in path $dir_opt_moamanager_statistical"
+mkdir -p $dir_opt_moamanager_statistical;
 
-echo "create folder in path $dirbase_statistical_friedman"
-mkdir -p $dirbase_statistical_friedman;
+echo "create folder in path $dir_opt_moamanager_statistical_friedmantest"
+mkdir -p $dir_opt_moamanager_statistical_friedmantest;
 
-chmod 777 -R $dirbase
 
-cd $dirbase_statistical_friedman_src;
+echo "create folder in path $dir_opt_moamanager_statistical_friedmantest_src"
+mkdir -p $dir_opt_moamanager_statistical_friedmantest_src;
 
-mv $dirbase1/dependencies/friedman/src/* $dirbase_statistical_friedman_src
+echo "create folder in path $dir_opt_moamanager_statistical_friedmantest_bin"
+mkdir -p $dir_opt_moamanager_statistical_friedmantest_bin;
 
-chmod 0777 -R $dirbase
+cd $currentpath;
 
-cd $dirbase1/dependencies/friedman/src/
+cp -rv $currentpath/statistical/friedman/src/* $dir_opt_moamanager_statistical_friedmantest_src
 
-g++ $dirbase_statistical_friedman_src/friedman_run.cpp $dirbase_statistical_friedman_src/Friedman.cpp -std=c++11 -o3 -o $dirbase_statistical_friedman_bin/friedman_run
+chmod 777 -R $dir_opt
 
-chmod 777 $dirbase_statistical_friedman_bin/friedman_run
+cd $dir_opt_moamanager_statistical_friedmantest_src
 
-chmod +x $dirbase_statistical_friedman_bin/friedman_run
+g++ $dir_opt_moamanager_statistical_friedmantest_src/friedman_run.cpp $dir_opt_moamanager_statistical_friedmantest_src/Friedman.cpp -std=c++11 -o3 -o $dir_opt_moamanager_statistical_friedmantest_bin/friedman_run
+
+chmod 777 $dir_opt_moamanager_statistical_friedmantest_bin/friedman_run
+
+chmod +x $dir_opt_moamanager_statistical_friedmantest_bin/friedman_run
 
 
 

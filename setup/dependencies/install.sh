@@ -17,10 +17,12 @@ sh php-install.sh
 
 service apache2 restart
 
-sh moamanager-install.sh
 sh java-install.sh
 sh moa-install.sh
 sh gcc-install.sh
 sh libboost-install.sh
 sh friedman-install.sh
+
+sh moamanager-install.sh
+
 sh checking-installed.sh

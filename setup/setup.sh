@@ -2,8 +2,9 @@
 
 # by Bruno Maciel
 
-dirbase=$(dirname $(readlink -f $0))
-dirinstall="$dirbase/dependencies"
+currentpath=$(dirname $(readlink -f $0))
+
+dirinstall="$currentpath/dependencies"
 
 cd $dirinstall
 

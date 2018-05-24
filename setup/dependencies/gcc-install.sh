@@ -2,9 +2,6 @@
 
 echo "Install GCC"
 
-
-sudo apt-get update -y 
-
 sudo apt-get install build-essential software-properties-common -y 
 sudo add-apt-repository ppa:ubuntu-toolchain-r/test -y 
 
