@@ -15,20 +15,28 @@ dirmoam_processing="$dirmoam_data/exec/"
 dirmoam_storage="$dirmoam_data/storage/"
 
 echo "create folder in path $dirmoam_web"
-mkdir -p $dirmoam_web;
-chmod 0777 -R $dirmoam_web
+mkdir -p $dirmoam_web
+#chmod 0777 -R $dirmoam_web
 
 echo "create folder in path $dirmoam_data"
-mkdir -p $dirmoam_data;
-chmod 0777 -R $dirmoam_data
+mkdir -p $dirmoam_data
+#chmod 0777 -R $dirmoam_data
 
 echo "create folder in path $dirmoam_processing"
-mkdir -p $dirmoam_processing;
-chmod 0777 -R $dirmoam_processing
+mkdir -p $dirmoam_processing
+#chmod 0777 -R $dirmoam_processing
 
 echo "create folder in path $dirmoam_storage"
-mkdir -p $dirmoam_storage;
-chmod 0777 -R $dirmoam_storage
+mkdir -p $dirmoam_storage
+#chmod 0777 -R $dirmoam_storage
+
+mkdir -p $dirmoam_processing/brunom4ciel@gmail.com
+#chmod 0777 -R $dirmoam_processing/brunom4ciel@gmail.com
+
+mkdir -p $dirmoam_storage/brunom4ciel@gmail.com
+#chmod 0777 -R $dirmoam_storage/brunom4ciel@gmail.com
+
+sudo chmod 777 -R $dirmoam_data
 
 cd $dirmoam_files;
 
