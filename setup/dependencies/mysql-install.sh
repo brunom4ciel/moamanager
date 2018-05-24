@@ -2,9 +2,7 @@
 
 echo "Install MySQL"
 
-currentpath=$(dirname $(readlink -f $0))
-
-cd $currentpath;
+#sudo apt-get remove --purge *mysql\*
 
 sudo apt-get install mysql-server -y
 

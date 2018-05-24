@@ -12,7 +12,7 @@ dirmoam_files=$currentpath/../../
 dirmoam_web="/var/www/html/moamanager"
 dirmoam_data="/var/www/moamanagerdata"
 dirmoam_processing="$dirmoam_data/exec/"
-dirmoam_storage="$dirmoam_data/storage/"
+dirmoam_workspace="$dirmoam_data/workspace/"
 
 echo "create folder in path $dirmoam_web"
 mkdir -p $dirmoam_web
@@ -26,16 +26,16 @@ echo "create folder in path $dirmoam_processing"
 mkdir -p $dirmoam_processing
 #chmod 0777 -R $dirmoam_processing
 
-echo "create folder in path $dirmoam_storage"
-mkdir -p $dirmoam_storage
-#chmod 0777 -R $dirmoam_storage
+echo "create folder in path $dirmoam_workspace"
+mkdir -p $dirmoam_workspace
+#chmod 0777 -R $dirmoam_workspace
 
 mkdir -p $dirmoam_processing/brunom4ciel@gmail.com
 
-mkdir -p $dirmoam_storage/brunom4ciel@gmail.com
-mkdir -p $dirmoam_storage/brunom4ciel@gmail.com/scripts
-mkdir -p $dirmoam_storage/brunom4ciel@gmail.com/trash
-mkdir -p $dirmoam_storage/brunom4ciel@gmail.com/backup
+mkdir -p $dirmoam_workspace/brunom4ciel@gmail.com
+mkdir -p $dirmoam_workspace/brunom4ciel@gmail.com/scripts
+mkdir -p $dirmoam_workspace/brunom4ciel@gmail.com/trash
+mkdir -p $dirmoam_workspace/brunom4ciel@gmail.com/backup
 
 sudo chmod 777 -R $dirmoam_data
 

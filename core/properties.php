@@ -19,7 +19,7 @@ abstract class Properties
 
     public static $base_directory_statistical = "/opt/moamanager/statistical/";
     
-    public static $base_directory_destine = "/var/www/moamanagerdata/storage/";
+    public static $base_directory_destine = "/var/www/moamanagerdata/workspace/";
 
     public static $base_directory_destine_exec = "/var/www/moamanagerdata/exec/";
 

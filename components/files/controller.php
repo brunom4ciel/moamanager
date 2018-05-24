@@ -15,6 +15,7 @@ use moam\core\Properties;
 use moam\libraries\core\utils\Utils;
 use ZipArchive;
 use moam\libraries\core\menu\Menu;
+
 if (! class_exists('Application')) {
     $application = Framework::getApplication();
 }

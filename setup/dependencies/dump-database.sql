@@ -134,7 +134,7 @@ CREATE TABLE `user` (
 
 LOCK TABLES `user` WRITE;
 /*!40000 ALTER TABLE `user` DISABLE KEYS */;
-INSERT INTO `user` VALUES (1,'brunom4ciel@gmail.com','123','2016-08-02 14:09:15','Bruno Maciel',1,'2016-08-02 14:09:15','/var/www/moamanagerdata/storage/');
+INSERT INTO `user` VALUES (1,'brunom4ciel@gmail.com','123','2016-08-02 14:09:15','Bruno Maciel',1,'2016-08-02 14:09:15','/var/www/moamanagerdata/workspace/');
 /*!40000 ALTER TABLE `user` ENABLE KEYS */;
 UNLOCK TABLES;
 

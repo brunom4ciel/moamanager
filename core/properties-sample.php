@@ -17,7 +17,9 @@ abstract class Properties
     
     private static $acl_autoremove_account = true;
     
-    public static $base_directory_destine = "/var/www/moamanagerdata/storage/";
+    public static $base_directory_statistical = "/opt/moamanager/statistical/";
+    
+    public static $base_directory_destine = "/var/www/moamanagerdata/workspace/";
     
     public static $base_directory_destine_exec = "/var/www/moamanagerdata/exec/";
     
@@ -52,8 +54,14 @@ abstract class Properties
     private static $max_number_on_list_of_process="12";
     
     private static $output_directorys = array(
-        "/var/www/moamanagerdata/storage/"
+        "var/www/moamanagerdata/storage/"
     );
+    
+    
+    
+    public static function getbase_directory_statistical() {
+        return self::$base_directory_statistical;
+    }
     
     /**
      * Get the value of the maximum number on list of process.
