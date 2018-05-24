@@ -40,28 +40,19 @@ mysqldb=moamanager
 mysqluser=root
 mysqlpass=123
 
-cd $dirmoam_web/core/;
-
-sed -e "s/localhost/"$mysqlhost"/" -e "s/root/"$mysqluser"/" -e "s/123/"$mysqlpass"/" -e "s/moamanagerdb/"$mysqldb"/" properties-sample.php > properties.php
-
-cd "$dirbase1";
-#echo $dirbase1;
+#cd $dirmoam_web/core/;
+#sed -e "s/localhost/"$mysqlhost"/" -e "s/root/"$mysqluser"/" -e "s/123/"$mysqlpass"/" -e "s/moamanagerdb/"$mysqldb"/" properties-sample.php > properties.php
 
 systemctl enable mysql
 
-# DB Variables
-mysqlhost=localhost
-mysqldb=moamanager
-mysqluser=root
-mysqlpass=123
 
 echo "Press [ENTER] only to leave the root user password as 123"
 
-sudo mysql -u$mysqluser -p -e "UPDATE mysql.user SET Password = PASSWORD('"$mysqlpass"') WHERE User = '"$mysqluser"';"
+sudo mysql -u$mysqluser -p -e "UPDATE mysql.user SET authentication_string=PASSWORD('123'), plugin='mysql_native_password' WHERE User='root';FLUSH PRIVILEGES;"
 
-sudo mysql -u$mysqluser -p -e "UPDATE mysql.user SET authentication_string = PASSWORD('"$mysqlpass"') WHERE User = '"$mysqluser"';"
-
-sudo mysql -u$mysqluser -p$mysqlpass -e "FLUSH PRIVILEGES;"
+#sudo mysql -u$mysqluser -p -e "UPDATE mysql.user SET Password = PASSWORD('$mysqlpass') WHERE User = '$mysqluser';"
+#sudo mysql -u$mysqluser -p -e "UPDATE mysql.user SET authentication_string = PASSWORD('$mysqlpass') WHERE User = '$mysqluser';"
+#sudo mysql -u$mysqluser -p$mysqlpass -e "FLUSH PRIVILEGES;"
 
 sudo mysql -u$mysqluser -p$mysqlpass -e "DROP DATABASE IF EXISTS $mysqldb;"
 
