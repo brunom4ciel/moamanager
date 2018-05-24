@@ -47,6 +47,7 @@ sed -e "s/localhost/"$mysqlhost"/" -e "s/root/"$mysqluser"/" -e "s/123/"$mysqlpa
 cd "$dirbase1";
 #echo $dirbase1;
 
+systemctl enable mysql
 
 # DB Variables
 mysqlhost=localhost
@@ -54,15 +55,19 @@ mysqldb=moamanager
 mysqluser=root
 mysqlpass=123
 
+echo "Press [ENTER] only to leave the root user password as 123"
+
 sudo mysql -u$mysqluser -p -e "UPDATE mysql.user SET Password = PASSWORD('"$mysqlpass"') WHERE User = '"$mysqluser"';"
 
-sudo mysql -uroot -p123 -e "DROP DATABASE IF EXISTS $mysqldb;"
+sudo mysql -u$mysqluser -p -e "UPDATE mysql.user SET authentication_string = PASSWORD('"$mysqlpass"') WHERE User = '"$mysqluser"';"
+
+sudo mysql -u$mysqluser -p$mysqlpass -e "FLUSH PRIVILEGES;"
+
+sudo mysql -u$mysqluser -p$mysqlpass -e "DROP DATABASE IF EXISTS $mysqldb;"
 
 sudo mysql -u$mysqluser -p$mysqlpass -e "CREATE DATABASE $mysqldb;"
 
 sudo mysql -u$mysqluser -p$mysqlpass $mysqldb < $currentpath/dump-database.sql
-
-sudo mysql -u$mysqluser -p$mysqlpass -e "FLUSH PRIVILEGES;"
 
 rm -fr $dirmoam_web/setup
 

@@ -6,7 +6,7 @@
 echo "Install JAVA 9"
 
 sudo apt-get install ppa-purge -y
-sudo apt-get install python-software-properties -y
+#sudo apt-get install python-software-properties -y
 sudo add-apt-repository ppa:webupd8team/java -y
 
 sudo apt-get update -y
