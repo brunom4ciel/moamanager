@@ -12,6 +12,8 @@ defined('_EXEC') or die();
 use moam\core\Framework;
 use moam\libraries\core\utils\Utils;
 use moam\libraries\core\menu\Menu;
+use moam\core\Properties;
+
 if (! class_exists('Application')) {
     $application = Framework::getApplication();
 }
@@ -52,7 +54,7 @@ if(!empty($filename_autoload))
 
 if (in_array($task, $statistical_test_array)) {
 
-    $friedman_bin = "/opt/statistical/friedman-test";
+    $friedman_bin = Properties::getbase_directory_statistical() . "friedman-test/bin/friedman_run";
 
     $data_source2 = $data_source;
     $data_source2 = str_replace(",", ".", $data_source);
