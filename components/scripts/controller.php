@@ -89,14 +89,17 @@ if ($task == "folder") {
 
             foreach ($element as $key => $item) {
 
-                if (is_file($dir . $item)) {
-
+                if (file_exists($dir . $item)) {
+                    
                     // verifica o formato da extensão do arquivo
                     if (in_array(substr($item, strrpos($item, ".") + 1), $files_extensions)) {
 
                         $from_file = $dir . $item;
                         unlink($from_file);
+                    }else{
+                        exit("extension not support.");
                     }
+                    
                 } else {
 
                     if (is_dir($dir . $item)) {
@@ -817,7 +820,7 @@ foreach ($files_list as $key => $element) {
 
             $numberLines = $utils->getScriptsNumber(Properties::getBase_directory_destine($application) . $application->getUser() . DIRECTORY_SEPARATOR . DIRNAME_SCRIPT . DIRECTORY_SEPARATOR . $folder . $element["name"]);
 
-            $element["name"] = substr($element["name"], 0, strrpos($element["name"], "."));
+            //$element["name"] = substr($element["name"], 0, strrpos($element["name"], "."));
 
             echo "<tr><td>" . $i . "</td><td>" . "<a title='Execute script' href='?component=moa&controller=run&filename=" . $element["name"] . "&task=open&folder=" . $folder . "'>" . "<img align='middle' width='24px' src='" . $application->getPathTemplate() . "/images/icon-play.png' border='0'></a> " . "<a href='?component=" . $application->getComponent() . "&controller=edit&filename=" . $element["name"] . "&folder=" . $application->getParameter("folder") . "'>" . "<img width='16px' align='middle' src='" . $application->getPathTemplate() . "/images/icon-view.png' title='View contents'/></a> " . "<label><input type='checkbox' name='element[]' value='" . $element["name"] . "' />" . $element["name"] . "</label> </td>" . "<td align='center'>" . $numberLines . "</td>" . "<td>" . $element["size"] . "</td>" . "<td>" . $element["datetime"] . "</td></tr>";
         }
