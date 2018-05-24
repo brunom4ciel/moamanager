@@ -31,10 +31,11 @@ mkdir -p $dirmoam_storage
 #chmod 0777 -R $dirmoam_storage
 
 mkdir -p $dirmoam_processing/brunom4ciel@gmail.com
-#chmod 0777 -R $dirmoam_processing/brunom4ciel@gmail.com
 
 mkdir -p $dirmoam_storage/brunom4ciel@gmail.com
-#chmod 0777 -R $dirmoam_storage/brunom4ciel@gmail.com
+mkdir -p $dirmoam_storage/brunom4ciel@gmail.com/scripts
+mkdir -p $dirmoam_storage/brunom4ciel@gmail.com/trash
+mkdir -p $dirmoam_storage/brunom4ciel@gmail.com/backup
 
 sudo chmod 777 -R $dirmoam_data
 
