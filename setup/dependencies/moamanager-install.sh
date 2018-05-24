@@ -7,7 +7,7 @@ echo "Install MOAManager\n"
 
 currentpath=$(dirname $(readlink -f $0))
 
-dirmoam_files=currentpath/../
+dirmoam_files=$currentpath/../../
 
 dirmoam_web="/var/www/html/moamanager"
 dirmoam_data="/var/www/moamanagerdata"
@@ -64,6 +64,6 @@ sudo mysql -u$mysqluser -p$mysqlpass $mysqldb < $currentpath/dump-database.sql
 
 sudo mysql -u$mysqluser -p$mysqlpass -e "FLUSH PRIVILEGES;"
 
-
+rm -fr $dirmoam_web/setup
 
 

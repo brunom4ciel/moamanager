@@ -17,11 +17,11 @@ abstract class Properties
 
     private static $acl_autoremove_account = true;
 
-    public static $base_directory_destine = "/var/www/html/output/";
+    public static $base_directory_destine = "/var/www/moamanagerdata/storage/";
 
-    public static $base_directory_destine_exec = "/var/www/html/tmp/";
+    public static $base_directory_destine_exec = "/var/www/moamanagerdata/exec/";
 
-    public static $base_directory_moa = "/opt/moa/";
+    public static $base_directory_moa = "/opt/moamanager/moa/";
 
     public static $base_directory_moa_jar_default = "moa2014.jar";
 
@@ -35,9 +35,9 @@ abstract class Properties
     
     public static $file_java_exec = "java";
 
-    public static $plivo_AUTH_ID = "MANYBGKDHDFHBLKK5ZG"; // sms service
+    public static $plivo_AUTH_ID = "MANYBGKDHDFHBHGFJLKK5ZG"; // sms service
 
-    public static $plivo_AUTH_TOKEN = "ZjU5MGYIUHFH97UF6G2JkkjlilMTQ1"; // sms service
+    public static $plivo_AUTH_TOKEN = "ZjFU5MGYIUHFHUTSS97UF6sfwG2JkkjlilMTQQW1"; // sms service
 
     private static $database_name = "moamanager";
 
@@ -52,9 +52,7 @@ abstract class Properties
     private static $max_number_on_list_of_process="12";
 
     private static $output_directorys = array(
-        "/var/www/html/output/",
-        "/var/www/html/output2/",
-        "/var/www/html/output1/"
+        "var/www/moamanagerdata/storage/"
     );   
     
     /**
