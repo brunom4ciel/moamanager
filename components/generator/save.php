@@ -43,6 +43,6 @@ $console2 = $application->getParameter("console2");
 
 $utils->setContentFile($filename, $console2);
 
-$application->redirect(PATH_WWW . "?component=home&controller=scripts");
+$application->redirect(PATH_WWW . "?component=scripts");
 
 ?>

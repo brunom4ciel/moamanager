@@ -844,7 +844,7 @@ abstract class App
                 break;
             case "Airlines":
 
-                $base = "-s (ArffFileStream -f /opt/moa/datasets/airlines.arff)";
+                $base = "-s (ArffFileStream -f /opt/moamanager/moa/datasets/airlines.arff)";
                 $dataBaseGenerated = array(
                     "dataset_name" => $dataset,
                     "dataset_script" => $base
@@ -852,7 +852,7 @@ abstract class App
                 break;
             case "Covtype":
 
-                $base = "-s (ArffFileStream -f /opt/moa/datasets/covtype.arff)";
+                $base = "-s (ArffFileStream -f /opt/moamanager/moa/datasets/covtype.arff)";
                 $dataBaseGenerated = array(
                     "dataset_name" => $dataset,
                     "dataset_script" => $base
@@ -860,7 +860,7 @@ abstract class App
                 break;
             case "Elec":
 
-                $base = "-s (ArffFileStream -f /opt/moa/datasets/elec.arff)";
+                $base = "-s (ArffFileStream -f /opt/moamanager/moa/datasets/elec.arff)";
                 $dataBaseGenerated = array(
                     "dataset_name" => $dataset,
                     "dataset_script" => $base
@@ -868,7 +868,7 @@ abstract class App
                 break;
             case "Poker":
 
-                $base = "-s (ArffFileStream -f /opt/moa/datasets/poker.arff)";
+                $base = "-s (ArffFileStream -f /opt/moamanager/moa/datasets/poker.arff)";
                 $dataBaseGenerated = array(
                     "dataset_name" => $dataset,
                     "dataset_script" => $base

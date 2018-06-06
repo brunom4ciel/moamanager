@@ -73,6 +73,7 @@ if ($task == "folder") {
                     $folder = $application->getParameter("folder") . $application->getParameter("rename") . DIRECTORY_SEPARATOR;
                 }
             }
+
         }
 
         // echo $from_folder."<br>";
@@ -89,7 +90,7 @@ if ($task == "folder") {
 
             foreach ($element as $key => $item) {
 
-                if (file_exists($dir . $item)) {
+                if (is_file($dir . $item)) {
                     
                     // verifica o formato da extensão do arquivo
                     if (in_array(substr($item, strrpos($item, ".") + 1), $files_extensions)) {
@@ -134,17 +135,22 @@ if ($task == "folder") {
 
                             $movedestine_ = PATH_USER_WORKSPACE_STORAGE . DIRNAME_SCRIPT . DIRECTORY_SEPARATOR . $application->getParameter("folder") . $movedestine . DIRECTORY_SEPARATOR;
                         }
-
-                        if (is_file($dir . $item . ".data")) {
+         
+                        if (is_file($dir . $item)) {
 
                             // chmod($dir, 0777);
+                            
+                            if (in_array(substr($item, strrpos($item, ".") + 1), $files_extensions)) {
 
-                            $from_file = $dir . $item . ".data";
-                            $to_file = $movedestine_ . $item . ".data";
-
-                            rename($from_file, $to_file);
-
-                            // echo "file - from: ".$from_file.", to: ".$to_file."<br>";exit();
+                                $from_file = $dir . $item;
+                                $to_file = $movedestine_ . $item;
+    
+                                rename($from_file, $to_file);
+    
+//                                 echo "file - from: ".$from_file.", to: ".$to_file."<br>";exit();
+                            
+                            }
+                            
                         } else {
 
                             if (is_dir($dir . $item)) {
@@ -238,6 +244,8 @@ if ($task == "folder") {
                                             if ($zip->open($dir . $item) === TRUE) {
                                                 $zip->extractTo($dir . $newfolder);
                                                 $zip->close();
+                                                $utils->chmod_r($dir . $newfolder);
+                                                
                                             } else {
                                                 $error[] = 'Error: failed - ' . $item;
                                             }
@@ -248,6 +256,8 @@ if ($task == "folder") {
                                         if ($zip->open($dir . $item) === TRUE) {
                                             $zip->extractTo($dir . $newfolder);
                                             $zip->close();
+                                            $utils->chmod_r($dir . $newfolder);
+//                                             exit("=".$dir . $newfolder);
                                         } else {
                                             $error[] = 'Error: failed - ' . $item;
                                         }

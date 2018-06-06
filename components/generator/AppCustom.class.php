@@ -53,206 +53,36 @@ $arrayTask = array(
     "GeneticAlgorithm",
     "EvaluateInterleavedTestThenTrain",
     "EvaluateInterleavedTestThenTrain2",
-    "EvaluatePrequential"
+    "EvaluatePrequential",
+    "EvaluatePrequential2"
 );
 
 $arrayTask = sortArrayElements($arrayTask, "asc");
 
 $arrayLearners = array(
     "NaiveBayes",
-    "SingleClassifierDrift",
     "HoeffdingTree",
-    "CDDE",
-    "PairedLearners",
-    "DDE"
+    "SingleClassifierDrift"
 );
 
 $arrayLearners = sortArrayElements($arrayLearners, "asc");
 
 $arrayLearnersParameters = array(
     "NaiveBayes" => array(),
-    "SingleClassifierDrift" => array(),
     "HoeffdingTree" => array(),
-    "PairedLearners" => array(),
-    "DDE" => array(
+    "SingleClassifierDrift" => array(
         array(
-            "name" => "s",
-            "default" => "2",
-            "label" => "Sensibility",
+            "name" => "l",
+            "default" => "",
+            "label" => "Classifier",
             "type" => "list",
             "list" => array(
-                "1" => "1",
-                "2" => "2",
-                "3" => "3"
-            )
-        ),
-
-        array(
-            "name" => "x",
-            "default" => "HDDM_A_Test",
-            "label" => "Drift Detect Méthod 1",
-            "type" => "list",
-            "list" => array(
-                "DDM" => "DDM",
-                "EDDM" => "EDDM",
-                "STEPD" => "STEPD",
-                "ADWINChangeDetector" => "ADWINChangeDetector",
-                "EWMAChartDM" => "EWMAChartDM",
-                "EnsembleDriftDetectionMethods" => "EnsembleDriftDetectionMethods",
-                "HDDM_A_Test" => "HDDM_A_Test",
-                "HDDM_W_Test" => "HDDM_W_Test",
-                "PageHinkleyDM" => "PageHinkleyDM",
-                "GeometricMovingAverageDM" => "GeometricMovingAverageDM"
-            )
-        ),
-
-        array(
-            "name" => "y",
-            "default" => "HDDM_W_Test",
-            "label" => "Drift Detect Méthod 2",
-            "type" => "list",
-            "list" => array(
-                "DDM" => "DDM",
-                "EDDM" => "EDDM",
-                "STEPD" => "STEPD",
-                "ADWINChangeDetector" => "ADWINChangeDetector",
-                "EWMAChartDM" => "EWMAChartDM",
-                "EnsembleDriftDetectionMethods" => "EnsembleDriftDetectionMethods",
-                "HDDM_A_Test" => "HDDM_A_Test",
-                "HDDM_W_Test" => "HDDM_W_Test",
-                "PageHinkleyDM" => "PageHinkleyDM",
-                "GeometricMovingAverageDM" => "GeometricMovingAverageDM"
-            )
-        ),
-
-        array(
-            "name" => "z",
-            "default" => "DDM",
-            "label" => "Drift Detect Méthod 3",
-            "type" => "list",
-            "list" => array(
-                "DDM" => "DDM",
-                "EDDM" => "EDDM",
-                "STEPD" => "STEPD",
-                "ADWINChangeDetector" => "ADWINChangeDetector",
-                "EWMAChartDM" => "EWMAChartDM",
-                "EnsembleDriftDetectionMethods" => "EnsembleDriftDetectionMethods",
-                "HDDM_A_Test" => "HDDM_A_Test",
-                "HDDM_W_Test" => "HDDM_W_Test",
-                "PageHinkleyDM" => "PageHinkleyDM",
-                "GeometricMovingAverageDM" => "GeometricMovingAverageDM"
-            )
-        )
-    ),
-    "CDDE" => array(/*
-						array("name"=>"c",
-																	"default"=>"Abrupt",
-																	"label"=>"CDType",
-																	"type"=>"list",
-																	"list"=>array("Default"=>"Default","Abrupt"=>"Abrupt", "Gradual"=>"Gradual")),*/
-						
-										array(
-            "name" => "q",
-            "default" => "On",
-            "label" => "Use MaxValue",
-            "type" => "list",
-            "list" => array(
-                "On" => "On - MaxValue",
-                "Off" => "Off - MaxValue"
-            )
-        ),
-
-        array(
-            "name" => "s",
-            "default" => "2",
-            "label" => "Sensibility",
-            "type" => "list",
-            "list" => array(
-                "1" => "1",
-                "2" => "2",
-                "3" => "3"
-            )
-        ),
-
-        array(
-            "name" => "x",
-            "default" => "100",
-            "label" => "MaxValue",
-            "type" => "text",
-            "list" => array()
-        ),
-											
-											/*
-											array("name"=>"y",
-																						"default"=>"25",
-																						"label"=>"MaxValueAbrult",
-																						"type"=>"text",
-																						"list"=>array()),
-																						
-																						array("name"=>"z",
-																						"default"=>"200",
-																						"label"=>"MaxValueGradual",
-																						"type"=>"text",
-																						"list"=>array()),*/
-											
-											
-										array(
-            "name" => "d",
-            "default" => "HDDM_A_Test",
-            "label" => "Drift Detect Méthod 1",
-            "type" => "list",
-            "list" => array(
-                "DDM" => "DDM",
-                "EDDM" => "EDDM",
-                "STEPD" => "STEPD",
-                "ADWINChangeDetector" => "ADWINChangeDetector",
-                "EWMAChartDM" => "EWMAChartDM",
-                "EnsembleDriftDetectionMethods" => "EnsembleDriftDetectionMethods",
-                "HDDM_A_Test" => "HDDM_A_Test",
-                "HDDM_W_Test" => "HDDM_W_Test",
-                "PageHinkleyDM" => "PageHinkleyDM",
-                "GeometricMovingAverageDM" => "GeometricMovingAverageDM"
-            )
-        ),
-
-        array(
-            "name" => "e",
-            "default" => "HDDM_W_Test",
-            "label" => "Drift Detect Méthod 2",
-            "type" => "list",
-            "list" => array(
-                "DDM" => "DDM",
-                "EDDM" => "EDDM",
-                "STEPD" => "STEPD",
-                "ADWINChangeDetector" => "ADWINChangeDetector",
-                "EWMAChartDM" => "EWMAChartDM",
-                "EnsembleDriftDetectionMethods" => "EnsembleDriftDetectionMethods",
-                "HDDM_A_Test" => "HDDM_A_Test",
-                "HDDM_W_Test" => "HDDM_W_Test",
-                "PageHinkleyDM" => "PageHinkleyDM",
-                "GeometricMovingAverageDM" => "GeometricMovingAverageDM"
-            )
-        ),
-
-        array(
-            "name" => "g",
-            "default" => "DDM",
-            "label" => "Drift Detect Méthod 3",
-            "type" => "list",
-            "list" => array(
-                "DDM" => "DDM",
-                "EDDM" => "EDDM",
-                "STEPD" => "STEPD",
-                "ADWINChangeDetector" => "ADWINChangeDetector",
-                "EWMAChartDM" => "EWMAChartDM",
-                "EnsembleDriftDetectionMethods" => "EnsembleDriftDetectionMethods",
-                "HDDM_A_Test" => "HDDM_A_Test",
-                "HDDM_W_Test" => "HDDM_W_Test",
-                "PageHinkleyDM" => "PageHinkleyDM",
-                "GeometricMovingAverageDM" => "GeometricMovingAverageDM"
+                "bayes.NaiveBayes" => "bayes.NaiveBayes",
+                "trees.HoeffdingTree" => "trees.HoeffdingTree"
             )
         )
     )
+
 );
 
 $arrayLearnersMethods = array(

@@ -604,15 +604,11 @@ function showMenu(element, event){
 			
 			break;
 		}
-		case	'SingleClassifierDrift':{
-			
-			break;
-		}
 		case	'HoeffdingTree':{
 			
 			break;
 		}
-		case	'CDDE':{
+		case	'SingleClassifierDrift':{
 			
 			
 			var key;
@@ -650,68 +646,6 @@ function showMenu(element, event){
 			
 			break;
 		}
-		case	'DDE':{
-			
-			
-			var key;
-			var parameters=[];
-			
-			for (key in optionLearnersParameters) {
-				
-			    if (optionLearnersParameters.hasOwnProperty(key)) {
-			    	
-			    	if(element.value == key){
-			    		
-				    	for (key2 in optionLearnersParameters[key]) {
-				    		
-				    		var b = new Object();
-				    		
-				    		b = {'name':optionLearnersParameters[key][key2]["name"],
-				    			'default':optionLearnersParameters[key][key2]["default"],
-				    			'label':optionLearnersParameters[key][key2]["label"],
-				    			'type':optionLearnersParameters[key][key2]["type"],
-				    			'list':optionLearnersParameters[key][key2]["list"]};
-				    		
-				    		parameters.push(b);
-	
-				    	}
-			    	}
-			        
-			    }
-			}	
-
-			//print_r(parameters);
-			
-			
-			createDynamicPopupObjects2(element,event,element.value,parameters,"text","formulario","","");
-			
-			
-			break;
-		}
-		/*
-		case	'CDDE':{
-					
-					
-					var key;
-					var parameters=[];
-					
-					for (key in optionLearnersParameters) {
-						if (optionLearnersParameters.hasOwnProperty(key)) {
-														 for (key2 in optionLearnersParameters[key]) {
-																 var b = new Object();
-																 b = {'name':optionLearnersParameters[key][key2]["name"],'default':optionLearnersParameters[key][key2]["default"],'label':optionLearnersParameters[key][key2]["label"],'type':optionLearnersParameters[key][key2]["type"],'list':optionLearnersParameters[key][key2]["list"]};
-																 parameters.push(b);
-									 }
-													 }
-					}	
-		
-					//print_r(parameters);
-					
-					
-					createDynamicPopupObjects2(element,event,element.value,parameters,"text","formulario","","");
-					
-					break;
-				}*/
 		
 	}
 	
