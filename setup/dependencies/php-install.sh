@@ -11,7 +11,7 @@ sudo apt-get install php-cli -y
 sudo apt-get install php-common  -y
 sudo apt-get install php-mbstring -y
 sudo apt-get install php-gd -y
-sudo apt-get install php-intl 
+sudo apt-get install php-intl -y
 sudo apt-get install php-xml -y
 sudo apt-get install php-mysql -y
 sudo apt-get install php-mcrypt -y 
