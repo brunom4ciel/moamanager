@@ -68,7 +68,7 @@ $utils = new Utils();
 
 
 $execution_history = new ExecutionHistory($DB);
-$extension_scripts = ".data";
+$extension_scripts = array("data","txt");
 
 
 $filename = $application->getParameter("filename");
@@ -92,9 +92,15 @@ if($task == "open"){
         .$folder
         //.DIRECTORY_SEPARATOR
         .$filename
-        .$extension_scripts;
+        ;//.$extension_scripts;
         
-        $data = $utils->getContentFile($filename);
+        if (in_array(substr($filename, strrpos($filename, ".") + 1), $extension_scripts)) {
+            $data = $utils->getContentFile($filename);
+        }else{
+            exit("problems file extension");
+        }
+        
+        
     }
     
 }else{

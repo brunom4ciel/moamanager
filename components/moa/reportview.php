@@ -318,7 +318,7 @@ if ($length_data > 0) {
                 "s"
             ));
 
-            $file_real = $application->getParameter("folder") . substr($application->getParameter("filename"), 0, strpos($application->getParameter("filename"), ".")) . "-" . $element["id"] . ".txt";
+            $file_real = $application->getParameter("folder") . substr($application->getParameter("filename"), 0, strrpos($application->getParameter("filename"), ".")) . "-" . $element["id"] . ".txt";
 
             $file_real = PATH_USER_WORKSPACE_STORAGE . $file_real;
 
