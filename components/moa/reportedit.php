@@ -97,8 +97,13 @@ if ($filename != null) {
 
     $data = $jsonfile->getDataKeyValue("id", $id);
 
-    if ($task == "edit") {} else {
+    
+    
+    if ($task == "edit") {
+        
+    } else {
 
+        
         if ($task == "save") {
 
             $data["process"] = false; // (strtolower(App::getParameter("process"))=="true"?true:false);
@@ -107,9 +112,9 @@ if ($filename != null) {
             $data["endtime"] = "";
             $data["running"] = false;
             $data["pid"] = "";
-
-            $dir = Properties::getBase_directory_destine() . $application->getUser() . DIRECTORY_SEPARATOR . $folder;
-
+            
+            $dir = Properties::getBase_directory_destine($application) . $application->getUser() . DIRECTORY_SEPARATOR . $folder;
+                        
             $filename_ = substr($filename, strrpos($filename, "/") + 1);
             $filename_ = substr($filename_, 0, strrpos($filename_, "."));
             $filename_ = trim($filename_);
@@ -120,6 +125,8 @@ if ($filename != null) {
 
             $filename_ = substr($filename_, 0, strpos($filename_, ".")) . "-" . $id . ".txt";
 
+            
+//             exit($dir . $filename_);
             // echo $dir.$filename_;
 
             // echo $dir.$id."-".$filename_;
@@ -185,7 +192,7 @@ else
 
 
 							<form method="POST"
-								action="<?php echo $_SERVER['PHP_SELF'];?>#save" name="saveform"
+								action="?<?php echo $_SERVER['QUERY_STRING'];?>#save" name="saveform"
 								async-form="login"
 								class="ng-pristine ng-valid-email ng-invalid ng-invalid-required">
 								<input type="hidden" value="<?php echo $application->getComponent()?>"

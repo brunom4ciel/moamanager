@@ -622,84 +622,131 @@ if($task == "folder"){
                 $extensions = array();
                 
                 
-                if($csv != null)
+                if($csv != null){
                     $extensions[] = "csv";
+                }
+                
+                if($tex != null){
+                    $extensions[] = "tex";
+                }
+                
+                if($html != null){
+                    $extensions[] = "html";
+                }
+                            
+                if($interval != null){
+                    $ic = "(ic)";
+                }else{
+                    $ic = "";
+                }
+                
+                if($accuracy != null){
+                    $accu = "-accuracy";
+                }else{
+                    $accu = "";
+                }
+                
+                if($timer != null){
+                    $tim = "-timer";
+                }else{
+                    $tim = "";
+                }
+                
+                if($memory != null){
+                    $mem = "-memory";
+                }else{
+                    $mem = "";
+                }
+                
+                if($fn != null){
+                    $fn = "-fn";
+                }else{
+                    $fn = "";
+                }
+                if($fp != null){
+                    $fp = "-fp";
+                }else{
+                    $fp = "";
+                }
+                if($tn != null){
+                    $tn = "-tn";
+                }else{
+                    $tn = "";
+                }
+                if($tp != null){
+                    $tp = "-tp";
+                }else{
+                    $tp = "";
+                }
+                
+                if($precision != null){
+                    $precicion = "-precision";
+                }else{
+                    $precicion = "";
+                }
+                if($recall != null){
+                    $recall = "-recall";
+                }else{
+                    $recall = "";
+                }
+                if($mcc != null){
+                    $mcc = "-mcc";
+                }else{
+                    $mcc = "";
+                }
+                if($f1 != null){
+                    $f1 = "-f1";
+                }else{
+                    $f1 = "";
+                }
+                
+                                                            
+                foreach($extensions as $extension){
                     
-                    if($tex != null)
-                        $extensions[] = "tex";
-                        
-                        if($html != null)
-                            $extensions[] = "html";
-                            
-                            
-                            if($interval != null)
-                                $ic = "(ic)";
-                                else
-                                    $ic = "";
+                    
+                    $filename = $filename_to_save.$accu.$tim.$mem.$ic.$fp.$fn.$tp.$tn.$precicion.$recall.$mcc.$f1.".".$extension;
+                    
+                    if(file_exists($filename))
+                        if($overwrite != null)
+                            unlink($filename);
+                            else
+                                break;
+                                
+                                switch($extension){
                                     
-                                    if($accuracy != null)
-                                        $accu = "-accuracy";
-                                        else
-                                            $accu = "";
-                                            
-                                            if($timer != null)
-                                                $tim = "-timer";
-                                                else
-                                                    $tim = "";
-                                                    
-                                                    if($memory != null)
-                                                        $mem = "-memory";
-                                                        else
-                                                            $mem = "";
-                                                            
-                                                            
-                                                            
-                                                            foreach($extensions as $extension){
-                                                                
-                                                                
-                                                                $filename = $filename_to_save.$accu.$tim.$mem.$ic.".".$extension;
-                                                                
-                                                                if(file_exists($filename))
-                                                                    if($overwrite != null)
-                                                                        unlink($filename);
-                                                                        else
-                                                                            break;
-                                                                            
-                                                                            switch($extension){
-                                                                                
-                                                                                case "csv":
-                                                                                    
-                                                                                    $data = $data_csv;
-                                                                                    
-                                                                                    break;
-                                                                                case "html":
-                                                                                    
-                                                                                    $data = $utils->castToHTML($data_csv);
-                                                                                    
-                                                                                    break;
-                                                                                case "tex":
-                                                                                    
-                                                                                    $data = $utils->castToTex($data_csv);
-                                                                                    
-                                                                                    $title = substr($filename_to_save,
-                                                                                        strrpos($filename_to_save,
-                                                                                            DIRECTORY_SEPARATOR)+1);
-                                                                                    
-                                                                                    $title = str_replace(" ", "-", $title);
-                                                                                    
-                                                                                    $data = str_replace("%title%", $title, $data);
-                                                                                    
-                                                                                    $data = str_replace("%label%",$title, $data);
-                                                                                    
-                                                                                    
-                                                                                    break;
-                                                                            }
-                                                                            
-                                                                            
-                                                                            $utils->setContentFile($filename, $data);
-                                                                            
-                                                                            
-                                                            }
+                                    case "csv":
+                                        
+                                        $data = $data_csv;
+                                        
+                                        break;
+                                    case "html":
+                                        
+                                        $data = $utils->castToHTML($data_csv);
+                                        
+                                        break;
+                                    case "tex":
+                                        
+                                        $data = $utils->castToTex($data_csv);
+                                        
+                                        $title = substr($filename_to_save,
+                                            strrpos($filename_to_save,
+                                                DIRECTORY_SEPARATOR)+1);
+                                        
+                                        $title = str_replace(" ", "-", $title);
+                                        
+                                        $data = str_replace("%title%", $title, $data);
+                                        
+                                        $data = str_replace("%label%",$title, $data);
+                                        
+                                        
+                                        break;
+                                }
+                                
+                                
+                                $utils->setContentFile($filename, $data);
+                                
+                                
+                }
                                                             
                                                             
             }

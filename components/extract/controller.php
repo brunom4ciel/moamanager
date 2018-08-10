@@ -534,7 +534,7 @@ function verificaChecks() {
 		<div class="boxlimit" style="margin-top:5px;width:100%">
 		
 				
-		Breaking line(s) <input type="text" name="breakline" id="breakline" value="7" style="width:40px;" onchange="setCookieElementValue(this);" /> <br>Separador decimal <label><input type="text" name="decimalformat" id="decimalformat" value="." style="width:40px;" onchange="setCookieElementValue(this);" /></label>
+		Breaking line(s) <input type="text" name="breakline" id="breakline" value="7" style="width:40px;" onchange="setCookieElementValue(this);" /> <br>Decimal separator<label><input type="text" name="decimalformat" id="decimalformat" value="." style="width:40px;" onchange="setCookieElementValue(this);" /></label>
 			
 			
 			

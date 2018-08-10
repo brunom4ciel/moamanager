@@ -171,6 +171,9 @@ if ($filename != null) {
 
 							<div id="container">
 
+								<form method="POST"
+								action="<?php echo $_SERVER['PHP_SELF'];?>#save" name="saveform"
+								async-form="login">								
 								<input type="button" value="Return" name="return"
 									onclick="javascript: returnPage();" /> - <input type="button"
 									value="Script All" name="script"
