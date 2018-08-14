@@ -25,50 +25,7 @@ if ($application->is_authentication()) {
 			<div class="">
 
 
-
-
-				<div class="boxnews">
-
-					<h4
-						style="font-size: 22px; font-weight: bold; margin-bottom: 8px; color: #a93529;">News</h4>
-
-
-					<table>
-						<tr>
-							<td>27/04/2017<br>
-
-								<ul>
-									<li>Task Manager.</li>
-								</ul>
-
-							</td>
-						</tr>
-						<tr>
-							<td>25/04/2017<br>
-
-								<ul>
-									<li>Removido o bloqueio de execução.</li>
-									<li>Núcleo reescrito.</li>
-								</ul>
-
-							</td>
-						</tr>
-						<tr>
-							<td>17/02/2017<br>
-
-								<ul>
-									<li>Permite enviar e manter mais de uma versão de software por
-										usuário.</li>
-									<li>Correções de problemas no componente de gestão de Scripts.</li>
-									<li>Novidades no componente de execução de scripts.</li>
-								</ul>
-
-							</td>
-						</tr>
-					</table>
-
-
-				</div>
+Welcome
 
 			</div>
 		</div>
