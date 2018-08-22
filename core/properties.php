@@ -37,9 +37,9 @@ abstract class Properties
     
     public static $file_java_exec = "java";
 
-    public static $plivo_AUTH_ID = "MANYBGKDHDFHBHGFJLKK5ZG"; // sms service
+//     public static $plivo_AUTH_ID = "MANYBGKDHDFHBHGFJLKK5ZG"; // sms service
 
-    public static $plivo_AUTH_TOKEN = "ZjFU5MGYIUHFHUTSS97UF6sfwG2JkkjlilMTQQW1"; // sms service
+//     public static $plivo_AUTH_TOKEN = "ZjFU5MGYIUHFHUTSS97UF6sfwG2JkkjlilMTQQW1"; // sms service
 
     private static $database_name = "moamanager";
 
@@ -54,7 +54,7 @@ abstract class Properties
     private static $max_number_on_list_of_process="12";
 
     private static $output_directorys = array(
-        "var/www/moamanagerdata/storage/"
+        "/var/www/moamanagerdata/workspace/"
     );   
     
     

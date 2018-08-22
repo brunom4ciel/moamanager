@@ -38,6 +38,9 @@ define('PHPMAILER_USERNAME', '');
 define('PHPMAILER_PASSWORD', '');
 define('PHPMAILER_FROMNAME', 'Bruno Maciel');
 
+define('PLIVO_AUTH_ID', '');
+define('PLIVO_AUTH_TOKEN', '');
+
 
 // define('PATH_WWW_TEMPLATE', PATH_WWW . 'default');
 

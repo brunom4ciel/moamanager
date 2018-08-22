@@ -326,8 +326,9 @@ if($task == "folder"){
         $mining = new Mining();
         
         $mining_store = array();
+        $mining_store2 = array();
         
-        
+        $two_folders = 0;
         
         foreach($element as $key=>$item){
             
@@ -337,8 +338,6 @@ if($task == "folder"){
                 $from_file = $dir.$item;//.DIRECTORY_SEPARATOR;
                 
                 //echo $from_file."<br>";
-                
-                
                 
                 
                 if($type_extract==2){
@@ -380,6 +379,8 @@ if($task == "folder"){
             }else{
                 
                 if(is_dir($dir.$item)){
+                    
+                    $two_folders++;
                     
                     //exit("bruno");
                     
@@ -443,16 +444,13 @@ if($task == "folder"){
                             
                             
                             
-                            
-                            
-                            
-                            
                             //$miningResult = $mining->miningFile($from_dir.$file["name"], $parameters);
                             
                             // echo $file["name"];
                             // var_dump($miningResult);
                             // exit();
                             array_push($mining_store, $miningResult);
+                            array_push($mining_store2, array("dirname"=>$item, "results"=>$miningResult));
                         }
                         
                     }
@@ -463,6 +461,128 @@ if($task == "folder"){
             
         }
         
+        
+//        
+        
+        if($two_folders > 1){
+            
+//             var_dump($mining_store2);
+//             exit();
+            
+            $lastname = "";
+            $columns_labels = array();
+            $data_values = array();
+            //$decimalformat = $parameters["decimalformat"];
+            
+            foreach($mining_store2 as $item)
+            {
+                if($lastname == ""){
+                    $lastname = $item['dirname'];
+                    $columns_labels[] = $lastname;
+                }else{
+                    if($item['dirname'] != $lastname){
+                        $lastname = $item['dirname'];
+                        $columns_labels[] = $lastname;
+                    }
+                }
+                
+                foreach($item as $key=>$item2){
+                    
+                    if(is_array($item2)){
+                        
+                        foreach($item2 as $item3){
+                            
+                            if(is_array($item3)){
+                                
+                                foreach($item3 as $item4){
+                                    
+                                    if($decimalformat != ".")
+                                    {
+                                        $item4 = str_replace(".", $decimalformat, $item4);
+                                    }
+                                    $data_values[$lastname][] = $item4;
+                                }
+                            }
+                            
+                        }
+                    }
+                }
+            }
+            
+            $index = 0;
+            $data_matriz = array();
+            
+            //var_dump($data_values);
+            
+            foreach($data_values as $key=>$item)
+            {
+                $data_matriz[$index][] = $key;
+                //             var_dump($key);exit("=");
+                for($i = 0; $i < count($data_values[$key]);$i++)
+                {
+                    $data_matriz[$index][] = $data_values[$key][$i];
+                    //var_dump( $data_values[$key][$i] );//. ", ";
+                }
+                
+                $index++;
+            }
+            
+            
+//             var_dump($data_matriz);
+//             exit();
+            
+            $data_csv_aux  = "";
+            $index_line = 0;
+            $cols_count = count($data_matriz);
+            $oef = false;
+            $eof_lines = false;
+            while($eof == false)
+            {
+                $first_col = true;
+                $eof_lines = true;
+                $data_line_aux = "";
+                
+                for($i = 0; $i < $cols_count; $i++)
+                {                    
+                    if($first_col == false){
+                        $data_line_aux .= "\t";
+                    }
+                    
+                    if(isset($data_matriz[$i][$index_line]))
+                    {
+                        $data_line_aux .= $data_matriz[$i][$index_line];
+                        $eof_lines = false;
+                    }else
+                    {
+                        $data_line_aux .= "00" . $decimalformat . "00";
+                    }
+    
+                    $first_col = false;
+                }
+                
+                $index_line++;
+                
+                if($eof_lines)
+                {
+                    $eof = true;
+                }else{
+                    $data_csv_aux .= $data_line_aux . "\n";
+                }
+                
+            }
+            
+            $data_csv_aux = trim($data_csv_aux);
+            
+//             var_dump($data_csv_aux);
+            
+            
+//             exit("fim");
+            
+        }
+        else 
+        {
+            unset($mining_store2);
+        }
         
         if($dist == 1
             || $fn == 1
@@ -576,9 +696,17 @@ if($task == "folder"){
                 }
                 
             }else{
+                
+                if($two_folders > 1){
+                    $data_csv = $data_csv_aux;
+                }else{
+                    
+                    $data_csv = $mining->convertCSV($mining_store, $parameters, $breakline);
+                    
+                }
                 // 				    var_dump($mining_store);
                 // 				    exit();
-                $data_csv = $mining->convertCSV($mining_store, $parameters, $breakline);
+                
                 
             }
             

@@ -104,7 +104,7 @@ class JsonFile
 
             $json_data = $this->SerializingData($this->data);
 
-            $handle = fopen($this->filename, "w") or die("Unable to open file!");
+            $handle = fopen($this->filename, "w") or die("Unable to open file " . $this->filename);
 
             fwrite($handle, $json_data);
 

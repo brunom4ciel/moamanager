@@ -12,16 +12,16 @@ defined('_EXEC') or die();
 use moam\core\AppException;
 use moam\core\Framework;
 use moam\core\Properties;
-use moam\libraries\core\utils\Utils;
-use moam\libraries\core\log\ExecutionHistory;
-use moam\libraries\core\menu\Menu;
 use moam\core\Template;
-use moam\libraries\core\json\JsonFile;
-use moam\libraries\core\utils\ParallelProcess;
-use moam\libraries\core\file\Files;
 use moam\libraries\core\db\DBPDO;
 use moam\libraries\core\email\UsageReportMail;
-use moam\libraries\core\sms\Plivo;
+use moam\libraries\core\file\Files;
+use moam\libraries\core\json\JsonFile;
+use moam\libraries\core\log\ExecutionHistory;
+use moam\libraries\core\menu\Menu;
+// use moam\libraries\core\sms\Plivo;
+use moam\libraries\core\utils\ParallelProcess;
+use moam\libraries\core\utils\Utils;
 
 
 
@@ -45,7 +45,7 @@ if (!class_exists('Menu'))
 
 
 Framework::import("Utils", "core/utils");
-Framework::import("Plivo", "core/sms");
+// Framework::import("Plivo", "core/sms");
 Framework::import("ParallelProcess", "core/utils");
 Framework::import("UsageReportMail", "core/email");
 Framework::import("Files", "core/file");
@@ -78,6 +78,29 @@ $task = $application->getParameter("task");
 $user_id    =   $application->getUserId();
 
 $data	="";
+
+function getDirContents($dir, &$results = array()){
+    
+    $files = scandir($dir);
+    
+    foreach($files as $key => $value){
+        $path = realpath($dir.DIRECTORY_SEPARATOR.$value);
+        if(is_dir($path) == false) {
+            $results[] = $path;
+        }
+        else if($value != "." && $value != "..") {
+            getDirContents($path, $results);
+            if(is_dir($path) == false) {
+                $results[] = $path;
+            }
+        }
+    }
+    return $results;
+    
+}
+
+
+
 
 
 if($task == "open"){
@@ -122,34 +145,36 @@ if($task == "open"){
         
         //Framework::includeLib("JsonFile.php");
         
-        $jsonfile = new JsonFile();
+//         $jsonfile = new JsonFile();
         
-        $jsonfile->open($filename);
+//         $jsonfile->open($filename);
         
-        $data2 = $jsonfile->getData();
+//         $data2 = $jsonfile->getData();
         
-        $length_data = count($data);
-        $length_process= 0;
+//         $length_data = count($data);
+//         $length_process= 0;
         
         $data = "";
         
-        if($length_data>0){
+//         if($length_data>0){
             
-            foreach($data2 as $key=>$element){
+//             foreach($data2 as $key=>$element){
                 
-                if(is_array($element)){
+//                 if(is_array($element)){
                     
-                    //if($element["process"]==false){
+//                     //if($element["process"]==false){
                     
-                    $data  .= $element["script"]."\n\n";
+//                     $data  .= $element["script"]."\n\n";
                     
-                    //}
+//                     //}
                     
-                }
+//                 }
                 
-            }
+//             }
             
-        }
+//         }
+        
+        
         
         /*	$parallel = new ParallelProcess();
         
@@ -182,7 +207,7 @@ if($task == "open"){
             $application->setParameter("dirstorage", base64_decode($application->getParameter("dirstorage")));
             $application->setParameter("data", base64_decode($application->getParameter("data")));
             $application->setParameter("email", base64_decode($application->getParameter("email")));
-            $application->setParameter("phone", base64_decode($application->getParameter("phone")));
+//             $application->setParameter("phone", base64_decode($application->getParameter("phone")));
             $application->setParameter("filename", base64_decode($application->getParameter("filename")));
             $application->setParameter("parallel_process", base64_decode($application->getParameter("parallel_process")));
             $application->setParameter("interfacename", base64_decode($application->getParameter("interfacename")));
@@ -214,26 +239,11 @@ if($task == "open"){
             //
             //************************************************
             
-            
-            
-            // 				if(file_exists(App::getBase_directory_moa()
-            // 						."bin"
-            // 						.DIRECTORY_SEPARATOR
-            // 						.$application->getUser()
-            // 						.".jar")){
-            
-            // 					$moafile = $application->getUser().".jar";
-            
-            // 				}else{
-            
-            // 					$moafile = App::getBase_directory_moa_jar_default();
-            // 					//$moafile = substr($moafile, strrpos($moafile, DIRECTORY_SEPARATOR));
-            
-            // 				}
-            
+                        
             
             if(strpos($version_software, $application->getUser())===false
-                && strpos($version_software, Properties::getBase_directory_moa_jar_default())===false){
+                && strpos($version_software, 
+                    Properties::getBase_directory_moa_jar_default())===false){
                     
                     exit("error not version software permission");
                     
@@ -244,7 +254,8 @@ if($task == "open"){
                     .DIRECTORY_SEPARATOR
                     .$version_software)){
                         
-                        $moafile = $version_software;
+                    $moafile = $version_software;
+                    
                 }else{
                     exit("error version software not found");
                 }
@@ -268,7 +279,14 @@ if($task == "open"){
                 //
                 //************************************************
                 $fname = $application->getParameter("foldername");
-                $fname = str_replace("/", "-", $fname);
+                
+                if(strpos($fname, "/") === false){
+                    
+                }else{
+                    $fname = substr($fname, strrpos($fname, "/")+1);
+                }
+                
+                //$fname = str_replace("/", "-", $fname);
                 
                 
                 if($application->getParameter("dirstorage") == null){
@@ -278,14 +296,11 @@ if($task == "open"){
                 }else{
                     
                     $foldernew = $application->getParameter("dirstorage")
-                    .DIRECTORY_SEPARATOR
-                    .$fname//$application->getParameter("filename")
-                    .DIRECTORY_SEPARATOR;
-                    
-                    
+                                    .DIRECTORY_SEPARATOR
+                                    .$fname//$application->getParameter("filename")
+                                    .DIRECTORY_SEPARATOR;
                 }
-                
-                
+                                
                 
                 $foldernew__ = $foldernew;
                 $y=0;
@@ -294,33 +309,23 @@ if($task == "open"){
                     .$application->getUser()
                     .DIRECTORY_SEPARATOR
                     .$foldernew__)){
-                        
-                        $foldernew__ = $foldernew." (".$utils->format_number($y,4).")";
-                        $y++;
+                    $foldernew__ = $foldernew."-new-(".$utils->format_number($y,4).")";
+                    $y++;
                 }
-                
+                          
                 $foldernew = $foldernew__;
                 
-                //criar o diretorio
-                mkdir(Properties::getBase_directory_destine($application)
-                    .$application->getUser()
-                    .DIRECTORY_SEPARATOR
-                    .$foldernew, 0777, true);
+                $dirStorage = $utils->create_dir($foldernew, 
+                            Properties::getBase_directory_destine($application)
+                            .$application->getUser() . DIRECTORY_SEPARATOR
+                            ,"0777");
+                                
+                if(!$dirStorage){
+                    exit("error: not permission in" .  Properties::getBase_directory_destine($application)
+                        .$application->getUser() . DIRECTORY_SEPARATOR);
+                }
                 
-                //modifica as permissoes do diretorio
-                chmod(Properties::getBase_directory_destine($application)
-                    .$application->getUser()
-                    .DIRECTORY_SEPARATOR
-                    .$foldernew, 0777);
-                
-                //define o local do diretorio base
-                $dirStorage = Properties::getBase_directory_destine($application)
-                .$application->getUser()
-                .DIRECTORY_SEPARATOR
-                .$foldernew
-                .DIRECTORY_SEPARATOR;
-                
-                
+
                 //*************************************************
                 //
                 //************************************************
@@ -330,221 +335,246 @@ if($task == "open"){
                 $files = new Files();
                 
                 $from_folder =  Properties::getBase_directory_destine($application)
-                .$application->getUser()
-                .DIRECTORY_SEPARATOR
-                ."scripts"
+                    .$application->getUser()
                     .DIRECTORY_SEPARATOR
-                    .$application->getParameter("foldername")
+                    ."scripts"
                     .DIRECTORY_SEPARATOR;
+                
+                $from_folder2 = trim($application->getParameter("foldername"));
                     
+                if(substr($from_folder2, 0, 1) == DIRECTORY_SEPARATOR){
+                    $from_folder .= substr($from_folder2, 1);
+                }else{
+                    $from_folder .= $from_folder2;
+                }
+                
+                if(substr($from_folder, strlen($from_folder)-1) != DIRECTORY_SEPARATOR){
+                    $from_folder .= DIRECTORY_SEPARATOR;
+                }
+                
+                $idSeq = 1;
+                
+                //verifica se o diretorio existe
+                if(is_dir($from_folder)){
                     
+                    $files_list = getDirContents($from_folder);
+                    $aux = array();
                     
-                    
-                    //verifica se o diretorio existe
-                    if(is_dir($from_folder)){
+                    foreach($files_list as $file_item){
                         
-                        //carrega a lista de arquivos de um diterório
-                        $files_list = $utils->getListElementsDirectory($from_folder, array("data"));
+                        $aux[] = substr($file_item, strlen($from_folder));                      
+                    }
+                    
+                    $files_log_list = array();
+                    
+                    foreach($aux as $file_item){
                         
+                        $aux_str = explode(DIRECTORY_SEPARATOR, $file_item);
+                        $aux_dir = $from_folder;
+                        $aux_dir_workspace = $dirStorage;
                         
-                        //carrega a lista de script dentro de um arquivo
-                        foreach($files_list as $file_item){
+                        foreach($aux_str as $aux_item){                                                     
                             
-                            $filename = substr($file_item,
-                                strrpos($file_item,
-                                    DIRECTORY_SEPARATOR),
-                                strrpos($file_item,"."));
-                            
-                            
-                            mkdir($dirStorage
-                                .$filename, 0777, true);
-                            
-                            chmod($dirStorage
-                                .$filename, 0777);
-                            
-                            $dirStorage_script = $dirStorage
-                            .$filename
-                            .DIRECTORY_SEPARATOR;
-                            
-                            
-                            
-                            $script_list = $files->loadListScripts($from_folder.$file_item);
-                            
-                            $list_scripts = array();
-                            
-                            $lines_cmd = array();
-                            $w=1;
-                            $dataJson = array();
-                            
-                            // 						$filename = substr($file_item,
-                            // 												strrpos($file_item,
-                            // 												DIRECTORY_SEPARATOR),
-                                // 												strrpos($file_item,"."));
+                            if(is_dir($aux_dir . $aux_item . DIRECTORY_SEPARATOR)){
                                 
-                            $filename_source = $filename;
-                            $filename_source = str_replace(" ", "", $filename_source);
-                            
-                            
-                            
-                            
-                            
-                            foreach($script_list as $script_item){
+                                $aux_dir .= $aux_item . DIRECTORY_SEPARATOR;  
                                 
-                                $filename_script= $filename_source."-".$utils->format_number($w,4).".txt"; //format_number2($i,4)
-                                
-                                
-                                
-                                
-                                
-                                if($javap == "runnable"){
+                                if(!is_dir($aux_dir_workspace . $aux_item . DIRECTORY_SEPARATOR)){
+                                    //echo "create dir " . $aux_dir_workspace . "<br>";
+                                    $aux_result = $utils->create_dir($aux_item,
+                                        $aux_dir_workspace
+                                        ,"0777");
                                     
-                                    $cmd = Properties::getFileJavaExec()
-                                    ." -Xmx".$moa_menory_used.$moa_memory_unit." -jar \""
-                                        .Properties::getBase_directory_moa()
-                                        ."bin"
-                                            .DIRECTORY_SEPARATOR
-                                            .$moafile . "\""
-                                                //." -javaagent:"
-                                    //.Properties::getBase_directory_moa()
-                                    //."lib"
-                                    //.DIRECTORY_SEPARATOR
-                                    //."sizeofag-1.0.0.jar "
-                                    ." \ \"".$script_item."\" > "
-                                        .$dirProcess . $filename_script;
-                                        
-                                }else{
-                                    $cmd = Properties::getFileJavaExec()
-                                    ." -Xmx".$moa_menory_used.$moa_memory_unit." -cp \""
-                                        .Properties::getBase_directory_moa()
-                                        ."bin"
-                                            .DIRECTORY_SEPARATOR
-                                            .$moafile
-                                            .":"
-                                                .Properties::getBase_directory_moa()
-                                                ."lib"
-                                                    .DIRECTORY_SEPARATOR
-                                                    ."*\""
-                                                        ." -javaagent:"
-                                                            .Properties::getBase_directory_moa()
-                                                            ."lib"
-                                                                .DIRECTORY_SEPARATOR
-                                                                ."sizeofag-1.0.0.jar " . $interfacename . " \ \"".$script_item."\" > "
-                                                                    .$dirProcess.$filename_script;
-                                                                    
-                                                                    
+                                    if(!$aux_result){
+                                        exit("error: not permission in" .  Properties::getBase_directory_destine($application)
+                                            .$application->getUser() . DIRECTORY_SEPARATOR);
+                                    }
+                                    
                                 }
                                 
-                                
-                                $lines_cmd[] = $cmd;
-                                
-                                $dataJson[] = array("id"=>$utils->format_number($w,4),
-                                    "pid"=>0,
-                                    "running"=>false,
-                                    "script"=>$script_item,
-                                    "process"=>false,
-                                    "starttime"=>"",//time(),
-                                    "endtime"=>"",
-                                    "command"=>$cmd,
-                                    "user"=>$application->getUser());
-                                
-                                $w++;
-                                
-                                
-                                
-                            }
-                            
-                            //var_dump($lines_cmd);exit("fim");
-                            
-                            $filename = $dirStorage_script
-                            .$filename_source.".log";
-                            
-                            
-                            if(file_exists($filename)){
-                                
-                                unlink($filename);
+                                $aux_dir_workspace .= $aux_item . DIRECTORY_SEPARATOR;
                                 
                             }else{
                                 
                                 
+                                $aux_filename = substr($aux_item, 0, strrpos($aux_item, "."));
+                                                                
+                                if(!is_dir($aux_dir_workspace . $aux_filename . DIRECTORY_SEPARATOR)){
+                                    //echo "create dir " . $aux_dir_workspace . "<br>";
+                                    $aux_result = $utils->create_dir($aux_filename,
+                                        $aux_dir_workspace
+                                        ,"0777");
+                                    
+                                    if(!$aux_result){
+                                        exit("error: not permission in" .  Properties::getBase_directory_destine($application)
+                                            .$application->getUser() . DIRECTORY_SEPARATOR);
+                                    }
+                                    
+//                                     $aux_dir .= $aux_filename . DIRECTORY_SEPARATOR;  
+                                    $aux_dir_workspace .= $aux_filename . DIRECTORY_SEPARATOR;
+                                }
+                                
+                                $filename = $aux_item;
+                                
+                              
+                                if(file_exists($aux_dir . $aux_item)){
+                                    
+                                    $script_list = $files->loadListScripts($aux_dir . $filename);
+                                    
+                                    $username = $application->getUser();
+                                    
+                                    $list_scripts = array();
+                                    
+//                                     $lines_cmd = array();
+                                    $w=1;
+                                    $dataJson = array();
+                                    
+                                        
+                                    $filename_source = $filename;
+                                    $filename_source = str_replace(" ", "", $filename_source);
+                                    $filename_source = substr($filename_source, 0, strrpos($filename_source, "."));
+                                    
+//                                     $filename = $aux_dir_workspace
+//                                     .$filename_source.".log";
+                                    
+//                                     if(file_exists($filename)){                                        
+//                                         unlink($filename);
+//                                     }
+                                    
+                                    foreach($script_list as $script_item){
+                                        
+                                        $filename_script= $filename_source."-".$utils->format_number($w,4).".txt"; //format_number2($i,4)
+                                        $cmd = "";
+                                        
+                                        
+                                        if($javap == "runnable"){
+                                            
+                                            $cmd = Properties::getFileJavaExec()
+                                            ." -Xmx".$moa_menory_used.$moa_memory_unit." -jar \""
+                                            .Properties::getBase_directory_moa()
+                                            ."bin"
+                                            .DIRECTORY_SEPARATOR
+                                            .$moafile . "\""
+                                                        //." -javaagent:"
+                                            //.Properties::getBase_directory_moa()
+                                            //."lib"
+                                            //.DIRECTORY_SEPARATOR
+                                            //."sizeofag-1.0.0.jar "
+                                            ." \ \"".$script_item."\" > "
+                                            .$dirProcess . $filename_script;
+                                                
+                                        }else{
+                                            
+                                            $cmd = Properties::getFileJavaExec()
+                                            ." -Xmx".$moa_menory_used.$moa_memory_unit." -cp \""
+                                            .Properties::getBase_directory_moa()
+                                            ."bin"
+                                            .DIRECTORY_SEPARATOR
+                                            .$moafile
+                                            .":"
+                                            .Properties::getBase_directory_moa()
+                                            ."lib"
+                                            .DIRECTORY_SEPARATOR
+                                            ."*\""
+                                            ." -javaagent:"
+                                            .Properties::getBase_directory_moa()
+                                            ."lib"
+                                            .DIRECTORY_SEPARATOR
+                                            ."sizeofag-1.0.0.jar " . $interfacename . " \ \"".$script_item."\" > "
+                                            .$dirProcess.$filename_script;
+                                                                            
+                                        }
+
+                                        $files_log_list[] = array(
+                                            //"id"=>$utils->format_number($w,4),
+                                            "id"=>$idSeq,
+                                            "pid"=>0,
+                                            "filename"=>$aux_dir_workspace.$filename_script,
+                                            "command"=>$cmd,
+                                            "running"=>false,
+                                            "script"=>$script_item,
+                                            "process"=>false,
+                                            "starttime"=>"",
+                                            "endtime"=>"",
+                                            "user"=>$username
+                                        );
+                                        
+                                        
+                                        $w++;
+                                        $idSeq++;
+                                        
+                                    }
+                                    
+                                    
+                                }
                             }
-                            
-                            
-                            //Framework::includeLib("JsonFile.php");
-                            
-                            $jsonfile = new JsonFile($filename);
-                            
-                            //$jsonfile->load();
-                            
-                            $jsonfile->setData($dataJson);
-                            
-                            $jsonfile->save();
-                            
-                            chmod($filename, 0777);
-                            
-                            
-                            //
-                            // ------------START PROCESS ------
-                            //
-                            $script = "";
-                            $process_initialized = date_create()->format('Y-m-d H:i:s');
-                            $command = "";
-                            $from = $filename;
-                            $pid = getmypid();
-                            
-                            $execution_history_id = $execution_history->process_initialized(
-                                $user_id,
-                                1,
-                                $script,
-                                $process_initialized,
-                                $command,
-                                $from,
-                                $pid);
-                            
-                            //
-                            // ------------END START PROCESS ------
-                            //
-                            
-                            
-                            
-                            $parallel->pool_execute($filename,
-                                $lines_cmd,
-                                $application->getParameter("parallel_process"),
-                                $dirProcess,
-                                $dirStorage_script,
-                                $user_id);
-                            
-                            
-                            
-                            //
-                            // ------------CLOSED PROCESS ------
-                            //
-                            
-                            $process_closed = date_create()->format('Y-m-d H:i:s');
-                            
-                            if($execution_history_id != null)
-                            {
-                                $execution_history->closed_process(
-                                    $execution_history_id,
-                                    $process_closed);
-                            }
-                            
-                            //
-                            // ------------END CLOSED PROCESS ------
-                            //
-                            
-                            
-                            
-                            
-                            
-                            
-                        }
-                        
-                        
-                        
+                        }                           
                     }
                     
-                    
-                    
+                }
+                
+                $filename_man_log = $dirStorage . $foldernew__ . ".log";                
+                
+                $jsonfile = new JsonFile($filename_man_log);
+                
+                $jsonfile->setData($files_log_list);
+                
+                $jsonfile->save();
+                
+                chmod($filename, 0777);
+                
+                
+                   
+                //$filename_man_log =  substr($filename_man_log, strrpos($filename_man_log, DIRECTORY_SEPARATOR)+1);
+                
+                //
+                // ------------START PROCESS ------
+                //
+                $script = "";
+                $process_initialized = date_create()->format('Y-m-d H:i:s');
+                $command = "";
+                $from = $filename_man_log;
+                $pid = getmypid();
+
+                $execution_history_id = $execution_history->process_initialized(
+                    $user_id,
+                    1,
+                    $script,
+                    $process_initialized,
+                    $command,
+                    $from,
+                    $pid);
+
+                //
+                // ------------END START PROCESS ------
+                //
+
+
+                $parallel->pool_execute2($filename_man_log,
+                    $application->getParameter("parallel_process"),
+                    $dirProcess,
+                    $user_id);
+
+
+                //
+                // ------------CLOSED PROCESS ------
+                //
+
+                $process_closed = date_create()->format('Y-m-d H:i:s');
+
+                if($execution_history_id != null)
+                {
+                    $execution_history->closed_process(
+                        $execution_history_id,
+                        $process_closed);
+                }
+
+                //
+                // ------------END CLOSED PROCESS ------
+                //
+
+
+                        
                     
                     
                     
@@ -555,8 +585,15 @@ if($task == "open"){
                 //*************************************************
                 //
                 //************************************************
-                $fname = $application->getParameter("filename");//$application->getParameter("filename");
-                $fname = str_replace("/", "-", $fname);
+                $fname = $application->getParameter("foldername");
+                
+                if(strpos($fname, "/") === false){
+                    
+                }else{
+                    $fname = substr($fname, strrpos($fname, "/")+1);
+                }
+                
+                //$fname = str_replace("/", "-", $fname);
                 
                 
                 if($application->getParameter("dirstorage") == null){
@@ -569,8 +606,6 @@ if($task == "open"){
                     .DIRECTORY_SEPARATOR
                     .$fname//$application->getParameter("filename")
                     .DIRECTORY_SEPARATOR;
-                    
-                    
                 }
                 
                 
@@ -581,32 +616,21 @@ if($task == "open"){
                     .$application->getUser()
                     .DIRECTORY_SEPARATOR
                     .$foldernew__)){
-                        
-                        $foldernew__ = $foldernew."".$utils->format_number($y,4)."";
+                        $foldernew__ = $foldernew."-new-(".$utils->format_number($y,4).")";
                         $y++;
                 }
                 
                 $foldernew = $foldernew__;
                 
+                $dirStorage = $utils->create_dir($foldernew,
+                    Properties::getBase_directory_destine($application)
+                    .$application->getUser() . DIRECTORY_SEPARATOR
+                    ,"0777");
                 
-                //criar o diretorio
-                mkdir(Properties::getBase_directory_destine($application)
-                    .$application->getUser()
-                    .DIRECTORY_SEPARATOR
-                    .$foldernew, 0777, true);
-                
-                //modifica as permissoes do diretorio
-                chmod(Properties::getBase_directory_destine($application)
-                    .$application->getUser()
-                    .DIRECTORY_SEPARATOR
-                    .$foldernew, 0777);
-                
-                //define o local do diretorio base
-                $dirStorage = Properties::getBase_directory_destine($application)
-                .$application->getUser()
-                .DIRECTORY_SEPARATOR
-                .$foldernew
-                .DIRECTORY_SEPARATOR;
+                if(!$dirStorage){
+                    exit("error: not permission in" .  Properties::getBase_directory_destine($application)
+                        .$application->getUser() . DIRECTORY_SEPARATOR);
+                }
                 
                 
                 //*************************************************
@@ -629,32 +653,43 @@ if($task == "open"){
                 
                 
                 
+                if($application->getParameter("filename")==null){
+                    
+                    $filename_source = "script";
+                    
+                }else{
+                    
+                    $filename_source = $application->getParameter("filename");
+                    
+                    //$filename_source = str_replace(" ", "", $filename_source);
+                    
+                    //$filename_source = $application->getParameter("filename");
+                }
                 
                 
+                //                     $filename = $filename_source."-".$utils->format_number($w,4).".txt"; //format_number2($i,4)
+                
+                //$filename_source = $filename;
+                $filename_source = str_replace(" ", "", $filename_source);
+                $filename_source = substr($filename_source, 0, strrpos($filename_source, "."));
+                
+//                 $filename_man_log = ""
+//                     .$filename_source
+//                     .substr(microtime(true),0,8).".log";
+                              
+                                
                 $lines_cmd = array();
                 $w=1;
                 $dataJson = array();
+                $idSeq = 1;
                 
                 foreach($list_scripts2 as $key=>$item){
                     
                     //usleep(5000);
                     //sleep(1);
                     
-                    if($application->getParameter("filename")==null){
-                        
-                        $filename_source = "script";
-                        
-                    }else{
-                        
-                        $filename_source = $application->getParameter("filename");
-                        
-                        $filename_source = str_replace(" ", "", $filename_source);
-                        
-                        //$filename_source = $application->getParameter("filename");
-                    }
                     
-                    
-                    $filename = $filename_source."-".$utils->format_number($w,4).".txt"; //format_number2($i,4)
+                    $filename_script= $filename_source."-".$utils->format_number($idSeq, 4).".txt"; //format_number2($i,4)
                     
                     
                     if($javap == "runnable"){
@@ -671,7 +706,7 @@ if($task == "open"){
                         //.DIRECTORY_SEPARATOR
                         //."sizeofag-1.0.0.jar "
                         ." \ \"".$item."\" > "
-                            .$dirProcess . $filename;
+                            .$dirProcess . $filename_script;
                             
                     }else {
                         
@@ -691,59 +726,61 @@ if($task == "open"){
                                                 ."lib"
                                                     .DIRECTORY_SEPARATOR
                                                     ."sizeofag-1.0.0.jar " . $interfacename . " \ \"".$item."\" > "
-                                                        .$dirProcess.$filename;
+                                                        .$dirProcess.$filename_script;
                                                         
                     }
                     
                     
-                    
-                    $lines_cmd[] = $cmd;
-                    
-                    $dataJson[] = array("id"=>$utils->format_number($w,4),
+                    $files_log_list[] = array(
+                        //"id"=>$utils->format_number($w,4),
+                        "id"=>$idSeq,
                         "pid"=>0,
-                        "running"=>false,
-                        "script"=>$item,
-                        "process"=>false,
-                        "starttime"=>"",//time(),
-                        "endtime"=>"",
+                        "filename"=>$dirProcess . $filename_script,
                         "command"=>$cmd,
-                        "user"=>$application->getUser());
+                        "running"=>false,
+                        "script"=>$script_item,
+                        "process"=>false,
+                        "starttime"=>"",
+                        "endtime"=>"",
+                        "user"=>$username
+                    );
                     
-                    $w++;
+                    
+//                     $lines_cmd[] = $cmd;
+                    
+//                     $dataJson[] = array("id"=>$utils->format_number($w,4),
+//                         "pid"=>0,
+//                         "running"=>false,
+//                         "script"=>$item,
+//                         "process"=>false,
+//                         "starttime"=>"",//time(),
+//                         "endtime"=>"",
+//                         "command"=>$cmd,
+//                         "user"=>$application->getUser());
+                    
+//                     $w++;
+                    $idSeq++;
                 }
                 
                 
-                
-                $filename = $dirStorage
-                .$application->getParameter("filename").".log";
-                
-                
-                if(file_exists($filename)){
-                    
-                    unlink($filename);
-                    
-                }else{
-                    
-                    
-                }
+                $filename_man_log = ""
+                    . $dirStorage . $filename_source
+                    . substr(microtime(true),0,8).".log";
                 
                 
-                //$utils->setContentFile($dirStorage.$filename, $data);
                 
-                //Framework::includeLib("JsonFile.php");
+                //$filename_man_log = $dirStorage . $foldernew__ . ".log";
                 
-                $jsonfile = new JsonFile($filename);
-                
-                //$jsonfile->load();
-                
-                $jsonfile->setData($dataJson);
-                
-                $jsonfile->save();
-                
-                
+                $jsonfile = new JsonFile($filename_man_log);                
+                $jsonfile->setData($files_log_list);                
+                $jsonfile->save();                
                 chmod($filename, 0777);
                 
                 
+//                 $parallel->pool_execute2($filename_man_log,
+//                     $application->getParameter("parallel_process"),
+//                     $dirProcess,
+//                     $user_id);
                 
                 
                 
@@ -753,7 +790,7 @@ if($task == "open"){
                 $script = "";
                 $process_initialized = date_create()->format('Y-m-d H:i:s');
                 $command = "";
-                $from = $filename;
+                $from = $filename_man_log;
                 $pid = getmypid();
                 
                 $execution_history_id = $execution_history->process_initialized(
@@ -770,12 +807,11 @@ if($task == "open"){
                 //
                 
                 
-                $parallel->pool_execute($filename,
-                    $lines_cmd,
+                $parallel->pool_execute2($filename_man_log,
                     $application->getParameter("parallel_process"),
                     $dirProcess,
-                    $dirStorage,
                     $user_id);
+                
                 
                 //
                 // ------------CLOSED PROCESS ------
@@ -793,6 +829,11 @@ if($task == "open"){
                 //
                 // ------------END CLOSED PROCESS ------
                 //
+                
+                
+                
+                
+                
                 
                 
                 
@@ -833,22 +874,21 @@ if($task == "open"){
                             
                 }
                 
-                $phone = $application->getParameter("phone");
-                //var_dump($phone);
-                if($phone!= null){
+//                 $phone = $application->getParameter("phone");
+//                 //var_dump($phone);
+//                 if($phone!= null){
                     
-                    $plivo = new Plivo(Properties::getPlivoAuthId(),
-                        Properties::getPlivoAuthToken());
+//                     $plivo = new Plivo(PLIVO_AUTH_ID, PLIVO_AUTH_TOKEN);
                     
                     
-                    $result = $plivo->sendSMS("Completed Experiment - "
-                        .substr($application->getParameter("filename"),0,30),
-                        array($phone));
+//                     $result = $plivo->sendSMS("Completed Experiment - "
+//                         .substr($application->getParameter("filename"),0,30),
+//                         array($phone));
                     
-                    var_dump($result);
-                    exit("---");
+//                     //var_dump($result);
+//                     exit("---");
                     
-                }
+//                 }
                 
             }
             
@@ -862,13 +902,16 @@ if($task == "open"){
             
             if($task == "restart"){
                 
+                
+                //exit("problems");
+                
                 $application->setParameter("memory_unit", base64_decode($application->getParameter("memory_unit")));
                 $application->setParameter("memory_used", base64_decode($application->getParameter("memory_used")));
                 $application->setParameter("version_software", base64_decode($application->getParameter("version_software")));
                 $application->setParameter("dirstorage", base64_decode($application->getParameter("dirstorage")));
                 //App::setParameter("data", base64_decode($application->getParameter("data")));
                 $application->setParameter("email", base64_decode($application->getParameter("email")));
-                $application->setParameter("phone", base64_decode($application->getParameter("phone")));
+//                 $application->setParameter("phone", base64_decode($application->getParameter("phone")));
                 $application->setParameter("filename", base64_decode($application->getParameter("filename")));
                 $application->setParameter("parallel_process", base64_decode($application->getParameter("parallel_process")));
                 
@@ -947,175 +990,171 @@ if($task == "open"){
                 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
                 
                 
-                // 					Framework::includeLib("JsonFile.php");
+                $filename_man_log = $filename;
                 
                 $jsonfile = new JsonFile();
                 
-                $jsonfile->open($filename);
-                
+                $jsonfile->open($filename);                
                 
                 $data2 = $jsonfile->getData();
+                                
                 
-                
-                
+
                 
                 $length_data = count($data);
                 $length_process= 0;
                 
                 $data = "";
+                $data_aux = array();
+                
                 
                 if($length_data>0){
                     
                     $lines_cmd = array();
+                    $username = $application->getUser();
+                    $idSeq = 1;
+                    
+                    
                     
                     foreach($data2 as $key=>$element){
                         
-                        if(is_array($element)){
                             
-                            //if($element["process"]==false){
+                        $filename_ = $element["filename"];
                             
-                            $command = $element["command"];
-                            $filename_ = substr($command,strrpos($command,">")+1);
-                            $filename_ = trim($filename_);
                             
-                            $filename_ = substr($filename_,strrpos($filename_,"/")+1);
-                            $filename_ = trim($filename_);
+                        if(file_exists($filename_)){
+                                
+                                
+                        }else{
                             
-                            if(file_exists($dirStorage.$filename_)){
+                            if($element["process"] == false){
                                 
-                            }else{
-                                
-                                $cmd = $element["command"];
-                                
-                                /*$script = substr($cmd,
-                                 strrpos($cmd, "moa.DoTask \ \"")
-                                 +strlen("moa.DoTask \ \""));
-                                
-                                 $script_item = substr($script, 0,
-                                 strrpos($script, "\" >"));*/
-                                
-                                
-                                $filename_script = substr($cmd,
-                                    strrpos($cmd, "\" >")+4);
-                                
-                                
-                                
-                                /*$cmd = Properties::getFileJavaExec()
-                                 ." -Xmx".$moa_menory_used.$moa_memory_unit." -cp \""
-                                 .Properties::getBase_directory_moa()
-                                 ."bin"
-                                 .DIRECTORY_SEPARATOR
-                                 .$moafile
-                                 .":"
-                                 .Properties::getBase_directory_moa()
-                                 ."lib"
-                                 .DIRECTORY_SEPARATOR
-                                 ."*\""
-                                 ." -javaagent:"
-                                 .Properties::getBase_directory_moa()
-                                 ."lib"
-                                 .DIRECTORY_SEPARATOR
-                                 ."sizeofag-1.0.0.jar " . $interfacename . " \ \"".$element["script"]."\" > "
-                                 .$filename_script;*/
-                                
-                                
+                                $script_item = $element["script"];                                
+                                    
+                                $aux_dir_workspace = substr($filename_, 0, strrpos($filename_, DIRECTORY_SEPARATOR)+1);
+                                    
+                                $filename_script = substr($filename_, strrpos($filename_, DIRECTORY_SEPARATOR)+1);
+                                    
+    //                                 $filename_script= $filename_source."-".$utils->format_number($idSeq,4).".txt"; //format_number2($i,4)
+                                    
+                                $cmd = "";
+                                    
+                                    
                                 if($javap == "runnable"){
                                     
                                     $cmd = Properties::getFileJavaExec()
                                     ." -Xmx".$moa_menory_used.$moa_memory_unit." -jar \""
-                                        .Properties::getBase_directory_moa()
-                                        ."bin"
-                                            .DIRECTORY_SEPARATOR
-                                            .$moafile . "\""
-                                                //." -javaagent:"
+                                    .Properties::getBase_directory_moa()
+                                    ."bin"
+                                    .DIRECTORY_SEPARATOR
+                                    .$moafile . "\""
+                                    //." -javaagent:"
                                     //.Properties::getBase_directory_moa()
                                     //."lib"
                                     //.DIRECTORY_SEPARATOR
                                     //."sizeofag-1.0.0.jar "
-                                    ." \ \"".$element["script"]."\" > "
-                                        . $filename_script;
-                                        
-                                        
-                                }else {
+                                    ." \ \"".$script_item."\" > "
+                                    .$dirProcess . $filename_script;
+                                    
+                                }else{
                                     
                                     $cmd = Properties::getFileJavaExec()
                                     ." -Xmx".$moa_menory_used.$moa_memory_unit." -cp \""
-                                        .Properties::getBase_directory_moa()
-                                        ."bin"
-                                            .DIRECTORY_SEPARATOR
-                                            .$moafile
-                                            .":"
-                                                .Properties::getBase_directory_moa()
-                                                ."lib"
-                                                    .DIRECTORY_SEPARATOR
-                                                    ."*\""
-                                                        ." -javaagent:"
-                                                            .Properties::getBase_directory_moa()
-                                                            ."lib"
-                                                                .DIRECTORY_SEPARATOR
-                                                                ."sizeofag-1.0.0.jar " . $interfacename . " \ \"".$element["script"]."\" > "
-                                                                    .$filename_script;
-                                                                    
+                                    .Properties::getBase_directory_moa()
+                                    ."bin"
+                                    .DIRECTORY_SEPARATOR
+                                    .$moafile
+                                    .":"
+                                    .Properties::getBase_directory_moa()
+                                    ."lib"
+                                    .DIRECTORY_SEPARATOR
+                                    ."*\""
+                                    ." -javaagent:"
+                                    .Properties::getBase_directory_moa()
+                                    ."lib"
+                                    .DIRECTORY_SEPARATOR
+                                    ."sizeofag-1.0.0.jar " . $interfacename . " \ \"".$script_item."\" > "
+                                    .$dirProcess.$filename_script;
+                                    
                                 }
+                                    
+                                    
+    //                             $files_log_list[] = array(
+    //                                 //"id"=>$utils->format_number($w,4),
+    //                                 "id"=>$idSeq,
+    //                                 "pid"=>0,
+    //                                 "filename"=>$aux_dir_workspace.$filename_script,
+    //                                 "command"=>$cmd,
+    //                                 "running"=>false,
+    //                                 "script"=>$script_item,
+    //                                 "process"=>false,
+    //                                 "starttime"=>"",
+    //                                 "endtime"=>"",
+    //                                 "user"=>$username
+    //                             );
                                 
                                 
+//                                 $jsonfile->open($filename);
                                 
+//                                 $data = $jsonfile->getDataKeyValue("id", $element["id"]);
                                 
-                                
-                                
-                                $data = "";
-                                
-                                $data = $jsonfile->getDataKeyValue("id", $element["id"]);
-                                
-                                $data["process"] = false;//(strtolower($application->getParameter("process"))=="true"?true:false);
-                                //$data["script"] = $element["script"];
+                                $data = $element;
+                                $data["process"] = false;
                                 $data["starttime"] = "";
                                 $data["endtime"] ="";
                                 $data["running"] = false;
                                 $data["pid"] = "";
                                 $data["command"] = $cmd;
                                 
-                                //var_dump($data);
+                                $data_aux[] = $data;
                                 
-                                $jsonfile->setDataKeyValue("id", $element["id"], $data);
+//                                 $jsonfile->setDataKeyValue("id", $element["id"], $data);                                
+//                                 $jsonfile->save();
+                                //$jsonfile->load();
                                 
-                                $jsonfile->save();
-                                
-                                $lines_cmd[] = $cmd;
+    //                             $idSeq++;
+                            
+                            }else{
+
+                                $data_aux[] = $element;
                             }
-                            //}
+
                         }
                     }
                     
+
+                    
+
+                    
+                    $jsonfile = new JsonFile($filename);                    
+                    $jsonfile->setData($data_aux);                    
+                    $jsonfile->save();                    
+                    chmod($filename, 0777);
                     
                     
+                    $filename_man_log = $filename;
                     
                     //var_dump($lines_cmd);
                     
-                    //exit("--ok");
+//                     exit("--ok");
                     //exit("----".$application->getParameter("parallel_process"));
                     
-                    $parallel = new ParallelProcess();
+                                      
+//                     $parallel = new ParallelProcess();
+//                     $parallel->pool_execute2($filename_man_log,
+//                         $application->getParameter("parallel_process"),
+//                         $dirProcess,
+//                         $user_id);
                     
-                    //var_dump($lines_cmd);exit();
                     
-                    //exit("bruno");
-                    // 						$parallel->pool_execute($filename,
-                    // 												$lines_cmd,
-                    // 												$application->getParameter("parallel_process"),
-                    // 												$dirProcess,
-                    // 						    $dirStorage, $user_id);
-                        
-                        
-                        
-                        
+                  
                     //
                     // ------------START PROCESS ------
                     //
                     $script = "";
                     $process_initialized = date_create()->format('Y-m-d H:i:s');
                     $command = "";
-                    $from = $filename;
+                    $from = $filename_man_log;
                     $pid = getmypid();
                     
                     $execution_history_id = $execution_history->process_initialized(
@@ -1131,12 +1170,12 @@ if($task == "open"){
                     // ------------END START PROCESS ------
                     //
                     
+                    $parallel = new ParallelProcess();
                     
-                    $parallel->pool_execute($filename,
-                        $lines_cmd,
+                    $parallel->pool_execute2($filename_man_log,
                         $application->getParameter("parallel_process"),
                         $dirProcess,
-                        $dirStorage, $user_id);
+                        $user_id);
                     
                     
                     //
@@ -1155,11 +1194,6 @@ if($task == "open"){
                     //
                     // ------------END CLOSED PROCESS ------
                     //
-                    
-                    
-                    
-                    
-                    
                     
                     
                     
@@ -1194,25 +1228,25 @@ if($task == "open"){
                     }
                     
                     
-                    $phone = $application->getParameter("phone");
+//                     $phone = $application->getParameter("phone");
                     
-                    if($phone!= null){
+//                     if($phone!= null){
                         
-                        $plivo = new Plivo();
+//                         $plivo = new Plivo(PLIVO_AUTH_ID, PLIVO_AUTH_TOKEN);
                         
-                        $result = $plivo->sendSMS("Completed Experiment - "
-                            .substr($application->getParameter("filename"),0,30),
-                            array($phone));
+//                         $result = $plivo->sendSMS("Completed Experiment - "
+//                             .substr($application->getParameter("filename"),0,30),
+//                             array($phone));
                         
-                        //var_dump($result);
+//                         //var_dump($result);
                         
-                    }
+//                     }
                     
                     
                     
                 }
                 
-                exit();
+                exit("-");
             }
             
         }
@@ -1278,7 +1312,7 @@ if($task == "open"){
 											?>
 											<?php ?>
 												<input type="hidden" value="<?php echo $application->getParameter("filename");?>" name="filename" id="filename" style="width:100%;">									
-												<textarea id="data"	style="visibility:hidden;display:none;width:100%;height:400px;" name="data" <?php echo ($task=="continue"?"readOnly=\"true\"":"")?>><?php echo $data?></textarea>
+												<textarea id="data"	style="visibility:hidden;display:none;width:100%;height:400px;" name="data" <?php echo ($task=="continue"?"readOnly=\"true\"":"")?>><?php echo $data;?></textarea>
 												<br>
 												
 											<?php 		
@@ -1287,7 +1321,9 @@ if($task == "open"){
 											?>
 												
 												<input type="text" value="<?php echo $application->getParameter("filename");?>" name="filename" id="filename" style="width:100%;">									
-												<textarea id="data"	style="width:100%;height:400px;" name="data" <?php echo ($task=="continue"?"readOnly=\"true\"":"")?>><?php echo $data?></textarea>
+												
+												<textarea id="data"	style="width:100%;height:400px;" name="data" <?php echo ($task=="continue"?"readOnly=\"true\"":"")?>><?php echo ($task=="continue"?"":$data);?></textarea>
+												
 												<br>
 												
 											<?php }?>	
@@ -1347,9 +1383,9 @@ if($task == "open"){
 													<br>
 													Notification by email <input type="text" id="email" name="email" onchange="setCookieElementValue(this);"/>
 												
-													<br>
+													<!-- <br>
 													Notification by phone <input type="text" id="phone" name="phone"  placeholder="+5581998070481" onchange="setCookieElementValue(this);"/>
-													<br>
+													<br> -->
 												
 												</div>
 												
@@ -1453,7 +1489,7 @@ if($task == "open"){
 												
 												<?php if($application->getParameter("task")=="continue"){ ?>
 												
-												<input type="button" value="Continue" onclick="javascript: sendScripts('restart');">	
+												<input type="button" id="button_send" name="button_send" value="Continue" onclick="javascript: sendScripts('restart'); this.disabled=true; this.style.background = '#ffffff'; this.value=this.value+' [disabled]'">	
 												
 												<?php }else{ ?>
 												
@@ -1702,7 +1738,7 @@ historicCookieElementSelectValue("memory_unit");
 
 
 historicCookieElementValue("email");
-historicCookieElementValue("phone");
+// historicCookieElementValue("phone");
 historicCookieCheckbox("notification");
 historicCookieElementValue("interfacename", "moa.DoTask");
 
@@ -1856,7 +1892,7 @@ function sendMOAREST(strURL, content, method){
 		dirstorage = dirstorage.options[dirstorage.selectedIndex].value;
 
 	var email = document.getElementById('email').value;
-	var phone = document.getElementById('phone').value;
+// 	var phone = document.getElementById('phone').value;
 
 	if(document.getElementById('notification').checked == true )	
 		var notification = 1;//document.getElementById('notification').value;
@@ -1876,7 +1912,7 @@ function sendMOAREST(strURL, content, method){
 				+'&memory_used='+encodeURIComponent(Base64.encode(memory_used))
 				+'&memory_unit='+encodeURIComponent(Base64.encode(memory_unit))
 				+'&email='+encodeURIComponent(Base64.encode(email))
-				+'&phone='+encodeURIComponent(Base64.encode(phone))
+// 				+'&phone='+encodeURIComponent(Base64.encode(phone))
 				+'&dirstorage='+encodeURIComponent(Base64.encode(dirstorage))
 				+'&component='+encodeURIComponent(component)
 				+'&controller='+encodeURIComponent(controller)

@@ -71,27 +71,111 @@ try {
                         exec("kill $pid");
                     }
                 }
-
-                // $command = "kill ". $pid;
-
-                // $utils->runExternal($command);
-                // echo $command;
-
-                // $running=posix_kill($pid, 15);
-
-                // if(posix_get_last_error()==1) /* EPERM */
-                // {
-                // echo "Sucess kill PID ".$pid;
-
-                // }else
-                // {
-                // echo "Fail kill PID ".$pid;
-                // }
-
-                // $learner->remove($learner_id, $user_id);
             }
         }
-    } else {}
+    }else if ($task == "killallmyprocesses") {
+        
+        $utils = new Utils();
+        
+//         if ($application->getUserType() == 1) { // super user
+//             $rs = $taskList->selectFromSuperUser();
+//         } else {
+            $rs = $taskList->selectFromUser($user_id);
+//         }
+        
+        $pid_list = array();
+        
+        while ($row = $rs->fetch()) {
+            
+            $pid = $row['pid'];
+            
+            if (file_exists("/proc/".$pid)) {
+            //if ($row["process_closed"] == "") {
+                //$realtime_status = $utils->proc_get_status($pid);
+                
+               // if($realtime_status == "running"){
+                    $pid_list[] = (int) $pid;
+               // }
+            }
+        }
+        
+        if (is_array($pid_list) && count($pid_list) > 0) {
+            foreach ($pid_list as $pid) {
+                
+                $endprocess = false;
+                $pid_aux = $pid + 1;
+                
+                while($endprocess == false){
+                    exec("kill $pid");//echo "kill ".$pid."<br>";
+                    sleep(5);
+                    exec("kill $pid_aux");//echo "kill aux ".$pid_aux."<br>";
+                    sleep(5);
+                    //$realtime_status = $utils->proc_get_status($pid_aux);
+                    if (!file_exists("/proc/".$pid)) {
+//                     if($realtime_status != "running"){
+                        $endprocess = true;
+                    }
+                }
+            }
+        }
+    
+//         exit("fim");
+        
+        
+    }else if ($task == "killallprocesses") {
+        
+        $utils = new Utils();
+        
+        if ($application->getUserType() == 1) { // super user
+            $rs = $taskList->selectFromSuperUser();
+        } else {
+            $rs = $taskList->selectFromUser($user_id);
+        }
+        
+        $pid_list = array();
+        
+        while ($row = $rs->fetch()) {
+            
+            $pid = $row['pid'];
+            
+            if (file_exists("/proc/".$pid)) {
+                //if ($row["process_closed"] == "") {
+                //$realtime_status = $utils->proc_get_status($pid);
+                
+                // if($realtime_status == "running"){
+                $pid_list[] = (int) $pid;
+                // }
+            }
+        }
+        
+        if (is_array($pid_list) && count($pid_list) > 0) {
+            foreach ($pid_list as $pid) {
+                
+                $endprocess = false;
+                $pid_aux = $pid + 1;
+                
+                while($endprocess == false){
+                    exec("kill $pid");//echo "kill ".$pid."<br>";
+                    sleep(5);
+                    exec("kill $pid_aux");//echo "kill aux ".$pid_aux."<br>";
+                    sleep(5);
+                    //$realtime_status = $utils->proc_get_status($pid_aux);
+                    if (!file_exists("/proc/".$pid)) {
+                        //                     if($realtime_status != "running"){
+                        $endprocess = true;
+                    }
+                }
+            }
+        }
+        
+        //         exit("fim");
+        
+        
+    }
+    
+    else {}
+    
+    
 } catch (AppException $e) {
     throw new AppException($e->getMessage());
 }
@@ -138,19 +222,19 @@ function newData(){
 
 function sendAction(task){
 
-	if(task == 'remove'){
+// 	if(task == 'remove'){
 
-	  var x = confirm("Are you sure you want to delete?");
-	  if (!x)
-	     return;
+// 	  var x = confirm("Are you sure you want to delete?");
+// 	  if (!x)
+// 	     return;
 
-	}
+// 	}
 
-	if(task == 'import'){
+// 	if(task == 'import'){
 
-		document.getElementById('controller').value = "import";
+// 		document.getElementById('controller').value = "import";
 
-	}
+// 	}
 	
 	document.getElementById('task').value = task;
 	document.getElementById('form_data').submit();
@@ -228,8 +312,22 @@ function do_this2(){
 
 												<div style="float: left; padding: 10px; width: 100%;"></div>
 
-												Last 20 <input type="button" value="Kill Process"
-													name="stop" onclick="javascript: sendAction('stop');" /> <br>
+												top last 40 processes <br> 
+												<input type="button" value="Refresh"
+													name="refresh" onclick="javascript: window.location.reload();" />
+												| 	
+												<input type="button" value="Kill process"
+													name="stop" onclick="javascript: sendAction('stop');" />
+													
+												| <input type="button" value="kill all my processes"
+													name="allmyprocesses" onclick="javascript: sendAction('killallmyprocesses');" />
+												
+												<?php if ($application->getUserType() == 1) {?>	
+												| <input type="button" value="kill all processes"
+													name="allprocesses" onclick="javascript: sendAction('killallprocesses');" />
+															 
+												<?php }?>			 
+															 <br>
 												<br>
 
 												<table border='1' id="temporary_files" style="width: 100%;">
@@ -239,8 +337,8 @@ function do_this2(){
 																id="checkall" onClick="do_this2()" value="select" />Type</label></th>
 														<th style="width: 70%;">Command</th>
 														<th style="width: 10%;">Initialized</th>
-														<th style="width: 10%;">Closed</th>
-														<th style="width: 10%;">Status</th>
+														<!-- <th style="width: 10%;">Closed</th>
+														<th style="width: 10%;">Status</th> -->
 
 													</tr>
 <?php
@@ -263,7 +361,12 @@ try {
         $pid = $row["pid"];
 
         if ($row["process_closed"] == "") {
-            $realtime_status = $utils->proc_get_status($pid);
+            if (file_exists("/proc/".$pid)) {
+                $realtime_status = "running";
+            }else{
+                $realtime_status = "closed";
+            }
+            
         } else {
             $realtime_status = "closed";
         }
@@ -274,27 +377,32 @@ try {
             $bgcolor = "#505050";
         }
 
-        echo "<tr style='color:" . $bgcolor . "'><td>" . $pid . "</td><td>" . 
+        if($realtime_status == "running"){
 
-        // ."<a onclick='javascript: renameFolder(this);' name='".$element["name"]."' title='Rename' href='#'>"
-        // ."<img align='middle' width='24px' src='".App::getDirTmpl()."images/icon-rename.png' border='0'></a> "
-        // "<a href='#'
-        // onclick=\"javascript: goEdit('" . $row["execution_history_id"] . "');\">"
-        // . "<img width='24px' align='middle' src='" . $application->getPathTemplate()
-        // . "/images/icon-folder.png' title='Open'/></a> " .
-
-        // ."<a title='Remove' onclick='javascript: return ConfirmDelete();' href='?component=home&controller=files&task=remove&folder=".$folder.$element["name"]."'>"
-        // ."<img src='".App::getDirTmpl()."images/icon-remove.gif' border='0'></a>
-
-        "<label><input type='checkbox' name='element[]' value='" . $pid . "' />" . $row["process_type"] . "</label> " . "</td><td>";
-
-        if ($row["process_type_id"] == "1") {
-            echo $row["source"];
-        } else {
-            echo $row["command"];
+            echo "<tr style='color:" . $bgcolor . "'><td>" . $pid . "</td><td>" .
+                
+                // ."<a onclick='javascript: renameFolder(this);' name='".$element["name"]."' title='Rename' href='#'>"
+            // ."<img align='middle' width='24px' src='".App::getDirTmpl()."images/icon-rename.png' border='0'></a> "
+            // "<a href='#'
+            // onclick=\"javascript: goEdit('" . $row["execution_history_id"] . "');\">"
+            // . "<img width='24px' align='middle' src='" . $application->getPathTemplate()
+            // . "/images/icon-folder.png' title='Open'/></a> " .
+            
+            // ."<a title='Remove' onclick='javascript: return ConfirmDelete();' href='?component=home&controller=files&task=remove&folder=".$folder.$element["name"]."'>"
+            // ."<img src='".App::getDirTmpl()."images/icon-remove.gif' border='0'></a>
+            
+            "<label><input type='checkbox' name='element[]' value='" . $pid . "' />" . $row["process_type"] . "</label> " . "</td><td>";
+            
+            if ($row["process_type_id"] == "1") {
+                echo $row["source"];
+            } else {
+                echo $row["command"];
+            }
+            
+            echo " " . "</td><td>" . $row["process_initialized"] . "</td></tr>";//<td>" . $row["process_closed"] . "</td><td>" . $realtime_status . "</td></tr>";
+            
         }
 
-        echo " " . "</td><td>" . $row["process_initialized"] . "</td><td>" . $row["process_closed"] . "</td><td>" . $realtime_status . "</td></tr>";
     }
 } catch (AppException $e) {
     throw new AppException($e->getMessage());

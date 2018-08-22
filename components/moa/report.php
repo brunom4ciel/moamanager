@@ -89,10 +89,12 @@ if ($folder == null) {
         ));
 }
 
+$dirs_system = array("scripts", "backup", "trash");
+
 foreach ($files_list as $key => $element) {
 
     if ($element["type"] == "dir") {
-        if ($element["name"] == "scripts") {
+        if (in_array($element["name"],$dirs_system)) {
             unset($files_list[$key]);
         }
     } else {
@@ -130,6 +132,31 @@ function getPercentProcessFile($filename, $folder = "")
 
                 foreach ($item as $key2 => $item2) {
 
+                    if ($key2 == "process") {
+                        
+                        if($item2 == "true"){                            
+                            
+                            $command = $item["command"];
+                            
+                            $filename = substr($command, strrpos($command, ">") + 1);
+                            $filename = trim($filename);
+    
+                            $filename = substr($filename, strrpos($filename, "/") + 1);
+                            $filename = trim($filename);
+    
+                            // echo $dirStorage.$filename."<br>";
+    
+                            if (file_exists($dirStorage . $filename)) {
+                                // echo $dirStorage.$filename."\n";
+                                $length_process ++;
+                            } else {}
+                        }
+                        
+                    }else{
+                        
+                    }
+                    
+                    
                     /*
                      * if($key2 == "process"){
                      *
@@ -140,22 +167,22 @@ function getPercentProcessFile($filename, $folder = "")
                      * }
                      */
 
-                    if ($key2 == "command") {
+//                     if ($key2 == "command") {
 
-                        $command = $item2;
-                        $filename = substr($command, strrpos($command, ">") + 1);
-                        $filename = trim($filename);
+//                         $command = $item2;
+//                         $filename = substr($command, strrpos($command, ">") + 1);
+//                         $filename = trim($filename);
 
-                        $filename = substr($filename, strrpos($filename, "/") + 1);
-                        $filename = trim($filename);
+//                         $filename = substr($filename, strrpos($filename, "/") + 1);
+//                         $filename = trim($filename);
 
-                        // echo $dirStorage.$filename."<br>";
+//                         // echo $dirStorage.$filename."<br>";
 
-                        if (file_exists($dirStorage . $filename)) {
-                            // echo $dirStorage.$filename."\n";
-                            $length_process ++;
-                        } else {}
-                    }
+//                         if (file_exists($dirStorage . $filename)) {
+//                             // echo $dirStorage.$filename."\n";
+//                             $length_process ++;
+//                         } else {}
+//                     }
                 }
             }
         }
@@ -165,7 +192,7 @@ function getPercentProcessFile($filename, $folder = "")
 
         $result = false;
     }
-
+ 
     return array(
         "percent" => $result,
         "fail" => ($length_data - $length_process),
@@ -265,8 +292,8 @@ foreach ($files_list as $key => $element) {
 
         $result = getPercentProcessFile(Properties::getBase_directory_destine($application) . $application->getUser() . DIRECTORY_SEPARATOR . $folder . $element["name"], $folder);
 
-        // var_dump($result);
-        // exit();
+//         var_dump($result);
+//         exit();
 
         $percentProcess = $result["percent"];
 

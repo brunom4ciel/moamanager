@@ -48,6 +48,7 @@ $folder = $application->getParameter("folder");
 $id = $application->getParameter("id");
 // $dirScriptsName = "scripts";
 
+// exit("error");
 $data = "";
 
 if ($filename != null) {
@@ -245,7 +246,7 @@ foreach ($files_list as $key => $element) {
             // }
 
             // echo $filename."<br>";
-            $data = $jsonfile->getDataKeyValue("id", $id);
+            $data = $jsonfile->getDataKeyValue("filename", $filename);
 
             $data['process'] = true;
             // echo "<br>id=".$id."<br><br>";
@@ -253,7 +254,7 @@ foreach ($files_list as $key => $element) {
             // exit();
             // $jsonfile->setData($data);
 
-            $jsonfile->setDataKeyValue("id", $id, $data);
+            $jsonfile->setDataKeyValue("filename", $filename, $data);
 
             $jsonfile->save();
 
@@ -262,6 +263,10 @@ foreach ($files_list as $key => $element) {
             $jsonfile = null;
         } else {}
 
+        
+        
+        
+        
         /*
          * echo substr($element["name"],strrpos($element["name"],".")+1);
          * if(substr($element["name"],strrpos($element["name"],".")+1)=="log"){exit("bruno");
@@ -321,10 +326,14 @@ if ($length_data > 0) {
                 "s"
             ));
 
-            $file_real = $application->getParameter("folder") . substr($application->getParameter("filename"), 0, strrpos($application->getParameter("filename"), ".")) . "-" . $element["id"] . ".txt";
+            $file_real = $element["filename"] ;//$application->getParameter("folder") . substr($application->getParameter("filename"), 0, strrpos($application->getParameter("filename"), ".")) . "-" . $element["id"] . ".txt";
 
-            $file_real = PATH_USER_WORKSPACE_STORAGE . $file_real;
-
+            //$file_real = PATH_USER_WORKSPACE_STORAGE . $file_real;
+            
+            //exit($file_real);
+            
+            $bgcolor = "#ffffff";
+            
             if ($element["running"] == 'true') {
                 $status = "Running";
             } else {
@@ -345,7 +354,7 @@ if ($length_data > 0) {
                 // $status = "Finish";
                 // $bgcolor="#F8E0E6";
                 // }
-            }
+            }            
 
             echo "<tr style='background-color:" . $bgcolor . "'><td>  " . $element["id"] . "</td><td>" . "<a title='Remove' href='javascript:ConfirmDelete(\"" . "?component=" . $application->getParameter("component") . "&controller=" . $application->getParameter("controller") . "&folder=" . $application->getParameter("folder") . "&id=" . $element["id"] . "&filename=" . $application->getParameter("filename") . "&task=remove\");'>" . "<img align='middle' width='24px' src='" . $application->getPathTemplate() . "/images/icon-remove.gif' border='0'></a> " . "<a title='Edit' href='" . "?component=" . $application->getParameter("component") . "&controller=reportedit" . "&folder=" . $application->getParameter("folder") . "&id=" . $element["id"] . "&filename=" . $application->getParameter("filename") . "&task=edit'>" . "<img align='middle' width='24px' src='" . $application->getPathTemplate() . "/images/icon-edit.png' border='0'></a> " . "<a href='#' title='" . $element["script"] . "' alt='' onclick=\"javascript: expand(this);\"'>" . substr($element["script"], 0, 40) . " ...</a> " . "</td><td>" . $status . "</td>" . "</td><td>" . $element["starttime"] . "</td><td>" . $element["endtime"] . "</td>" . "<td>" . $diff_dates . "</td>" . "</tr>";
 

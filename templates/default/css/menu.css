@@ -28,7 +28,6 @@ ul#nav li a {
 
 ul#nav li a:hover{
     text-decoration:underline;
-    font-weight: bold;
     background: #ccc; }
     
     

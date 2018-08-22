@@ -16,6 +16,8 @@ use moam\core\Template;
 use moam\core\Properties;
 use moam\libraries\core\utils\Utils;
 use moam\libraries\core\sys\CPULoad;
+
+
 if (! class_exists('Application')) {
     $application = Framework::getApplication();
 }
@@ -335,7 +337,7 @@ hr {
 
 							<div id="usage_machine">
 								<pre>
-<?php echo $output;?>
+
 </pre>
 							</div>
 
@@ -395,7 +397,7 @@ hr {
 							<div id="console_process"></div>
 
 
-							<script type='text/javascript'>
+<script type='text/javascript'>
 
 
 

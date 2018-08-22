@@ -22,13 +22,13 @@ class TaskList
         $this->DB = $DB;
     }
 
-    public function selectFromSuperUser()
+    public function selectFromSuperUser($limit_start=0, $limit_end=40)
     {
         $data = array();
 
         try {
 
-            $rs = $this->DB->prep_query("SELECT
+            $sql = "SELECT
             execution_history.execution_history_id,
 			process_type.process_type,
             process_type.process_type_id,
@@ -43,8 +43,14 @@ class TaskList
        INNER JOIN process_type ON
     process_type.process_type_id = execution_history.process_type_id
 		where execution_history.process_closed IS NULL
-		ORDER by execution_history_id DESC LIMIT 0,20");
-
+		ORDER by execution_history.process_type_id asc, execution_history_id DESC"
+            . " LIMIT ?,?";
+            
+            $rs = $this->DB->prep_query($sql);
+                
+            $rs->bindParam(1, $limit_start, PDO::PARAM_INT);
+            $rs->bindParam(2, $limit_end, PDO::PARAM_INT);
+            
             // execute query
             if ($rs->execute()) {
                 $data = $rs;
@@ -59,13 +65,13 @@ class TaskList
         return $data;
     }
 
-    public function selectFromUser($user_id)
+    public function selectFromUser($user_id, $limit_start=0, $limit_end=40)
     {
         $data = array();
 
         try {
 
-            $rs = $this->DB->prep_query("SELECT 
+            $sql = "SELECT 
             execution_history.execution_history_id,
 			process_type.process_type,
             process_type.process_type_id,
@@ -79,19 +85,24 @@ class TaskList
 		FROM execution_history
        INNER JOIN process_type ON 
     process_type.process_type_id = execution_history.process_type_id
-		WHERE  user_id=?
+		WHERE  user_id=? and execution_history.process_closed is null
 		
-		ORDER by execution_history_id DESC LIMIT 0,20");
-
+		ORDER by execution_history.process_type_id asc, 
+                execution_history_id DESC LIMIT ?,?";
+                        
+            $rs = $this->DB->prep_query($sql);
+            
             $rs->bindParam(1, $user_id, PDO::PARAM_INT);
-
+            $rs->bindParam(2, $limit_start, PDO::PARAM_INT);
+            $rs->bindParam(3, $limit_end, PDO::PARAM_INT);
+            
             // execute query
             if ($rs->execute()) {
                 $data = $rs;
             } else {
-
                 throw new AppException($this->DB->getErrorMessage($rs));
             }
+            
         } catch (AppException $e) {
             throw new AppException($e->getMessage());
         }

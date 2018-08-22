@@ -12,9 +12,9 @@ defined('_EXEC') or die();
 class Plivo
 {
 
-    private $AUTH_ID = "MAN2E4YZLHM2RKYTK5ZG";
+    private $AUTH_ID = "MAN2E4YZLDFFHM2RKYTK5ZGFD";
 
-    private $AUTH_TOKEN = "ZjU5MGY2ZGMzZTg4YTE1YTdhMTkwZjYzM2JkMTQ1";
+    private $AUTH_TOKEN = "ZjU5MGY2ZGMzZSUHG978F97YGDYTdhMTkwZjYzM2JkMTQ1";
 
     private $response = "";
 

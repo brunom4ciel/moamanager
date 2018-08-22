@@ -59,6 +59,23 @@ Template::addHeader(array(
 ?>
 <script>
 
+
+function confirmCleanDirectory(){
+
+ 	var x = confirm("Are you sure you want to delete your temporary files?");
+
+ 	if (x){
+ 	 	var x = confirm("If the temporary files is delete all files in processing will cease to function .\nAre you sure you want to delete your temporary files?");
+		if(x)
+			return true;
+	  	else
+			return false;
+ 	}else
+    	return false;
+	
+}
+
+
 function confirmRemoveAccount(){
 
  	var x = confirm("Are you sure you want to delete your account?");
@@ -284,6 +301,64 @@ function confirmRemoveAccount(){
 
 
 
+
+
+
+									<div data-reactid=".1lisbcwokxs.3.0.0.2.0"
+										class="account-section collapsable-panel clearfix membership-section-wrapper">
+										<header data-reactid=".1lisbcwokxs.3.0.0.2.0.0"
+											class="account-section-header collapsable-section-toggle">
+											<h2 data-reactid=".1lisbcwokxs.3.0.0.2.0.0.0"
+												class="account-section-heading">
+												<span data-reactid=".1lisbcwokxs.3.0.0.2.0.0.0.0">Temporary Files</span>
+
+											</h2>
+										</header>
+										<section data-reactid=".1lisbcwokxs.3.0.0.2.0.1"
+											class="collapsable-section-content account-section-content">
+											<div data-reactid=".1lisbcwokxs.3.0.0.2.0.1.0"
+												class="account-subsection clearfix">
+												<div data-reactid=".1lisbcwokxs.3.0.0.2.0.1.0.0"
+													class="clearfix">
+
+
+													<div data-reactid=".1lisbcwokxs.3.0.0.2.0.1.0.0.0"
+														class="account-section-group">
+
+														<div data-reactid=".1lisbcwokxs.3.0.0.2.0.1.0.0.0.1"
+															class="account-section-item account-section-item-disabled">
+															<span data-reactid=".1lisbcwokxs.3.0.0.2.0.1.0.0.0.1.0">Directory:</span> <span
+																data-reactid=".1lisbcwokxs.3.0.0.2.0.1.0.0.0.1.1"> <?php echo Properties::getBase_directory_destine_exec($application);?><?php echo $application->getUser()?></span>
+														</div>
+														<div data-reactid=".1lisbcwokxs.3.0.0.2.0.1.0.0.0.2"
+															class="account-section-item account-section-item-disabled"></div>
+
+													</div>
+
+													<div data-reactid=".1lisbcwokxs.3.0.0.2.0.1.0.0.1"
+														class="account-section-group">
+
+														<div data-reactid=".1lisbcwokxs.3.0.0.2.0.1.0.0.1.1"
+															class="account-section-item">
+															<a data-reactid=".1lisbcwokxs.3.0.0.2.0.1.0.0.1.1.0"
+																href="<?php echo PATH_WWW?>?component=settings&controller=cleantmp&task=clean"
+																onclick='javascript: return confirmCleanDirectory();'
+																class="account-section-link">Clean Directory</a>
+														</div>
+
+													</div>
+												</div>
+
+											</div>
+										</section>
+									</div>
+									
+									
+									
+									
+									
+									
+									
 									<div data-reactid=".1lisbcwokxs.3.0.0.2.0"
 										class="account-section collapsable-panel clearfix membership-section-wrapper">
 										<header data-reactid=".1lisbcwokxs.3.0.0.2.0.0"
@@ -449,6 +524,60 @@ function confirmRemoveAccount(){
 
 
 
+
+									<div data-reactid=".1lisbcwokxs.3.0.0.2.0"
+										class="account-section collapsable-panel clearfix membership-section-wrapper">
+										<header data-reactid=".1lisbcwokxs.3.0.0.2.0.0"
+											class="account-section-header collapsable-section-toggle">
+											<h2 data-reactid=".1lisbcwokxs.3.0.0.2.0.0.0"
+												class="account-section-heading">
+												<span data-reactid=".1lisbcwokxs.3.0.0.2.0.0.0.0">Defines</span>
+
+											</h2>
+										</header>
+										<section data-reactid=".1lisbcwokxs.3.0.0.2.0.1"
+											class="collapsable-section-content account-section-content">
+											<div data-reactid=".1lisbcwokxs.3.0.0.2.0.1.0"
+												class="account-subsection clearfix">
+												<div data-reactid=".1lisbcwokxs.3.0.0.2.0.1.0.0"
+													class="clearfix">
+
+													<div data-reactid=".1lisbcwokxs.3.0.0.2.0.1.0.0.0"
+														class="account-section-group">
+
+														<div data-reactid=".1lisbcwokxs.3.0.0.2.0.1.0.0.0.1"
+															class="account-section-item account-section-item-disabled">
+															<span data-reactid=".1lisbcwokxs.3.0.0.2.0.1.0.0.0.1.0">File:
+															</span> <span
+																data-reactid=".1lisbcwokxs.3.0.0.2.0.1.0.0.0.1.0"><?php echo PATH_BASE.DIRECTORY_SEPARATOR . "includes" . DIRECTORY_SEPARATOR;?>defines.php</span>
+
+														</div>
+														<div data-reactid=".1lisbcwokxs.3.0.0.2.0.1.0.0.0.2"
+															class="account-section-item account-section-item-disabled"></div>
+													</div>
+
+													<div data-reactid=".1lisbcwokxs.3.0.0.2.0.1.0.0.1"
+														class="account-section-group">
+
+														<div data-reactid=".1lisbcwokxs.3.0.0.2.0.1.0.0.1.1"
+															class="account-section-item">
+															<a data-reactid=".1lisbcwokxs.3.0.0.2.0.1.0.0.1.1.0"
+																href="<?php echo PATH_WWW?>?component=settings&controller=editDefines"
+																class="account-section-link">Edit</a>
+														</div>
+
+													</div>
+
+
+												</div>
+											</div>
+										</section>
+									</div>
+									
+									
+									
+									
+									
 
 
 									<div data-reactid=".1lisbcwokxs.3.0.0.2.0"

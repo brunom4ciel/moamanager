@@ -24,6 +24,8 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.PrintStream;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.LinkedList;
 import java.util.List;
 
 import moa.classifiers.Classifier;
@@ -115,7 +117,7 @@ public class EvaluatePrequential2 extends MainTask {
         return LearningCurve.class;
     }
 
-    double calcStandardDeviation(double u, List<Double> mean) {
+    private double calcStandardDeviation(double u, List<Double> mean) {
         double s = 0.0;
         int size = (int) mean.size();
         for (int i = 0; i < size; i++) {
@@ -127,7 +129,7 @@ public class EvaluatePrequential2 extends MainTask {
         return Math.sqrt(s / ((double) (size - 1)));
     }
     
-    void printStatistics( List<Double> typeMean, String type ) {
+    private void printStatistics( List<Double> typeMean, String type ) {
         double n, u, s, sum=0.0;
         n = typeMean.size();
         System.out.println(type+":");
@@ -142,13 +144,13 @@ public class EvaluatePrequential2 extends MainTask {
         
         if ( repetitionOption.getValue() > 1 ) {
             TDistribution t = new TDistribution(repetitionOption.getValue()-1);
-            System.out.printf("Confidence Interval = %.2f (+-%.2f)\n\n", u, t.inverseCumulativeProbability(1-((1-alphaOption.getValue())/2.0)) * (s / Math.sqrt(n)));
+            System.out.printf("Mean (CI) = %.2f (+-%.2f)\n\n", u, t.inverseCumulativeProbability(1-((1-alphaOption.getValue())/2.0)) * (s / Math.sqrt(n)));
         } else {
-            System.out.printf("Confidence Interval = %.2f (+-N/A)\n\n", u);
+            System.out.printf("Mean (CI) = %.2f (+-N/A)\n\n", u);
         }
     }
     
-    String printMetrics1( List<Double> FN, List<Double> FP, List<Double> TN, List<Double> TP ) {
+    private String printMetrics1( List<Double> FN, List<Double> FP, List<Double> TN, List<Double> TP ) {
         String results="";
         double n, uFN,uFP,uTN,uTP, sFN,sFP,sTN,sTP, sumFN,sumFP,sumTN,sumTP;
         sumFN=sumFP=sumTN=sumTP=0.0;
@@ -190,7 +192,7 @@ public class EvaluatePrequential2 extends MainTask {
         return results;
     }
     
-    String printMetrics2( List<Double> FN, List<Double> FP, List<Double> TN, List<Double> TP ) {
+    private String printMetrics2( List<Double> FN, List<Double> FP, List<Double> TN, List<Double> TP ) {
         double sumFN,sumFP,sumTN,sumTP, precision,recall,MCC,F1;
         String results="";
         sumFN=sumFP=sumTN=sumTP=0.0;
@@ -219,7 +221,7 @@ public class EvaluatePrequential2 extends MainTask {
         return results;
     }
     
-    String printDistanceDriftTable ( List<Double> cd, List<Integer> positions ) {
+    private String printDistanceDriftTable ( List<Double> cd, List<Integer> positions ) {
         System.out.println("Drift point distance:");
         
         double u, s; String results="";
@@ -285,31 +287,30 @@ public class EvaluatePrequential2 extends MainTask {
     @Override
     protected Object doMainTask(TaskMonitor monitor, ObjectRepository repository) {
         LearningCurve learningCurve = new LearningCurve("learning evaluation instances");
-        List<Double> meanAccuracy = new ArrayList<>();
-        List<Double> meanAccuracy2 = new ArrayList<>();
-        List<Double> meanPrecision = new ArrayList<>();
-        List<Double> meanTime = new ArrayList<>();
-        List<Double> meanMemory = new ArrayList<>();
-        List<Double> FP = new ArrayList<>();
-        List<Double> FN = new ArrayList<>();
-        List<Double> TP = new ArrayList<>();
-        List<Double> TN = new ArrayList<>();
-        List<Integer> positions, widths;
+        List<Measurement> measurementList = new LinkedList<>();
+        List<Double> meanAccuracy = new ArrayList<>(), meanTime = new ArrayList<>(), meanMemory = new ArrayList<>();
+        List<Double> FP = new ArrayList<>(), FN = new ArrayList<>(), TP = new ArrayList<>(), TN = new ArrayList<>();
         List<Double> CD = new ArrayList<>();
-        double accuracy, ctime, memory, fp, fn, tp, tn, accuracy2;
-        int frequency, curr, sz, wt, realPos, nextRealPos, pos;
+        List<Integer> positions, widths;
+        double accuracy, ctime, memory, fp, fn, tp, tn;
+        int frequency, curr, sz, wt, realPos, pos;
         boolean toleranceArea, drift;
         String lineValues = "";
-        int instanceLimit = 0;
+        accuracy = frequency = 0;
+        double accuracy_sum = 0;
         
-        instanceLimit = instanceLimitOption.getValue();
-        
-        for (int i = 1; i <= this.repetitionOption.getValue(); i++) 
-        {
+        for (int i = 1; i <= this.repetitionOption.getValue(); i++) {
             learningCurve = new LearningCurve("learning evaluation instances");
             prepareClassOptions(monitor, repository);
-            accuracy2 = accuracy = ctime = memory = 0.0; frequency = curr = pos = 0;
             
+            if(i>1){
+            	accuracy_sum += (accuracy/frequency);
+            	monitor.setCurrentActivity("Step "+i+" of "+this.repetitionOption.getValue()+" "+String.format("%.2f", (accuracy_sum/(i-1)))+"%", -1.0);            
+            }else{
+            	monitor.setCurrentActivity("Step "+i+" of "+this.repetitionOption.getValue(), -1.0); 
+            }
+            
+            accuracy = ctime = memory = 0.0; curr = pos = 0; accuracy = frequency = 0;
             fp = fn = 0.0;
             drift = false;
             Classifier learner = (Classifier) getPreparedClassOption(this.learnerOption);
@@ -328,8 +329,9 @@ public class EvaluatePrequential2 extends MainTask {
             long instancesProcessed = 0;
             int maxSeconds = this.timeLimitOption.getValue();
             int secondsElapsed = 0;
-            monitor.setCurrentActivity("Evaluating learner...", -1.0);
-
+//            monitor.setCurrentActivity("Evaluating learner...", -1.0);
+            
+            
             File dumpFile = this.dumpFileOption.getFile();
             PrintStream immediateResultStream = null;
             if (dumpFile != null) {
@@ -368,45 +370,60 @@ public class EvaluatePrequential2 extends MainTask {
             long evaluateStartTime = TimingUtils.getNanoCPUTimeOfCurrentThread();
             long lastEvaluateStartTime = evaluateStartTime;
             double RAMHours = 0.0;
-            int instancesProcessedNumber=0;
             while (stream.hasMoreInstances()
                     && ((maxInstances < 0) || (instancesProcessed < maxInstances))
-                    && ((maxSeconds < 0) || (secondsElapsed < maxSeconds))) 
-            {
-            	            	 
+                    && ((maxSeconds < 0) || (secondsElapsed < maxSeconds))) {
                 Instance trainInst = stream.nextInstance();
                 Instance testInst = (Instance) trainInst.copy();
-                
-                instancesProcessedNumber++;
-                
                 if (testInst.classIsMissing() == false) {
                     // Added for semisupervised setting: test only if we have the label
-                	double[] prediction = learner.getVotesForInstance(testInst);
+                    double[] prediction = learner.getVotesForInstance(testInst);
                     // Output prediction
                     if (outputPredictionFile != null) {
                         outputPredictionResultStream.println(Utils.maxIndex(prediction) + "," + testInst.classValue());
                     }
                     evaluator.addResult(testInst, prediction);
-                    
-                    
-                    int trueClass = (int) testInst.classValue();
-                    
-                    if (Utils.maxIndex(learner.getVotesForInstance(testInst)) == trueClass) {
-                       // prediction = true;
-                    	//System.out.println("accuracy2=0");
-                    	accuracy2 += 1;
-                    } else {
-                       // prediction = false;
-                    	//System.out.println("accuracy2=1");
-                    	
-                    }
-
                 }
-                
-                
-                
                 learner.trainOnInstance(trainInst);
                 instancesProcessed++;
+
+                measurementList.addAll(Arrays.asList(learner.getModelMeasurements()));
+
+                if (instancesProcessed == 1) { // Checks for drifts in dataset
+                    for (int z = 0; z < measurementList.size(); z++) {
+                        if (measurementList.get(z).getName().equals("Change detected")) {
+                            pos = z;
+                            drift = true;
+                            break;
+                        }
+                    }
+                }
+
+                if (drift) {
+                    toleranceArea = false;
+                    if (curr < sz) {
+                        wt = widths.get(curr) + this.toleranceOption.getValue();
+                        realPos = (int) instancesProcessed;
+                        if (positions.get(curr) <= realPos && realPos < positions.get(curr) + wt) {
+                            toleranceArea = true;
+                            if (measurementList.get(pos).getValue() == 1.0) { // Drift
+                                CD.add((double) realPos);
+                                curr++;
+                            } else if (realPos+1 >= positions.get(curr) + wt) {
+                                CD.add(-1.0);
+                                fn++;
+                                curr++;
+                            }
+                        }
+                    }
+
+                    if (measurementList.get(pos).getValue() == 1.0 && !toleranceArea) {
+                        fp++;
+                    }
+                }
+
+                measurementList.clear();
+
                 if (instancesProcessed % this.sampleFrequencyOption.getValue() == 0
                         || stream.hasMoreInstances() == false) {
                     long evaluateTime = TimingUtils.getNanoCPUTimeOfCurrentThread();
@@ -418,17 +435,20 @@ public class EvaluatePrequential2 extends MainTask {
                     lastEvaluateStartTime = evaluateTime;
                     learningCurve.insertEntry(new LearningEvaluation(
                             new Measurement[]{
-                                new Measurement(
+                                new Measurement(//"learning evaluation instances",instancesProcessed
                                         "learning evaluation instances",
-                                        instancesProcessed),
-                                new Measurement(
+                                        instancesProcessed
+                                        ),
+                                new Measurement(//"",0
                                         "evaluation time ("
-                                        + (preciseCPUTiming ? "cpu "
-                                                : "") + "seconds)",
-                                        time),
-                                new Measurement(
+                                        + (preciseCPUTiming ? "cpu ": "") + "seconds)"
+                                        ,
+                                        time
+                                        ),
+                                new Measurement(//"",0
                                         "model cost (RAM-Hours)",
-                                        RAMHours)
+                                        RAMHours
+                                        )
                             },
                             evaluator, learner));
 
@@ -439,57 +459,6 @@ public class EvaluatePrequential2 extends MainTask {
                         }
                         immediateResultStream.println(learningCurve.entryToString(learningCurve.numEntries() - 1));
                         immediateResultStream.flush();
-                    }
-             
-                    if ( frequency == 0 ) 
-                    { // Checks for drifts in dataset
-                    	
-                        for ( int z=0; z<learningCurve.getMeasurementNameSize(); z++ ) 
-                        {
-                            if ( learningCurve.getMeasurementName(z).equals("Change detected") ) 
-                            {
-                        		pos = z;
-                                drift = true;                                
-                                break;
-                                
-                            }
-                        }
-                    }
-                    
-                    
-                   
-                    
-                    if ( drift ) {
-                        toleranceArea = false;
-                        if ( curr < sz ) {
-                            wt = widths.get(curr) + this.toleranceOption.getValue();                           
-                                                       
-                            realPos = (int)learningCurve.getMeasurement(frequency, 0);  
-                            nextRealPos = (int)learningCurve.getMeasurement(frequency, 0) + this.sampleFrequencyOption.getValue();                            
-                            
-                                                       
-                            if ( positions.get(curr) <= realPos && realPos < positions.get(curr)+wt ) {
-                                toleranceArea = true;
-
-                                if ( learningCurve.getMeasurement(frequency, pos) == 1.0 ) { // Drift
-                                    CD.add((double)realPos);
-                                    curr++;
-                                } else if ( nextRealPos >= positions.get(curr)+wt ) {
-                                    CD.add(-1.0);
-                                    fn += 1.0;
-                                    curr++;
-                                }
-                            }
-                        }
-
-                        if ( learningCurve.getMeasurement(frequency, pos) == 1.0 && !toleranceArea )
-                        {
-                        	//if(instanceLimit != instancesProcessedNumber)
-                        	//{
-                        		fp += 1.0;  
-                        	//}
-                            
-                        }
                     }
                     
                     accuracy += evaluator.getPerformanceMeasurements()[1].getValue();
@@ -530,14 +499,6 @@ public class EvaluatePrequential2 extends MainTask {
             tn = (double)instancesProcessed-(double)stream.getDriftPositions().size()-fp;
             
             meanAccuracy.add(accuracy/frequency);
-            //meanAccuracy2.add(( (double) accuracy2/instancesProcessed)*100);
-            
-            //double accPreq = (double) accuracy/frequency;
-            //double acc = ( (double)  accuracy2/instancesProcessed)*100;            
-            //double precision = ((double)  accPreq*100) / acc;            
-           
-           // meanPrecision.add(precision);
-            
             meanTime.add(ctime/frequency);
             meanMemory.add(memory/frequency);
             FP.add(fp);
@@ -546,10 +507,10 @@ public class EvaluatePrequential2 extends MainTask {
             TN.add(tn);
         }
         
+        monitor.setCurrentActivity("Execution "+this.repetitionOption.getValue()+" of "+this.repetitionOption.getValue(), -1.0);
+        
         InstanceStreamGenerators stream = (InstanceStreamGenerators) getPreparedClassOption(this.streamOption);
         
-       // printStatistics(meanPrecision,"Precision");
-       // printStatistics(meanAccuracy2,"Accuracy Real");
         printStatistics(meanAccuracy,"Accuracy");
         printStatistics(meanTime,"Time");
         printStatistics(meanMemory,"Memory (B/s)");
@@ -560,6 +521,8 @@ public class EvaluatePrequential2 extends MainTask {
         System.out.println("Mean Distance\t\tFN\tFP\tTN\t\tTP\tPrecision\tRecall\t\tMCC\t\tF1");
         System.out.println(lineValues);
 
+        //LearningCurve learningCurve2 = new LearningCurve("");
+        
         return learningCurve;
     }
 }

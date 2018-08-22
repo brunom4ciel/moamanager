@@ -59,7 +59,7 @@ abstract class AbstractApplication
             self::$menu->add($path_www . "?component=task_list" . $language, MENU_TASK_MANAGER);
 
             self::$menu->add($path_www . "?component=extract" . $language, MENU_DATA_EXTRACTION);
-            self::$menu->add($path_www . "?component=evaluation" . $language, MENU_EVALUATION);
+//             self::$menu->add($path_www . "?component=evaluation" . $language, MENU_EVALUATION);
             self::$menu->add($path_www . "?component=statistical&controller=texteditor" . $language, MENU_STATISTICAL);
 
             self::$menu->add($path_www . "?component=trash" . $language, MENU_TRASH);

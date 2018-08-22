@@ -14,7 +14,152 @@ defined('_EXEC') or die();
 class Utils
 {
 
-   
+    
+    function getHardwareCpuName(){
+       
+        $file = file('/proc/cpuinfo');
+        
+        return trim(substr($file[4], strrpos($file[4], ":")+1));
+    }
+    
+    
+    
+    function getHardwareMemory(){
+        
+        $file = file('/proc/meminfo');
+        
+        $men = trim(substr($file[0], strrpos($file[0], ":")+1));
+        $men = trim($men);
+        $men = trim(substr($men, 0, strrpos($men, " ")));
+        $men = (int) $men;
+        
+        $unit=array('kb','mb','gb','tb','pb');
+        
+        return @round($men/pow(1024,($i=floor(log($men,1024)))),2).' '.$unit[$i];
+    }
+    
+    function getHardwareDisk(){
+        
+        $men = (int) disk_total_space('/');
+        
+        $unit=array('b','kb','mb','gb','tb','pb');
+        
+        return @round($men/pow(1024,($i=floor(log($men,1024)))),2).' '.$unit[$i];
+    }
+    
+    function getHardwareDiskFree(){
+        
+        //$men = (int) disk_total_space('/');
+        $men = (int) disk_free_space('/');
+        
+        $unit=array('b','kb','mb','gb','tb','pb');
+        
+        return @round($men/pow(1024,($i=floor(log($men,1024)))),2).' '.$unit[$i];
+    }
+    
+    
+    function intdiv_2($a, $b){
+        return floor($a / $b);
+    }
+    
+    function getHardwareUptime(){
+        
+        $str   = @file_get_contents('/proc/uptime');
+        
+        $num   = floatval($str);
+        $secs  = fmod($num, 60); $num = $this->intdiv_2($num, 60);
+        $mins  = $num % 60;      $num = $this->intdiv_2($num, 60);
+        $hours = $num % 24;      $num = $this->intdiv_2($num, 24);
+        $days  = $num;
+        
+        $uptime = "";
+        
+        if($days > 0){
+            $uptime .= $days . " day";
+            if($days > 1){
+                $uptime .= "s ";
+            }         
+        }
+        
+        if($hours > 0){
+            $uptime .= " " . $hours . " hour";
+            if($hours > 1){
+                $uptime .= "s ";
+            }
+        }
+        
+        if($mins > 0){
+            $uptime .= " " . $mins . " minute";
+            if($mins > 1){
+                $uptime .= "s";
+            }
+        }
+        
+//         $uptime = $days . " days " . $hours . ":" . $mins . ":" . $secs;
+        
+//         $uptime = floor(preg_replace ('/\.[0-9]+/', '', file_get_contents('/proc/uptime')) / 86400);
+        
+        return trim($uptime);
+    }
+    
+    
+    function getHardwareKernelVersion() {
+        
+        $result = $this->runExternal("lsb_release -a");
+        
+        $str = explode("\n", $result["output"]);
+        
+        foreach($str as $line)
+        {
+//             if(trim(substr($line,0, strrpos($line, ":"))) == "Distributor ID") 
+//             {
+//                 $distributorId = trim(substr($line,strrpos($line, ":")+1));
+//             }
+            
+            if(trim(substr($line,0, strrpos($line, ":"))) == "Description")
+            {
+                $description = trim(substr($line,strrpos($line, ":")+1));
+            }
+            
+            if(trim(substr($line,0, strrpos($line, ":"))) == "Codename")
+            {
+                $codename = trim(substr($line,strrpos($line, ":")+1));
+            }
+                        
+        }
+        
+        
+        
+//         $result = trim(substr($str[2], strrpos($str[2], ":")+1));
+//         $result .= " " . trim(substr($str[4], strrpos($str[4], ":")+1));
+        
+//         var_dump($result);exit();
+//         $file = file('/proc/version');
+        //$kernel = explode(' ', file_get_contents('/proc/version'));
+        //$result = $kernel[0] . " " . $kernel[2] . " " . $kernel[8];
+                
+//         var_dump($description);
+        
+        $result = $description . " " .  $codename;
+        
+        return $result;
+        
+    }
+    
+    
+    function getHardwareInfo() {
+        
+        $sysinfo = $this->getHardwareCpuName();
+        $sysinfo .= " RAM " . $this->getHardwareMemory();
+        $sysinfo .= " OS " . $this->getHardwareKernelVersion();
+        $sysinfo .= " Uptime " . $this->getHardwareUptime();
+        $sysinfo .= " Disk Total " . $this->getHardwareDisk();
+        $sysinfo .= " Disk Free " . $this->getHardwareDiskFree();
+        
+        return $sysinfo;        
+    }
+    
+    
 	/*
 	 * converts data in CSV notation to a table with HTML notation.
 	 * 
@@ -649,6 +794,9 @@ class Utils
 
         if ($handle = opendir($base_directory_destine)) {
 
+            $elements_dir_list = array();
+            $elements_file_list = array();
+            
             /* Esta é a forma correta de varrer o diretório */
             while (false !== ($file = readdir($handle))) {
 
@@ -659,30 +807,73 @@ class Utils
 
                 if ($file != "." && $file != "..")
                     if ($type == "dir") {
-
-                        array_push($files_list, array(
-                            "name" => $file,
-                            "size" => $this->getDirSize($base_directory_destine . $file),
-                            "type" => $type,
-                            "datetime" => date("Y/m/d H:i:s", filemtime($base_directory_destine . $file))
-                        ));
+                        
+                        $elements_dir_list[] = $file;
+//                         array_push($files_list, array(
+//                             "name" => $file,
+//                             "size" => $this->getDirSize($base_directory_destine . $file),
+//                             "type" => $type,
+//                             "datetime" => date("Y/m/d H:i:s", filemtime($base_directory_destine . $file))
+//                         ));
                     } else {
 
-                        if (in_array(substr($file, strrpos($file, ".") + 1), $filter)) {
-                            array_push($files_list, array(
-                                "name" => $file,
-                                "size" => $this->filesize_formatted($base_directory_destine . $file),
-                                "type" => $type,
-                                "datetime" => date("Y/m/d H:i:s", filemtime($base_directory_destine . $file))
-                            ));
+                        if (in_array(substr($file, strrpos($file, ".") + 1), $filter)) 
+                        {
+                            $elements_file_list[] = $file;
+//                             array_push($files_list, array(
+//                                 "name" => $file,
+//                                 "size" => $this->filesize_formatted($base_directory_destine . $file),
+//                                 "type" => $type,
+//                                 "datetime" => date("Y/m/d H:i:s", filemtime($base_directory_destine . $file))
+//                             ));
                         }
                     }
             }
 
             closedir($handle);
-        }
+            
+            
+            sort($elements_dir_list);
+            
+            foreach($elements_dir_list as $item) {
+                
+                $type = "dir"; 
+                    
+                if ($item != "." && $item != "..")
+                {   if ($type == "dir") {
+                        
+                        array_push($files_list, array(
+                            "name" => $item,
+                            "size" => $this->getDirSize($base_directory_destine . $item),
+                            "type" => $type,
+                            "datetime" => date("Y/m/d H:i:s", filemtime($base_directory_destine . $item))
+                        ));
+                    }                         
+                }
+            
+            }
+            
+            sort($elements_file_list);
+            
+            foreach($elements_file_list as $item) {
+                
+                $type = "file";
+                
+                if ($item != "." && $item != "..")
+                {                           
+                    if (in_array(substr($item, strrpos($item, ".") + 1), $filter)) {
+                        array_push($files_list, array(
+                            "name" => $item,
+                            "size" => $this->filesize_formatted($base_directory_destine . $item),
+                            "type" => $type,
+                            "datetime" => date("Y/m/d H:i:s", filemtime($base_directory_destine . $item))
+                        ));
+                    }
+                
+                }                
+            }
 
-        sort($files_list);
+        }       
 
         return $files_list;
     }
@@ -942,7 +1133,47 @@ class Utils
     
     
     
-    
+    function create_dir($dirname, $realpath, $chmod="0777"){
+        
+        $realpath = trim($realpath);
+        
+        if(substr($realpath, strlen($realpath)-1) != DIRECTORY_SEPARATOR){
+            $realpath .= DIRECTORY_SEPARATOR;
+        }
+        
+        $dirname = trim($dirname);
+        
+        if(substr($dirname, strlen($dirname)-1) == DIRECTORY_SEPARATOR){
+            $dirname = substr($dirname, 0, strlen($dirname)-1);     
+        }
+        
+        //define o local do diretorio base
+        $new_path = $realpath . $dirname;
+        
+        if(!is_dir($new_path)){
+                      
+            //criar o diretorio
+            if(mkdir($new_path, octdec($chmod), true)){
+                
+                //modifica as permissoes do diretorio
+                chmod($new_path, octdec($chmod));
+                
+                //define o local do diretorio base
+                $new_path .= DIRECTORY_SEPARATOR;
+                
+            }else{
+                //define o local do diretorio base
+                $new_path = -1;
+            }
+              
+        }else{
+            //define o local do diretorio base
+            $new_path .= DIRECTORY_SEPARATOR;
+        }
+                
+        return $new_path;
+        
+    }
     
     
 }
