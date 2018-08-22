@@ -13,8 +13,13 @@ defined('_EXEC') or die;
 use moam\core\Framework;
 use moam\core\Template;
 
+if (!class_exists('Application'))
+{
+    $application = Framework::getApplication();
+}
+
 // get Instantiate the application.
-$application = Framework::getApplication();
+// $application = Framework::getApplication();
 
 
 if($application->is_authentication()){

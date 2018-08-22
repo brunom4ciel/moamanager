@@ -463,11 +463,12 @@ class Application extends AbstractApplication
     public function session_open()
     {
         try {
-            session_name(SESSION_NAME);
+            
             $status = session_status();
 
             if ($status == PHP_SESSION_NONE) {
                 // There is no active session
+                session_name(SESSION_NAME);
                 session_start();
             } else if ($status == PHP_SESSION_DISABLED) {
                 // Sessions are not available
@@ -490,10 +491,12 @@ class Application extends AbstractApplication
     public function session_end()
     {
         try {
-            session_name(SESSION_NAME);
+            
             $status = session_status();
 
             if ($status == PHP_SESSION_ACTIVE) {
+                
+                session_name(SESSION_NAME);
                 // Destroy current and start new one
                 session_destroy();
             }

@@ -77,7 +77,6 @@ class ParallelProcess extends Utils
         
         
         
-        
         for ($i = 0; $i < $nb_max_process; $i ++) {
             $pool[$i] = FALSE;
         }
@@ -208,7 +207,7 @@ class ParallelProcess extends Utils
                                 
                                 $fp = fopen($filename, "r+");
                                 rewind($fp);
-                                $this->finsert($fp, $script . "\n" . $hardwareInfo . "\n\n");
+                                $this->finsert($fp, $script . "\n\n" . $hardwareInfo . "\n\n");
                                 fclose($fp);
                                 
 //                                 $filename = substr($filename, strrpos($filename, "/") + 1);
@@ -423,7 +422,7 @@ class ParallelProcess extends Utils
                             
                             $fp = fopen($filename, "r+");
                             rewind($fp);
-                            $this->finsert($fp, $script . "\n" . $hardwareInfo . "\n\n");
+                            $this->finsert($fp, $script . "\n\n" . $hardwareInfo . "\n\n");
                             fclose($fp);
                             
 //                             $filename = substr($filename, strrpos($filename, "/") + 1);

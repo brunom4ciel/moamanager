@@ -114,7 +114,7 @@ function get_memory()
 {
     foreach (file('/proc/meminfo') as $ri)
         $m[strtok($ri, ':')] = strtok('');
-        return 100 - round(($m['MemFree'] + $m['Buffers'] + $m['Cached']) / $m['MemTotal'] * 100);
+        return 100 - @round(($m['MemFree'] + $m['Buffers'] + $m['Cached']) / $m['MemTotal'] * 100);
 }
 
 $stat1 = array();

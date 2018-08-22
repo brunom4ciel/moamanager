@@ -338,9 +338,7 @@ if($task == "open"){
                 //
                 //************************************************
                 
-                
-                var_dump($dirStorage);
-                exit("-fim-");
+        
                 
                 $files = new Files();
                 
@@ -679,7 +677,7 @@ if($task == "open"){
                 }
                 
                 
-                
+                $aux_dir_workspace = $dirStorage;
                 
                 //*************************************************
                 //
@@ -727,13 +725,13 @@ if($task == "open"){
 //                     .$filename_source
 //                     .substr(microtime(true),0,8).".log";
                               
-                                
+                $username = $application->getUser();
                 $lines_cmd = array();
                 $w=1;
                 $dataJson = array();
                 $idSeq = 1;
                 
-                foreach($list_scripts2 as $key=>$item){
+                foreach($list_scripts2 as $key=>$script_item){
                     
                     //usleep(5000);
                     //sleep(1);
@@ -755,7 +753,7 @@ if($task == "open"){
                         //."lib"
                         //.DIRECTORY_SEPARATOR
                         //."sizeofag-1.0.0.jar "
-                        ." \ \"".$item."\" > "
+                        ." \ \"".$script_item."\" > "
                             .$dirProcess . $filename_script;
                             
                     }else {
@@ -775,7 +773,7 @@ if($task == "open"){
                                                 .Properties::getBase_directory_moa()
                                                 ."lib"
                                                     .DIRECTORY_SEPARATOR
-                                                    ."sizeofag-1.0.0.jar " . $interfacename . " \ \"".$item."\" > "
+                                                    ."sizeofag-1.0.0.jar " . $interfacename . " \ \"".$script_item."\" > "
                                                         .$dirProcess.$filename_script;
                                                         
                     }
@@ -785,7 +783,7 @@ if($task == "open"){
                         //"id"=>$utils->format_number($w,4),
                         "id"=>$idSeq,
                         "pid"=>0,
-                        "filename"=>$dirProcess . $filename_script,
+                        "filename"=>$aux_dir_workspace . $filename_script,
                         "command"=>$cmd,
                         "running"=>false,
                         "script"=>$script_item,
@@ -810,6 +808,8 @@ if($task == "open"){
                     
 //                     $w++;
                     $idSeq++;
+                    
+                    
                 }
                 
                 
@@ -824,7 +824,7 @@ if($task == "open"){
                 $jsonfile = new JsonFile($filename_man_log);                
                 $jsonfile->setData($files_log_list);                
                 $jsonfile->save();                
-                chmod($filename, 0777);
+                chmod($filename_man_log, 0777);
                 
                 
 //                 $parallel->pool_execute2($filename_man_log,
