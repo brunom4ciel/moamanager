@@ -41,7 +41,7 @@ class ParallelProcess extends Utils
 
     
     
-    public function pool_execute2($filename, $nb_max_process, $user_id)
+    public function pool_execute2($filename, $nb_max_process, $user_id, $interfacename="moa.DoTask")
     { // }, $filename_source="") {
         $pross_ids = array();
         
@@ -191,7 +191,7 @@ class ParallelProcess extends Utils
                             
                             if (is_writable($filename)) {
                                 
-                                $tagSearch = "moa.DoTask \\";
+                                $tagSearch = $interfacename . " \\";
                                 $script = substr($command, strrpos($command, $tagSearch) + strlen($tagSearch) + 2);
                                 $script = trim($script);
                                 
@@ -414,7 +414,7 @@ class ParallelProcess extends Utils
                         
                         if (is_writable($filename)) {
                             
-                            $tagSearch = "moa.DoTask \\";
+                            $tagSearch = $interfacename . " \\";
                             $script = substr($command, strrpos($command, $tagSearch) + strlen($tagSearch) + 2);
                             $script = trim($script);
                             

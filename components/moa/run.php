@@ -579,7 +579,8 @@ if($task == "open"){
                 $parallel->pool_execute2($filename_man_log,
                     $application->getParameter("parallel_process"),
 //                     $dirProcess,
-                    $user_id);
+                    $user_id,
+                    $interfacename);
 
 
                 //
@@ -751,37 +752,38 @@ if($task == "open"){
                         
                         $cmd = Properties::getFileJavaExec()
                         ." -Xmx".$moa_menory_used.$moa_memory_unit." -jar \""
-                            .Properties::getBase_directory_moa()
-                            ."bin"
-                                .DIRECTORY_SEPARATOR
-                                .$moafile . "\""
-                                    //." -javaagent:"
+                        .Properties::getBase_directory_moa()
+                        ."bin"
+                        .DIRECTORY_SEPARATOR
+                        .$moafile . "\""
+                                   //." -javaagent:"
                         //.Properties::getBase_directory_moa()
                         //."lib"
                         //.DIRECTORY_SEPARATOR
                         //."sizeofag-1.0.0.jar "
                         ." \ \"".$script_item."\" > "
-                            .$dirProcess . $filename_script;
+                        .$dirProcess . $filename_script;
                             
                     }else {
                         
                         $cmd = Properties::getFileJavaExec()
                         ." -Xmx".$moa_menory_used.$moa_memory_unit." -cp \""
-                            .Properties::getBase_directory_moa()
-                            ."bin"
-                                .DIRECTORY_SEPARATOR
-                                .$moafile
-                                .":"
-                                    .Properties::getBase_directory_moa()
-                                    ."lib"
-                                        .DIRECTORY_SEPARATOR
-                                        ."*\""
-                                            ." -javaagent:"
-                                                .Properties::getBase_directory_moa()
-                                                ."lib"
-                                                    .DIRECTORY_SEPARATOR
-                                                    ."sizeofag-1.0.0.jar " . $interfacename . " \ \"".$script_item."\" > "
-                                                        .$dirProcess.$filename_script;
+                        .Properties::getBase_directory_moa()
+                        ."bin"
+                        .DIRECTORY_SEPARATOR
+                        .$moafile
+                        .":"
+                        .Properties::getBase_directory_moa()
+                        ."lib"
+                        .DIRECTORY_SEPARATOR
+                        ."*\""
+                        ." -javaagent:"
+                        .Properties::getBase_directory_moa()
+                        ."lib"
+                        .DIRECTORY_SEPARATOR
+                        ."sizeofag-1.0.0.jar " . $interfacename . " \ \"".$script_item."\" > "
+                        .$dirProcess.$filename_script;
+
                                                         
                     }
                     
@@ -871,7 +873,8 @@ if($task == "open"){
                 
                 $parallel->pool_execute2($filename_man_log,
                     $application->getParameter("parallel_process"),
-                    $user_id);
+                    $user_id,
+                    $interfacename);
                 
                 
                 //
@@ -1092,12 +1095,18 @@ if($task == "open"){
                                 
                                 $script_item = $element["script"];                                
                                     
-                                $aux_dir_workspace = substr($filename_, 0, strrpos($filename_, DIRECTORY_SEPARATOR)+1);
+//                                 $aux_dir_workspace = substr($element["command"], 0, strrpos($filename_, DIRECTORY_SEPARATOR)+1);
                                     
-                                $filename_script = substr($filename_, strrpos($filename_, DIRECTORY_SEPARATOR)+1);
-                                                                
+//                                 $filename_script = substr($filename_, strrpos($filename_, DIRECTORY_SEPARATOR)+1);
+                                      
                                 
+                                $filename_script = substr($element["command"], strrpos($element["command"], ">") + 1);
+                                $filename_script = trim($filename_script);
                                 
+                                $aux_dir_workspace = substr($filename_script, 0, strrpos($filename_script, DIRECTORY_SEPARATOR)+1);
+                                $filename_script = substr($filename_script, strrpos($filename_script, DIRECTORY_SEPARATOR)+1);
+                                
+                                  
     //                                 $filename_script= $filename_source."-".$utils->format_number($idSeq,4).".txt"; //format_number2($i,4)
                                     
                                 $cmd = "";
@@ -1117,7 +1126,7 @@ if($task == "open"){
                                     //.DIRECTORY_SEPARATOR
                                     //."sizeofag-1.0.0.jar "
                                     ." \ \"".$script_item."\" > "
-                                    .$dirProcess . $filename_script;
+                                        .$aux_dir_workspace . $filename_script;
                                     
                                 }else{
                                     
@@ -1137,7 +1146,7 @@ if($task == "open"){
                                     ."lib"
                                     .DIRECTORY_SEPARATOR
                                     ."sizeofag-1.0.0.jar " . $interfacename . " \ \"".$script_item."\" > "
-                                    .$dirProcess.$filename_script;
+                                    . $aux_dir_workspace . $filename_script;
                                     
                                 }
                                     
@@ -1238,7 +1247,8 @@ if($task == "open"){
                     $parallel->pool_execute2($filename_man_log,
                         $application->getParameter("parallel_process"),
 //                         $dirProcess,
-                        $user_id);
+                        $user_id,
+                        $interfacename);
                     
                     
                     //

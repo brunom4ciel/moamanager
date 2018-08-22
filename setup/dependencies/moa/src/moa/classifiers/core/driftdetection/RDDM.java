@@ -1,9 +1,10 @@
-﻿/*
+/*
  *    RDDM.java
- *    Copyright (C) 2015 Barros, Cabral, Gonçalves
+ *    Copyright (C) 2016 Barros, Cabral, Goncalves, Santos
  *    @authors Roberto S. M. Barros (roberto@cin.ufpe.br) 
  *             Danilo Cabral (danilocabral@danilocabral.com.br)
- *             Paulo M. Gonçalves Jr. (paulomgj@gmail.com)
+ *             Paulo M. Goncalves Jr. (paulomgj@gmail.com)
+ *             Silas G. T. C. Santos (sgtcs@cin.ufpe.br)
  *    @version $Version: 1 $
  *    
  *    Evolved from DDM.java
@@ -11,33 +12,27 @@
  *    @author Manuel Baena (mbaena@lcc.uma.es)
  *    @version $Revision: 7 $
  *
- *    This program is free software; you can redistribute it and/or modify
- *    it under the terms of the GNU General Public License as published by
- *    the Free Software Foundation; either version 3 of the License, or
- *    (at your option) any later version.
+ *    Licensed under the Apache License, Version 2.0 (the "License");
+ *    you may not use this file except in compliance with the License.
+ *    You may obtain a copy of the License at
  *
- *    This program is distributed in the hope that it will be useful,
- *    but WITHOUT ANY WARRANTY; without even the implied warranty of
- *    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *    GNU General Public License for more details.
+ *      http://www.apache.org/licenses/LICENSE-2.0
  *
- *    You should have received a copy of the GNU General Public License
- *    along with this program. If not, see <http://www.gnu.org/licenses/>.
+ *    Unless required by applicable law or agreed to in writing, software
+ *    distributed under the License is distributed on an "AS IS" BASIS,
+ *    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *    See the License for the specific language governing permissions and
+ *    limitations under the License.
  */
 
 /**
- * Reactive Drift detection method (RDDM) 
+ * Reactive Drift Detection Method (RDDM) 
  * published as:
- * <p> Roberto S. M. Barros, Danilo R. L. Cabral, Paulo M. Gonçalves Jr.,
+ *     Roberto S. M. Barros, Danilo R. L. Cabral, Paulo M. Goncalves Jr.,
  *     and Silas G. T. C. Santos: 
  *     RDDM: Reactive Drift Detection Method. 
- *     ... detalhes da publicação... </p>
- *
- * Inspired in DDM method, published as: 
- *     João Gama, Pedro Medas, Gladys Castillo, and Pedro Pereira Rodrigues.
- *     Learning with Drift Detection. 
- *     SBIA 2004, LNCS, Vol. 3171, pp 286-295. 
- *
+ *     Expert Systems With Applications 90C (2017) pp. 344-355.
+ *     DOI: 10.1016/j.eswa.2017.08.023
  */
 
 package moa.classifiers.core.driftdetection;
@@ -48,9 +43,9 @@ import moa.options.FloatOption;
 import moa.tasks.TaskMonitor;
 
 public class RDDM extends AbstractChangeDetector {
-	private static final long serialVersionUID = -489867468386968209L;
+    private static final long serialVersionUID = -489867468386968209L;
 
-	public IntOption minNumInstancesOption = new IntOption("minNumInstances", 
+    public IntOption minNumInstancesOption = new IntOption("minNumInstances", 
             'n', "Minimum number of instances before monitoring changes.",
             129, 0, Integer.MAX_VALUE);
 
@@ -115,8 +110,6 @@ public class RDDM extends AbstractChangeDetector {
         m_pmin = Double.MAX_VALUE;
         m_smin = Double.MAX_VALUE;
         m_psmin = Double.MAX_VALUE; 
-//        System.out.println("RDDM - Params. MAX=" + maxSizeConcept + " MIN=" + 
-//        		minSizeStableConcept + " warnLimit =" + warnLimit);
     }
 
     @Override
@@ -143,7 +136,7 @@ public class RDDM extends AbstractChangeDetector {
     	    	firstPos = lastWarnPos;
     	    	numStoredInstances = lastPos - firstPos + 1;
     	    	if (numStoredInstances <= 0) {
-    	    		numStoredInstances += minSizeStableConcept;
+    	    	    numStoredInstances += minSizeStableConcept;
     	    	}
     	    } 
     	    
@@ -161,7 +154,7 @@ public class RDDM extends AbstractChangeDetector {
             }
     	    
             lastWarnPos = -1;
-	    	lastWarnInst = -1;
+            lastWarnInst = -1;
             rddmDrift = false;
             this.isChangeDetected = false;
         }
@@ -169,12 +162,12 @@ public class RDDM extends AbstractChangeDetector {
         lastPos = (lastPos + 1) % minSizeStableConcept;   // Adds prediction at the end of the window.
         storedPredictions[lastPos] = (byte) prediction;
         if (numStoredInstances < minSizeStableConcept) {   // The window grows.
-        	numStoredInstances++;
+            numStoredInstances++;
         } else {   // The window is full.
-        	firstPos = (firstPos + 1) % minSizeStableConcept;    // Start of the window moves.
-        	if (lastWarnPos == lastPos) { 
-        		lastWarnPos = -1;
-        	}
+            firstPos = (firstPos + 1) % minSizeStableConcept;    // Start of the window moves.
+            if (lastWarnPos == lastPos) { 
+                lastWarnPos = -1;
+            }
         }
 	    
         m_p = m_p + (prediction - m_p) / m_n;
