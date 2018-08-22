@@ -461,7 +461,12 @@ if($task == "open"){
                                     foreach($script_list as $script_item)
                                     {
                                         
-                                        $filename_script= $filename_source."-".$utils->format_number($w,4).".txt"; //format_number2($i,4)
+//                                         $filename_script= $filename_source."-".$utils->format_number($w,4).".txt"; //format_number2($i,4)
+                                        
+                                        $filename_script= $filename_source."-".$utils->format_number($w, 4)
+                                        . "-" . $idSeq . ".txt"; //format_number2($i,4)
+                                        
+                                        
                                         $cmd = "";
                                         
                                         
@@ -573,7 +578,7 @@ if($task == "open"){
 
                 $parallel->pool_execute2($filename_man_log,
                     $application->getParameter("parallel_process"),
-                    $dirProcess,
+//                     $dirProcess,
                     $user_id);
 
 
@@ -735,9 +740,9 @@ if($task == "open"){
                     
                     //usleep(5000);
                     //sleep(1);
-                    
-                    
-                    $filename_script= $filename_source."-".$utils->format_number($idSeq, 4).".txt"; //format_number2($i,4)
+                                        
+                    $filename_script= $filename_source."-".$utils->format_number($idSeq, 4)
+                    . "-" . $idSeq . ".txt"; //format_number2($i,4)
                     
                     
                     if($javap == "runnable"){
@@ -809,7 +814,7 @@ if($task == "open"){
 //                     $w++;
                     $idSeq++;
                     
-                    
+//                     var_dump($files_log_list);exit();
                 }
                 
                 
@@ -820,6 +825,11 @@ if($task == "open"){
                 
                 
                 //$filename_man_log = $dirStorage . $foldernew__ . ".log";
+                
+                if(file_exists($filename_man_log))
+                {
+                    unlink($filename_man_log);   
+                }
                 
                 $jsonfile = new JsonFile($filename_man_log);                
                 $jsonfile->setData($files_log_list);                
@@ -859,7 +869,6 @@ if($task == "open"){
                 
                 $parallel->pool_execute2($filename_man_log,
                     $application->getParameter("parallel_process"),
-                    $dirProcess,
                     $user_id);
                 
                 
@@ -1084,7 +1093,9 @@ if($task == "open"){
                                 $aux_dir_workspace = substr($filename_, 0, strrpos($filename_, DIRECTORY_SEPARATOR)+1);
                                     
                                 $filename_script = substr($filename_, strrpos($filename_, DIRECTORY_SEPARATOR)+1);
-                                    
+                                                                
+                                
+                                
     //                                 $filename_script= $filename_source."-".$utils->format_number($idSeq,4).".txt"; //format_number2($i,4)
                                     
                                 $cmd = "";
@@ -1224,7 +1235,7 @@ if($task == "open"){
                     
                     $parallel->pool_execute2($filename_man_log,
                         $application->getParameter("parallel_process"),
-                        $dirProcess,
+//                         $dirProcess,
                         $user_id);
                     
                     
