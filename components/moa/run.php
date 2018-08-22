@@ -461,7 +461,7 @@ if($task == "open"){
                                     foreach($script_list as $script_item)
                                     {
                                         
-//                                         $filename_script= $filename_source."-".$utils->format_number($w,4).".txt"; //format_number2($i,4)
+                                        $filename_script_w = $filename_source."-".$utils->format_number($w,4).".txt"; //format_number2($i,4)
                                         
                                         $filename_script= $filename_source."-".$utils->format_number($w, 4)
                                         . "-" . $idSeq . ".txt"; //format_number2($i,4)
@@ -515,7 +515,7 @@ if($task == "open"){
                                             //"id"=>$utils->format_number($w,4),
                                             "id"=>$idSeq,
                                             "pid"=>0,
-                                            "filename"=>$aux_dir_workspace.$filename_script,
+                                            "filename"=>$aux_dir_workspace.$filename_script_w,
                                             "command"=>$cmd,
                                             "running"=>false,
                                             "script"=>$script_item,
@@ -740,7 +740,9 @@ if($task == "open"){
                     
                     //usleep(5000);
                     //sleep(1);
-                                        
+                    
+                    $filename_script_w = $filename_source."-".$utils->format_number($idSeq,4).".txt";
+                    
                     $filename_script= $filename_source."-".$utils->format_number($idSeq, 4)
                     . "-" . $idSeq . ".txt"; //format_number2($i,4)
                     
@@ -788,7 +790,7 @@ if($task == "open"){
                         //"id"=>$utils->format_number($w,4),
                         "id"=>$idSeq,
                         "pid"=>0,
-                        "filename"=>$aux_dir_workspace . $filename_script,
+                        "filename"=>$aux_dir_workspace . $filename_script_w,
                         "command"=>$cmd,
                         "running"=>false,
                         "script"=>$script_item,
