@@ -194,9 +194,6 @@ if($task == "open"){
             $parallel = new ParallelProcess();
             
             
-            
-            
-            
             $dirProcess = Properties::getBase_directory_destine_exec()
             .$application->getUser()
             .DIRECTORY_SEPARATOR;
@@ -214,7 +211,8 @@ if($task == "open"){
             
             $interfacename = $application->getParameter("interfacename");
             
-            if(empty($interfacename)){
+            if(empty($interfacename))
+            {
                 $interfacename = "moa.DoTask";
             }
             
@@ -227,7 +225,8 @@ if($task == "open"){
             
             $javap = $application->getParameter("java");
             
-            if(empty($javap)){
+            if(empty($javap))
+            {
                 $javap = "jar";
             }
             
@@ -243,20 +242,24 @@ if($task == "open"){
             
             if(strpos($version_software, $application->getUser())===false
                 && strpos($version_software, 
-                    Properties::getBase_directory_moa_jar_default())===false){
+                    Properties::getBase_directory_moa_jar_default())===false)
+            {
                     
                     exit("error not version software permission");
                     
-            }else{
+            }else
+            {
                 
                 if(is_file(Properties::getBase_directory_moa()
                     ."bin"
                     .DIRECTORY_SEPARATOR
-                    .$version_software)){
+                    .$version_software))
+                {
                         
                     $moafile = $version_software;
                     
-                }else{
+                }else
+                {
                     exit("error version software not found");
                 }
                 
@@ -268,33 +271,36 @@ if($task == "open"){
             
             
             
-            
+
             
             
             
             //executar todos de um diretorio
-            if($application->getParameter("foldername")!=null){
+            if($application->getParameter("foldername")!=null)
+            {
                 
                 //*************************************************
                 //
                 //************************************************
                 $fname = $application->getParameter("foldername");
                 
-                if(strpos($fname, "/") === false){
+                if(strpos($fname, "/") === false)
+                {
                     
-                }else{
+                }else
+                {
                     $fname = substr($fname, strrpos($fname, "/")+1);
                 }
                 
                 //$fname = str_replace("/", "-", $fname);
                 
                 
-                if($application->getParameter("dirstorage") == null){
-                    
+                if($application->getParameter("dirstorage") == null)
+                {                    
                     $foldernew = $fname;//$application->getParameter("filename");
                     
-                }else{
-                    
+                }else
+                {                    
                     $foldernew = $application->getParameter("dirstorage")
                                     .DIRECTORY_SEPARATOR
                                     .$fname//$application->getParameter("filename")
@@ -308,7 +314,8 @@ if($task == "open"){
                 while(is_dir(Properties::getBase_directory_destine($application)
                     .$application->getUser()
                     .DIRECTORY_SEPARATOR
-                    .$foldernew__)){
+                    .$foldernew__))
+                {
                     $foldernew__ = $foldernew."-new-(".$utils->format_number($y,4).")";
                     $y++;
                 }
@@ -320,7 +327,8 @@ if($task == "open"){
                             .$application->getUser() . DIRECTORY_SEPARATOR
                             ,"0777");
                                 
-                if(!$dirStorage){
+                if(!$dirStorage)
+                {
                     exit("error: not permission in" .  Properties::getBase_directory_destine($application)
                         .$application->getUser() . DIRECTORY_SEPARATOR);
                 }
@@ -331,6 +339,8 @@ if($task == "open"){
                 //************************************************
                 
                 
+                var_dump($dirStorage);
+                exit("-fim-");
                 
                 $files = new Files();
                 
@@ -342,32 +352,36 @@ if($task == "open"){
                 
                 $from_folder2 = trim($application->getParameter("foldername"));
                     
-                if(substr($from_folder2, 0, 1) == DIRECTORY_SEPARATOR){
+                if(substr($from_folder2, 0, 1) == DIRECTORY_SEPARATOR)
+                {
                     $from_folder .= substr($from_folder2, 1);
-                }else{
+                }else
+                {
                     $from_folder .= $from_folder2;
                 }
                 
-                if(substr($from_folder, strlen($from_folder)-1) != DIRECTORY_SEPARATOR){
+                if(substr($from_folder, strlen($from_folder)-1) != DIRECTORY_SEPARATOR)
+                {
                     $from_folder .= DIRECTORY_SEPARATOR;
                 }
                 
                 $idSeq = 1;
                 
                 //verifica se o diretorio existe
-                if(is_dir($from_folder)){
-                    
+                if(is_dir($from_folder))
+                {                    
                     $files_list = getDirContents($from_folder);
                     $aux = array();
                     
-                    foreach($files_list as $file_item){
-                        
+                    foreach($files_list as $file_item)
+                    {                        
                         $aux[] = substr($file_item, strlen($from_folder));                      
                     }
                     
                     $files_log_list = array();
                     
-                    foreach($aux as $file_item){
+                    foreach($aux as $file_item)
+                    {
                         
                         $aux_str = explode(DIRECTORY_SEPARATOR, $file_item);
                         $aux_dir = $from_folder;
@@ -375,18 +389,21 @@ if($task == "open"){
                         
                         foreach($aux_str as $aux_item){                                                     
                             
-                            if(is_dir($aux_dir . $aux_item . DIRECTORY_SEPARATOR)){
-                                
+                            if(is_dir($aux_dir . $aux_item . DIRECTORY_SEPARATOR))
+                            {                                
                                 $aux_dir .= $aux_item . DIRECTORY_SEPARATOR;  
                                 
-                                if(!is_dir($aux_dir_workspace . $aux_item . DIRECTORY_SEPARATOR)){
+                                if(!is_dir($aux_dir_workspace . $aux_item . DIRECTORY_SEPARATOR))
+                                {
                                     //echo "create dir " . $aux_dir_workspace . "<br>";
                                     $aux_result = $utils->create_dir($aux_item,
                                         $aux_dir_workspace
                                         ,"0777");
                                     
-                                    if(!$aux_result){
-                                        exit("error: not permission in" .  Properties::getBase_directory_destine($application)
+                                    if(!$aux_result)
+                                    {
+                                        exit("error: not permission in" 
+                                            .  Properties::getBase_directory_destine($application)
                                             .$application->getUser() . DIRECTORY_SEPARATOR);
                                     }
                                     
@@ -394,18 +411,19 @@ if($task == "open"){
                                 
                                 $aux_dir_workspace .= $aux_item . DIRECTORY_SEPARATOR;
                                 
-                            }else{
-                                
-                                
+                            }else
+                            {
                                 $aux_filename = substr($aux_item, 0, strrpos($aux_item, "."));
                                                                 
-                                if(!is_dir($aux_dir_workspace . $aux_filename . DIRECTORY_SEPARATOR)){
+                                if(!is_dir($aux_dir_workspace . $aux_filename . DIRECTORY_SEPARATOR))
+                                {
                                     //echo "create dir " . $aux_dir_workspace . "<br>";
                                     $aux_result = $utils->create_dir($aux_filename,
                                         $aux_dir_workspace
                                         ,"0777");
                                     
-                                    if(!$aux_result){
+                                    if(!$aux_result)
+                                    {
                                         exit("error: not permission in" .  Properties::getBase_directory_destine($application)
                                             .$application->getUser() . DIRECTORY_SEPARATOR);
                                     }
@@ -417,7 +435,8 @@ if($task == "open"){
                                 $filename = $aux_item;
                                 
                               
-                                if(file_exists($aux_dir . $aux_item)){
+                                if(file_exists($aux_dir . $aux_item))
+                                {
                                     
                                     $script_list = $files->loadListScripts($aux_dir . $filename);
                                     
@@ -441,13 +460,15 @@ if($task == "open"){
 //                                         unlink($filename);
 //                                     }
                                     
-                                    foreach($script_list as $script_item){
+                                    foreach($script_list as $script_item)
+                                    {
                                         
                                         $filename_script= $filename_source."-".$utils->format_number($w,4).".txt"; //format_number2($i,4)
                                         $cmd = "";
                                         
                                         
-                                        if($javap == "runnable"){
+                                        if($javap == "runnable")
+                                        {
                                             
                                             $cmd = Properties::getFileJavaExec()
                                             ." -Xmx".$moa_menory_used.$moa_memory_unit." -jar \""
@@ -463,7 +484,9 @@ if($task == "open"){
                                             ." \ \"".$script_item."\" > "
                                             .$dirProcess . $filename_script;
                                                 
-                                        }else{
+                                        }
+                                        else
+                                        {
                                             
                                             $cmd = Properties::getFileJavaExec()
                                             ." -Xmx".$moa_menory_used.$moa_memory_unit." -cp \""
@@ -596,17 +619,39 @@ if($task == "open"){
                 //$fname = str_replace("/", "-", $fname);
                 
                 
+                if($application->getParameter("filename") == null){
+                    
+                    $filename_source = "moamanager";//$application->getParameter("filename");
+                    
+                }else{
+                    
+                    $filename_source = $application->getParameter("filename");
+                    if(strpos($filename_source, ".")=== false)
+                    {
+                        
+                    }
+                    else 
+                    {
+                        $filename_source = substr($filename_source, 0, strrpos($filename_source, "."));
+                    }
+                    
+                    $filename_source = str_replace(" ", "", $filename_source);
+                }
+                                                
+                
                 if($application->getParameter("dirstorage") == null){
                     
-                    $foldernew = $fname;//$application->getParameter("filename");
+                    $foldernew = $filename_source;//$application->getParameter("filename");
                     
                 }else{
                     
                     $foldernew = $application->getParameter("dirstorage")
                     .DIRECTORY_SEPARATOR
-                    .$fname//$application->getParameter("filename")
-                    .DIRECTORY_SEPARATOR;
+                    .$fname
+                    .$filename_source;//$application->getParameter("filename");
+                    //.DIRECTORY_SEPARATOR;
                 }
+                
                 
                 
                 $foldernew__ = $foldernew;
@@ -620,6 +665,7 @@ if($task == "open"){
                         $y++;
                 }
                 
+                
                 $foldernew = $foldernew__;
                 
                 $dirStorage = $utils->create_dir($foldernew,
@@ -631,6 +677,8 @@ if($task == "open"){
                     exit("error: not permission in" .  Properties::getBase_directory_destine($application)
                         .$application->getUser() . DIRECTORY_SEPARATOR);
                 }
+                
+                
                 
                 
                 //*************************************************
@@ -653,25 +701,27 @@ if($task == "open"){
                 
                 
                 
-                if($application->getParameter("filename")==null){
+//                 if($application->getParameter("filename")==null){
                     
-                    $filename_source = "script";
+//                     $filename_source = "script";
                     
-                }else{
+//                 }else{
                     
-                    $filename_source = $application->getParameter("filename");
+//                     $filename_source = $application->getParameter("filename");
                     
-                    //$filename_source = str_replace(" ", "", $filename_source);
+//                     //$filename_source = str_replace(" ", "", $filename_source);
                     
-                    //$filename_source = $application->getParameter("filename");
-                }
+//                     //$filename_source = $application->getParameter("filename");
+//                 }
                 
                 
                 //                     $filename = $filename_source."-".$utils->format_number($w,4).".txt"; //format_number2($i,4)
                 
                 //$filename_source = $filename;
-                $filename_source = str_replace(" ", "", $filename_source);
-                $filename_source = substr($filename_source, 0, strrpos($filename_source, "."));
+//                 $filename_source = str_replace(" ", "", $filename_source);
+//                 $filename_source = substr($filename_source, 0, strrpos($filename_source, "."));
+                
+                
                 
 //                 $filename_man_log = ""
 //                     .$filename_source
