@@ -37,14 +37,17 @@ $filename = $application->getParameter("filename");
 if (strrpos($filename, ".") > - 1) {
 
     if (in_array(substr($filename, strrpos($filename, ".") + 1), array(
-        "data"
+        "data", "txt"
     ))) {
 
-        $filename = substr($filename, 0, strrpos($filename, "."));
+//         $filename = substr($filename, 0, strrpos($filename, "."));
 
-        $application->setParameter("filename", $filename);
+//         $application->setParameter("filename", $filename);
+    }else{
+        exit("error");
     }
 }
+
 
 $folder = $application->getParameter("folder");
 $dirScriptsName = "scripts";
@@ -55,9 +58,10 @@ if ($filename != null) {
 
     $utils = new Utils();
 
-    $filename = Properties::getBase_directory_destine($application) . $application->getUser() . DIRECTORY_SEPARATOR . $dirScriptsName . DIRECTORY_SEPARATOR . $folder . 
+    $filename = Properties::getBase_directory_destine($application) . $application->getUser() 
+    . DIRECTORY_SEPARATOR . $dirScriptsName . DIRECTORY_SEPARATOR . $folder . 
     // .DIRECTORY_SEPARATOR
-    $filename . $extension_scripts;
+    $filename;// . $extension_scripts;
 
     $task = $application->getParameter("task");
 
@@ -66,7 +70,8 @@ if ($filename != null) {
         $data = $application->getParameter("data");
         $utils->setContentFile($filename, $data);
 
-        $filenamenew = Properties::getBase_directory_destine($application) . $application->getUser() . DIRECTORY_SEPARATOR . $dirScriptsName . DIRECTORY_SEPARATOR . $folder . 
+        $filenamenew = Properties::getBase_directory_destine($application) . $application->getUser() 
+        . DIRECTORY_SEPARATOR . $dirScriptsName . DIRECTORY_SEPARATOR . $folder . 
         // .DIRECTORY_SEPARATOR
         $application->getParameter("filenamenew"); // /.$extension_scripts;
 
@@ -74,14 +79,14 @@ if ($filename != null) {
 
             if (file_exists($filename)) {
 
-                if (file_exists($filenamenew . $extension_scripts)) {
+                if (file_exists($filenamenew)) {
 
-                    while (file_exists($filenamenew . $extension_scripts)) {
+                    while (file_exists($filenamenew)) {
                         $filenamenew = "copy-" . $filenamenew;
                     }
                 }
 
-                rename($filename, $filenamenew . $extension_scripts);
+                rename($filename, $filenamenew);
 
                 $application->setParameter("filename", substr($filenamenew, strrpos($filenamenew, "/") + 1, strrpos($filenamenew, ".")));
             }
