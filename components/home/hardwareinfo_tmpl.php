@@ -136,7 +136,7 @@ $ram_free = $stat1[1];// - $stat1[1];
 $v = array("usage"=>"".$ram_usage."",
     "free"=>"".$ram_free . "");
 
-$json_result["ram"][] = base64_encode(makeImageUrl2( "RAM", $v ));
+$json_result["moamram"][] = base64_encode(makeImageUrl2( "RAM", $v ));
 
 
 // $v = array("usage"=>$utils->getha,
@@ -147,7 +147,7 @@ $json_result["ram"][] = base64_encode(makeImageUrl2( "RAM", $v ));
 
 /* ouput pretty images */
 foreach( $data as $k => $v ) {
-    $json_result["cpu"][] = base64_encode(makeImageUrl( $k, $v ));
+    $json_result["moamcpu"][] = base64_encode(makeImageUrl( $k, $v ));
 }
 
 

@@ -26,11 +26,11 @@ Framework::import("menu", "core/menu");
 Framework::import("Utils", "core/utils");
 // Framework::import("class_CPULoad", "core/sys");
 
-Template::addHeader(array("tag"=>"script",
-    "type"=>"text/javascript",
-    "src"=>""
-    . $application->getPathTemplate()
-    . "/javascript/base64.js"));
+// Template::addHeader(array("tag"=>"script",
+//     "type"=>"text/javascript",
+//     "src"=>""
+//     . $application->getPathTemplate()
+//     . "/javascript/base64.js"));
 
 $utils = new Utils();
 
@@ -84,12 +84,12 @@ if (! empty($time))
 								</div>
 
 						<div
-							style="float: left; width: 80%; border: 1px solid #fff; display: table-cell">
+							style="float: left; width: 80%; border: 1px solid #fff; display: table-cell;overflow-wrap: break-word;">
 			
 																
 																
-						<div id="usage_machine" style="text-align: left;">
-								<pre style="font-family: monospace,monospace;font-size: 11px;text-aling:left;">
+						<div id="usage_machine" style="text-align: left;display: block;overflow-wrap: break-word;max-width: 100%;">
+								<pre style="font-family: monospace,monospace;font-size: 11px;text-aling:left;max-width: 90%;">
 
 <?php 
 						
@@ -109,7 +109,7 @@ if (! empty($time))
 						
 </pre>
 
-<pre style="font-family: monospace,monospace;font-size: 11px;text-aling:left;">
+<pre style="font-family: monospace,monospace;font-size: 11px;text-aling:left;overflow-wrap: break-word;max-width: 90%;">
 
 <?php 
 $sysinfo = $utils->getHardwareInfo();
@@ -124,254 +124,6 @@ $utils->getHardwareKernelVersion();
 							
 						
 					
-					
-						
-<div id="console_process" style="width: 100%; max-width: 100%; border: 0px solid #000; text-align:center;">
-	<div id="ram" style="float:left;width: 20%; max-width: 90%; border: 0px solid #000; text-align:center;"></div>
-	<div id="cpu" style="float:left;width: 80%; max-width: 90%; border: 0px solid #000; text-align:center;"></div>
-</div>
-
-
-<br>
-<input type="button" id="buttonrefresh" value="Auto Refresh"
-								onclick="javascript:if(this.value=='Stop Auto Refresh'){this.value='Auto Refresh';cancelViewHardwareInfo=false; }else{ this.value='Stop Auto Refresh';cancelViewHardwareInfo=true;refreshViewHardwareinfo(); }" />
-					
-					
-					
-<script type='text/javascript'>
-
-
-
-
-// var cancelViewCPU=true;
-// var cancelViewProcess=true;
-var cancelViewHardwareInfo=true;
-var timeoutajust = 500;
-
-function refreshViewHardwareinfo(){
-	
-	setTimeout(function () {
-        // Do Something Here
-        // Then recall the parent function to
-        // create a recursive loop.
-        if(cancelViewHardwareInfo==true){
-            
-        	url = 'index.php?component=home&controller=hardwareinfo_tmpl&task=view&tmpl=tmpl';
-            method = 'POST';
-            id = 'console_process';
-            
-        	sendAjaxRequest(url, method, id, 'refreshViewHardwareinfo();');
-        	timeoutajust = 1000;
-        }
-        	
-    }, timeoutajust);
-    
-	
-}
-
-
-
-function sendAjaxRequest(url, method, id, callback){
-
-
-	var parameters ="";
-	var method = method;//"GET";
-
-	var strURL = url;//'index.php?component=home&controller=cpu_tmpl&task=view&tmpl=true';
-
-	
-	//var method= elementObj.value.toUpperCase();
-
-	
-	var HttpReq;
-	
-	if (window.XMLHttpRequest)
-	{// code for IE7+, Firefox, Chrome, Opera, Safari
-		HttpReq=new XMLHttpRequest();
-	}
-	else
-	{// code for IE6, IE5
-		HttpReq=new ActiveXObject("Microsoft.XMLHTTP");
-	}
-	
-	HttpReq.withCredentials = false;
-	
-	var strParameters = parameters;
-	 
-	if ( method == 'POST'){//create data
-		
-		HttpReq.open(method, strURL, true);
-		
-		
-		//strParameters = "parameters="+strParameters;
-		
-	}else if( method == 'PUT'){//update data
-		
-		HttpReq.open(method, strURL, true);
-		//strParameters = "parameters="+strParameters;
-		
-	}else if( method == 'DELETE'){//delete data
-		
-		HttpReq.open(method, strURL, true);
-		//strParameters = "parameters="+strParameters;
-				
-	}else if( method == 'GET'){//delete data
-		
-		//strParameters = "script="+Base64.encode(strParameters);
-		HttpReq.open(method, strURL +'?'+ strParameters, true);
-		//HttpReq.open(method, strURL, true);
-				
-	}else if( method == 'HEAD'){//delete data
-		
-		HttpReq.open(method, strURL, true);
-		//strParameters = "parameters="+strParameters;
-				
-	}else if( method == 'OPTIONS'){//delete data
-		
-		HttpReq.open(method, strURL, true);
-		//strParameters = "parameters="+strParameters;
-				
-	}else{
-		//default
-		
-		//strParameters = "parameters="+strParameters;
-		HttpReq.open(method, strURL +'?'+ strParameters, true);
-	}
-    
-
-	HttpReq.setRequestHeader("Content-type","application/x-www-form-urlencoded");
-	
-	
-	//alert("Content-Type: "+contentType);
-	var content_type="text/html";
-	var content_type="text/html";
-	
-	//HttpReq.setRequestHeader('Content-Type', content_type+";charset=UTF-8");
-	//HttpReq.setRequestHeader("Accept",accept+";charset=UTF-8");
-	    
-    HttpReq.onreadystatechange = function() {
-        if (HttpReq.readyState == 4) {
-        	
-        	switch(HttpReq.status){
-        		
-        		case	200:
-        		
-        			
-        			var html = HttpReq.responseText;
-			         
-
-        			var objectArray = JSON.parse(HttpReq.responseText);
-        			var imgs = "";
-					var create = false;
-					var keyname = 'ram';
-					
-					for(var i=0; i < objectArray[keyname].length; i++)
-					{
-						var element =  document.getElementById(keyname+'graph' + i);
-						var url = Base64.decode(objectArray[keyname][i]);
-						
-						if (typeof(element) != 'undefined' && element != null)
-						{
-						  // exists.
-							document.getElementById(keyname+"graph" + i).src = url;
-						}else
-							{
-							create = true;
-							imgs = imgs + '<img id="'+keyname+'graph' + i + '" src="' + url + '" />';
-						}						
-					}
-					
-
-					if(create == true)
-        			{
-						document.getElementById(keyname).innerHTML = imgs;
-        			}
-
-
-					if(create == true)
-        			{
-						document.getElementById('ram').innerHTML = imgs;
-        			}
-        			
-					var imgs = "";
-					var create = false;
-					var keyname = 'cpu';
-					
-					for(var i=0; i < objectArray[keyname].length; i++)
-					{
-						var element =  document.getElementById(keyname+'graph' + i);
-						var url = Base64.decode(objectArray[keyname][i]);
-						
-						if (typeof(element) != 'undefined' && element != null)
-						{
-						  // exists.
-							document.getElementById(keyname+"graph" + i).src = url;
-						}else
-							{
-							create = true;
-							imgs = imgs + '<img id="'+keyname+'graph' + i + '" src="' + url + '" />';
-						}						
-					}
-					
-
-					if(create == true)
-        			{
-						document.getElementById(keyname).innerHTML = imgs;
-        			}
-        			
-//         			if(typeof(objectArray[0]) == 'object')
-//                     {
-//                         headers = array_keys(objectArray[0]);
-
-
-//                         alert("ok");
-                        
-//                         for (i = 0; i < headers.length; i++){
-//                             alert(Base64.decode(headers[i]));
-//                         }
-                        
-//                     }
-
-                    
-			         
-					
-			       // var jsonHtmlTable = ConvertJsonToTable(objectArray, 'jsonTable', null, 'Download');
-			        
-// 					document.getElementById(id).innerHTML = "<br>"+html+"<br>";	
-            			
-            			
-            			
-        			break;
-        		case	401:
-        		
-        			alert("401 Unauthorized");
-        			
-        			break;
-        	}
-        }
-        
-	
-	}
-
-	HttpReq.send();
-	//refreshViewProcess();
-	eval(callback);
-
-}
-
-
-
-
-refreshViewHardwareinfo();
-cancelViewHardwareInfo=true;
-document.getElementById("buttonrefresh").value='Stop Auto Refresh';
-
-</script>
-
-										
-										
-										
-										</div>
 
 					</div>
 

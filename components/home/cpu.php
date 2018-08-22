@@ -32,6 +32,13 @@ if (! class_exists('Menu')) {
     $menu = new Menu();
 }
 
+Template::addHeader(array("tag"=>"script",
+    "type"=>"text/javascript",
+    "src"=>""
+    . $application->getPathTemplate()
+    . "/javascript/base64.js"));
+
+
 Template::addHeader(array(
     "tag" => "script",
     "type" => "text/javascript",
@@ -393,8 +400,245 @@ hr {
 							<input type="button" value="Auto Refresh Temp Files"
 								onclick="javascript:if(this.value=='Stop Auto Refresh Temp Files'){this.value='Auto Refresh Temp Files';cancelViewTempFiles=false; }else{ this.value='Stop Auto Refresh Temp Files';cancelViewTempFiles=true;refreshViewTempFiles(); }" />
 
-
+							<input type="button" id="buttonrefresh" value="Auto Refresh++"
+								onclick="javascript:if(this.value=='Stop Auto Refresh++'){this.value='Auto Refresh++';cancelViewHardwareInfo=false; }else{ this.value='Stop Auto Refresh++';cancelViewHardwareInfo=true;refreshViewHardwareinfo(); }" />
+					
+					
 							<div id="console_process"></div>
+
+
+<div id="console_process2" style="width: 100%; max-width: 100%; border: 0px solid #000; text-align:center;">
+	<div id="moamram" style="float:left;width: 20%; max-width: 90%; border: 0px solid #000; text-align:center;"></div>
+	<div id="moamcpu" style="float:left;width: 80%; max-width: 90%; border: 0px solid #000; text-align:center;"></div>
+</div>
+
+
+
+					
+					
+<script type='text/javascript'>
+
+
+
+
+// var cancelViewCPU=true;
+// var cancelViewProcess=true;
+var cancelViewHardwareInfo=true;
+var timeoutajust = 500;
+
+function refreshViewHardwareinfo(){
+	
+	setTimeout(function () {
+        // Do Something Here
+        // Then recall the parent function to
+        // create a recursive loop.
+        if(cancelViewHardwareInfo==true){
+            
+        	url = 'index.php?component=home&controller=hardwareinfo_tmpl&task=view&tmpl=tmpl';
+            method = 'POST';
+            id = 'console_process2';
+            
+        	sendAjaxRequest2(url, method, id, 'refreshViewHardwareinfo();');
+        	timeoutajust = 1000;
+        }
+        	
+    }, timeoutajust);
+    
+	
+}
+
+
+
+function sendAjaxRequest2(url, method, id, callback){
+
+
+	var parameters ="";
+	var method = method;//"GET";
+
+	var strURL = url;//'index.php?component=home&controller=cpu_tmpl&task=view&tmpl=true';
+
+	
+	//var method= elementObj.value.toUpperCase();
+
+	
+	var HttpReq;
+	
+	if (window.XMLHttpRequest)
+	{// code for IE7+, Firefox, Chrome, Opera, Safari
+		HttpReq=new XMLHttpRequest();
+	}
+	else
+	{// code for IE6, IE5
+		HttpReq=new ActiveXObject("Microsoft.XMLHTTP");
+	}
+	
+	HttpReq.withCredentials = false;
+	
+	var strParameters = parameters;
+	 
+	if ( method == 'POST'){//create data
+		
+		HttpReq.open(method, strURL, true);
+		
+		
+		//strParameters = "parameters="+strParameters;
+		
+	}else if( method == 'PUT'){//update data
+		
+		HttpReq.open(method, strURL, true);
+		//strParameters = "parameters="+strParameters;
+		
+	}else if( method == 'DELETE'){//delete data
+		
+		HttpReq.open(method, strURL, true);
+		//strParameters = "parameters="+strParameters;
+				
+	}else if( method == 'GET'){//delete data
+		
+		//strParameters = "script="+Base64.encode(strParameters);
+		HttpReq.open(method, strURL +'?'+ strParameters, true);
+		//HttpReq.open(method, strURL, true);
+				
+	}else if( method == 'HEAD'){//delete data
+		
+		HttpReq.open(method, strURL, true);
+		//strParameters = "parameters="+strParameters;
+				
+	}else if( method == 'OPTIONS'){//delete data
+		
+		HttpReq.open(method, strURL, true);
+		//strParameters = "parameters="+strParameters;
+				
+	}else{
+		//default
+		
+		//strParameters = "parameters="+strParameters;
+		HttpReq.open(method, strURL +'?'+ strParameters, true);
+	}
+    
+
+	HttpReq.setRequestHeader("Content-type","application/x-www-form-urlencoded");
+	
+	
+	//alert("Content-Type: "+contentType);
+	var content_type="text/html";
+	var content_type="text/html";
+	
+	//HttpReq.setRequestHeader('Content-Type', content_type+";charset=UTF-8");
+	//HttpReq.setRequestHeader("Accept",accept+";charset=UTF-8");
+	    
+    HttpReq.onreadystatechange = function() {
+        if (HttpReq.readyState == 4) {
+        	
+        	switch(HttpReq.status){
+        		
+        		case	200:
+        		
+        			
+        			var html = HttpReq.responseText;
+			         
+
+        			var objectArray = JSON.parse(HttpReq.responseText);
+        			var imgs = "";
+					var create = false;
+					var keyname = 'moamram';
+					
+					for(var i=0; i < objectArray[keyname].length; i++)
+					{
+						var element =  document.getElementById(keyname+'graph' + i);
+						var url = Base64.decode(objectArray[keyname][i]);
+						
+						if (typeof(element) != 'undefined' && element != null)
+						{
+						  // exists.
+							document.getElementById(keyname+"graph" + i).src = url;
+						}else
+							{
+							create = true;
+							imgs = imgs + '<img id="'+keyname+'graph' + i + '" src="' + url + '" />';
+						}						
+					}
+					
+
+					if(create == true)
+        			{
+						document.getElementById(keyname).innerHTML = imgs;
+        			}
+        			
+					var imgs = "";
+					var create = false;
+					var keyname = 'moamcpu';
+					
+					for(var i=0; i < objectArray[keyname].length; i++)
+					{
+						var element =  document.getElementById(keyname+'graph' + i);
+						var url = Base64.decode(objectArray[keyname][i]);
+						
+						if (typeof(element) != 'undefined' && element != null)
+						{
+						  // exists.
+							document.getElementById(keyname+"graph" + i).src = url;
+						}else
+							{
+							create = true;
+							imgs = imgs + '<img id="'+keyname+'graph' + i + '" src="' + url + '" />';
+						}						
+					}
+					
+
+					if(create == true)
+        			{
+						document.getElementById(keyname).innerHTML = imgs;
+        			}
+        			
+//         			if(typeof(objectArray[0]) == 'object')
+//                     {
+//                         headers = array_keys(objectArray[0]);
+
+
+//                         alert("ok");
+                        
+//                         for (i = 0; i < headers.length; i++){
+//                             alert(Base64.decode(headers[i]));
+//                         }
+                        
+//                     }
+
+                    
+			         
+					
+			       // var jsonHtmlTable = ConvertJsonToTable(objectArray, 'jsonTable', null, 'Download');
+			        
+// 					document.getElementById(id).innerHTML = "<br>"+html+"<br>";	
+            			
+            			
+            			
+        			break;
+        		case	401:
+        		
+        			alert("401 Unauthorized");
+        			
+        			break;
+        	}
+        }
+        
+	
+	}
+
+	HttpReq.send();
+	//refreshViewProcess();
+	eval(callback);
+
+}
+
+
+
+
+refreshViewHardwareinfo();
+cancelViewHardwareInfo=false;
+// document.getElementById("buttonrefresh").value='Stop Auto Refresh';
+
+</script>
 
 
 <script type='text/javascript'>
