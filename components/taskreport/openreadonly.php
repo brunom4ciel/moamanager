@@ -131,54 +131,8 @@ if ($filename != null) {
 
                     $maxBytesFileLoadPart = Properties::getFileContentsMaxSize();
 
-                    $size = filesize($filename) /1024;
-                    
-                    //                     $bparted = 20;
-                    
-                    if($size > 3000)
-                    {
-                        $bparted = 1000;
-                    }
-                    else
-                    {
-                        if($size > 1000)
-                        {
-                            $bparted = 500;
-                        }
-                        else
-                        {
-                            $bparted = $maxBytesFileLoadPart;
-                        }
-                    }                    
-                    
-                    
-                    $data1 = $utils->getContentFilePart($filename, ($bparted * 1024));
-                    $script = "";
-                    $output = "";
-                    
-                    if($utils->isMetadataFileScript($filename))
-                    {
-                        $script = $utils->getMetadataValueScript($filename, "script");
-                        $output = $utils->getMetadataValueScript($filename, "command-output");
-                        
-                        if(strpos($data1["data"], "Accuracy:") ===  false)
-                        {
-                            
-                        }
-                        else
-                        {
-                            $data1["data"] = substr($data1["data"], strpos($data1["data"], "Accuracy:"));
-                        }
-                    }
-                    else 
-                    {
-                        $script = substr($data1["data"], 0, strpos($data1["data"], "\n\n"));
-                        
-                        $data1["data"] = substr($data1["data"], strpos($data1["data"], "Accuracy:"));
-                    }
-                        
-                    
-                    
+                    $data1 = $utils->getContentFilePart($filename, ($maxBytesFileLoadPart * 1024));
+
                     $data = $data1["data"];
                 }
             }
@@ -241,7 +195,6 @@ if ($filename != null) {
 													
 												<input type="text" style="width: 100%" name="filenamenew"
 											value="<?php echo $application->getParameter("filename");?>">
-											<div style="text-align:justify;"><?php echo $script;?></div><br>
 										<textarea id="data" style="width: 100%; height: 400px;"
 											name="data"><?php echo $data?></textarea>		
 													<?php
@@ -249,7 +202,7 @@ if ($filename != null) {
 
             ?>
 												
-												<?php echo "Debug: <pre>".substr($output, 0, 5000);?></pre>
+												
 											</div>
 
 
@@ -274,7 +227,8 @@ function returnPage()
 {
 
 	window.location.href='?component=<?php echo $application->getParameter("component");?>'
-			+'&controller=controller'
+			+'&controller=detectproblems'
+			+'&filename=<?php echo $application->getParameter("filename2");?>'
 			+'&task=open'
 			+'&folder=<?php echo $application->getParameter("folder");?>';
 			

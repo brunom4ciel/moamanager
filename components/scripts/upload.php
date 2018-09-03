@@ -10,7 +10,7 @@ namespace moam\components\scripts;
 defined('_EXEC') or die();
 
 use moam\core\Framework;
-// use moam\core\Application;
+use moam\core\Template;
 use moam\core\Properties;
 // use moam\libraries\core\utils\Utils;
 // use moam\libraries\core\menu\Menu;
@@ -21,6 +21,8 @@ if (! class_exists('Application')) {
 if (! $application->is_authentication()) {
     $application->alert("Error: you do not have credentials.");
 }
+
+Template::setDisabledMenu();
 
 // Framework::import("menu", "core/menu");
 
@@ -149,7 +151,7 @@ if (isset($_FILES['uploadfile'])) {
 							<tr>
 								<td>File Upload (*.txt, *.data or *.zip):</td>
 								<td><input type="file" name="uploadfile" class="btn btn-default" /></td>
-								<td><input type="submit" class="btn btn-primary" name="default" value="Send" /></td>
+								<td>&nbsp; <input type="submit" class="btn btn-success" name="default" value="Send" /></td>
 							</tr>
 						</table>
 

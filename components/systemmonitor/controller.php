@@ -355,17 +355,19 @@ echo wordwrap($sysinfo, 80, "\n");
 
 								<div
 									style="float:left;width:100%">
-									<div id="disk">
+									
+									<div id="cpu">
 										<div class='progress'>
-											<div class='prgtext'><?php echo $dp; ?>% Disk Used</div>
+											<div class='prgtext'><?php echo $cpu_dp; ?> % CPU Used</div>
 											<div class='prgbar'></div>
 											<div class='prginfo'>
-												<span style='float: left;'><?php echo "$du of $dt used"; ?></span>
-												<span style='float: right;'><?php echo "$df of $dt free"; ?></span>
+
 												<span style='clear: both;'></span>
 											</div>
 										</div>
 									</div>
+									
+									
 
 									<div id="memory1">
 										<div class='progress'>
@@ -378,17 +380,19 @@ echo wordwrap($sysinfo, 80, "\n");
 										</div>
 									</div>
 
-
-									<div id="cpu">
+									<div id="disk">
 										<div class='progress'>
-											<div class='prgtext'><?php echo $cpu_dp; ?> % CPU Used</div>
+											<div class='prgtext'><?php echo $dp; ?>% Disk Used</div>
 											<div class='prgbar'></div>
 											<div class='prginfo'>
-
+												<span style='float: left;'><?php echo "$du of $dt used"; ?></span>
+												<span style='float: right;'><?php echo "$df of $dt free"; ?></span>
 												<span style='clear: both;'></span>
 											</div>
 										</div>
 									</div>
+									
+									
 								</div>
 
 							</div>

@@ -20,7 +20,7 @@ use moam\core\Template;
 use moam\libraries\core\json\JsonFile;
 // use moam\libraries\core\utils\ParallelProcess;
 // use moam\libraries\core\file\Files;
-use moam\libraries\core\db\DBPDO;
+// use moam\libraries\core\db\DBPDO;
 // use moam\libraries\core\email\UsageReportMail;
 // use moam\libraries\core\sms\Plivo;
 
@@ -84,6 +84,9 @@ $folder = $application->getParameter("folder");
 $task = $application->getParameter("task");
 $id = $application->getParameter("id");
 
+$dir = PATH_USER_WORKSPACE_STORAGE . $folder;
+
+
 $data = "";
 
 if ($filename != null) {
@@ -115,52 +118,89 @@ if ($filename != null) {
         
         if ($task == "save") {
 
-            $data["process"] = false; // (strtolower(App::getParameter("process"))=="true"?true:false);
-            $data["script"] = $application->getParameter("data");
-            $data["starttime"] = "";
-            $data["endtime"] = "";
-            $data["running"] = false;
-            $data["pid"] = "";
             
-            $dir = Properties::getBase_directory_destine($application) . $application->getUser() . DIRECTORY_SEPARATOR . $folder;
-                        
-            $filename_ = substr($filename, strrpos($filename, "/") + 1);
-            $filename_ = substr($filename_, 0, strrpos($filename_, "."));
-            $filename_ = trim($filename_);
-            $filename_ .= ".txt";
-
-            $dir = substr($filename, 0, strrpos($filename, "/") + 1);
-            $dir = trim($dir);
-
-            $filename_ = substr($filename_, 0, strpos($filename_, ".")) . "-" . $id . ".txt";
-
-            
-//             exit($dir . $filename_);
-            // echo $dir.$filename_;
-
-            // echo $dir.$id."-".$filename_;
-
-            if (file_exists($dir . $filename_)) {
-                unlink($dir . $filename_);
+            $find = FALSE;
+            if($jsonfile->issetKeyValue("filename"))
+            {
+                $s = $data;
+                $filename_aux = substr($s['filename'], strrpos($s['filename'],DIRECTORY_SEPARATOR)+1);
+                $find = TRUE;                
             }
+            else
+            {                    
+//                 $filename_ = substr($data['command'], strrpos($data['command'], "/") + 1);
+//                 $filename_ = trim($filename_);
+//                 $filename_f = substr($filename_, strrpos($filename_, DIRECTORY_SEPARATOR));                    
+                
+                //$s = $jsonfile->findDataKeyValue("command", $filename_f);
+                
+                $s = $data;
+                
+                $filename_aux = substr($s['command'], strrpos($s['command'],DIRECTORY_SEPARATOR)+1);
+                $find = TRUE;
+            }
+                
+                
+                
+            if($find == TRUE)
+            {
+                
+                if(file_exists($dir . $filename_aux))
+                {
+                    chmod($dir . $filename_aux, octdec("0777"));
+                    
+                    if(!unlink($dir . $filename_aux))
+                    {
+                        exit("Error: operation not allowed.");
+                    }
+                }
+                
+//                 $jsonfile->removeDataKeyValue("id", $id);
 
-            $jsonfile->setDataKeyValue("id", $id, $data);
+                $data["process"] = false; // (strtolower(App::getParameter("process"))=="true"?true:false);
+                $data["script"] = $application->getParameter("data");
+                $data["starttime"] = "";
+                $data["endtime"] = "";
+                $data["running"] = false;
+                $data["pid"] = "";
+                
+                $jsonfile->setDataKeyValue("id", $id, $data);
+                
+                $jsonfile->save();
+                
+//                 $data = $jsonfile->getDataKeyValue("id", $id);
 
-            // echo "<br><br><br><br>";
+                $application->redirect(PATH_WWW . "?component=" . $application->getComponent()
+                    . "&controller=" . $application->getController()
+                    . "&filename=" . basename($filename)
+                    . "&folder=" . $folder . ""
+                    . "&id=" . $id . ""
+                    . "&task=open");
+                
+                
+            }
+                
 
-            $data = $jsonfile->getDataKeyValue("id", $id);
-
-            // var_dump($data);exit($id);
-
-            $jsonfile->save();
-            $jsonfile->load();
-
-            $data = $jsonfile->getDataKeyValue("id", $id);
+            
         }
     }
 }
 
-$filename_element = $data['filename'];// substr($application->getParameter("filename"), 0, strpos($application->getParameter("filename"), ".")) . "-" . $id . ".txt";
+
+if($jsonfile->issetKeyValue("filename"))
+{
+    $filename_element = $data['filename'];
+}
+else
+{
+    $s = $data;    
+    $filename_element = substr($s['command'], strrpos($s['command'],DIRECTORY_SEPARATOR)+1);
+    $filename_element = $dir . $filename_element;
+}
+
+
+
+// $filename_element = $data['filename'];// substr($application->getParameter("filename"), 0, strpos($application->getParameter("filename"), ".")) . "-" . $id . ".txt";
 // $filename_element = App::getUser()."/".$folder.$filename_element;
 
 // exit($filename_element);
@@ -274,25 +314,34 @@ else
 
 									
 
-								
+								<div style="float: right; padding-left: 10px">
+									
+										<input type='button' class="btn btn-info" onclick='toogle_editable("data", this);' value='Toggle to read only mode' />
+										
+										<a name="save"></a><input
+											type="submit" class="btn btn-success"  value="Save">
+														
+										<input type="button" class="btn btn-default badge" value="Return" name="return"
+										onclick="javascript: returnPage();" />
+										
+									</div>
+									
+									
 							</form>
 
 
 
 
-									<div style="float: right; padding-left: 10px">
 									
-										<input type='button' class="btn btn-default" onclick='toogle_editable("data", this);' value='Toggle to read only mode' />
-										
-										<a name="save"></a><input
-											type="submit" class="btn btn-primary"  value="Save">
-														
-										<input type="button" class="btn btn-default" value="Return" name="return"
-										onclick="javascript: window.history.go(-1);" />
-									</div>
 									
 
 <script>
+
+
+
+
+
+
 function expand(id){
 
 	if(id.alt=='' || id.alt === undefined){

@@ -741,8 +741,11 @@ class Utils
             $handle_r = fopen($filename, "rb") or die("Unable to open file!");
 
             $eof_metadata = false;
+            $end_tag = false;
+            $open_tag = false;
+            $tagvalue = "";
             
-            while (! feof($handle_r))
+            while (!feof($handle_r))
             {
                 $data = fread($handle_r, 8024);
                 
@@ -753,21 +756,38 @@ class Utils
                 foreach($data_list as $item)
                 {
                     
-                    if(strpos($item, $keyname) === false)
+                    if(strpos($item, $keyname) === false && $open_tag == false)
                     {
                         
                     }
                     else
                     {
-                        $tagvalue = substr($item, strpos($item, $keyname)+strlen($keyname));
-                        $aux = "moamanager:value=\"";
-                        $tagvalue = substr($tagvalue, strpos($tagvalue, $aux)+strlen($aux));
-                        $tagvalue = substr($tagvalue,0, strpos($tagvalue, "\""));
-                        $keyvalue = $tagvalue;
-                        $eof_metadata = true;
-                        break;
+                        if($open_tag == false)
+                        {
+                            $tagvalue = substr($item, strpos($item, $keyname)+strlen($keyname));
+                            $aux = "moamanager:value=\"";
+                            $tagvalue = substr($tagvalue, strpos($tagvalue, $aux)+strlen($aux));
+                            $open_tag = true;
+                        }
+                        else
+                        {
+                            $tagvalue .= $item;
+                        }
+                       
+                        
                     }
+                    
                 }
+                        
+                        
+                if(strpos($tagvalue, "\""))
+                {
+                    $tagvalue = substr($tagvalue,0, strpos($tagvalue, "\""));
+                    $keyvalue = $tagvalue;
+                    $eof_metadata = true;
+                }
+                        
+
                 
                 if($eof_metadata == true)
                 {
@@ -936,13 +956,20 @@ class Utils
 	 */
     public static function getContentFile($filename)
     {
-        $handle = fopen($filename, "rb") or die("Unable to open file!");
-        $result = "";
-
-        while (! feof($handle))
-            $result .= fread($handle, 1024);
-
-        fclose($handle);
+        $result = false;
+        
+        if(file_exists($filename))
+        {
+            $handle = fopen($filename, "rb");// or die("Unable to open file: " . $filename);
+            $result = "";
+    
+            while (!feof($handle))
+            {
+                $result .= fread($handle, 1024);
+            }
+            
+            fclose($handle);
+        }
 
         return $result;
     }

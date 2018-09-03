@@ -705,43 +705,53 @@ if($task == "open"){
                 $data = $application->getParameter("data");
                 
                 
+                $folder = $application->getParameter("folder");
+                
+                if ($folder != null) {
+                    if (substr($folder, strlen($folder) - 1) != "/") {
+                        $folder .= DIRECTORY_SEPARATOR;
+                    }
+                }
+                
+                $dir = PATH_USER_WORKSPACE_STORAGE . $folder;
+                
+                
+                if(empty($application->getParameter("dirstorage")))
+                {
+                    $filename = $dir
+                    . $application->getParameter("dirstorage")
+                    . DIRNAME_SCRIPT
+                    . DIRECTORY_SEPARATOR
+                    . $application->getParameter("filename");
+                }
+                else
+                {
+                    $filename = $dir
+                    . $application->getParameter("dirstorage")
+                    . DIRECTORY_SEPARATOR
+                    . DIRNAME_SCRIPT
+                    . DIRECTORY_SEPARATOR
+                    . $application->getParameter("filename");
+                }
+                
+                $data = $utils->getContentFile($filename);
+                
                 $list_scripts = explode("\n", $data);
                 $list_scripts2 = array();
                 
-                for($i=0;$i<count($list_scripts);$i++){
-                    if(trim($list_scripts[$i])!="")
-                        array_push($list_scripts2, trim($list_scripts[$i]));
+                if(count($list_scripts) > 0)
+                {                
+                    for($i=0;$i<count($list_scripts);$i++){
+                        if(trim($list_scripts[$i])!="")
+                            array_push($list_scripts2, trim($list_scripts[$i]));
+                    }
+                }
+                else 
+                {
+                    exit("Error: without scripts in the file.");
                 }
                 
-                
-                
-                
-                
-//                 if($application->getParameter("filename")==null){
-                    
-//                     $filename_source = "script";
-                    
-//                 }else{
-                    
-//                     $filename_source = $application->getParameter("filename");
-                    
-//                     //$filename_source = str_replace(" ", "", $filename_source);
-                    
-//                     //$filename_source = $application->getParameter("filename");
-//                 }
-                
-                
-                //                     $filename = $filename_source."-".$utils->format_number($w,4).".txt"; //format_number2($i,4)
-                
-                //$filename_source = $filename;
-//                 $filename_source = str_replace(" ", "", $filename_source);
-//                 $filename_source = substr($filename_source, 0, strrpos($filename_source, "."));
-                
-                
-                
-//                 $filename_man_log = ""
-//                     .$filename_source
-//                     .substr(microtime(true),0,8).".log";
+//                 var_dump($_REQUEST);exit();
                               
                 $username = $application->getUser();
                 $lines_cmd = array();
@@ -847,10 +857,15 @@ if($task == "open"){
                     unlink($filename_man_log);   
                 }
                 
+                
+//                 exit("==" . $filename_man_log);
+                
                 $jsonfile = new JsonFile($filename_man_log);                
                 $jsonfile->setData($files_log_list);                
                 $jsonfile->save();                
                 chmod($filename_man_log, 0777);
+//                 var_dump($list_scripts2);
+//                 exit("fim");
                 
                 
 //                 $parallel->pool_execute2($filename_man_log,
@@ -1941,6 +1956,8 @@ function sendMOAREST(strURL, content, method){
 	var interfacename = document.getElementById('interfacename').value;	
 	var parallel_process = document.getElementById('parallel_process');
 		parallel_process = parallel_process.options[parallel_process.selectedIndex].value;
+		
+
 
 	var memory_used = document.getElementById('memory_used');
 		memory_used = memory_used.options[memory_used.selectedIndex].value;
@@ -1956,8 +1973,7 @@ function sendMOAREST(strURL, content, method){
 		var notification = 1;//document.getElementById('notification').value;
 	else
 		var notification = 0;//
-			
-
+		
 	var version_software = document.getElementById('version_software');
 	version_software = version_software.options[version_software.selectedIndex].value;
 		

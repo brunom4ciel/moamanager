@@ -46,7 +46,9 @@ $utils = new Utils();
 $filename = $application->getParameter("filename");
 $folder = $application->getParameter("folder");
 $id = $application->getParameter("id");
-// $dirScriptsName = "scripts";
+
+$dir = PATH_USER_WORKSPACE_STORAGE . $folder;
+
 
 // exit("error");
 $data = "";
@@ -63,6 +65,7 @@ if ($filename != null) {
 
     $task = $application->getParameter("task");
 
+    
     if ($task == "save") {
 
         /*
@@ -101,7 +104,9 @@ if ($filename != null) {
          */
     } else {
 
-        if ($task == "remove") {
+        if ($task == "remove") 
+        {
+//             var_dump($task);exit();
 
             // Framework::includeLib("JsonFile.php");
 
@@ -112,15 +117,75 @@ if ($filename != null) {
 
             if (isset($data["id"])) {
 
-                $jsonfile->removeDataKeyValue("id", $id);
-
-//                 $jsonfile->save();
-
+                
+                if($jsonfile->issetKeyValue("filename"))
+                {
+                    $s = $jsonfile->findDataKeyValue("filename", $filename_f);
+                    
+                    // if($s['process'] ==  TRUE)
+                    //{
+                    $filename_aux = substr($s['filename'], strrpos($s['filename'],DIRECTORY_SEPARATOR)+1);
+                    $find = TRUE;
+                    //}
+                }
+                else
+                {
+                    
+                    $filename_ = substr($data['command'], strrpos($data['command'], "/") + 1);
+                    $filename_ = trim($filename_);
+                    $filename_f = substr($filename_, strrpos($filename_, DIRECTORY_SEPARATOR));
+                                        
+                    
+                    $s = $jsonfile->findDataKeyValue("command", $filename_f);
+                    
+                    //if($s['process'] ==  TRUE)
+                    //{
+                    $filename_aux = substr($s['command'], strrpos($s['command'],DIRECTORY_SEPARATOR)+1);
+                    $find = TRUE;
+                    //}
+                    
+//                     var_dump($dir . $filename_aux);
+//                     exit("ok=");
+                    
+                }
+                
+                
+                
+                if($find == TRUE)
+                {
+                    
+                    if(file_exists($dir . $filename_aux))
+                    {                        
+                        chmod($dir . $filename_aux, octdec("0777")); 
+                        
+                        if(!unlink($dir . $filename_aux))
+                        {
+                            exit("Error: operation not allowed.");
+                        }
+                    }
+                    
+                    $jsonfile->removeDataKeyValue("id", $id);
+                }
+                
+//                 var_dump($dir . $filename_aux);
+                
+//                 exit("==");
+                
+                $jsonfile->save();
+                
+//                 sleep(1);
+//                 exit("=+=");
                 $application->redirect(PATH_WWW . "?component=" . $application->getComponent()
                     . "&controller=" . $application->getController() 
                     . "&filename=" . basename($filename) 
-                    . "&folder=" . $folder . "");
+                    . "&folder=" . $folder . ""
+                    . "&task=open");
+                
+                
+                
             }
+            
+            
 
             // if(file_exists($filename)){
 
@@ -135,7 +200,7 @@ if ($filename != null) {
             if ($task == "new") {
 
                 // exit($filename);
-
+                exit("fim");
                 $data = "";
                 $utils->setContentFile($filename, $data);
             } else {
@@ -190,7 +255,13 @@ $files_list = $utils->getListElementsDirectory1(PATH_USER_WORKSPACE_STORAGE . $f
         "txt"
     ));
 
-$dir = PATH_USER_WORKSPACE_STORAGE . $folder;
+
+
+$jsonfile = new JsonFile();
+
+$jsonfile->open($filename);
+
+$overwrite = false;
 
 foreach ($files_list as $key => $element) {
 
@@ -208,18 +279,19 @@ foreach ($files_list as $key => $element) {
         $filename_ = substr($filename_, strrpos($filename_, "/") + 1);
         $filename_ = trim($filename_);
 
-        // echo $dir.$filename_."<br>";
+//         echo $dir.$filename_."<br>";
+        
 
         if (file_exists($dir . $filename_)) {
 
-            // echo $filename_." ---sim<br>";
+            
+//             break;
+//             echo $filename." ---sim<br>";
+// exit();
+//             $id = substr($filename_, 0, 4); // strrpos($filename_,"-"));
+//             $id = trim($id);
 
-            $id = substr($filename_, 0, 4); // strrpos($filename_,"-"));
-            $id = trim($id);
-
-            $jsonfile = new JsonFile();
-
-            $jsonfile->open($filename);
+            
 
             // if(is_writable($filename)){
 
@@ -227,23 +299,83 @@ foreach ($files_list as $key => $element) {
             // }else{
             // echo "nao";
             // }
+            
+            $filename_f = substr($filename_, strrpos($filename_, DIRECTORY_SEPARATOR));
 
-            // echo $filename."<br>";
-            $data = $jsonfile->getDataKeyValue("filename", $filename);
+            $find = FALSE;
+            
+            $s = array();
+            
+            if($jsonfile->issetKeyValue("filename"))
+            {
+                $s = $jsonfile->findDataKeyValue("filename", $filename_f);   
+                
+               // if($s['process'] ==  TRUE)
+                //{
+                    $filename_aux = substr($s['filename'], strrpos($s['filename'],DIRECTORY_SEPARATOR)+1);    
+                    $find = TRUE;
+                //}
+            }
+            else 
+            {
+                
+                $s = $jsonfile->findDataKeyValue("command", $filename_f);         
 
-            $data['process'] = true;
+                if($s)
+                {
+                    $filename_aux = substr($s['command'], strrpos($s['command'],DIRECTORY_SEPARATOR)+1);
+                    $find = TRUE;
+                }
+//                 var_dump($s);exit();
+                //if($s['process'] ==  TRUE)
+                //{
+                    
+                //}
+            }
+            
+            
+            if($find == TRUE)
+            {
+                $data = $s;
+//                 var_dump($dir . $filename_aux);exit();
+                if(file_exists($dir . $filename_aux))
+                {                                        
+                    $data['process'] = true;
+                }
+                else 
+                {
+                    $data['process'] = false;
+                }
+                
+                $jsonfile->setDataKeyValue("id", $data['id'], $data);
+                
+                $overwrite = true;
+            }
+            
+            
+//             exit("===---");
+            
+//             echo $filename_."<br>";
+//             $data = $jsonfile->getDataKeyValue("filename", $filename_);
+
+//             var_dump($data);exit();
+            
+//             $data['process'] = true;
             // echo "<br>id=".$id."<br><br>";
             // var_dump($data);
             // exit();
             // $jsonfile->setData($data);
 
-            $jsonfile->setDataKeyValue("filename", $filename, $data);
+//             $jsonfile->setDataKeyValue("filename", $filename, $data);
 
-            $jsonfile->save();
+//             $jsonfile->save();
 
             // $jsonfile->load();
 
-            $jsonfile = null;
+//             $jsonfile = null;
+
+            
+            
         } else {}
 
         
@@ -259,9 +391,16 @@ foreach ($files_list as $key => $element) {
     }
 }
 
+if($overwrite)
+{
+    $jsonfile->save();
+    sleep(1);
+}
+
+
 // exit("fim");
 
-$jsonfile = null;
+// $jsonfile = null;
 
 $jsonfile = new JsonFile();
 
@@ -272,12 +411,15 @@ $data = $jsonfile->getData();
 $length_data = count($data);
 $length_process = 0;
 
+// var_dump($filename);
+// exit("0=".$length_data);
+
 if ($length_data > 0) {
 
     foreach ($data as $key => $element) {
 
         if (is_array($element)) {
-
+            
             // foreach($item as $key2=>$item2){
 
             // if($key2 == "process"){
@@ -313,31 +455,43 @@ if ($length_data > 0) {
             $isMedatata = false;
             $checksum = false;
             
-            if(isset($element["filename"]))
+            if($jsonfile->issetKeyValue("filename"))
             {
-                $file_real = $element["filename"] ;//$application->getParameter("folder") . substr($application->getParameter("filename"), 0, strrpos($application->getParameter("filename"), ".")) . "-" . $element["id"] . ".txt";
-
-                if(file_exists($file_real))
+                if(isset($element["filename"]))
                 {
-                    if($utils->isMetadataFileScript($file_real))
+                    $file_real = $element["filename"] ;//$application->getParameter("folder") . substr($application->getParameter("filename"), 0, strrpos($application->getParameter("filename"), ".")) . "-" . $element["id"] . ".txt";
+                    
+                    if(file_exists($file_real))
                     {
-                        $isMedatata = true;
-                
-                        $hash_file = $utils->checksumFileScriptMOA($file_real,
-                            Properties::getBase_directory_destine_exec() .
-                            $application->getUser() . DIRECTORY_SEPARATOR, $element['script']);
-                        
-                        $metadata_hmac = $utils->getMetadataValueScript($file_real,
-                            "security-hash-hmac-file");
-                               
-                        if($metadata_hmac == $hash_file)
+                        if($utils->isMetadataFileScript($file_real))
                         {
-                            $checksum = true;
+                            $isMedatata = true;
+                            
+                            $hash_file = $utils->checksumFileScriptMOA($file_real,
+                                Properties::getBase_directory_destine_exec() .
+                                $application->getUser() . DIRECTORY_SEPARATOR, $element['script']);
+                            
+                            $metadata_hmac = $utils->getMetadataValueScript($file_real,
+                                "security-hash-hmac-file");
+                            
+                            if($metadata_hmac == $hash_file)
+                            {
+                                $checksum = true;
+                            }
                         }
                     }
+                    
                 }
-            
+                
             }
+            else 
+            {
+                $filename_aux = substr($element['command'], strrpos($element['command'], DIRECTORY_SEPARATOR)+1);
+                
+                $file_real = $dir . $filename_aux;
+
+            }
+            
             
             
             //$file_real = PATH_USER_WORKSPACE_STORAGE . $file_real;
@@ -354,7 +508,9 @@ if ($length_data > 0) {
                 // $status = "Proccessed";
                 // $bgcolor="#ffffff";
                 // }else {
-
+//                 echo "process=".$element["process"] ."\n";
+                
+                //$element["process"] == true){//
                 if (file_exists($file_real)) {
                     $bgcolor = "#fff";
                     $status = "Finish";

@@ -212,7 +212,7 @@ if ($filename != null) {
 											onclick="javascript: window.location.href='?component=taskinitializer&controller=run&task=open&filename=<?php echo $application->getParameter("filename");?>&folder=<?php echo $application->getParameter("folder");?>';">
 										
 										<input type="submit" class="btn btn-success" value="Save"> <input type="submit"
-											class="btn btn-danger" value="Remove"
+											class="btn btn-danger" value="Delete"
 											onclick="javascript: document.getElementById('task').value='remove'">
 											
 										<input type="button" class="btn btn-default badge" value="Return" name="return"

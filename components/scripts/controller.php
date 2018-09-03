@@ -679,7 +679,7 @@ function do_this2(){
 										onclick="javascript: newFolder();" /> || <input type="button" class="btn btn-default"
 										value="New file" name="file" onclick="javascript: newFile();" />
 
-									|| <input type="button" class="btn btn-danger" value="Remove" name="remove"
+									|| <input type="button" class="btn btn-danger" value="Delete" name="remove"
 										onclick="javascript: sendAction('remove');" /> || <input
 										type="button" class="btn btn-default" value="zip" name="compress"
 										onclick="javascript: sendAction('zip');" /> <input

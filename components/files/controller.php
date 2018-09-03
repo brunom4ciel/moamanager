@@ -47,6 +47,9 @@ if ($folder != null) {
     }
 }
 
+$dir = PATH_USER_WORKSPACE_STORAGE . $folder;
+
+
 if ($task == "folder") {
 
     $foldernew = $application->getParameter("foldernew");
@@ -164,13 +167,20 @@ if ($task == "folder") {
 
                     if (is_file($dir . $item)) {
 
-                        // chmod($dir, 0777);
-
                         $from_file = $dir . $item;
                         $to_file = $movedestine_ . $item;
-
-                        if (! file_exists($to_file))
-                            rename($from_file, $to_file);
+                        
+                        if (file_exists($to_file))
+                        {
+                            chmod($to_file, octdec("0777"));                            
+                            
+                            if(!unlink($to_file))
+                            {
+                                exit("Error: operation not allowed. File: " . $to_file);
+                            }                            
+                        }
+                        
+                        rename($from_file, $to_file);
 
                         // echo "file - from: ".$from_file.", to: ".$to_file."<br>";
                     } else {
@@ -181,10 +191,15 @@ if ($task == "folder") {
 
                             $from_dir = $dir . $item;
                             $to_dir = $movedestine_ . $item;
-
-                            if (! is_dir($to_dir))
-                                rename($from_dir, $to_dir);
-
+                            
+                            if (is_dir($to_dir))
+                            {
+                                $utils->set_perms($to_dir, true);                                
+                                $utils->delTree($to_dir);                                
+                                //exit("Error: operation not allowed. File: " . $to_file);
+                            }
+                            rename($from_dir, $to_dir);
+                            
                             // echo "dir - from: ".$from_dir.", to: ".$to_dir."<br>";
                         }
                     }
@@ -1316,7 +1331,7 @@ File Upload (*.txt, *.zip)</a> <br>
 										onclick="javascript: newFolder();" /> || 
 										
 										<input type="button"
-										class="btn btn-danger" value="Trash" name="trash"
+										class="btn btn-danger" value="Delete" name="trash"
 										onclick="javascript: sendAction('trash');" /> || <input
 										type="button" class="btn btn-default" value="Backup" name="backup"
 										onclick="javascript: sendAction('backup');" /> || <input

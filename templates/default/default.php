@@ -94,11 +94,15 @@ if(IS_AUTHENTICATION){
 				</div>
 				<div class="navbar-collapse collapse" collapse="navCollapsed" style="height: 0px;">
 					<ul class="nav navbar-nav navbar-right">
+						
+						<li style="vertical-align: middle;padding:5px;">
+							<?php echo USERNAME;?>
+						</li>
 						<li>
 							<a href="<?php echo PATH_WWW;?>?component=contact" title="Bug reports" style="padding:0px"><img width="34px" src="<?php echo WWW_IMAGES?>/bug-128.png"></a>
 						</li>
 						<li>
-							<a href="<?php echo PATH_WWW;?>?component=settings"><?php echo USERNAME;?></a>
+							<a href="<?php echo PATH_WWW;?>?component=settings">Settings</a>
 						</li>
 						<!-- <li>
 							<a href="<?php echo PATH_WWW;?>?component=user&controller=passwordChange">Change Password</a>

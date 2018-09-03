@@ -64,9 +64,9 @@ class JsonFile
         if (! empty($json)) {
 
             $this->json = json_decode($json);
-
-            if (is_array($this->json)) {
-
+            
+            if (is_array($this->json) || is_object($this->json) ) {
+//                 var_dump($this->json);exit();
                 foreach ($this->json as $key => $item) {
 
                     if (is_object($item)) {
@@ -80,7 +80,7 @@ class JsonFile
                 }
             }
         }
-
+        
         return $db;
     }
 
@@ -96,6 +96,7 @@ class JsonFile
 
         if (! empty($data))
             $this->data = $this->DeserializingData($data);
+        
     }
 
     public function save()
@@ -103,16 +104,102 @@ class JsonFile
         try {
 
             $json_data = $this->SerializingData($this->data);
-
-            $handle = fopen($this->filename, "w") or die("Unable to open file " . $this->filename);
-
-            fwrite($handle, $json_data);
-
-            fclose($handle);
+            
+            $filename = $this->filename;
+            
+            if(file_exists($filename))
+            {
+                if(is_writable($filename))
+                {
+                    $handle = fopen($filename, "w") or die("Unable to open file " . $filename);
+                    
+                    fwrite($handle, $json_data);
+                    
+                    fclose($handle);
+                    
+                    //                 var_dump($json_data);exit("---------------");
+                }
+                else
+                {
+                    exit("Unable to write on file.");
+                }
+                
+            }else 
+            {
+                $handle = fopen($filename, "w") or die("Unable to open file " . $filename);
+                
+                fwrite($handle, $json_data);
+                
+                fclose($handle);
+            }
+            
+            
         } catch (Exception $e) {
             exit("Error: " . $e->getMessage());
         }
     }
+    
+    
+    
+    public function issetKeyValue($keyname)
+    {
+        $result = false;
+        
+        if (! empty($this->data)) 
+        {
+            foreach ($this->data as $key => $item) 
+            {                
+                if (is_array($item)) 
+                {                    
+                    foreach ($item as $key2 => $item2) 
+                    {      
+                        
+                        if ($key2 == $keyname) 
+                        {                            
+                            $result = true;
+                            break 2;
+                        }
+                    }
+                }
+            }
+        }
+        
+        return $result;
+    }
+    
+    
+    public function findDataKeyValue($keyname, $findValue)
+    {
+        $result = false;
+        
+        if (! empty($this->data)) {
+            // var_dump($this->data);
+            foreach ($this->data as $key => $item) {
+                
+                if (is_array($item)) {
+                    
+                    foreach ($item as $key2 => $item2) {
+                        
+                        if ($key2 == $keyname) {
+                            
+                            if (strpos($item2, $findValue) === FALSE ) 
+                            {
+                                
+                            }
+                            else 
+                            {
+                                $result = $item;
+                                break 2;
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        
+        return $result;
+    }
+    
 
     public function getDataKeyValue($keyname, $findValue)
     {
@@ -157,6 +244,9 @@ class JsonFile
 
                     foreach ($item as $key2 => $item2) {
 
+//                         var_dump($keyname);var_dump($findValue);var_dump($value);
+//                         exit();
+                        
                         if ($key2 == $keyname) {
 
                             if ($findValue == $item2) {
@@ -165,7 +255,7 @@ class JsonFile
                                 $db_data = $value;
 
                                 // var_dump($item);
-                                // exit("ppp");
+//                                 exit("ppp");
                                 break;
                             } else {
                                 // $db_data[$key2] = $item2;
@@ -209,7 +299,8 @@ class JsonFile
                             if ($findValue == $item2) {
 
                                 unset($this->data[$key]);
-
+                                $result = true;
+                                
                                 break 2;
                             } else {
                                 // $db_data[$key2] = $item2;

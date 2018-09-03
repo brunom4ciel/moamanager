@@ -10,7 +10,7 @@ namespace moam\components\java;
 defined('_EXEC') or die();
 
 use moam\core\Framework;
-// use moam\core\Application;
+use moam\core\Template;
 use moam\core\Properties;
 // use moam\libraries\core\utils\Utils;
 // use moam\libraries\core\menu\Menu;
@@ -21,6 +21,8 @@ if (! class_exists('Application')) {
 if (! $application->is_authentication() || $application->getUserType() != 1) {
     $application->alert("Error: you do not have credentials.");
 }
+
+Template::setDisabledMenu();
 
 // Framework::import("menu", "core/menu");
 
@@ -143,15 +145,31 @@ if (isset($_FILES['uploadfile'])) {
 						<table>
 							<tr>
 								<td>Upload files (*.java):</td>
-								<td><input type="file" name="uploadfile" /></td>
-								<td><input type="submit" name="default" value="Send" /></td>
+								<td><input type="file" class="btn btn-default" name="uploadfile" /></td>
+								<td><input type="submit" class="btn btn-success" name="default" value="Send" /></td>
 							</tr>
 						</table>
 
 					</form>
 
-					<input type="button"
-						onclick="javascript: window.location.href='?component=java&folder=<?php echo $folder;?>';"
-						name="cancel" value="Back files" />
+					<div style="float: right; padding-left: 10px;margin-top:20px;">
+
+										<input type="button" class="btn btn-default" value="Return" name="return"
+										onclick="javascript: returnPage();" />
+									</div>
+									
+<script type="text/javascript">
+
+function returnPage()
+{
+
+	window.location.href='?component=<?php echo $application->getParameter("component");?>'
+			+'&controller=controller'
+			+'&task=open'
+			+'&folder=<?php echo $application->getParameter("folder");?>';
+			
+}
+
+</script>
 				
 

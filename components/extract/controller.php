@@ -637,7 +637,7 @@ function verificaChecks() {
 			    }
 			}
 			else
-			{
+			{			    
 			    echo ""
                     ."<a target='_blank' href='?component=".$application->getComponent()."&task=view&type_extract=2&controller=extract_tmpl&filename=".$element["name"]."&folder=".$application->getParameter("folder")."'>"
                     ."<img width='16px' align='middle' src='".$application->getPathTemplate()."/images/icon-view.png' title='View Content'/></a> ";
@@ -663,7 +663,9 @@ function verificaChecks() {
 
 			if(in_array($extension_file, $exterions)){
 				
-				echo "<label>".$element["name"]."</label> ";
+			    echo "<label><input type='checkbox' name='element[]' value='"
+                    .$element["name"]."' />";
+				echo "".$element["name"]."</label> ";
 				
 			}else{
 				
@@ -671,9 +673,7 @@ function verificaChecks() {
 						.$element["name"]."' />".$element["name"]."</label> ";
 				
 			}
-				
-				
-			
+
     			
 				// ."<a title='Move file' href='?component=moa&controller=run&filename=".$element["name"]."&folder=".$application->getParameter("folder")."'>"
     			//."<img align='middle' width='24px' src='".App::getDirTmpl()."/images/icon-play.png' border='0'></a> "	

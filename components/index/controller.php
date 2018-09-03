@@ -16,9 +16,11 @@ if (! class_exists('Application')) {
     $application = Framework::getApplication();
 }
 
-if ($application->is_authentication()) {
-    $application->redirect(PATH_WWW . "?component=home");
+if (!$application->is_authentication()) {
+    $application->redirect(PATH_WWW . "?component=user&controller=login");
 }
+
+$application->redirect(PATH_WWW . "?component=systemmonitor");
 
 Template::setDisabledMenu();
 

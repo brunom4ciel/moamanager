@@ -54,15 +54,27 @@ if ($filename != null) {
 
     if($task == "clean")
     {        
-        $files_list = detectProblemsFiles($filename);
+        $dir = PATH_USER_WORKSPACE_STORAGE . $folder;
         
-        foreach ($files_list as $element) {
-            
-            if(file_exists($element['name']))
+        $element = $application->getParameter("element");
+
+        foreach ($element as $key => $item) 
+        {       
+            if(file_exists($dir . $item))
             {
-                unlink($element['name']);
+                unlink($dir . $item);
             }
-        }        
+        }
+        
+//         $files_list = detectProblemsFiles($filename);
+        
+//         foreach ($files_list as $element) {
+            
+//             if(file_exists($element['name']))
+//             {
+//                 unlink($element['name']);
+//             }
+//         }        
     }
 }
 
@@ -83,7 +95,27 @@ function detectProblemsFiles($filename)
             {
                 if(file_exists($item['filename']))
                 {
-                    $content = $utils->getContentFilePart($item['filename'], (10 * 1024));
+                    $size = filesize($item['filename']) /1024;
+                    
+//                     $bparted = 20;
+                    
+                    if($size > 3000)
+                    {
+                        $bparted = 1000;
+                    }
+                    else 
+                    {
+                        if($size > 1000)
+                        {
+                            $bparted = 500;
+                        }
+                        else
+                        {
+                            $bparted = 50;
+                        }
+                    }
+                    
+                    $content = $utils->getContentFilePart($item['filename'], ($bparted * 1024));
                     
                     if(strrpos($content["data"], "Accuracy:") === FALSE)//if(filesize($item['filename']) < 1000)
                     {
@@ -132,7 +164,7 @@ function detectProblemsFiles($filename)
 
 
 										
-										<input type="submit" class="btn btn-success" value="Solve problems" name="return"
+										<input type="submit" class="btn btn-danger" value="Delete files" name="return"
 										onclick="javascript: return confirmfixedBugs();" />
 										
 										<br> 
@@ -152,7 +184,8 @@ function detectProblemsFiles($filename)
 	<?php }?>
 	<table border='1' id="temporary_files" style="width: 100%;">
 										<tr>
-											<th style="width: 70%;">Name</th>
+											<th style="width: 70%;"><label><input type="checkbox"
+													id="checkall" onClick="do_this2()" value="select" />Name</label></th>
 											<th>Size</th>
 											<th>DateTime</th>
 										</tr>
@@ -171,12 +204,16 @@ foreach ($files_list as $element) {
     
     $f_name = substr($element['name'], strrpos($element['name'], DIRECTORY_SEPARATOR)+1);
     
-    echo "<tr><td> " 
-     . "<a href='?component=moa" 
-    . "&controller=openreadonly&filename=" . $f_name 
-    . "&folder=" . $f_dirname . "'"
-    ." target='_blank'>" . $f_dirname . $f_name . "</a>";
-
+    echo "<tr><td> "    
+     . "<label><input type='checkbox' name='element[]' value='" . $f_name . "' />"
+    . "<a href='?component=" . $application->getComponent() . "&controller=openreadonly&filename=" . $f_name 
+    . "&folder=" . $f_dirname 
+    . "&filename2=" . $application->getParameter("filename")
+    . "'"
+    ." >"
+    . "<img width='16px' align='middle' src='" . $application->getPathTemplate() . "/images/icon-view.png' title='View contents'/></a>"
+    . "" .  $f_dirname . $f_name  ."</label> " 
+    ;
 
         echo "</td><td>" . $element["size"] . "</td><td>" . $element["datetime"] . "</td></tr>";
 //     }
@@ -229,6 +266,28 @@ $folder = $application->getParameter("folder");
 			+'&task=open'
 			+'&folder=<?php echo $folder;?>';
 			
+}
+
+
+
+
+function do_this2(){
+
+    var checkboxes = document.getElementsByName('element[]');
+    var button = document.getElementById('checkall');
+    
+    if(button.checked ==  true){
+        for (var i in checkboxes){
+            checkboxes[i].checked = 'FALSE';
+        }
+        //button.value = 'deselect'
+    }else{
+        for (var i in checkboxes){
+            checkboxes[i].checked = '';
+        }
+       // button.value = 'select';
+        button.checked == false;
+    }
 }
 
 </script>
