@@ -21,8 +21,6 @@ class User
 
     private $data = "";
 
-    private $file_user = "datasets/users.json";
-
     // private $passphrase = "";
     private $db;
 

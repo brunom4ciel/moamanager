@@ -9,17 +9,17 @@ namespace moam\components\settings;
 
 defined('_EXEC') or die();
 
-use moam\core\AppException;
+
 use moam\core\Framework;
-use moam\core\Application;
 use moam\core\Properties;
-use moam\libraries\core\db\DBPDO;
-use moam\libraries\core\user\User;
 use moam\libraries\core\utils\Utils;
-use moam\libraries\core\email\UsageReportMail;
+use moam\core\Template;
+
 if (! class_exists('Application')) {
     $application = Framework::getApplication();
 }
+
+Template::setDisabledMenu();
 
 Framework::import("Utils", "core/utils");
 
@@ -214,19 +214,12 @@ function remove(filename){
 
 </script>
 
-<div class="content content-alt">
-	<div class="container" style="width: 70%">
-		<div class="row">
-			<div class="">
-				<div class="card" style="width: 100%">
+							<div class="page-header">
+        						<h1>
+        							<a href="<?php echo $_SERVER['REQUEST_URI']?>">Datasets</a>
+        						</h1>
+        					</div>
 
-
-
-					<div class="page-header">
-						<h1>
-							<a href="<?php echo $_SERVER['REQUEST_URI']?>">Real Datasets</a>
-						</h1>
-					</div>
 							
 							<?php
 
@@ -285,8 +278,8 @@ function remove(filename){
 						<table>
 							<tr>
 								<td>Dataset Upload (*.arff):</td>
-								<td><input type="file" name="jarfile" /></td>
-								<td><input type="submit" name="default" value="update" /></td>
+								<td><input type="file" class="btn btn-default" name="jarfile" /></td>
+								<td>&nbsp; <input type="submit" class="btn btn-success" name="default" value="Send" /></td>
 							</tr>
 						</table>
 						<!-- <input type="submit" name="default" value="default system" />-->
@@ -294,11 +287,14 @@ function remove(filename){
 					</form>
 							<?php }?>
 							
-							</div>
 
-			</div>
-		</div>
-	</div>
-</div>
-</div>
-
+									<div style="float: right; padding-left: 10px">
+									
+											<input type="button" class="btn btn-default"
+                							onclick="javascript: window.location.href='?component=settings';"
+                							name="cancel" value="Return" />
+									</div>
+									
+									
+									
+									

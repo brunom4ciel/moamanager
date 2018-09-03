@@ -5,12 +5,12 @@
  * @copyright  Copyright (C) 2015 - 2017 Open Source CIn/UFPE, Inc. All rights reserved.
  * @license    GNU General Public License version 2 or later; see LICENSE.txt
  */
-namespace moam\components\generator;
+namespace moam\components\resource;
 
 defined('_EXEC') or die();
 
 use moam\core\Framework;
-use moam\core\Application;
+// use moam\core\Application;
 use moam\core\Properties;
 if (! class_exists('Application')) {
     $application = Framework::getApplication();

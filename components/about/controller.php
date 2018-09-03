@@ -1,4 +1,25 @@
 <?php
+/**
+ * @package    MOAM.Application
+ *
+ * @copyright  Copyright (C) 2015 - 2017 Open Source CIn/UFPE, Inc. All rights reserved.
+ * @license    GNU General Public License version 2 or later; see LICENSE.txt
+ */
+namespace moam\templates;
+
+defined('_EXEC') or die();
+
+use moam\core\Framework;
+use moam\core\Template;
+
+
+if (!class_exists('Application'))
+{
+    $application = Framework::getApplication();
+}
+
+Template::setDisabledMenu();
+
 ?>
 
 <div class="content content-alt">
@@ -61,14 +82,14 @@
 					style="font-size: 22px; font-weight: bold; margin-bottom: 8px; color: #a93529;">Releases</h4>
 
 				<ul>
-					<li><a href="#">Version 0.9 released - 2017-05-27</a></li>
+					<li><a href="#">Version <?php echo MOAMANAGER_VERSION?> released - <?php echo MOAMANAGER_RELEASES;?></a></li>
 				</ul>
 
 				<h4
 					style="font-size: 22px; font-weight: bold; margin-bottom: 8px; color: #a93529;">History</h4>
 
 				This program was developed originally by Bruno Maciel and has been
-				evolved by him during his doctoral work. The initial release came
+				evolved by him during his doctoral work, under supervised by PhD. Roberto S. M. Barros at UFPE. The initial release came
 				from the basic need to run batch scripts in the MOA Framework. <br>
 				<br> The original code was cut, adjusted and rewritten twice. The
 				resulting program was renamed MOAManager, and released in the Public

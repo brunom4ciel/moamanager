@@ -11,7 +11,7 @@ defined('_EXEC') or die();
 
 use moam\core\Framework;
 use moam\libraries\core\utils\Utils;
-use moam\libraries\core\menu\Menu;
+// use moam\libraries\core\menu\Menu;
 use moam\core\Properties;
 
 if (! class_exists('Application')) {
@@ -22,11 +22,11 @@ if (! $application->is_authentication()) {
     $application->alert("Error: you do not have credentials.");
 }
 
-Framework::import("menu", "core/menu");
+// Framework::import("menu", "core/menu");
 
-if (! class_exists('Menu')) {
-    $menu = new Menu();
-}
+// if (! class_exists('Menu')) {
+//     $menu = new Menu();
+// }
 
 Framework::import("Utils", "core/utils");
 $utils = new Utils();
@@ -203,28 +203,6 @@ if (in_array($task, $statistical_test_array)) {
 ?>
 
 
-<div class="content content-alt">
-	<div class="container" style="width: 90%">
-		<div class="row">
-			<div class="">
-
-				<div class="card" style="width: 100%">
-					<div class="page-header">
-						<h1>
-							<a href="<?php echo $_SERVER['REQUEST_URI']?>">Test statistical</a>
-						</h1>
-					</div>
-
-					<div style="width: 100%; padding-bottom: 15px; display: table">
-
-						<div style="float: left; width: 200px; border: 1px solid #fff">
-																
-									<?php echo $application->showMenu($menu);?>							
-
-								</div>
-
-						<div style="float: left; width: 80%; border: 1px solid #fff">
-
 
 							<form method="POST" action="<?php echo $_SERVER['PHP_SELF'];?>">
 								<input type="hidden"
@@ -234,8 +212,7 @@ if (in_array($task, $statistical_test_array)) {
 									name="controller"> <input type="hidden" value="Shaffer"
 									name="task" id="task">
 
-								<div style="float: left; padding-left: 20px; width: 100%">
-
+								
 
 									<div
 										style="float: left; padding-left: 5px; width: 100%; margin-top: 5px;">
@@ -252,15 +229,15 @@ if (in_array($task, $statistical_test_array)) {
 									<div style="float: left; padding-left: 10px">
 										Separador decimal <input type="text" name="decimalformat"
 											id="decimalformat" value="," style="width: 40px;" /> <input
-											type="submit" value="Shaffer"
+											type="submit" class="btn btn-default" value="Shaffer"
 											onclick="document.forms[0].task.value=this.value"> <input
-											type="submit" value="Nemenyi"
+											type="submit" class="btn btn-default" value="Nemenyi"
 											onclick="document.forms[0].task.value=this.value"> <input
-											type="submit" value="Holm"
+											type="submit" class="btn btn-default" value="Holm"
 											onclick="document.forms[0].task.value=this.value"> <input
-											type="submit" value="Bonferroni-Dunn"
+											type="submit" class="btn btn-default" value="Bonferroni-Dunn"
 											onclick="document.forms[0].task.value=this.value"> <input
-											type="submit" value="Bergmann-Hommel"
+											type="submit" class="btn btn-default" value="Bergmann-Hommel"
 											onclick="document.forms[0].task.value=this.value">
 									</div>
 											
@@ -287,20 +264,7 @@ if (in_array($task, $statistical_test_array)) {
 									</div>
 											
 											<?php }?>
-										
-										</div>
+					
 
 							</form>
-
-
-						</div>
-
-					</div>
-
-				</div>
-			</div>
-		</div>
-	</div>
-</div>
-
 

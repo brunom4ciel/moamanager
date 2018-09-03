@@ -1707,9 +1707,10 @@ textarea.input-lg, select.input-lg[multiple] {
     pointer-events: none;
 }
 .btn-default {
-    background-color: #ffffff;
-    border-color: #cccccc;
+    background-color: #ebebeb;
+    border-color: #adadad;
     color: #333333;
+    outline: 0 none;
 }
 .btn-default:hover, .btn-default:focus, .btn-default:active, .btn-default.active, .btn-default.checked, .open .dropdown-toggle.btn-default {
     background-color: #ebebeb;
@@ -7712,5 +7713,30 @@ font-size: 12px;
 
 
 
+<!--
+.divmenuleft {
+    float: left;
+    width: 180px;
+    border:0px solid #000000;
 
+}
+.divcontentmenu {
+    border:0px solid #000000;
+    display: block; width: 100%;
+    padding-left:200px;
+}
+.divcontent {
+    border:0px solid #000000;
+    display: block; width: 100%;
+}
+/* Clear floats after the columns */
+.componentcontainer:after {
+    content: "";
+    display: table;
+    clear: both;
+}
+.componentcontainer{
+border:0px solid #000000;
+}
+-->
     

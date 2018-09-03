@@ -11,13 +11,18 @@ defined('_EXEC') or die();
 
 use moam\core\Framework;
 use moam\libraries\core\utils\Utils;
+use moam\core\Template;
+
 if (! class_exists('Application')) {
     $application = Framework::getApplication();
 }
 
-if (! $application->is_authentication()) {
+if (! $application->is_authentication() || $application->getUserType() != 1) {
     $application->alert("Error: you do not have credentials.");
 }
+
+
+Template::setDisabledMenu();
 
 Framework::import("Utils", "core/utils");
 
@@ -181,31 +186,11 @@ function do_this(){
 
 
 
-<div class="content content-alt">
-	<div class="container" style="width: 90%">
-		<div class="row">
-			<div class="">
-
-				<div class="card" style="width: 100%">
-					<div class="page-header">
-						<h1>
-							<a href="<?php echo $_SERVER['REQUEST_URI']?>">Files</a>
-						</h1>
-					</div>
-
-					<div style="width: 100%; padding-bottom: 15px; display: table">
-
-						<div
-							style="float: left; width: 1%; border: 1px solid #fff; display: table-cell">
-
-
-						</div>
-
-						<div
-							style="float: left; width: 98%; border: 1px solid #fff; display: table-cell">
-
-
-
+							<div class="page-header">
+        						<h1>
+        							<a href="<?php echo $_SERVER['REQUEST_URI']?>">Files</a>
+        						</h1>
+        					</div>
 
 
 
@@ -292,16 +277,18 @@ foreach ($files_list as $key => $element) {
 
 
 
-									<div style="text-align: right; display: block;">
-										<br> <input type="button"
-											onclick="javascript: window.location.href='?component=settings&controller=managerUsers';"
-											name="cancel" value="Return" />
-
-									</div>
+									<br>
+								<div style="float: right; padding-left: 10px">
+									
+									<input type="submit" class="btn btn-primary" name="Execute" value="Execute" />
+						
+        								<input type="button" class="btn btn-default"
+            							onclick="javascript: window.location.href='?component=settings&controller=managerUsers';"
+            							name="cancel" value="Cancel" />
+        						</div>
 							
 							</form>
 	
-	
 
 	
 	
@@ -317,38 +304,3 @@ foreach ($files_list as $key => $element) {
 	
 	
 	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-									<?php
-
-        /*
-         * for($i=0; $i<count($files_list); $i++){
-         *
-         * echo "<span style='margin-left:65px;' data-reactid=\".1lisbcwokxs.3.0.0.2.0.1.0.0.0.1.0\">".$files_list[$i]."</span><br>\n";
-         *
-         * }
-         */
-
-        ?>
-								
-								</div>
-
-					</div>
-
-				</div>
-			</div>
-		</div>
-	</div>
-</div>

@@ -1,4 +1,4 @@
-﻿/*
+/*
  *    FTDD.java
  *    Copyright (C) 2017 Cabral, Barros
  *    @authors Danilo R. L. Cabral (drlc@cin.ufpe.br)

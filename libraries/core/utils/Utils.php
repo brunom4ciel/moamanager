@@ -8,21 +8,78 @@
 namespace moam\libraries\core\utils;
 
 use Exception;
+use moam\libraries\core\sys\CPULoad;
 
 defined('_EXEC') or die();
 
 class Utils
 {
+    
+    public function removeDuplicateSpaces($str="")
+    {
+        while(strpos($str, "  "))
+        {
+            $str = str_replace("  "," ", $str);
+        }
+        
+        return $str;
+    }
 
+    function compareVersion($versionLocal = "", $versionRemote)
+    {
+        
+        $result = FALSE;
+        
+        $str_remote = explode(".", $versionRemote);
+        
+        $str_local = explode(".", $versionLocal);
+        $button_show = false;
+        
+        for($i = 0; $i < count($str_local); $i++)
+        {
+            if($str_local[$i] < $str_remote[$i])
+            {
+                $result = TRUE;
+            }else
+            {
+                
+            }
+        }
+        
+        return $result;
+    }
+    
+    
     
     function getHardwareCpuName(){
        
         $file = file('/proc/cpuinfo');
         
-        return trim(substr($file[4], strrpos($file[4], ":")+1));
+        return trim($this->removeDuplicateSpaces(substr($file[4], strrpos($file[4], ":")+1)));
     }
     
     
+    function getHardwareCpuUsage(){
+        
+        $cpuload = new CPULoad();
+        $cpuload->get_load();
+        // $cpuload->print_load();
+        $cpu_du = 0;
+        $cpu_df = 0;
+        $cpu_dt = 0;
+        
+        // echo "CPU load is: ".$cpuload->load["cpu"]."%";
+        
+        return @round($cpuload->load["cpu"], 2);
+    }
+    
+    
+    function getHardwareMemoryRamUsage()
+    {
+        foreach (file('/proc/meminfo') as $ri)
+            $m[strtok($ri, ':')] = strtok('');
+            return 100 - @round(($m['MemFree'] + $m['Buffers'] + $m['Cached']) / $m['MemTotal'] * 100);
+    }
     
     function getHardwareMemory(){
         
@@ -57,51 +114,50 @@ class Utils
         return @round($men/pow(1024,($i=floor(log($men,1024)))),2).' '.$unit[$i];
     }
     
-    
-    function intdiv_2($a, $b){
-        return floor($a / $b);
+    function getHardwareDiskUsage(){
+        
+        $men = (int) disk_total_space('/') - (int) disk_free_space('/');
+        
+        $unit=array('b','kb','mb','gb','tb','pb');
+        
+        return @round($men/pow(1024,($i=floor(log($men,1024)))),2).' '.$unit[$i];
     }
     
     function getHardwareUptime(){
         
         $str   = @file_get_contents('/proc/uptime');
         
-        $num   = floatval($str);
-        $secs  = fmod($num, 60); $num = $this->intdiv_2($num, 60);
-        $mins  = $num % 60;      $num = $this->intdiv_2($num, 60);
-        $hours = $num % 24;      $num = $this->intdiv_2($num, 24);
-        $days  = $num;
-        
-        $uptime = "";
-        
-        if($days > 0){
-            $uptime .= $days . " day";
-            if($days > 1){
-                $uptime .= "s ";
-            }         
-        }
-        
-        if($hours > 0){
-            $uptime .= " " . $hours . " hour";
-            if($hours > 1){
-                $uptime .= "s ";
-            }
-        }
-        
-        if($mins > 0){
-            $uptime .= " " . $mins . " minute";
-            if($mins > 1){
-                $uptime .= "s";
-            }
-        }
-        
-//         $uptime = $days . " days " . $hours . ":" . $mins . ":" . $secs;
-        
-//         $uptime = floor(preg_replace ('/\.[0-9]+/', '', file_get_contents('/proc/uptime')) / 86400);
-        
-        return trim($uptime);
+        return $this->formatDatetime($str);
     }
     
+    
+    function formatDatetime($str)
+    {
+        $secs   = floatval($str);
+        
+        $bit = array(
+            'y' => $secs / 31556926 % 12,
+            'w' => $secs / 604800 % 52,
+            'd' => $secs / 86400 % 7,
+            'h' => $secs / 3600 % 24,
+            'm' => $secs / 60 % 60,
+            's' => $secs % 60
+        );
+        
+        $ret = array();
+        
+        foreach($bit as $k => $v)
+        {
+            if($v > 0)
+            {
+                $ret[] = $v . $k;
+            }
+        }
+        
+        $s = join(' ', $ret);
+        
+        return trim($s);
+    }
     
     function getHardwareKernelVersion() {
         
@@ -150,7 +206,9 @@ class Utils
     function getHardwareInfo() {
         
         $sysinfo = $this->getHardwareCpuName();
+        $sysinfo .= " / " . $this->getHardwareCpuUsage() . "%";        
         $sysinfo .= " RAM " . $this->getHardwareMemory();
+        $sysinfo .= " / " . $this->getHardwareMemoryRamUsage() . "%";        
         $sysinfo .= " OS " . $this->getHardwareKernelVersion();
         $sysinfo .= " Uptime " . $this->getHardwareUptime();
         $sysinfo .= " Disk Total " . $this->getHardwareDisk();
@@ -267,7 +325,7 @@ class Utils
         if (! empty($event))
             $event = " " . $event . " ";
 
-        $result = "<select name='" . $name . "' id='" . $id . "'" . $style . "" . $style . "" . $event . "><option value=\"\"></option>";
+        $result = "<select name='" . $name . "' id='" . $id . "'"  . $class . $style . "" . $style . "" . $event . "><option value=\"\"></option>";
 
         foreach ($data as $element) {
 
@@ -615,6 +673,217 @@ class Utils
         return $result;
     }
 
+    
+    
+    /*
+     * is metadata in file script
+     *
+     * @param	string	$filename	file name with real path.
+     *
+     * @return	boolean
+     */
+    public static function isMetadataFileScript($filename)
+    {
+        
+        $result =  false;        
+        
+        if(file_exists($filename))
+        {
+            
+            $handle_r = fopen($filename, "rb") or die("Unable to open file!");
+            
+            $metadata = false;
+            
+            while (!feof($handle_r))
+            {
+                $data = fread($handle_r, 512);
+                
+                if(strpos($data, "<meta-data") === false)
+                {
+                    
+                }
+                else
+                {
+                    $metadata = true;
+                }      
+
+                break;
+            }
+
+            fclose($handle_r);
+            
+            $result = $metadata;
+        }
+        
+        return $result;
+    }
+    
+    
+    
+    
+    /*
+     * checksum file script
+     *
+     * @param	string	$filename	file name with real path.
+     * @param   string  $keyname    key name
+     *
+     * @return	string
+     */
+    public static function getMetadataValueScript($filename, $keyname)
+    {
+        
+        $keyvalue = "";
+        
+        
+        if(file_exists($filename))
+        {
+            
+            $handle_r = fopen($filename, "rb") or die("Unable to open file!");
+
+            $eof_metadata = false;
+            
+            while (! feof($handle_r))
+            {
+                $data = fread($handle_r, 8024);
+                
+                $data_list = explode("\n", $data);
+                
+                $line_seek = 0;
+                
+                foreach($data_list as $item)
+                {
+                    
+                    if(strpos($item, $keyname) === false)
+                    {
+                        
+                    }
+                    else
+                    {
+                        $tagvalue = substr($item, strpos($item, $keyname)+strlen($keyname));
+                        $aux = "moamanager:value=\"";
+                        $tagvalue = substr($tagvalue, strpos($tagvalue, $aux)+strlen($aux));
+                        $tagvalue = substr($tagvalue,0, strpos($tagvalue, "\""));
+                        $keyvalue = $tagvalue;
+                        $eof_metadata = true;
+                        break;
+                    }
+                }
+                
+                if($eof_metadata == true)
+                {
+                    break;
+                }
+                
+            }                
+                
+            fclose($handle_r);
+            
+        }
+        
+        return $keyvalue;
+    }
+    
+    
+    
+    /*
+     * calc checksum in file script
+     *
+     * @param	string	$filename	file name with real path.
+     * @param   string  $folder_tmp  folder tmp
+     * @param   string  $script script data
+     *
+     * @return	string
+     */
+    public static function checksumFileScriptMOA($filename, $folder_tmp, $script)
+    {
+        
+        $hash_file = "";
+                
+        
+        if(file_exists($filename))
+        {
+            $ok = true;
+            
+            while($ok == true)
+            {
+                $filename_aux = $folder_tmp . basename($filename);
+                $filename_aux_ext = substr($filename_aux, strrpos($filename_aux, "."));
+                $filename_aux = substr($filename_aux, 0, strrpos($filename_aux, "."));
+                $filename_aux .= "_TMP" . time() . $filename_aux_ext;
+                
+                if(!file_exists($filename_aux))
+                {
+                    $ok = false;
+                }
+            }
+            
+            if(self::setContentFile($filename_aux, ""))
+            {
+                
+                $handle_r = fopen($filename, "rb") or die("Unable to open file!");
+                $handle_w = fopen($filename_aux, "w");// or die("Unable to open file!");
+                
+                $eof_metadata = false;
+                
+                while (! feof($handle_r))
+                {
+                    $data = fread($handle_r, 8024);
+                    
+                    $data_list = explode("\n", $data);
+
+                    $line_seek = 0;
+                    
+                    foreach($data_list as $item)
+                    {   
+                        $line_seek += strlen($item)+1;
+                        
+                        if(strpos($item, "security-hash-hmac-file") === false)
+                        {
+                            
+                        }
+                        else
+                        {
+                            $eof_metadata = true;
+                            break;
+                        }
+                    }
+                          
+                    if($eof_metadata == true)
+                    {
+                        $line_seek++;
+                        break;
+                    }
+                   
+                }
+                
+                // = rewind
+                fseek($handle_r, 0, SEEK_SET);
+                
+                fseek($handle_r, $line_seek);
+                
+                while (! feof($handle_r))
+                {
+                    $data = fread($handle_r, 1024);
+                    fwrite($handle_w, $data);
+                }
+                
+                fclose($handle_r);
+                fclose($handle_w); 
+                
+                if(file_exists($filename_aux))
+                {
+                    $hash_file = hash_hmac_file('md5', $filename_aux, $script);
+                    unlink($filename_aux);
+                }
+                                
+            }             
+                
+        }
+            
+        return $hash_file;
+    }
+    
+    
 	/*
 	 * save data in file
 	 * 
@@ -625,19 +894,37 @@ class Utils
 	 */
     public static function setContentFile($filename, $data)
     {
+        $result = FALSE;
         try {
 
-            $handle = fopen($filename, "w") or die("Unable to open file!");
-
-            fwrite($handle, $data);
-
-            fclose($handle);
+            if(file_exists($filename))
+            {
+                if(is_writable($filename))
+                {
+                    $handle = fopen($filename, "w");// or die("Unable to open file!");
+                    fwrite($handle, $data);        
+                    fclose($handle);                    
+                    $result = TRUE;
+                }
+                else 
+                {                    
+                    //exit("file not permission");
+                }
+            }
+            else 
+            {
+                $handle = fopen($filename, "w");// or die("Unable to open file!");                
+                fwrite($handle, $data);                
+                fclose($handle);                
+                $result = TRUE;
+            }
+            
         } catch (Exception $e) {
             // chmod($base_directory_destine, 0777);
-            exit("file nto permission");
+            exit("file not permission");
         }
 
-        // exit($filename);
+        return $result;
     }
 
 	/*
@@ -1106,7 +1393,7 @@ class Utils
             $is_dir = is_dir($path);
             
             $this->set_perms($path, $is_dir);
-            if($is_dir) chmod_r($path);
+            if($is_dir) $this->chmod_r($path);
         }
         closedir($dp);
     }

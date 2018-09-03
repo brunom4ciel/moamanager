@@ -14,11 +14,34 @@
     text-rendering: optimizelegibility;
     box-sizing: border-box;
 }
-.btn-primary {
+.btn-primaryred {
 	background-color: #a93529;
     border-color: #80281f;
     color: #ffffff;
 }
+
+
+/* .btn-primary { */
+/*     background: #32ac83 !important; */
+/*     color: #fff !important;         */
+/*     border-radius: 5px !important;     */
+/*     text-transform: uppercase;           */
+/* } */
+/* .btn-cancel { */
+/*     background: #ff0000 !important; */
+/*     color: #fff !important;         */
+/*     border-radius: 5px !important;     */
+/*     text-transform: uppercase;           */
+/* } */
+/* .btn-default { */
+/*     background: #ccc !important; */
+/*     color: #fff !important;         */
+/*     border-radius: 5px !important;     */
+/*     text-transform: uppercase;           */
+/* } */
+
+
+
 .btn {
     cursor: pointer;
     font-size: 16px;

@@ -10,6 +10,8 @@ namespace moam\components\index;
 defined('_EXEC') or die();
 
 use moam\core\Framework;
+use moam\core\Template;
+
 if (! class_exists('Application')) {
     $application = Framework::getApplication();
 }
@@ -18,16 +20,11 @@ if ($application->is_authentication()) {
     $application->redirect(PATH_WWW . "?component=home");
 }
 
+Template::setDisabledMenu();
+
 ?>
-<div class="content content-alt">
-	<div class="container">
-		<div class="row">
-			<div class="">
 
 
 Welcome
 
-			</div>
-		</div>
-	</div>
-</div>
+<br><br><br><br>

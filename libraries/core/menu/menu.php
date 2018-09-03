@@ -45,21 +45,35 @@ class Menu
         );
     }
 
+    public function addTab()
+    {
+        $this->menu[] = null;
+    }
+    
+    
     public function toHTML()
     {
         $result = "\n<ul id=\"nav\">\n";
         $title = "";
         $target = "";
 
-        foreach ($this->menu as $item) {
+        foreach ($this->menu as $item) 
+        {
 
-            if (empty($item->title))
-                $title = " title=\"" . $item->title . "\"";
-
-            if (empty($item->target))
-                $target = " target=\"" . $item->target . "\"";
-
-            $result .= "\t<li><a" . $title . $target . " href=\"" . $item->href . "\">" . $item->label . "</a></li>\n";
+            if($item == null)
+            {
+                $result .= "\t<li style='height:3px;border: 3px solid #ccc;'></li>\n";
+            }
+            else 
+            {
+                if (empty($item->title))
+                    $title = " title=\"" . $item->title . "\"";
+    
+                if (empty($item->target))
+                    $target = " target=\"" . $item->target . "\"";
+    
+                $result .= "\t<li><a" . $title . $target . " href=\"" . $item->href . "\">" . $item->label . "</a></li>\n";
+            }
         }
 
         $result .= "</ul>\n";

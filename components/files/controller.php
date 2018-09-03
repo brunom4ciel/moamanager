@@ -10,11 +10,11 @@ namespace moam\components\files;
 defined('_EXEC') or die();
 
 use moam\core\Framework;
-use moam\core\Application;
+// use moam\core\Application;
 use moam\core\Properties;
 use moam\libraries\core\utils\Utils;
 use ZipArchive;
-use moam\libraries\core\menu\Menu;
+// use moam\libraries\core\menu\Menu;
 
 if (! class_exists('Application')) {
     $application = Framework::getApplication();
@@ -24,11 +24,11 @@ if (! $application->is_authentication()) {
     $application->alert("Error: you do not have credentials.");
 }
 
-Framework::import("menu", "core/menu");
+// Framework::import("menu", "core/menu");
 
-if (! class_exists('Menu')) {
-    $menu = new Menu();
-}
+// if (! class_exists('Menu')) {
+//     $menu = new Menu();
+// }
 
 Framework::import("Utils", "core/utils");
 
@@ -1278,29 +1278,6 @@ function do_this(){
 
 
 
-<div class="content content-alt">
-	<div class="container" style="width: 90%">
-		<div class="row">
-			<div class="">
-
-				<div class="card" style="width: 100%">
-					<div class="page-header">
-						<h1>
-							<a href="<?php echo $_SERVER['REQUEST_URI']?>"><?php echo TITLE_COMPONENT?></a>
-						</h1>
-					</div>
-
-					<div style="width: 100%; padding-bottom: 15px; display: table">
-
-						<div
-							style="float: left; width: 18%; border: 1px solid #fff; display: table-cell">
-																
-									<?php echo $application->showMenu($menu);?>								
-
-								</div>
-
-						<div
-							style="float: left; width: 80%; border: 1px solid #fff; display: table-cell">
 
 
 
@@ -1316,8 +1293,7 @@ function do_this(){
 									type="hidden" name="filename" id="filename" value="" /> <input
 									type="hidden" name="overwrite" id="overwrite" value="" />
 
-								<div id="container">
-    
+								
     
     <?php
 
@@ -1331,24 +1307,26 @@ function do_this(){
     ?>
     
 <a
-										href="?component=<?php echo $application->getComponent()?>&controller=upload&folder=<?php echo $folder;?>">Upload
-										File (*.txt, *.zip)</a> <br>
+										href="?component=<?php echo $application->getComponent()?>&controller=upload&folder=<?php echo $folder;?>">
+File Upload (*.txt, *.zip)</a> <br>
 									<!-- 
 <input type="button" value="BRUNO-Kill-files-alert" name="bruno" onclick="javascript: sendAction('bruno');" />
 || -->
-									<input type="button" value="New folder" name="folder"
-										onclick="javascript: newFolder();" /> || <input type="button"
-										value="Trash" name="trash"
+									<input type="button" class="btn btn-default" value="New folder" name="folder"
+										onclick="javascript: newFolder();" /> || 
+										
+										<input type="button"
+										class="btn btn-danger" value="Trash" name="trash"
 										onclick="javascript: sendAction('trash');" /> || <input
-										type="button" value="Backup" name="backup"
+										type="button" class="btn btn-default" value="Backup" name="backup"
 										onclick="javascript: sendAction('backup');" /> || <input
-										type="button" value="Merge" name="compredss"
+										type="button" class="btn btn-default" value="Merge" name="compredss"
 										onclick="javascript: sendAction('merge');" /> || <input
-										type="button" value="zip" name="compress"
+										type="button" class="btn btn-default" value="zip" name="compress"
 										onclick="javascript: sendAction('zip');" /> <input
-										type="button" value="unzip" name="decompress"
+										type="button" class="btn btn-default" value="unzip" name="decompress"
 										onclick="javascript: sendAction('unzip');" /> || Move to: <select
-										name="movedestine" id=movedestine>		
+										name="movedestine" class="btn btn-default"  id=movedestine>		
 		<?php
 
 // $folder = $application->getParameter("folder");
@@ -1376,7 +1354,7 @@ foreach ($dir_list as $key => $element) {
 
 ?>
 													
-												</select> <input type="button" value="Move" name="move"
+												</select> <input type="button" class="btn btn-default" value="Move" name="move"
 										id="move" onclick="javascript: sendAction('move');" /> <br> <a
 										href="<?php echo PATH_WWW ?>?component=<?php echo $application->getComponent()?>&controller=<?php echo $application->getController();?>">Root</a>
 
@@ -1431,8 +1409,13 @@ foreach ($files_list as $key => $element) {
     $i ++;
     if ($element["type"] != "dir") {
 
-        echo "<tr><td>" . $i . "</td><td>" . "<a onclick='javascript: renameFile(this);' name='" . $element["name"] . "' title='Rename' href='#'>" . "<img align='middle' width='24px' src='" . $application->getPathTemplate() . "/images/icon-rename.png' border='0'></a> " . "<a href='?component=" . $application->getComponent() . "&controller=openreadonly&filename=" . $element["name"] . "&folder=" . $application->getParameter("folder") . "'>" . "<img width='16px' align='middle' src='" . $application->getPathTemplate() . "/images/icon-view.png' title='View contents'/></a> " . 
-        '<a href="' . PATH_WWW . '?component=resource&tmpl=tmpl&task=download&file=' . $application->getParameter("folder") . $element["name"] . '">' . "<img width='16px' align='middle' src='" . $application->getPathTemplate() . "/images/icon_download.png' title='View contents'/></a> " . 
+        echo "<tr><td>" . $i . "</td><td>" . "<a onclick='javascript: renameFile(this);' name='" . $element["name"] . "' title='Rename' href='#'>" 
+            . "<img align='middle' width='24px' src='" . $application->getPathTemplate() . "/images/icon-rename.png' border='0'></a> " 
+            . "<a href='?component=" . $application->getComponent() . "&controller=openreadonly&filename=" . $element["name"] 
+            . "&folder=" . $application->getParameter("folder") . "'>" 
+            . "<img width='16px' align='middle' src='" . $application->getPathTemplate() . "/images/icon-view.png' title='View contents'/></a> " . 
+        '<a href="' . PATH_WWW . '?component=resource&tmpl=tmpl&task=download&file=' . $application->getParameter("folder") . $element["name"] . '">' 
+            . "<img width='16px' align='middle' src='" . $application->getPathTemplate() . "/images/icon_download.png' title='View contents'/></a> " . 
         "<label><input type='checkbox' name='element[]' value='" . $element["name"] . "' />" . $element["name"] . "</label> " . 
 
         // ."<a title='Move file' href='?component=moa&controller=run&filename=".$element["name"]."&folder=".$application->getParameter("folder")."'>"
@@ -1449,52 +1432,57 @@ foreach ($files_list as $key => $element) {
 							</form>
 	
 	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
 
-	
-	
-	
-	
-									<?php 
-																	
-									/*	for($i=0; $i<count($files_list); $i++){
-										
-											echo "<span style='margin-left:65px;' data-reactid=\".1lisbcwokxs.3.0.0.2.0.1.0.0.0.1.0\">".$files_list[$i]."</span><br>\n";
-										
-										}*/
-										
-									?>
-								
+<?php if(!empty($application->getParameter('folder'))){?>
+								<div style="float: right; padding-top: 10px">
+									<input type="button" class="btn btn-default" value="Return" name="return"
+										onclick="javascript: returnPage();" />
 								</div>
+									
+									
+									<br>
+										
+<?php }?>	
 
-					</div>
 
-				</div>
-			</div>
-		</div>
-	</div>
-</div>
+<script type='text/javascript'>
+
+function returnPage(){
+	//window.history.go(-1);
+
+	<?php
+
+$folder = $application->getParameter("folder");
+
+$levels = explode("/", $folder);
+
+$folder_ = "";
+
+for ($i = 0; $i < (count($levels) - 2); $i ++) {
+    $folder_ .= $levels[$i] . "/";
+}
+
+// echo $folder_;
+?>
+			
+	window.location.href='?component=<?php echo $application->getParameter("component");?>'
+			+'&controller=<?php echo $application->getController()?>'
+			+'&task=open'
+			+'&folder=<?php echo $folder_;?>';
+			
+}
+
+</script>
+
+
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	

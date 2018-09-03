@@ -5,16 +5,17 @@
  * @copyright  Copyright (C) 2015 - 2017 Open Source CIn/UFPE, Inc. All rights reserved.
  * @license    GNU General Public License version 2 or later; see LICENSE.txt
  */
-namespace moam\components\generator;
+namespace moam\components\scripts;
 
 defined('_EXEC') or die();
 
 use moam\core\Framework;
-use moam\core\Application;
+use moam\core\Template;
+// use moam\core\Application;
 use moam\core\Properties;
 use moam\libraries\core\utils\Utils;
-use moam\libraries\core\menu\Menu;
-use ZipArchive;
+// use moam\libraries\core\menu\Menu;
+// use ZipArchive;
 if (! class_exists('Application')) {
     $application = Framework::getApplication();
 }
@@ -23,11 +24,13 @@ if (! $application->is_authentication()) {
     $application->alert("Error: you do not have credentials.");
 }
 
-Framework::import("menu", "core/menu");
+// Framework::import("menu", "core/menu");
 
-if (! class_exists('Menu')) {
-    $menu = new Menu();
-}
+// if (! class_exists('Menu')) {
+//     $menu = new Menu();
+// }
+// Template::setDisabledMenu();
+
 
 Framework::import("Utils", "core/utils");
 
@@ -79,7 +82,7 @@ if ($filename != null) {
 
                 rename($filename, $filenamenew . $extension_scripts);
 
-                App::setParameter("filename", substr($filenamenew, strrpos($filenamenew, "/") + 1, strrpos($filenamenew, ".")));
+                $application->setParameter("filename", substr($filenamenew, strrpos($filenamenew, "/") + 1, strrpos($filenamenew, ".")));
             }
         }
     } else {
@@ -120,7 +123,7 @@ if ($filename != null) {
                     // echo "numFile:" . $za->numFiles . "\n";
                 } else {
 
-                    $maxBytesFileLoadPart = App::getFileContentsMaxSize();
+                    $maxBytesFileLoadPart = Properties::getFileContentsMaxSize();
 
                     $data1 = $utils->getContentFilePart($filename, ($maxBytesFileLoadPart * 1024));
 
@@ -133,32 +136,14 @@ if ($filename != null) {
 
 ?>
 
-
-<div class="content content-alt">
-	<div class="container" style="width: 90%">
-		<div class="row">
-			<div class="">
-
-				<div class="card" style="width: 100%">
 					<div class="page-header">
 						<h1>
-							<a href="<?php echo $_SERVER['REQUEST_URI']?>">Open - Read-only</a>
+							<a href="<?php echo $_SERVER['REQUEST_URI']?>">Read zip file</a>
 						</h1>
 					</div>
 
-					<div style="width: 100%; padding-bottom: 15px; display: table">
-
-						<div style="float: left; width: 200px; border: 1px solid #fff">
-																
-									<?php echo $application->showMenu($menu);?>							
-
-								</div>
-
-						<div style="float: left; width: 80%; border: 1px solid #fff">
-
-
 							<form method="POST" action="<?php echo $_SERVER['PHP_SELF'];?>"
-								name="saveform" async-form="login"
+								name="saveform" 
 								class="ng-pristine ng-valid-email ng-invalid ng-invalid-required">
 								<input type="hidden"
 									value="<?php echo $application->getComponent()?>"
@@ -170,8 +155,12 @@ if ($filename != null) {
 									value="<?php echo $application->getParameter("folder");?>"
 									name="folder">
 
-								<div style="float: left; padding-left: 20px; width: 100%">
+									<div style="float: right; padding-left: 10px;margin-bottom:20px;">
 
+										<input type="button" class="btn btn-default" value="Return" name="return"
+										onclick="javascript: returnPage();" />
+									</div>
+									
 									<div
 										style="margin-left: 5px; display: table; width: 99%; height: 70px; background-color: #F3F781; border: 1px solid #000; text-align: center; vertical-align: middle;">
 										Read-only <br>
@@ -216,27 +205,30 @@ if ($filename != null) {
 											</div>
 
 
-									<div style="float: left; padding-left: 10px">
-										<input type="button" value="Return"
-											onclick="javascript: window.location.href='?component=scripts&folder=<?php echo $application->getParameter("folder");?>';">
-										<!-- <input type="submit" value="Save">							
-												<input type="submit" value="Remove" onclick="javascript: document.getElementById('task').value='remove'"> 	
-											 -->
-									</div>
+	
 
-								</div>
 
 							</form>
 
 
-						</div>
 
-					</div>
+									<div style="float: right; padding-left: 10px;margin-top:20px;">
 
-				</div>
-			</div>
-		</div>
-	</div>
-</div>
+										<input type="button" class="btn btn-default" value="Return" name="return"
+										onclick="javascript: returnPage();" />
+									</div>
+									
+<script type="text/javascript">
 
+function returnPage()
+{
+
+	window.location.href='?component=<?php echo $application->getParameter("component");?>'
+			+'&controller=controller'
+			+'&task=open'
+			+'&folder=<?php echo $application->getParameter("folder");?>';
+			
+}
+
+</script>
 

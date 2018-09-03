@@ -10,8 +10,8 @@ namespace moam\components\generator;
 defined('_EXEC') or die();
 
 use moam\core\Framework;
-use moam\core\Application;
-use moam\libraries\core\menu\Menu;
+// use moam\core\Application;
+// use moam\libraries\core\menu\Menu;
 use moam\core\Template;
 use moam\core\Properties;
 use moam\libraries\core\utils\Utils;
@@ -23,11 +23,11 @@ if (! $application->is_authentication()) {
     $application->alert("Error: you do not have credentials.");
 }
 
-Framework::import("menu", "core/menu");
+// Framework::import("menu", "core/menu");
 
-if (! class_exists('Menu')) {
-    $menu = new Menu();
-}
+// if (! class_exists('Menu')) {
+//     $menu = new Menu();
+// }
 
 Framework::import("Utils", "core/utils");
 
@@ -50,11 +50,11 @@ Template::addHeader(array(
     // . "http://ajax.googleapis.com/ajax/libs/jquery/1.5.2/jquery.min.js")
 ));
 
-Template::addHeader(array(
-    "tag" => "script",
-    "type" => "text/javascript",
-    "src" => "" . PATH_WWW . "templates/default/javascript/jquery.zclip.min.js"
-));
+// Template::addHeader(array(
+//     "tag" => "script",
+//     "type" => "text/javascript",
+//     "src" => "" . PATH_WWW . "templates/default/javascript/jquery.zclip.min.js"
+// ));
 
 Template::addHeader(array(
     "tag" => "script",
@@ -266,29 +266,13 @@ echo "var optionArrayDatasets = " . $arrayJS . "];\n";
 
 
 
-<div class="content content-alt">
-	<div class="container" style="width: 90%">
-		<div class="row">
-			<div class="">
-
-				<div class="card" style="width: 100%">
-					<div class="page-header">
-						<h1>
-							<a href="<?php echo $_SERVER['REQUEST_URI']?>"><?php echo TITLE_COMPONENT?></a>
-						</h1>
-					</div>
 
 					<div style="width: 100%; padding-bottom: 15px; display: table">
 
 						<div
 							style="float: left; width: 20%; border: 1px solid #fff; display: table-cell">
 								
-									<?php require_once(PATH_COMPONENTS."/generator/menu_features.php")?>
-								
-									
-								  	
-								  	<br>
-							<br>
+	
 
 							<ul id="nav" style="width: 200px;">
 
@@ -339,14 +323,14 @@ echo "var optionArrayDatasets = " . $arrayJS . "];\n";
 													style="float: right; padding-right: 5px; width: auto; padding-top: 20px;">
 
 													<div style="float: right; padding-right: 0px; width: auto;">
-														<input type="button" id="submit" name="submit"
+														&nbsp; <input type="button" class="btn btn-success" id="submit" name="submit"
 															value="Generate Script"
 															onclick="javascript:sendGeneratorDatasets();" />
 
 													</div>
 
 													<div style="float: right; width: auto;">
-														<input type="button" id="limpar" name="limpar"
+														<input type="button" class="btn btn-default" id="limpar" name="limpar"
 															value="Clean"
 															onclick="javascript:document.getElementById('consoles').value='';" />
 													</div>
@@ -509,7 +493,7 @@ echo "var optionArrayDatasets = " . $arrayJS . "];\n";
 									</div>
 
 									<div style="float: left; padding-left: 10px">
-										<input type="submit" value="Save"
+										<input type="submit" class="btn btn-default" value="Save"
 											onclick="javascript: document.getElementById('console2').value=document.getElementById('consoles').value;">
 
 
@@ -873,7 +857,7 @@ function createDynamicPopupObjects2(element, event, idName, optionArray, type, f
 			   			if(w.length==1)
 			   				checkbox.style.width = (50)+"px";
 			   			else
-			   				checkbox.style.width = (w.length*13)+"px";
+			   				checkbox.style.width = (w.length*18)+"px";
 			   			
 			   			checkbox.value = optionArray[option]["default"];
 			   				
@@ -1793,6 +1777,15 @@ function detectLearnerMethod(element){
 		case	"HDDM_W_Test":
 		case	"PageHinkleyDM":
 		case	"STEPD":	
+		case	    "RDDM":
+		case	    "DDE":
+		case	    "FTDD":
+		case	    "FSDD":
+		case	    "FPDD":
+		case	    "WSTD":
+		case	    "SEEDChangeDetector":
+		case	    "FHDDM":
+		case	    "FHDDMS":
 				
 			//var elementOptionMethod = document.getElementById('learn_method_'
 			//+element.options[element.selectedIndex].innerHTML.toLowerCase());
@@ -2669,42 +2662,42 @@ $(document).ready(function(){
 });
 */
 
-$(document).ready(function(){
+// $(document).ready(function(){
 
-    $("a#copy-origem").zclip({
-        path:'http://www.steamdev.com/zclip/js/ZeroClipboard.swf',//'js/ZeroClipboard.swf',
-        //copy:$('textarea#destino').text(),
-		copy:function(){return $('textarea#origem').val();},
-        beforeCopy:function(){
+//     $("a#copy-origem").zclip({
+//         path:'http://www.steamdev.com/zclip/js/ZeroClipboard.swf',//'js/ZeroClipboard.swf',
+//         //copy:$('textarea#destino').text(),
+// 		copy:function(){return $('textarea#origem').val();},
+//         beforeCopy:function(){
            
-        },
-        afterCopy:function(){
+//         },
+//         afterCopy:function(){
            
-            $(this).next('.check').show();
-        }
-    });
+//             $(this).next('.check').show();
+//         }
+//     });
 
-});
+// });
 
 
 
-$(document).ready(function(){
+// $(document).ready(function(){
 
-    $("a#copy-consoles").zclip({
-        path:'http://www.steamdev.com/zclip/js/ZeroClipboard.swf',//'js/ZeroClipboard.swf',
-        //copy:$('textarea#destino').text(),
-		copy:function(){return $('textarea#consoles').val();},
-        beforeCopy:function(){
+//     $("a#copy-consoles").zclip({
+//         path:'http://www.steamdev.com/zclip/js/ZeroClipboard.swf',//'js/ZeroClipboard.swf',
+//         //copy:$('textarea#destino').text(),
+// 		copy:function(){return $('textarea#consoles').val();},
+//         beforeCopy:function(){
            
-        },
+//         },
         
-        afterCopy:function(){
+//         afterCopy:function(){
            
-            $(this).next('.check').show();
-        }
-    });
+//             $(this).next('.check').show();
+//         }
+//     });
 
-});
+// });
 
 
 </script>
@@ -2814,9 +2807,5 @@ $(document).ready(function(){
 
 		</div>
 
-	</div>
-</div>
-</div>
-</div>
-</div>
+
 

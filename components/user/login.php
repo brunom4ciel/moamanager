@@ -14,10 +14,15 @@ use moam\core\Framework;
 use moam\core\Properties;
 use moam\libraries\core\db\DBPDO;
 use moam\libraries\core\user\User;
+use moam\libraries\core\sys\SoftwareUpdate;
+use moam\core\Template;
+
 
 if (! class_exists('Application')) {
     $application = Framework::getApplication();
 }
+
+Template::setDisabledMenu();
 
 // Template::addHeader(array("tag"=>"link",
 // "type"=>"text/css",
@@ -34,6 +39,7 @@ if (isset($_GET["logout"])) {
 
     $http_referer = $application->getParameter("http_referer");
     $application->logout($http_referer);
+    
 } else if ($application->is_authentication())
     header("Location: " . PATH_WWW . "?component=home");
 
@@ -56,6 +62,8 @@ if (isset($_GET["msg"])) {
                 Framework::import("UsageReportMail", "core/email");
                 Framework::import("DBPDO", "core/db");
                 Framework::import("User", "core/user");
+                Framework::import("SoftwareUpdate", "core/sys");                
+                
             } catch (AppException $e) {
 
                 throw new AppException('import library ' . ' error - component ' . $application->getComponent());
@@ -85,12 +93,18 @@ if (isset($_GET["msg"])) {
                     $application->authentication($email, $credentials['type'], $credentials['user_id'], $credentials['workspace']);
 
                     $http_referer = $application->getParameter("http_referer");
-
+                    
+                    $update = new SoftwareUpdate();
+//                     $isUpdate = $update->isUpdate(MOAMANAGER_VERSION);
+//                     $version = $update->getVersion();
+                    
+                    $application->setSoftwareRemoteVersion($update->getVersion());
+                    
                     if (! empty($http_referer)) {
                         $http_referer = base64_decode($http_referer);
                         $application->redirect($http_referer);
                     } else
-                        $application->redirect(PATH_WWW . "?component=home");
+                        $application->redirect(PATH_WWW . "?component=systemmonitor");
                 } else {
                     $error_msg = "Error: mail or password invalid";
                 }
@@ -107,7 +121,7 @@ if (isset($_GET["msg"])) {
 ?>
 
 
-<div class="content content-alt">
+<div class="content">
 	<div class="container">
 		<div class="row">
 			<div class="col-md-6 col-md-offset-3 col-lg-4 col-lg-offset-4">

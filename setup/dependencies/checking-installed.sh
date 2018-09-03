@@ -19,5 +19,5 @@ cat << "EOF"
 
 EOF
 
-
-firefox http://localhost/moamanager/
+#xdg-open http://localhost/moamanager/
+#python -m webbrowser -t "http://localhost/moamanager/"

@@ -20,9 +20,11 @@ if (! class_exists('Application')) {
     $application = Framework::getApplication();
 }
 
-if (! $application->is_authentication()) {
+if (! $application->is_authentication() || $application->getUserType() != 1) {
     $application->alert("Error: you do not have credentials.");
 }
+
+Template::setDisabledMenu();
 
 Framework::import("Utils", "core/utils");
 Framework::import("DBPDO", "core/db");
@@ -140,17 +142,12 @@ if (isset($_POST['query'])) {
 
 
 
-<div class="content content-alt">
-	<div class="container" style="width: 70%">
-		<div class="row">
-			<div class="">
-				<div class="card" style="width: 100%">
 
-
-
-					<div class="page-header">
-						<h1>Query Execute</h1>
-					</div>
+							<div class="page-header">
+        						<h1>
+        							<a href="<?php echo $_SERVER['REQUEST_URI']?>">Dataset Manager</a>
+        						</h1>
+        					</div>
 							
 							<?php
 
@@ -187,15 +184,16 @@ if (isset($_POST['query'])) {
 							name="query"><?php echo $query?></textarea>
 						<br>
 
-						<div style="text-align: right; display: block;">
-
-							<input type="submit" name="Execute" value="Execute" /> <input
-								type="button"
-								onclick="javascript: window.location.href='?component=settings';"
-								name="cancel" value="Cancel" />
-
+							<div style="float: right; padding-left: 10px">
+									
+								<input type="submit" class="btn btn-success" name="Execute" value="Execute" />
+						
+								<input type="button" class="btn btn-default"
+    							onclick="javascript: window.location.href='?component=settings';"
+    							name="cancel" value="Return" />
 						</div>
-
+						
+						
 					</form>
 							
 							
@@ -217,11 +215,6 @@ if (isset($_POST['query'])) {
 
     ?>
 							
-							</div>
 
-			</div>
-		</div>
-	</div>
-</div>
-</div>
+
 

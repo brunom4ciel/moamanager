@@ -5,15 +5,15 @@
  * @copyright  Copyright (C) 2015 - 2017 Open Source CIn/UFPE, Inc. All rights reserved.
  * @license    GNU General Public License version 2 or later; see LICENSE.txt
  */
-namespace moam\components\generator;
+namespace moam\components\scripts;
 
 defined('_EXEC') or die();
 
 use moam\core\Framework;
-use moam\core\Application;
+use moam\core\Template;
 use moam\core\Properties;
 use moam\libraries\core\utils\Utils;
-use moam\libraries\core\menu\Menu;
+// use moam\libraries\core\menu\Menu;
 if (! class_exists('Application')) {
     $application = Framework::getApplication();
 }
@@ -22,11 +22,21 @@ if (! $application->is_authentication()) {
     $application->alert("Error: you do not have credentials.");
 }
 
-Framework::import("menu", "core/menu");
+// Framework::import("menu", "core/menu");
 
-if (! class_exists('Menu')) {
-    $menu = new Menu();
-}
+// if (! class_exists('Menu')) {
+//     $menu = new Menu();
+// }
+
+Template::setDisabledMenu();
+
+Template::addHeader(array("tag"=>"script",
+    "type"=>"text/javascript",
+    "src"=>""
+    . $application->getPathTemplate()
+    . "/javascript/edit_area/edit_area_full.js"));
+
+
 
 Framework::import("Utils", "core/utils");
 
@@ -47,7 +57,35 @@ if (strrpos($filename, ".") > - 1) {
         exit("error");
     }
 }
+else 
+{
+    $filename .= ".data";
+}
 
+
+
+$filenamenew = $application->getParameter("filename");
+
+if(!empty($filenamenew))
+{
+    if (strrpos($filenamenew, ".") > - 1) {
+        
+        if (in_array(substr($filenamenew, strrpos($filenamenew, ".") + 1), array(
+            "data", "txt"
+        ))) {
+            
+            //         $filename = substr($filename, 0, strrpos($filename, "."));
+            
+            //         $application->setParameter("filename", $filename);
+        }else{
+            exit("error");
+        }
+    }
+    else
+    {
+        $filenamenew .= ".data";
+    }
+}
 
 $folder = $application->getParameter("folder");
 $dirScriptsName = "scripts";
@@ -66,9 +104,18 @@ if ($filename != null) {
     $task = $application->getParameter("task");
 
     if ($task == "save") {
-
+        
         $data = $application->getParameter("data");
-        $utils->setContentFile($filename, $data);
+        if(!$utils->setContentFile($filename, $data))
+        {
+            $utils->set_perms($filename, "0777");
+            if(!$utils->setContentFile($filename, $data))
+            {
+                exit("Error: modifying the file was not allowed.");
+            }
+        }
+        
+        
 
         $filenamenew = Properties::getBase_directory_destine($application) . $application->getUser() 
         . DIRECTORY_SEPARATOR . $dirScriptsName . DIRECTORY_SEPARATOR . $folder . 
@@ -123,32 +170,15 @@ if ($filename != null) {
 
 ?>
 
-
-<div class="content content-alt">
-	<div class="container" style="width: 90%">
-		<div class="row">
-			<div class="">
-
-				<div class="card" style="width: 100%">
-					<div class="page-header">
-						<h1>
-							<a href="<?php echo $_SERVER['REQUEST_URI']?>">Edit File</a>
-						</h1>
-					</div>
-
-					<div style="width: 100%; padding-bottom: 15px; display: table">
-
-						<div style="float: left; width: 200px; border: 1px solid #fff">
-																
-									<?php echo $application->showMenu($menu);?>							
-
-								</div>
-
-						<div style="float: left; width: 80%; border: 1px solid #fff">
-
+							<div class="page-header">
+        						<h1>
+        							<a href="<?php echo $_SERVER['REQUEST_URI']?>">Edit Script</a>
+        						</h1>
+        					</div>
+					
 
 							<form method="POST" action="<?php echo $_SERVER['PHP_SELF'];?>"
-								name="saveform" async-form="login"
+								name="saveform" 
 								class="ng-pristine ng-valid-email ng-invalid ng-invalid-required">
 								<input type="hidden"
 									value="<?php echo $application->getComponent()?>"
@@ -160,8 +190,7 @@ if ($filename != null) {
 									value="<?php echo $application->getParameter("folder");?>"
 									name="folder">
 
-								<div style="float: left; padding-left: 20px; width: 100%">
-
+								
 									<div
 										style="float: left; padding-left: 5px; width: 100%; margin-top: 5px;">
 
@@ -172,29 +201,80 @@ if ($filename != null) {
 									</div>
 
 
-									<div style="float: left; padding-left: 10px">
-										<input type="button" value="Return"
-											onclick="javascript: window.location.href='?component=scripts&folder=<?php echo $application->getParameter("folder");?>';">
-										<input type="button" value="Execute"
-											onclick="javascript: window.location.href='?component=moa&controller=run&task=open&filename=<?php echo $application->getParameter("filename");?>&folder=<?php echo $application->getParameter("folder");?>';">
-										<input type="submit" value="Save"> <input type="submit"
-											value="Remove"
-											onclick="javascript: document.getElementById('task').value='remove'">
-									</div>
+									
 
-								</div>
+									<div style="float: right; padding-left: 10px">
+									
+										
+										<input type='button' class="btn btn-info" onclick='toogle_editable("data", this);' value='Toggle to read only mode' />
+										
+										<input type="button" class="btn btn-warning" value="Execute"
+											onclick="javascript: window.location.href='?component=taskinitializer&controller=run&task=open&filename=<?php echo $application->getParameter("filename");?>&folder=<?php echo $application->getParameter("folder");?>';">
+										
+										<input type="submit" class="btn btn-success" value="Save"> <input type="submit"
+											class="btn btn-danger" value="Remove"
+											onclick="javascript: document.getElementById('task').value='remove'">
+											
+										<input type="button" class="btn btn-default badge" value="Return" name="return"
+										onclick="javascript: returnPage();" />
+									</div>
 
 							</form>
 
 
-						</div>
 
-					</div>
 
-				</div>
-			</div>
-		</div>
-	</div>
-</div>
+
+<script type="text/javascript">
+
+function returnPage()
+{
+
+	window.location.href='?component=<?php echo $application->getParameter("component");?>'
+			+'&controller=controller'
+			+'&task=open'
+			+'&folder=<?php echo $application->getParameter("folder");?>';
+			
+}
+
+
+	// initialisation
+	editAreaLoader.init({
+		id: "data"	// id of the textarea to transform	
+			,start_highlight: true	
+			,font_size: "8"
+			,is_editable: true
+			,word_wrap: true
+			,font_family: "verdana, monospace"
+			,allow_resize: "y"
+			,allow_toggle: true
+			,language: "en"
+			,syntax: "xml"	
+			,toolbar: "go_to_line, |, undo, redo, |, select_font"
+			//,load_callback: "my_load"
+			//,save_callback: "my_save"
+			,plugins: "charmap"
+			,min_height: 300
+			,charmap_default: "arrows"
+	});
+
+
+	function toogle_editable(id, id2)
+	{
+		if(id2.value == "Toggle to edit mode")
+		{
+			id2.value = "Toggle to read only mode";
+		}
+		else
+		{
+			id2.value = "Toggle to edit mode";
+		}
+		
+		editAreaLoader.execCommand(id, 'set_editable', !editAreaLoader.execCommand(id, 'is_editable'));
+	}
+
+</script>
+
+
 
 

@@ -14,10 +14,12 @@ use moam\core\Properties;
 use moam\libraries\core\db\DBPDO;
 use moam\libraries\core\json\JsonFile;
 use moam\libraries\core\log\ExecutionHistory;
+use moam\libraries\core\date\DateTimeFormats;
 
 // Framework::import("Utils", "core/utils");
 Framework::import("execution_history", "core/log");
 Framework::import("DBPDO", "core/db");
+Framework::import("DateTimeFormats", "core/date");
 
 class ParallelProcess extends Utils
 {
@@ -27,7 +29,12 @@ class ParallelProcess extends Utils
     public $base_directory_destine_exec;
 
     private $execution_history;
-
+    
+    private $app_name = "";
+    private $app_version = "";
+    private $app_release = "";
+    private $datetimeformat = null;
+    
     public function __construct()
     {
         $DB = new DBPDO(
@@ -37,16 +44,160 @@ class ParallelProcess extends Utils
             Properties::getDatabasePass());
 
         $this->execution_history = new ExecutionHistory($DB);
+        
+        if(defined('APPLICATION_NAME'))
+        {
+            $this->app_name = APPLICATION_NAME;
+        }
+        
+        if(defined('MOAMANAGER_VERSION'))
+        {
+            $this->app_version = MOAMANAGER_VERSION;
+        }
+        
+        if(defined('MOAMANAGER_RELEASES'))
+        {
+            $this->app_release = MOAMANAGER_RELEASES;
+        }
+     
+        $this->datetimeformat = new DateTimeFormats();
+        
     }
 
+    private function tagMetadata($metadata = array(), $attribute = "moamanager")
+    {
+        $result = array();
+        
+        foreach($metadata as $item)
+        {
+            foreach($item as $key=>$value)
+            {
+                if(strpos($value, '"') === FALSE)
+                {
+                    
+                }
+                else
+                {
+                    $value = str_replace('"', '""', $value);
+                }
+                
+                $result[] = "<meta-data " . $attribute . ":name=\"" . $key . "\" "
+                    . $attribute . ":value=\"" . $value . "\"/>";
+            }
+        }            
+        
+        return $result;
+    }
     
-    
-    public function pool_execute2($filename, $nb_max_process, $user_id, $interfacename="moa.DoTask")
+    private function metadata($opts=array())//$filename = "", $script = "", ="", $output, $cpustarttime=0, $username = "")
+    {
+        $filename = $opts["filename"];
+        $script = $opts["script"];
+        $input = $opts["command"];
+        $output = $opts["output"];
+        $username = $opts["username"];
+        $cpustarttime = $opts["timestart"];
+        $ramusage = $opts["ramusagem"];
+        $cpuusage = $opts["cpuusagem"];     
+        
+        
+        if(file_exists($filename))
+        {
+            $hash_file = hash_hmac_file('md5', $filename, $script);
+        }
+        else
+        {
+            $hash_file = "file not found";
+        }
+        
+                
+        $filename_ = substr($input, strrpos($input, ">") + 1);
+        $filename_ = substr($filename_, strrpos($filename_, DIRECTORY_SEPARATOR)+1);        
+        $filename_ex = substr($filename_, strrpos($filename_, "."));
+        $filename_ = substr($filename_, 0, strrpos($filename_, "-"));
+        $filename_ = $filename_ . $filename_ex;        
+        $filename_ = trim($filename_);
+                
+        
+        $startime = date("Y-m-d H:i:s", $cpustarttime);
+        $endtime = date("Y-m-d H:i:s", time());
+        
+        
+        $result = $this->datetimeformat->date_diff($startime, $endtime, array(
+            "s"
+        )); // i-minutes
+        
+        $secs = $result['s'];
+        $diff_dates = $this->formatDatetime($secs);
+        
+        
+        $metadata = array();
+        $metadata[] = array("software-name"=>$this->app_name);
+        $metadata[] = array("software-version"=>$this->app_version);
+        $metadata[] = array("software-release"=>$this->app_release);
+        $metadata[] = array("software-copyright"=>"(C) 2015-2018 CIn (Informatic Center) of UFPE (Federal University of Pernambuco), Pernambuco, Brazil");
+        $metadata[] = array("software-web"=>"https://github.com/brunom4ciel/moamanager");
+        
+        $metadata[] = array("user-owner"=>$username);
+        
+        $metadata[] = array("script-data"=>trim($script));
+        $metadata[] = array("script-original-filename"=>trim($filename_));
+        
+        $metadata[] = array("script-cpu-datetime-start"=>$startime);
+        $metadata[] = array("script-cpu-datetime-end"=>$endtime);
+        $metadata[] = array("script-cpu-time"=>$diff_dates);        
+        $metadata[] = array("script-cpu-usage-start"=>$cpuusage . "%");
+        $metadata[] = array("script-cpu-usage-end"=>$this->getHardwareCpuUsage() . "%");
+        
+        $metadata[] = array("script-ram-usage-start"=>$ramusage . "%");        
+        $metadata[] = array("script-ram-usage-end"=>$this->getHardwareMemoryRamUsage() . "%");
+        
+        $metadata[] = array("hardware-cpu"=>$this->getHardwareCpuName());
+        $metadata[] = array("hardware-ram"=>$this->getHardwareMemory());
+
+        $metadata[] = array("hardware-disk"=>$this->getHardwareDisk());
+        $metadata[] = array("hardware-disk-usage"=>$this->getHardwareDiskUsage());
+        $metadata[] = array("hardware-disk-free"=>$this->getHardwareDiskFree());
+        
+        $metadata[] = array("os-system"=>$this->getHardwareKernelVersion());
+        $metadata[] = array("os-uptime"=>$this->getHardwareUptime());
+        
+        $metadata[] = array("command-input"=>trim($input));
+        $metadata[] = array("command-output"=>trim($output));
+        
+        $metadata[] = array("security-hash-hmac-file"=>$hash_file);
+        
+        
+        $result = implode("\n",$this->tagMetadata($metadata));
+                                
+        return $result."\n\n";
+    }
+        
+
+    public function pool_execute2($filename, $nb_max_process, $user_id, $interfacename="moa.DoTask", $username = "")
     { // }, $filename_source="") {
         $pross_ids = array();
-        
+        $descriptorspec = array(
+            0 => array(
+                "pipe",
+                "r"
+            ), // stdin is a pipe that the child will read from
+            1 => array(
+                "pipe",
+                "w"
+            ), // stdout is a pipe that the child will write to
+            2 => array(
+                "pipe",
+                "w"
+            ) // stderr is a file to write to
+        );
         $pool = array();
+        $pipes = array();
+        $output = array();
+        $cpu = array();
+        $ram = array();
         $foo = "";
+
         // $contadorList=1;
                 
         $jsonfile = new JsonFile($filename);
@@ -81,14 +232,24 @@ class ParallelProcess extends Utils
             $pool[$i] = FALSE;
         }
         
-        while (count($commandes) > 0) {
-            $commande = array_shift($commandes);
+        while (count($commandes) > 0) 
+        {
+            $commande = array_shift($commandes);            
+                        
+                                  
+            
             
             $commande_lancee = FALSE;
             while ($commande_lancee == FALSE) {
                 
                 //usleep(50000);
-                sleep(1);
+                //sleep(1);
+                
+                while(file_exists($commande["filename"]))
+                {
+                    //not reprocess
+                    $commande = array_shift($commandes);
+                } 
                 
                 
                 for ($i = 0; $i < $nb_max_process and $commande_lancee == FALSE; $i ++) {
@@ -99,19 +260,30 @@ class ParallelProcess extends Utils
                         
                         // if($data['process']==false){
                         
-                        $pool[$i] = proc_open($commande["command"], array(), $foo);
+                        $pool[$i] = proc_open($commande["command"], $descriptorspec, $pipes[$i]);
                         $commande_lancee = TRUE;
                         
+                        
+                        $ram[$i] = $this->getHardwareMemoryRamUsage();
+                        $cpu[$i] = $this->getHardwareCpuUsage();                        
+                        $output[$i] = "";
+                        
+                        // close child's input imidiately
+                        fclose($pipes[$i][0]);
+                        
+                        stream_set_blocking($pipes[$i][1], false);
+                        stream_set_blocking($pipes[$i][2], false);
+                        
+                        
+                        
+                        
+                        
+                        
+                        
+                        
+                        
                         $statusProc = proc_get_status($pool[$i]);
-                        
-                        // $contadorList = substr($commande, strrpos($commande, "/")+1);
-                        // $contadorList = substr($contadorList, 0, 4);//strrpos($contadorList, "-"));
-                        
-                        $contadorList = substr($commande["command"], strrpos($commande["command"], "/") + 1);
-                        $contadorList = substr($contadorList, strrpos($contadorList, "-") + 1); // strrpos($contadorList, "-"));
-                        $contadorList = substr($contadorList, 0, strrpos($contadorList, "."));
-   
-                        
+
                         
                         $data = $jsonfile->getDataKeyValue("id", $commande["id"]);
                         
@@ -122,26 +294,6 @@ class ParallelProcess extends Utils
                         $jsonfile->setDataKeyValue("id", $commande["id"], $data);                        
                         $jsonfile->save();                        
                         $jsonfile->load();
-                        
-                        
-                        
-                        
-                        
-//                         $jsonfile_pool = new JsonFile($commande["filename"]);                        
-//                         $jsonfile_pool->open();
-                                                
-//                         $data = $jsonfile_pool->getDataKeyValue("id", $contadorList);
-                        
-//                         $data['pid'] = $statusProc["pid"];
-//                         $data['running'] = true;
-//                         $data['process'] = false;
-//                         $data['starttime'] = time();
-                        
-//                         // $jsonfile->setData($data);
-                        
-//                         $jsonfile_pool->setDataKeyValue("id", $contadorList, $data);                        
-//                         $jsonfile_pool->save();                        
-//                         $jsonfile_pool->load();
                         
                         //
                         // ------------START PROCESS ------
@@ -164,13 +316,7 @@ class ParallelProcess extends Utils
                         //
                         // ------------END START PROCESS ------
                         //
-                        
-                        // }else{
-                        
-                        // $pool[$i] = TRUE;
-                        // $commande_lancee=TRUE;
-                        // break 2;
-                        // }
+
                         
                         // $contadorList++;
                     } else {
@@ -178,16 +324,26 @@ class ParallelProcess extends Utils
                         
                         if ($etat['running'] == FALSE) {
                             
+                            fclose($pipes[$i][1]);
+                            fclose($pipes[$i][2]);
+                            
+                            
+                            
                             $command = $etat["command"];
                             
                             $filename = substr($command, strrpos($command, ">") + 1);
                             $filename = trim($filename);
+
                             
-                            // echo "==".$filename."----\n";
-                            // echo $command."\n\n";
-                            // echo $filename."<br>";
+                            $statusProc = proc_get_status($pool[$i]);                            
+                            $data = $jsonfile->getDataKeyValue("pid", $statusProc["pid"]);                            
+                            $data['running'] = false;
+                            $data['process'] = true;
+                            $data['endtime'] = time();
+                            $jsonfile->setDataKeyValue("pid", $statusProc["pid"], $data);
+                            $jsonfile->save();
+                            $jsonfile->load();
                             
-                            // echo substr(sprintf('%o', fileperms($filename)), -4)."\n\n";
                             
                             if (is_writable($filename)) {
                                 
@@ -201,25 +357,28 @@ class ParallelProcess extends Utils
                                 
                                 // echo $script."\n\n";
                                 
-                                $hardwareInfo = $this->getHardwareInfo();
+                                $opts = array();
+                                $opts["filename"] = $filename;
+                                $opts["script"] = $script;
+                                $opts["command"] = $command;
+                                $opts["output"] = $output[$i];
+                                $opts["username"] =  $username;
+                                $opts["timestart"] =  $data['starttime'];
+                                $opts["ramusagem"] =  $ram[$i];
+                                $opts["cpuusagem"] =  $ram[$i];                                
                                 
+                                $metadata = $this->metadata($opts);
+                                        
                                 $fp = fopen($filename, "r+");
                                 rewind($fp);
-                                $this->finsert($fp, $script . "\n\n" . $hardwareInfo . "\n\n");
+                                $this->finsert($fp, $metadata);
                                 fclose($fp);
                                 
                                 
                                 $idSeq = substr($filename, strrpos($filename, "-")+1);
                                 $idSeq = substr($idSeq,0, strrpos($idSeq, "."));
                                 $idSeq = trim($idSeq);
-                              
-                                
-//                                 $filename = substr($filename, strrpos($filename, "/") + 1);
-//                                 $filename = trim($filename);
-                                
-                                // rename($this->path_tmp_result.$filename, $this->path_real_result.$filename);
-                                // echo "From: ".$dirProcess.$filename." - To: ". $dirStorage.$filename."<br><br>";
-                                
+                                                              
                                 $data = $jsonfile->getDataKeyValue("id", $idSeq);
                                 
                                 $filename_tmp = $filename;
@@ -237,41 +396,8 @@ class ParallelProcess extends Utils
                                 exit("Could not save the file in the directory indicated, perhaps the problem be permission. Please contact your system administrator.\nfile: " . $filename);
                             }
                             
-                            $statusProc = proc_get_status($pool[$i]);
                             
                             
-                            $data = $jsonfile->getDataKeyValue("pid", $statusProc["pid"]);
-                            
-                            $data['running'] = false;
-                            $data['process'] = true;
-                            $data['endtime'] = time();
-                            $jsonfile->setDataKeyValue("pid", $statusProc["pid"], $data);
-                            $jsonfile->save();
-                            $jsonfile->load();
-                            
-                            
-                            
-                            
-                            
-                            
-                            
-                            
-//                             $jsonfile_pool = new JsonFile($commande["filename"]);
-//                             $jsonfile_pool->open();
-                            
-//                             $data = $jsonfile_pool->getDataKeyValue("pid", $statusProc["pid"]);
-                            
-//                             $data['running'] = false;
-//                             $data['process'] = true;
-//                             $data['endtime'] = time();
-                            
-//                             // $jsonfile->setData($data);
-                            
-//                             $jsonfile_pool->setDataKeyValue("pid", $statusProc["pid"], $data);
-                            
-//                             $jsonfile_pool->save();
-                            
-//                             $jsonfile_pool->load();
                             
                             proc_close($pool[$i]);
                             
@@ -305,15 +431,22 @@ class ParallelProcess extends Utils
                             
                             // if($data['process']==false){
                             
-                            $pool[$i] = proc_open($commande["command"], array(), $foo);
+                            $pool[$i] = proc_open($commande["command"], $descriptorspec, $pipes[$i]);
                             $commande_lancee = TRUE;
                             
+                            $ram[$i] = $this->getHardwareMemoryRamUsage();
+                            $cpu[$i] = $this->getHardwareCpuUsage();   
+                            $output[$i] = "";
+                            
+                            // close child's input imidiately
+                            fclose($pipes[$i][0]);
+                            
+                            stream_set_blocking($pipes[$i][1], false);
+                            stream_set_blocking($pipes[$i][2], false);
+                            
+                            
+                            
                             $statusProc = proc_get_status($pool[$i]);
-                            
-                            $contadorList = substr($commande["command"], strrpos($commande["command"], "/") + 1);
-                            $contadorList = substr($contadorList, strrpos($contadorList, "-") + 1); // strrpos($contadorList, "-"));
-                            $contadorList = substr($contadorList, 0, strrpos($contadorList, "."));
-                            
                             
                             
                             $data = $jsonfile->getDataKeyValue("id", $commande["id"]);
@@ -327,24 +460,6 @@ class ParallelProcess extends Utils
                             $jsonfile->load();
                             
                             
-                            
-//                             $jsonfile_pool = new JsonFile($commande["filename"]);
-//                             $jsonfile_pool->open();
-                            
-//                             $data = $jsonfile_pool->getDataKeyValue("id", $contadorList);
-                            
-//                             $data['pid'] = $statusProc["pid"];
-//                             $data['running'] = true;
-//                             $data['process'] = false;
-//                             $data['starttime'] = time();
-                            
-//                             // $jsonfile->setData($data);
-                            
-//                             $jsonfile_pool->setDataKeyValue("id", $contadorList, $data);
-                            
-//                             $jsonfile_pool->save();
-                            
-//                             $jsonfile_pool->load();
                             
                             //
                             // ------------START PROCESS ------
@@ -368,16 +483,48 @@ class ParallelProcess extends Utils
                             // ------------END START PROCESS ------
                             //
                             
-                            // }else{
-                            
-                            // $pool[$i] = TRUE;
-                            // $commande_lancee=TRUE;
-                            // break 2;
-                            
-                            // }
-                            
-                            // $contadorList++;
                         }
+                        
+                        
+                        
+                        
+                        
+                        
+                        
+                        $read = array();
+                        
+                        if (! feof($pipes[$i][1]))
+                        {
+                            $read[] = $pipes[$i][1];
+                        }
+                        if (! feof($pipes[$i][2]))
+                        {       
+                            $read[] = $pipes[$i][2];
+                        }
+                        
+                        if ($read)
+                        {            
+                            $ready = @stream_select($read, $write = NULL, $ex = NULL, 2);
+                            
+                            if ($ready === false)
+                            {
+                                // should never happen - something died
+                                
+                            }else 
+                            {
+                                foreach ($read as $r)
+                                {
+                                    $s = fread($r, 1024);
+                                    $output[$i] .= $s;
+                                }
+                            }
+                            
+                            
+                        }
+                        
+                        
+                                    
+                                    
                     }
                 }
             }
@@ -390,7 +537,7 @@ class ParallelProcess extends Utils
         
         while ($fim == FALSE) {
             
-            usleep(50000);
+            //usleep(50000);
             
             $exist_process_running = FALSE;
             $killCount = 1;
@@ -399,9 +546,45 @@ class ParallelProcess extends Utils
                 
                 if (is_resource($pool[$i])) {
                     
+                    $read = array();
+                    
+                    if (! feof($pipes[$i][1]))
+                    {
+                        $read[] = $pipes[$i][1];
+                    }
+                    if (! feof($pipes[$i][2]))
+                    {
+                        $read[] = $pipes[$i][2];
+                    }
+                    
+                    if ($read)
+                    {
+                        $ready = @stream_select($read, $write = NULL, $ex = NULL, 2);
+                        
+                        if ($ready === false)
+                        {
+                            // should never happen - something died
+                            
+                        }else
+                        {
+                            foreach ($read as $r)
+                            {
+                                $s = fread($r, 1024);
+                                $output[$i] .= $s;
+                            }
+                        }
+                        
+                        
+                    }
+                    
+                    
                     $etat = proc_get_status($pool[$i]);
                     
                     if ($etat['running'] == FALSE) {
+                        
+                        
+                        fclose($pipes[$i][1]);
+                        fclose($pipes[$i][2]);
                         
                         // exit("bruno");
                         $command = $etat["command"];
@@ -411,6 +594,16 @@ class ParallelProcess extends Utils
                         
                         // echo $filename."----\n";
                         // echo $command."\n\n";
+                        
+                        $statusProc = proc_get_status($pool[$i]);
+                        $data = $jsonfile->getDataKeyValue("pid", $statusProc["pid"]);
+                        $data['running'] = false;
+                        $data['process'] = true;
+                        $data['endtime'] = time();
+                        $jsonfile->setDataKeyValue("pid", $statusProc["pid"], $data);
+                        $jsonfile->save();
+                        $jsonfile->load();
+                        
                         
                         if (is_writable($filename)) {
                             
@@ -422,16 +615,24 @@ class ParallelProcess extends Utils
                             $script = substr($script, 0, strrpos($script, $tagSearch));
                             $script = trim($script);
                             
-                            // echo $script."\n\n";
                             
-                            // $script = "MOA 2014\n".date("d/m/Y H:i:s")."\n\n";
-                                                        
-                            $hardwareInfo = $this->getHardwareInfo();
+                            $opts = array();
+                            $opts["filename"] = $filename;
+                            $opts["script"] = $script;
+                            $opts["command"] = $command;
+                            $opts["output"] = $output[$i];
+                            $opts["username"] =  $username;
+                            $opts["timestart"] =  $data['starttime'];
+                            $opts["ramusagem"] =  $ram[$i];
+                            $opts["cpuusagem"] =  $ram[$i];
+                            
+                            $metadata = $this->metadata($opts);
                             
                             $fp = fopen($filename, "r+");
                             rewind($fp);
-                            $this->finsert($fp, $script . "\n\n" . $hardwareInfo . "\n\n");
+                            $this->finsert($fp, $metadata);
                             fclose($fp);
+                            
                             
                             $idSeq = substr($filename, strrpos($filename, "-")+1);
                             $idSeq = substr($idSeq,0, strrpos($idSeq, "."));
@@ -451,37 +652,8 @@ class ParallelProcess extends Utils
 
                         }
                         
-                        $statusProc = proc_get_status($pool[$i]);
                         
                         
-                        
-                        $data = $jsonfile->getDataKeyValue("pid", $statusProc["pid"]);
-                        
-                        $data['running'] = false;
-                        $data['process'] = true;
-                        $data['endtime'] = time();
-                        $jsonfile->setDataKeyValue("pid", $statusProc["pid"], $data);
-                        $jsonfile->save();
-                        $jsonfile->load();
-                        
-                        
-                        
-//                         $jsonfile_pool = new JsonFile($commande["filename"]);
-//                         $jsonfile_pool->open();
-                        
-//                         $data = $jsonfile_pool->getDataKeyValue("pid", $statusProc["pid"]);
-                        
-//                         $data['running'] = false;
-//                         $data['process'] = true;
-//                         $data['endtime'] = time();
-                        
-//                         // $jsonfile->setData($data);
-                        
-//                         $jsonfile_pool->setDataKeyValue("pid", $statusProc["pid"], $data);
-                        
-//                         $jsonfile_pool->save();
-                        
-//                         $jsonfile_pool->load();
                         
                         proc_close($pool[$i]);
                         

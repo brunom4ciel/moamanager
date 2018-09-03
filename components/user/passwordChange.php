@@ -11,14 +11,19 @@ defined('_EXEC') or die();
 
 use moam\core\AppException;
 use moam\core\Framework;
-use moam\core\Application;
+// use moam\core\Application;
 use moam\core\Properties;
+use moam\core\Template;
 use moam\libraries\core\db\DBPDO;
 use moam\libraries\core\user\User;
 use moam\libraries\core\email\UsageReportMail;
+
 if (! class_exists('Application')) {
     $application = Framework::getApplication();
 }
+
+Template::setDisabledMenu();
+
 
 $error_msg = "";
 

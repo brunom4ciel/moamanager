@@ -11,13 +11,20 @@ defined('_EXEC') or die();
 
 use moam\core\Framework;
 use moam\core\AppException;
+use moam\core\Template;
+
+
 if (! class_exists('Application')) {
     $application = Framework::getApplication();
 }
 
-if (! $application->is_authentication()) {
+if (! $application->is_authentication() || $application->getUserType() != 1) {
     $application->alert("Error: you do not have credentials.");
 }
+
+
+Template::setDisabledMenu();
+
 
 function runExternal($cmd)
 {
@@ -110,18 +117,11 @@ if (isset($_POST['cmd'])) {
 
 
 
-<div class="content content-alt">
-	<div class="container" style="width: 70%">
-		<div class="row">
-			<div class="">
-				<div class="card" style="width: 100%">
-
-
-
-					<div class="page-header">
-						<h1>Command Line</h1>
-					</div>
-
+							<div class="page-header">
+        						<h1>
+        							<a href="<?php echo $_SERVER['REQUEST_URI']?>">Shell Manager</a>
+        						</h1>
+        					</div>
 
 
 					<form method="POST" action="<?php echo $_SERVER['PHP_SELF'];?>"
@@ -137,13 +137,13 @@ if (isset($_POST['cmd'])) {
 						<textarea id="data" style="width: 100%; height: 400px;" name="cmd"><?php echo $cmd?></textarea>
 						<br>
 
-						<div style="text-align: right; display: block;">
-
-							<input type="submit" name="Execute" value="Execute" /> <input
-								type="button"
-								onclick="javascript: window.location.href='?component=settings';"
-								name="cancel" value="Cancel" />
-
+							<div style="float: right; padding-left: 10px">
+									
+								<input type="submit" class="btn btn-success" name="Execute" value="Execute" />
+						
+								<input type="button" class="btn btn-default"
+    							onclick="javascript: window.location.href='?component=settings';"
+    							name="cancel" value="Return" />
 						</div>
 
 					</form>
@@ -167,11 +167,4 @@ if (isset($_POST['cmd'])) {
 
     ?>
 							
-							</div>
-
-			</div>
-		</div>
-	</div>
-</div>
-</div>
 

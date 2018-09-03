@@ -11,13 +11,25 @@ defined('_EXEC') or die();
 
 use moam\core\Framework;
 use moam\libraries\core\utils\Utils;
+use moam\core\Template;
+
 if (! class_exists('Application')) {
     $application = Framework::getApplication();
 }
 
-if (! $application->is_authentication()) {
+if (! $application->is_authentication() || $application->getUserType() != 1) {
     $application->alert("Error: you do not have credentials.");
 }
+
+Template::setDisabledMenu();
+
+Template::addHeader(array("tag"=>"script",
+    "type"=>"text/javascript",
+    "src"=>""
+    . $application->getPathTemplate()
+    . "/javascript/edit_area/edit_area_full.js"));
+
+
 
 Framework::import("Utils", "core/utils");
 
@@ -38,20 +50,13 @@ if (isset($_POST['data'])) {
 ?>
 
 
-
-<div class="content content-alt">
-	<div class="container" style="width: 70%">
-		<div class="row">
-			<div class="">
-				<div class="card" style="width: 100%">
-
-
-
-					<div class="page-header">
-						<h1>Edit Properties</h1>
-					</div>
-
-
+							<div class="page-header">
+        						<h1>
+        							<a href="<?php echo $_SERVER['REQUEST_URI']?>">Edit properties.php</a>
+        						</h1>
+        					</div>
+        					
+        					
 					<form method="POST" action="<?php echo $_SERVER['PHP_SELF'];?>"
 						name="loginForm" enctype="multipart/form-data">
 						<input type="hidden"
@@ -64,23 +69,66 @@ if (isset($_POST['data'])) {
 							name="data"><?php echo $data?></textarea>
 						<br>
 
-						<div style="text-align: right; display: block;">
-
-							<input type="submit" name="save" value="Save" /> <input
-								type="button"
-								onclick="javascript: window.location.href='?component=settings';"
-								name="cancel" value="Cancel" />
-
+						<div style="float: right; padding-left: 10px">
+									
+									<input type='button' class="btn btn-info" onclick='toogle_editable("data", this);' value='Toggle to edit mode' />
+									
+							<input type="submit" class="btn btn-success" name="save" value="Save" /> 
+						
+								<input type="button" class="btn btn-default"
+    							onclick="javascript: window.location.href='?component=settings';"
+    							name="cancel" value="Return" />
 						</div>
 
 					</form>
 
+					
+					
+					
+					
+					
+					
+<script type="text/javascript">
+	// initialisation
+	editAreaLoader.init({
+		id: "data"	// id of the textarea to transform	
+			,start_highlight: true	
+			,font_size: "8"
+			,is_editable: true
+			,word_wrap: true
+			,font_family: "verdana, monospace"
+			,allow_resize: "y"
+			,allow_toggle: true
+			,language: "en"
+			,syntax: "php"	
+			,toolbar: "go_to_line, |, undo, redo, |, select_font"
+			//,load_callback: "my_load"
+			//,save_callback: "my_save"
+			,plugins: "charmap"
+			,min_height: 300
+			,charmap_default: "arrows"
+	});
 
-				</div>
 
-			</div>
-		</div>
-	</div>
-</div>
-</div>
+	function toogle_editable(id, id2)
+	{
+		if(id2.value == "Toggle to edit mode")
+		{
+			id2.value = "Toggle to read only mode";
+		}
+		else
+		{
+			id2.value = "Toggle to edit mode";
+		}
+		
+		editAreaLoader.execCommand(id, 'set_editable', !editAreaLoader.execCommand(id, 'is_editable'));
+	}
 
+</script>			
+					
+					
+					
+					
+					
+					
+					

@@ -5,15 +5,15 @@
  * @copyright  Copyright (C) 2015 - 2017 Open Source CIn/UFPE, Inc. All rights reserved.
  * @license    GNU General Public License version 2 or later; see LICENSE.txt
  */
-namespace moam\components\generator;
+namespace moam\components\scripts;
 
 defined('_EXEC') or die();
 
 use moam\core\Framework;
-use moam\core\Application;
+// use moam\core\Application;
 use moam\core\Properties;
 // use moam\libraries\core\utils\Utils;
-use moam\libraries\core\menu\Menu;
+// use moam\libraries\core\menu\Menu;
 if (! class_exists('Application')) {
     $application = Framework::getApplication();
 }
@@ -22,11 +22,11 @@ if (! $application->is_authentication()) {
     $application->alert("Error: you do not have credentials.");
 }
 
-Framework::import("menu", "core/menu");
+// Framework::import("menu", "core/menu");
 
-if (! class_exists('Menu')) {
-    $menu = new Menu();
-}
+// if (! class_exists('Menu')) {
+//     $menu = new Menu();
+// }
 
 $error_msg = "";
 
@@ -34,7 +34,7 @@ $folder = $application->getParameter("folder");
 
 if ($folder != null) {
     if (substr($folder, strlen($folder) - 1) != "/") {
-        $folder .= App::getDirectorySeparator();
+        $folder .= DIRECTORY_SEPARATOR;
     }
 }
 
@@ -120,20 +120,11 @@ if (isset($_FILES['uploadfile'])) {
 
 
 
-<div class="content content-alt">
-	<div class="container" style="width: 70%">
-		<div class="row">
-			<div class="">
-				<div class="card" style="width: 100%">
-
-
-
 					<div class="page-header">
 						<h1>
-							<a href="<?php echo $_SERVER['REQUEST_URI']?>">Upload file</a>
+							<a href="<?php echo $_SERVER['REQUEST_URI']?>">File Upload</a>
 						</h1>
 					</div>
-							
 							<?php
 
     if (! empty($error_msg)) {
@@ -156,22 +147,30 @@ if (isset($_FILES['uploadfile'])) {
 
 						<table>
 							<tr>
-								<td>Upload file (*.txt or *.zip):</td>
-								<td><input type="file" name="uploadfile" /></td>
-								<td><input type="submit" name="default" value="Send" /></td>
+								<td>File Upload (*.txt, *.data or *.zip):</td>
+								<td><input type="file" name="uploadfile" class="btn btn-default" /></td>
+								<td><input type="submit" class="btn btn-primary" name="default" value="Send" /></td>
 							</tr>
 						</table>
 
 					</form>
 
-					<input type="button"
-						onclick="javascript: window.location.href='?component=scripts&folder=<?php echo $folder;?>';"
-						name="cancel" value="Back" />
-				</div>
+									<div style="float: right; padding-left: 10px;margin-top:20px;">
 
-			</div>
-		</div>
-	</div>
-</div>
-</div>
+										<input type="button" class="btn btn-default" value="Return" name="return"
+										onclick="javascript: returnPage();" />
+									</div>
+									
+<script type="text/javascript">
 
+function returnPage()
+{
+
+	window.location.href='?component=<?php echo $application->getParameter("component");?>'
+			+'&controller=controller'
+			+'&task=open'
+			+'&folder=<?php echo $application->getParameter("folder");?>';
+			
+}
+
+</script>

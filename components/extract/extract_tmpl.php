@@ -12,11 +12,11 @@ namespace moam\components\extract;
 defined('_EXEC') or die;
 
 use moam\core\Framework;
-use moam\core\Application;
+// use moam\core\Application;
 use moam\core\Properties;
 use moam\core\Template;
 use moam\libraries\core\utils\Utils;
-use moam\libraries\core\menu\Menu;
+// use moam\libraries\core\menu\Menu;
 use moam\libraries\core\mining\Mining;
 
 
@@ -30,13 +30,15 @@ if(!$application->is_authentication())
     $application->alert ( "Error: you do not have credentials." );
 }
 
-Framework::import("menu", "core/menu");
+// Template::setDisabledMenu();
 
-if (!class_exists('Menu'))
-{
-    $menu = new Menu();
+// Framework::import("menu", "core/menu");
+
+// if (!class_exists('Menu'))
+// {
+//     $menu = new Menu();
     
-}
+// }
 
 Framework::import("Utils", "core/utils");
 Framework::import("Mining", "core/mining");
@@ -321,14 +323,124 @@ if($task == "folder"){
         .$application->getUser()
         .DIRECTORY_SEPARATOR
         .$application->getParameter("folder");
-        
-        
+                
         $mining = new Mining();
         
         $mining_store = array();
         $mining_store2 = array();
         
         $two_folders = 0;
+        
+        
+        
+        
+        if($type_extract!=2)
+        {
+            
+            
+            $filename_template_dataset = $dir . "template.txt";
+            $template_user = FALSE;
+            
+            if(file_exists($filename_template_dataset))
+            {
+                $data_tmpl = $utils->getContentFile($filename_template_dataset);
+                
+                $s = json_decode($data_tmpl);
+     
+                if($s == null)
+                {
+                    $template_user = FALSE;
+                }
+                else 
+                {
+                    if(isset($s->order))
+                    {
+                        if(isset($s->order->list))
+                        {
+                            $data_order_tmpl = $s->order->list;
+                        }
+                        if(isset($s->order->enable))
+                        {
+                            $data_order_enable_tmpl = $s->order->enable;
+                        }                    
+                    }
+                    
+                    if(isset($s->renames))
+                    {
+                        if(isset($s->renames->list))
+                        {
+                            $data_renames_tmpl = $s->renames->list;
+                        }
+                        if(isset($s->renames->enable))
+                        {
+                            $data_renames_enable_tmpl = $s->renames->enable;
+                        }
+                    }
+                    
+                    if(isset($s->filter))
+                    {
+                        if(isset($s->filter->list))
+                        {
+                            $data_filter_tmpl = $s->filter->list;
+                        }
+                        if(isset($s->filter->enable))
+                        {
+                            $data_filter_enable_tmpl = $s->filter->enable;
+                        }
+                    }
+                                    
+                    if(isset($s->datasets))
+                    {
+                        if(isset($s->datasets->list))
+                        {
+                            $data_tmpl = $s->datasets->list;
+                        }
+                        if(isset($s->datasets->name))
+                        {
+                            $datasets_name = $s->datasets->name;
+                        }
+                        if(isset($s->datasets->enable))
+                        {
+                            $datasets_enable = $s->datasets->enable;
+                        }
+                                           
+                        if(isset($datasets_enable))
+                        {
+                            if($datasets_enable)
+                            {
+                                $tmpl_lines = array();
+                                
+                                foreach($data_tmpl as $key=>$item){
+                                    
+                                    if(substr(trim($item),0,1)!="#" && trim($item) != ""){
+                                        //                     $tmpl_lines[] = trim($item);
+                                        array_push($mining_store2, array("dirname"=>$datasets_name, "results"=>array(array("Dataset"=>trim($item)))));
+                                    }
+                                }
+                            }
+                        }
+                        
+                    }
+                    
+                    //             $data_tmpl = explode("\n", $data_tmpl);
+                    
+                    
+                    
+                    $template_user = TRUE;
+                    
+                }
+            }
+            
+            
+            //if(count($mining_store2) > 0)
+            //{
+//                 $template_user = TRUE;
+            //}
+            
+        }
+        
+        
+        $scripts = "";
         
         foreach($element as $key=>$item){
             
@@ -342,8 +454,13 @@ if($task == "folder"){
                 
                 if($type_extract==2){
                     
+                    if($scripts != "")
+                    {
+                        $scripts .= "\n\n";
+                    }
+                    
                     $scripts .= $mining->getScriptMOA($from_file);
-                    $scripts .= "\n";
+                    
                     
                 }else{
                     
@@ -397,8 +514,13 @@ if($task == "folder"){
                         
                         if($type_extract==2){
                             
+                            if($scripts != "")
+                            {
+                                $scripts .= "\n\n";
+                            }
+                            
                             $scripts .= $mining->getScriptMOA($from_dir.$file["name"]);
-                            $scripts .= "\n";
+                            
                             
                         }else{
                             if($type_extract==1){
@@ -508,6 +630,213 @@ if($task == "folder"){
                     }
                 }
             }
+            
+            
+
+            if($template_user == TRUE)
+            {
+                
+                $data_values_aux = array();
+                
+                if($datasets_enable)
+                {
+                    $data_values_aux[$datasets_name] = $data_values[$datasets_name];
+                }
+                
+                
+                $data_values_aux2 = array();                
+                
+                if($data_order_enable_tmpl)
+                {                    
+                    foreach($data_order_tmpl as $col)
+                    {
+                        foreach($data_values as $key=>$item)
+                        {
+                            //                         echo $key . "=" . $col."\n";
+                            if($key == $col)
+                            {
+                                $data_values_aux2[$key]  = $item;
+                            }
+                        }
+                    }
+                }
+                
+                $data_values_aux3 = array();
+                
+                if($data_filter_enable_tmpl)
+                {
+                    if($data_order_enable_tmpl)
+                    {
+                        $s = $data_values_aux2;
+                    }
+                    else
+                    {
+                        $s = $data_values;
+                    }
+                    
+                    foreach($data_filter_tmpl as $col)
+                    {
+                        foreach($s as $key=>$item)
+                        {
+                            //                         echo $key . "=" . $col."\n";
+                            if($key == $col)
+                            {
+                                $data_values_aux3[$key]  = $item;
+                            }
+                        }
+                    }
+                }
+                
+                   
+                $data_values_aux4 = array();
+                
+                if($data_renames_enable_tmpl)
+                {
+                    if($data_filter_enable_tmpl || $data_order_enable_tmpl)
+                    {
+                        if($data_filter_enable_tmpl)
+                        {
+                            $s = $data_values_aux3;
+                        }
+                        else 
+                        {
+                            $s = $data_values_aux2;
+                        }
+                    }
+                    else
+                    {
+                        $s = $data_values;
+                    }
+                    
+                    
+                    foreach($s as $key=>$item)
+                    {
+                        foreach($data_renames_tmpl as $key_find=>$rename_newkey)
+                        {                            
+                            if($key == $key_find)
+                            {
+                                $key = $rename_newkey;
+                                break;
+                            }
+                        }
+                        $data_values_aux4[$key]  = $item;
+                    }
+                  
+                }
+                
+                $data_values2 = array();
+                
+                if(count($data_values_aux) > 0)
+                {
+                    foreach($data_values_aux as $key=>$item)
+                    {
+                        $data_values2[$key] = $item;
+                    }
+                }
+                
+                
+                
+                if(count($data_values_aux4) > 0)
+                {
+                    foreach($data_values_aux4 as $key=>$item)
+                    {
+                        $data_values2[$key] = $item;
+                    }
+                                        
+                }
+                else 
+                {
+                    if(count($data_values_aux3) > 0)
+                    {
+                        foreach($data_values_aux3 as $key=>$item)
+                        {
+                            $data_values2[$key] = $item;
+                        }
+                    }
+                    else
+                    {
+                        if(count($data_values_aux2) > 0)
+                        {
+                            foreach($data_values_aux2 as $key=>$item)
+                            {
+                                $data_values2[$key] = $item;
+                            }
+                        }
+                        else
+                        {
+                            
+                        }
+                    }
+                }
+                
+                
+                if(count($data_values2) > 0)
+                {
+                    $data_values = $data_values2;
+                }
+                
+//                 var_dump($data_values);
+                
+//                 exit("fim");
+                
+                
+//                 if($data_cols_enable_tmpl)
+//                 {                    
+                    
+//                     foreach($data_cols_order_tmpl as $col)
+//                     {
+//                         foreach($data_values as $key=>$item)
+//                         {
+//     //                         echo $key . "=" . $col."\n";
+//                             if($key == $col)
+//                             {
+//                                 if(count($data_cols_filter_tmpl) > 0)
+//                                 {
+                                    
+//                                     foreach($data_cols_filter_tmpl as $filter)
+//                                     {
+//                                         if($key == $filter)
+//                                         {
+//                                             foreach($data_cols_renames_tmpl as $key_find=>$rename_newkey)
+//                                             {
+//                                                 //                                 echo $key . "=" . $rename_col."\n";
+                                                
+//                                                 if($key == $key_find)
+//                                                 {
+//                                                     $key = $rename_newkey;
+//                                                     break;
+//                                                 }
+//                                             }
+//                                             $data_values_aux[$key]  = $item;
+//                                         }
+                                        
+//                                     }
+//                                 }
+//                                 else 
+//                                 {
+//                                     foreach($data_cols_renames_tmpl as $key_find=>$rename_newkey)
+//                                     {
+//                                         //                                 echo $key . "=" . $rename_col."\n";
+                                        
+//                                         if($key == $key_find)
+//                                         {
+//                                             $key = $rename_newkey;
+//                                             break;
+//                                         }
+//                                     }
+//                                     $data_values_aux[$key]  = $item;
+//                                 }
+//                             }
+//                         }
+//                     }
+                                    
+//                     $data_values = $data_values_aux;
+//                 }
+// //                 var_dump($data_values);
+// //                 exit();
+                
+            }
+            
             
             $index = 0;
             $data_matriz = array();
@@ -922,8 +1251,8 @@ if($task == "folder"){
                 }
                 case	"txt":{
                     
-                    ob_end_clean();
-                    header( 'Content-Type: text/plain' );
+//                     ob_end_clean();
+//                     header( 'Content-Type: text/plain' );
                     
                     
                     
@@ -964,14 +1293,14 @@ if($task == "folder"){
                         
                     }else{
                         
-                        echo $result_view;
+                       // echo $result_view;
                     }
                     
                     
                     //$contLength = ob_get_length();
                     //header( 'Content-Length: '.$contLength);
                     
-                    exit();
+//                     exit();
                     
                     break;
                 }
@@ -1084,21 +1413,8 @@ div#table_id table tr td{
 
 </style>	
 	
-		<div class="content content-alt">
-			<div class="container" style="width:90%">
-				<div class="row">
-					<div class="" >
-					
-						<div class="card" style="width:100%">
-							<div class="page-header">
-								<h1><a href="<?php echo $_SERVER['REQUEST_URI']?>">Extract</a></h1>
-							</div>
+
 							
-							<div style="width:100%;padding-bottom:15px;display:table">
-						
-								
-								<div style="float:left;width:100%;border:1px solid #fff;display:table;">
-									
 									
 	<!-- 	<input type="button" value="Return" name="return" onclick="javascript: returnPage();" /> 	<br><br>	 -->	
 <?php 
@@ -1131,6 +1447,13 @@ div#table_id table tr td{
 		
 		if($type_extract==2){
 	?>	
+							<div class="page-header">
+        						<h1>
+        							<a href="<?php echo $_SERVER['REQUEST_URI']?>">Read File</a>
+        						</h1>
+        					</div>
+        					
+			File name: <?php echo $application->getParameter("filename");?><br>
 			Content:<br>
 			<textarea id="data"	style="width:100%;height:400px;" name="data"><?php echo $scripts?></textarea><br>
 													
@@ -1144,7 +1467,16 @@ div#table_id table tr td{
 				exit();
 				
 			}else{		
+				?>
 				
+				<div class="page-header">
+        						<h1>
+        							<a href="<?php echo $_SERVER['REQUEST_URI']?>">Result</a>
+        						</h1>
+        					</div>
+        					
+        					
+        					<?php 
 				//if(strlen($csv)>1){
 					
 					//exit("ooo");
@@ -1152,8 +1484,15 @@ div#table_id table tr td{
 					
 					//var_dump($aa);exit();
 					//App::setParameter('tmpl',true);
-					echo $result_view;//echo $utils->createSheetHtml($csv);//htmlCSV($csv);
-				
+			    if($viewdata == "txt")
+			    {			        
+					echo "<pre style='font-size:11px;border: 0px solid #000; text-align:left;font-family: monospace,verdana;'>".$result_view."</pre>";//echo $utils->createSheetHtml($csv);//htmlCSV($csv);
+			    }
+			    else 
+			    {
+			        echo $result_view;
+			    }
+			    
 				//}
 				
 			}
@@ -1163,7 +1502,12 @@ div#table_id table tr td{
 		
 	}
 ?>	
-									
+		
+									<div style="float: right; padding-left: 10px">
+										<input type="button" class="btn btn-default" value="Return"
+											onclick="javascript: returnPage();">
+									</div>
+																
 <script>
 
 
@@ -1173,21 +1517,57 @@ function returnPage(){
 	//http://localhost/iea/?component=moa&controller=reportview&filename=maciel.log&folder=New%20Folder/
 
 		window.location.href='?component=<?php echo $application->getParameter("component");?>'
-			+'&controller=extract-values'
+			+'&controller='
 			+'&folder=<?php echo $application->getParameter("folder");?>'
 			+'&task=open';
 		
 }
 
 
-</script>									
+</script>	
+
+
+
+
+<script type="text/javascript">
+	// initialisation
+	editAreaLoader.init({
+		id: "data"	// id of the textarea to transform	
+			,start_highlight: true	
+			,font_size: "8"
+			,is_editable: true
+			,word_wrap: true
+			,font_family: "verdana, monospace"
+			,allow_resize: "y"
+			,allow_toggle: true
+			,language: "en"
+			,syntax: "xml"	
+			,toolbar: " undo, redo, |, select_font"
+			//,load_callback: "my_load"
+			//,save_callback: "my_save"
+			,plugins: "charmap"
+			,min_height: 300
+			,charmap_default: "arrows"
+	});
+
+
+	function toogle_editable(id, id2)
+	{
+		if(id2.value == "Toggle to edit mode")
+		{
+			id2.value = "Toggle to read only mode";
+		}
+		else
+		{
+			id2.value = "Toggle to edit mode";
+		}
+		
+		editAreaLoader.execCommand(id, 'set_editable', !editAreaLoader.execCommand(id, 'is_editable'));
+	}
+
+</script>
+
+
+
 								
-								</div>
-							
-							</div>
-							
-						</div>
-					</div>
-				</div>
-			</div>
-		</div>
+								

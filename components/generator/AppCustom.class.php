@@ -89,9 +89,6 @@ $arrayLearnersMethods = array(
     "DDM",
     "EDDM",
     "STEPD",
-    "STEPD_New",
-    "FSDD",
-    "EADD",
     "ADWINChangeDetector",
     "EWMAChartDM",
     "EnsembleDriftDetectionMethods",
@@ -100,7 +97,16 @@ $arrayLearnersMethods = array(
     "PageHinkleyDM",
     "GeometricMovingAverageDM",
     "SeqDrift1ChangeDetector",
-    "SeqDrift2ChangeDetector"
+    "SeqDrift2ChangeDetector",
+    "RDDM",
+    "DDE",
+    "FTDD",
+    "FSDD",
+    "FPDD",
+    "WSTD",
+    "SEEDChangeDetector",
+    "FHDDM",
+    "FHDDMS"
 );
 
 $arrayLearnersMethodsParameters = array(
@@ -179,31 +185,31 @@ $arrayLearnersMethodsParameters = array(
             "list" => array()
         )
     ),
-    "STEPD_New" => array(
-        array(
-            "name" => "r",
-            "default" => "30",
-            "label" => "W",
-            "type" => "text",
-            "list" => array()
-        ),
+//     "STEPD_New" => array(
+//         array(
+//             "name" => "r",
+//             "default" => "30",
+//             "label" => "W",
+//             "type" => "text",
+//             "list" => array()
+//         ),
 
-        array(
-            "name" => "w",
-            "default" => "0.003",
-            "label" => "AlphaD",
-            "type" => "text",
-            "list" => array()
-        ),
+//         array(
+//             "name" => "w",
+//             "default" => "0.003",
+//             "label" => "AlphaD",
+//             "type" => "text",
+//             "list" => array()
+//         ),
 
-        array(
-            "name" => "o",
-            "default" => "0.05",
-            "label" => "AlphaW",
-            "type" => "text",
-            "list" => array()
-        )
-    ),
+//         array(
+//             "name" => "o",
+//             "default" => "0.05",
+//             "label" => "AlphaW",
+//             "type" => "text",
+//             "list" => array()
+//         )
+//     ),
     "FSDD" => array(
         array(
             "name" => "r",
@@ -490,6 +496,269 @@ $arrayLearnersMethodsParameters = array(
             "name" => "a",
             "default" => "0.99",
             "label" => "alpha.",
+            "type" => "text",
+            "list" => array()
+        )
+    ),
+    "RDDM" => array(
+        array(
+            "name" => "n",
+            "default" => "129",
+            "label" => "minNumInstances", //Minimum number of instances before monitoring changes
+            "type" => "text",
+            "list" => array()
+        ),
+        
+        array(
+            "name" => "w",
+            "default" => "1773",
+            "label" => "warningLevel", //Warning Level
+            "type" => "text",
+            "list" => array()
+        ),
+        
+        array(
+            "name" => "o",
+            "default" => "2258",
+            "label" => "driftLevel", //Drift Level
+            "type" => "text",
+            "list" => array()
+        ),
+        array(
+            "name" => "x",
+            "default" => "4000",
+            "label" => "maxSizeConcept", //Maximum Size of Concept
+            "type" => "text",
+            "list" => array()
+        ),
+        array(
+            "name" => "o",
+            "default" => "7000",
+            "label" => "minSizeStableConcept", //Minimum Size of Stable Concept
+            "type" => "text",
+            "list" => array()
+        ),
+        array(
+            "name" => "o",
+            "default" => "1400",
+            "label" => "warnLimit", //Warning Limit of instances
+            "type" => "text",
+            "list" => array()
+        )
+    ),
+    "DDE" => array(
+        array(
+            "name" => "x",
+            "default" => "300",
+            "label" => "maxValue", 
+            "type" => "text",
+            "list" => array()
+        ),
+        
+        array(
+            "name" => "d",
+            "default" => "HDDM_A_Test,HDDM_W_Test,DDM",
+            "label" => "detectors", 
+            "type" => "text",
+            "list" => array()
+        ),
+        
+        array(
+            "name" => "s",
+            "default" => "1",
+            "label" => "sensibility", 
+            "type" => "text",
+            "list" => array()
+        )
+    ),
+    "WSTD" => array(
+        array(
+            "name" => "r",
+            "default" => "30",
+            "label" => "windowSize",
+            "type" => "text",
+            "list" => array()
+        ),
+        
+        array(
+            "name" => "o",
+            "default" => "0.003",
+            "label" => "alphaDrift",
+            "type" => "text",
+            "list" => array()
+        ),
+        
+        array(
+            "name" => "w",
+            "default" => "0.05",
+            "label" => "alphaWarning",
+            "type" => "text",
+            "list" => array()
+        ),
+        
+        array(
+            "name" => "m",
+            "default" => "4000",
+            "label" => "maxOldWindowSize",
+            "type" => "text",
+            "list" => array()
+        )
+    ),
+    "FTDD" => array(
+        array(
+            "name" => "r",
+            "default" => "30",
+            "label" => "windowSize",
+            "type" => "text",
+            "list" => array()
+        ),
+        
+        array(
+            "name" => "o",
+            "default" => "0.003",
+            "label" => "alphaDrift",
+            "type" => "text",
+            "list" => array()
+        ),
+        
+        array(
+            "name" => "w",
+            "default" => "0.05",
+            "label" => "alphaWarning",
+            "type" => "text",
+            "list" => array()
+        )
+    ),
+    "FSDD" => array(
+        array(
+            "name" => "r",
+            "default" => "30",
+            "label" => "windowSize",
+            "type" => "text",
+            "list" => array()
+        ),
+        
+        array(
+            "name" => "o",
+            "default" => "0.003",
+            "label" => "alphaDrift",
+            "type" => "text",
+            "list" => array()
+        ),
+        
+        array(
+            "name" => "w",
+            "default" => "0.05",
+            "label" => "alphaWarning",
+            "type" => "text",
+            "list" => array()
+        )
+    ),
+    "FPDD" => array(
+        array(
+            "name" => "r",
+            "default" => "30",
+            "label" => "windowSize",
+            "type" => "text",
+            "list" => array()
+        ),
+        
+        array(
+            "name" => "o",
+            "default" => "0.003",
+            "label" => "alphaDrift",
+            "type" => "text",
+            "list" => array()
+        ),
+        
+        array(
+            "name" => "w",
+            "default" => "0.05",
+            "label" => "alphaWarning",
+            "type" => "text",
+            "list" => array()
+        )
+    ),
+    "SEEDChangeDetector" => array(
+        array(
+            "name" => "d",
+            "default" => "0.05",
+            "label" => "deltaSEED",
+            "type" => "text",
+            "list" => array()
+        ),
+        
+        array(
+            "name" => "b",
+            "default" => "32",
+            "label" => "blockSizeSEED",
+            "type" => "text",
+            "list" => array()
+        ),
+        
+        array(
+            "name" => "e",
+            "default" => "0.01",
+            "label" => "epsilonPrimeSEED",
+            "type" => "text",
+            "list" => array()
+        ),
+        
+        array(
+            "name" => "a",
+            "default" => "0.8",
+            "label" => "alphaSEED",
+            "type" => "text",
+            "list" => array()
+        ),
+        
+        array(
+            "name" => "c",
+            "default" => "75",
+            "label" => "compressTermSEED",
+            "type" => "text",
+            "list" => array()
+        )
+    ),
+    
+    "FHDDM" => array(
+        array(
+            "name" => "s",
+            "default" => "25",
+            "label" => "slidingWinSize",
+            "type" => "text",
+            "list" => array()
+        ),
+        
+        array(
+            "name" => "d",
+            "default" => "0.000001",
+            "label" => "delta",
+            "type" => "text",
+            "list" => array()
+        )        
+    ),
+    "FHDDMS" => array(
+        array(
+            "name" => "s",
+            "default" => "4",
+            "label" => "stackSize",
+            "type" => "text",
+            "list" => array()
+        ),
+        
+        array(
+            "name" => "w",
+            "default" => "25",
+            "label" => "shortWinSize",
+            "type" => "text",
+            "list" => array()
+        ),
+        
+        array(
+            "name" => "c",
+            "default" => "0.000001",
+            "label" => "confidence",
             "type" => "text",
             "list" => array()
         )

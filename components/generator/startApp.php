@@ -11,8 +11,9 @@ defined('_EXEC') or die();
 
 use moam\core\AppException;
 use moam\core\Framework;
-use moam\core\Application;
+// use moam\core\Application;
 use moam\libraries\core\menu\Menu;
+
 if (! class_exists('Application')) {
     $application = Framework::getApplication();
 }

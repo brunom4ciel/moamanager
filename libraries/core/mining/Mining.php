@@ -1947,27 +1947,89 @@ function getScriptMOA($file){
     
     $result = "";
     
-    try{
-        
+    try
+    {
+                
         $handle = fopen($file, "r");
         
-        if ($handle) {
+        if ($handle) 
+        {          
+            $output = "";
             
-            $output="";
+            $metadata = FALSE;
             
-            $startFind = "";
-            
-            while (($buffer = fgets($handle, 4096)) !== false) {
+            while (($buffer = fgets($handle, 4096)) !== false) 
+            {            
+                  
+                if($output != "")
+                {
+                    $output .= "\n";
+                }
+                                
                 
-                $result = $buffer;
-                break;
+                if(strpos($buffer, "<meta-data") === FALSE)
+                {
+                    
+                }
+                else 
+                {
+                    $metadata = TRUE;
+                }
+                
+                
+                if($metadata == TRUE)
+                {
+                    if(strpos($buffer, "Accuracy:") === FALSE)
+                    {
+                        $output .= trim($buffer);
+                    }
+                    else 
+                    {
+                        break;
+                    }
+                }
+                else
+                {
+                    if(trim($buffer) == "")
+                    {
+                        break;
+                    }
+                    else
+                    {
+                        $output .= trim($buffer);
+                    }
+                }
+
+            }            
+                        
+            
+            if(strpos($output, "<meta-data") === FALSE)
+            {
+                $result = $output;
+            }
+            else
+            {
+                $aux = substr($output, strpos($output, "script-data") + strlen("script-data"));
+                $aux = substr($aux, strpos($aux, "moamanager:value=\"") + strlen("moamanager:value=\""));
+                $aux = substr($aux, 0, strpos($aux, '"'));
+                $result = $aux;
+            } 
+            
+            if(strpos($result, "\n") === FALSE)
+            {
+                
+            }
+            else 
+            {
+                $result = str_replace("\n", "", $result);
             }
             
-            fclose($handle);
-            
+            fclose($handle);            
         }
         
-    }catch(Exception $e){
+    }
+    catch(Exception $e)
+    {
         exit("error: ".$e->getMessage());
     }
     

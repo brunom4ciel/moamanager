@@ -27,12 +27,12 @@
  * Boosting-like Online Learning Ensemble (BOLE), 
  * published as:
  * <p> Roberto Souto Maior de Barros, Silas Garrido T. de Carvalho Santos 
- *     and Paulo Mauricio Gonçalves Jr.: 
+ *     and Paulo Mauricio Gonalves Jr.: 
  *     A Boosting-like Online Learning Ensemble. 
- *     ... detalhes da publicação... </p>
+ *     ... detalhes da publicao... </p>
  *
  * Inspired in (and generalized from) ADOB method, published as: 
- *     Silas Garrido Teixeira de Carvalho Santos, Paulo Mauricio Gonçalves Júnior,
+ *     Silas Garrido Teixeira de Carvalho Santos, Paulo Mauricio Gonalves Jnior,
  *     Geyson Daniel dos Santos Silva, and Roberto Souto Maior de Barros: 
  *     Speeding Up Recovery From Concept Drifts. 
  *     In book: Machine Learning and Knowledge Discovery in Databases, 
@@ -141,7 +141,7 @@ public class BOLE extends AbstractClassifier {
         maxAcc = 0; 
         minAcc = ensembleSize - 1; 
         lambda_d = 1.0; 
-        //System.out.printf("Instância %d\n\n", ++cnt);
+        //System.out.printf("Instancia %d\n\n", ++cnt);
         for (i = 0; i < ensembleSize; i++) {
             if (correct) {
                 pos = this.orderPosition[maxAcc];

@@ -482,39 +482,12 @@ function do_this(){
 
 
 
-<div class="content content-alt">
-	<div class="container" style="width: 90%">
-		<div class="row">
-			<div class="">
-
-				<div class="card" style="width: 100%">
-					<div class="page-header">
-						<h1>
-							<a href="<?php echo $_SERVER['REQUEST_URI']?>"><?php echo TITLE_COMPONENT?></a>
-						</h1>
-					</div>
-
-					<div style="width: 100%; padding-bottom: 15px; display: table">
-
-						<div
-							style="float: left; width: 18%; border: 1px solid #fff; display: table-cell">
-																
-									<?php echo $application->showMenu($menu);?>							
-
-								</div>
-
-						<div
-							style="float: left; width: 80%; border: 1px solid #fff; display: table-cell">
-
-
-
-
 
 
 
 							<form name="formulario" id="formulario" action="" method="POST"
 								enctype="multipart/form-data">
-								<input type="hidden"
+								<input type="hidden" 
 									value="<?php echo$application->getComponent()?>"
 									name="component" id="component"> <input type="hidden"
 									value=<?php echo $application->getController()?>
@@ -539,9 +512,9 @@ function do_this(){
     ?>
     
     
-<input type="button" value="Empty" name="empty"
+<input type="button" class="btn btn-danger"  value="Empty" name="empty" title="Empty files"
 										onclick="javascript: sendAction('remove');" /> || Restore to:
-									<select name="movedestine" id=movedestine>		
+									<select name="movedestine" class="btn btn-default" id=movedestine>		
 		<?php
 
 foreach ($dir_list as $key => $element) {
@@ -554,8 +527,8 @@ foreach ($dir_list as $key => $element) {
 
 ?>
 													
-												</select> <input type="button" value="Restore" name="move"
-										id="move" onclick="javascript: sendAction('move');" /> <br> <a
+												</select> <input type="button" class="btn btn-warning"  value="Restore" name="move"
+										id="move" onclick="javascript: sendAction('move');" title="Restore files" /> <br> <a
 										href="<?php echo PATH_WWW ?>?component=<?php echo $application->getComponent()?>&controller=<?php echo $application->getController();?>">Root</a>
 
 <?php
@@ -622,6 +595,10 @@ foreach ($files_list as $key => $element) {
 ?>		
 	</table>
 							
+							
+							
+							</div>
+							
 							</form>
 
 
@@ -639,23 +616,3 @@ historicCookieCheckbox("overwrite_file");
 	
 	
 	
-	
-									<?php 
-																	
-									/*	for($i=0; $i<count($files_list); $i++){
-										
-											echo "<span style='margin-left:65px;' data-reactid=\".1lisbcwokxs.3.0.0.2.0.1.0.0.0.1.0\">".$files_list[$i]."</span><br>\n";
-										
-										}*/
-										
-									?>
-								
-								</div>
-
-					</div>
-
-				</div>
-			</div>
-		</div>
-	</div>
-</div>

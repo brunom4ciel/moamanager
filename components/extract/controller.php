@@ -12,12 +12,12 @@ namespace moam\components\extract;
 defined('_EXEC') or die;
 
 use moam\core\Framework;
-use moam\core\Application;
+// use moam\core\Application;
 use moam\core\Properties;
 use moam\core\Template;
 use moam\libraries\core\utils\Utils;
-use moam\libraries\core\menu\Menu;
-use moam\libraries\core\mining\Mining;
+// use moam\libraries\core\menu\Menu;
+// use moam\libraries\core\mining\Mining;
 
 
 if (!class_exists('Application'))
@@ -30,13 +30,13 @@ if(!$application->is_authentication())
     $application->alert ( "Error: you do not have credentials." );
 }
 
-Framework::import("menu", "core/menu");
+// Framework::import("menu", "core/menu");
 
-if (!class_exists('Menu'))
-{
-    $menu = new Menu();
+// if (!class_exists('Menu'))
+// {
+//     $menu = new Menu();
     
-}
+// }
 
 Framework::import("Utils", "core/utils");
 Framework::import("Mining", "core/mining");
@@ -60,7 +60,7 @@ $utils = new Utils();
 
 $csv = "";
 
-$exterions = array("tex", "csv", "html");
+$exterions = array("tex", "csv", "html", "txt");
 
 //var_dump($_POST);exit();
 
@@ -94,7 +94,7 @@ if($folder == null){
     $files_list = $utils->getListElementsDirectory1(
         Properties::getBase_directory_destine($application)
         .$application->getUser()
-        .DIRECTORY_SEPARATOR, array("txt", "csv", "html", "tex","report"));
+        .DIRECTORY_SEPARATOR, $exterions);
     
 }else{
     
@@ -113,7 +113,7 @@ if($folder == null){
         .DIRECTORY_SEPARATOR
         .$folder
         //.DIRECTORY_SEPARATOR
-        , array("txt", "csv", "html", "tex","report"));
+        , $exterions);
 }
 
 
@@ -455,45 +455,18 @@ function verificaChecks() {
 </script>	
 	
 	
-		<div class="content content-alt">
-			<div class="container" style="width:90%">
-				<div class="row">
-					<div class="" >
-					
-						<div class="card" style="width:100%">
-							<div class="page-header">
-								<h1><a href="<?php echo $_SERVER['REQUEST_URI']?>"><?php echo TITLE_COMPONENT?></a></h1>
-							</div>
-							
-							<div style="width:100%;padding-bottom:15px;display:table">
-							
-						
-							
-								<div style="float:left;width:18%;border:1px solid #fff;display:table-cell">
-																
-									<?php echo $application->showMenu($menu);?>								
 
-								</div>
-								
-								<div style="float:left;width:80%;border:1px solid #fff;display:table-cell">
-									
-									
-								
-					
-								
+			
 									
 
-<form name="formulario" id="formulario" action="" method="POST" target="_blank"  enctype="multipart/form-data">
+<form name="formulario" id="formulario" action="" method="POST" enctype="multipart/form-data">
 		<input type="hidden" value="<?php echo $application->getComponent()?>" name="component" id="component">
 		<input type="hidden" value="extract_tmpl" name="controller" id="controller">	
 		<input type="hidden" name="folder" value="<?php echo $folder;?>"/>
 		<input type="hidden" name="task" id="task" value=""/>		
 		
 		
-		
-<div id="container">
-    
-    
+ 
     <div class="displayfix">
 
 		
@@ -581,7 +554,7 @@ function verificaChecks() {
 
 	
 		<div style="float:right;width:100%;text-align:right;padding-top:5px;">
-			<input type="button" value="Execute" name="extract" onclick="javascript: if(verificaChecks()==true){ sendAction('extract');}" />
+			<input type="button" class="btn btn-success" value="Execute" name="extract" onclick="javascript: if(verificaChecks()==true){ sendAction('extract');}" />
 			
 		</div>
 		
@@ -652,11 +625,26 @@ function verificaChecks() {
 			$extension_file = $element["name"];
 			$extension_file = substr($extension_file, strrpos($extension_file,".")+1);
 			
-			echo "<tr><td>".$i."</td><td>"
-					."<a target='_blank' href='?component=".$application->getComponent()."&task=view&type_extract=2&controller=extract_tmpl&filename=".$element["name"]."&folder=".$application->getParameter("folder")."'>"
-					."<img width='16px' align='middle' src='".$application->getPathTemplate()."/images/icon-view.png' title='View Content'/></a> ";
+			echo "<tr><td>".$i."</td><td>";
 			
-			
+			if($element["name"] == "template.txt")
+			{
+			    if(in_array($extension_file, array("txt"))){
+			        
+			        echo "<a href='?component=".$application->getComponent()."&task=view&&controller=edit&filename=".$element["name"]."&folder=".$application->getParameter("folder")."'>"
+                        ."<img width='16px' align='middle' src='".$application->getPathTemplate()."/images/icon-view.png' title='Edit'/></a> ";
+
+			    }
+			}
+			else
+			{
+			    echo ""
+                    ."<a target='_blank' href='?component=".$application->getComponent()."&task=view&type_extract=2&controller=extract_tmpl&filename=".$element["name"]."&folder=".$application->getParameter("folder")."'>"
+                    ."<img width='16px' align='middle' src='".$application->getPathTemplate()."/images/icon-view.png' title='View Content'/></a> ";
+                
+			}
+					
+					
 			
 			if(in_array($extension_file, array("csv", "html"))){	
 				
@@ -664,6 +652,7 @@ function verificaChecks() {
 				."<img width='16px' align='middle' src='".$application->getPathTemplate()."/images/icon-table.png' title='Preview'/></a> ";
 			
 			}
+			
 			
 			
 			echo			"<a href='?component=".$application->getComponent()."&task=download&type_extract=1&controller=extract_tmpl&filename=".$element["name"]."&folder=".$application->getParameter("folder")."'>"				
@@ -707,26 +696,7 @@ function verificaChecks() {
 	
 
 	
-									<?php 
-																	
-									/*	for($i=0; $i<count($files_list); $i++){
-										
-											echo "<span style='margin-left:65px;' data-reactid=\".1lisbcwokxs.3.0.0.2.0.1.0.0.0.1.0\">".$files_list[$i]."</span><br>\n";
-										
-										}*/
-										
-									?>
-								
-								</div>
-							
-							</div>
-							
-						</div>
-					</div>
-				</div>
-			</div>
-		</div>
-		
+				
 
 <script>
 

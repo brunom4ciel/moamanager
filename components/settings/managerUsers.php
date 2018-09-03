@@ -16,13 +16,17 @@ use moam\libraries\core\utils\Utils;
 use moam\core\Properties;
 use PDO;
 use moam\core\AppException;
+
+
 if (! class_exists('Application')) {
     $application = Framework::getApplication();
 }
 
-if (! $application->is_authentication()) {
+if (! $application->is_authentication() || $application->getUserType() != 1) {
     $application->alert("Error: you do not have credentials.");
 }
+
+Template::setDisabledMenu();
 
 Framework::import("Utils", "core/utils");
 Framework::import("DBPDO", "core/db");
@@ -166,7 +170,111 @@ if ($task == "move") {
     }
 } else {
 
-    if ($task == "remove") {}
+    if ($task == "unsetadmin" || $task == "setadmin")
+    {   
+        
+        if($application->getUserType() == 1)
+        {
+         
+            if($task == "unsetadmin")
+            {
+                $tonewusertypeid = 2;
+            }
+            else 
+            {//to admin
+                $tonewusertypeid = 1;
+            }
+            
+            $user_id = null;
+            $username = $application->getParameter('username');
+            
+            $rs = $DB->prep_query("SELECT
+                			user_id, user_type_id
+                			FROM user
+                			WHERE email=?");
+            
+            $rs->bindParam(1, $username, PDO::PARAM_STR);
+            
+            $error = "";
+            
+            try {
+                              
+                // execute query
+                if ($rs->execute()) {
+                    $data = $rs->fetch();
+                    
+                    $user_id = $data["user_id"];
+                    $user_type_id = $data["user_type_id"];
+                    
+                } else {
+                    
+                    throw new AppException($DB->getErrorMessage($rs));
+                }
+                
+                
+            } catch (AppException $e) {
+                
+                throw new AppException($e->getMessage());
+            }
+            
+            
+            if(!empty($user_id))
+            {
+                if($user_type_id != $tonewusertypeid)
+                {
+                                                            
+                    $data_db = $DB->prep_query("UPDATE user SET
+                        
+    				user_type_id=?
+                            
+    				WHERE email=? and user_id=?");
+                    
+                    
+                    $data_db->bindParam(1, $tonewusertypeid, PDO::PARAM_INT);
+                    $data_db->bindParam(2, $username, PDO::PARAM_STR);
+                    $data_db->bindParam(3, $user_id, PDO::PARAM_INT);
+                    
+                    $error = "";
+                    
+                    try {
+                        
+                        // open transaction
+                        $DB->beginTransaction();
+                        
+                        // execute query
+                        if ($data_db->execute()) {} else {
+                            
+                           // throw new AppException($DB->getErrorMessage($rs));
+                        }
+                        
+                        // confirm transaction
+                        $DB->commit();
+                    } catch (AppException $e) {
+                        
+                        // back transaction
+                        $DB->rollback();
+                        
+                        //throw new AppException($e->getMessage());
+                    }
+                
+                }
+                
+            }
+            
+        }           
+        
+    }
+    
+    
+    
+    
+    
+//     if ($task == "remove")
+//     {
+        
+//         var_dump($_REQUEST);
+//         exit("remove");
+//     }
 }
 
 ?>
@@ -222,20 +330,15 @@ function do_this2(){
 
 </script>
 
-<div class="content content-alt">
-	<div class="container" style="width: 70%">
-		<div class="row">
-			<div class="">
-				<div class="card" style="width: 100%">
 
-
-
-					<div class="page-header">
-						<h1>
-							<a href="<?php echo $_SERVER['REQUEST_URI']?>">Manager Users</a>
-						</h1>
-					</div>
-							
+							<div class="page-header">
+        						<h1>
+        							<a href="<?php echo $_SERVER['REQUEST_URI']?>">Manager Users</a>
+        						</h1>
+        					</div>
+        					
+        					
+        					
 							<?php
 
     if (! empty($error_msg)) {
@@ -262,16 +365,16 @@ function do_this2(){
 
 								<div id="container">
 
-									<input type="button" value="Remove" name="remove"
-										onclick="javascript: sendAction('remove');" />
-||
+<!-- 									<input type="button" value="Remove" name="remove" -->
+<!-- 										onclick="javascript: sendAction('remove');" /> -->
+<!-- || -->
 
 Move to:  
 <?php
 
 $rs = $DB->prep_query("SELECT
 	
-	email, workspace
+	email, workspace, user_type_id
 	
 	FROM  user 
 
@@ -302,12 +405,12 @@ foreach ($dirs as $item) {
     );
 }
 
-$cmb = $utils->createSelectList("moveto", "moveto", $data_db2, "", "", "", "");
+$cmb = $utils->createSelectList("moveto", "moveto", $data_db2, "", "", "btn btn-default", "");
 
 ?><?php echo $cmb;?>
 
 													
-												</select> <input type="button" value="Move" name="move"
+												<input type="button" class="btn btn-default" value="Move" name="move"
 										id="move" onclick="javascript: sendAction('move');" /> <br>
 
 
@@ -317,6 +420,7 @@ $cmb = $utils->createSelectList("moveto", "moveto", $data_db2, "", "", "", "");
 											<th>#</th>
 											<th style="width: 40%;"><label><input type="checkbox"
 													id="checkall" onClick="do_this2()" value="select" />Name</label></th>
+											<th>Profile</th>
 											<th>Disk</th>
 											<th>Size Usage</th>
 											<th>Free Space</th>
@@ -333,7 +437,19 @@ foreach ($data as $key => $element) {
     // ."<a title='Remove' onclick='javascript: return ConfirmDelete();' href='?component=home&controller=files&task=remove&folder=".$folder.$element["name"]."'>"
     // ."<img src='".App::getDirTmpl()."images/icon-remove.gif' border='0'></a>
 
-    "<label><input type='checkbox' name='element[]' value='" . $element["email"] . "' />" . $element["email"] . "</label></td>" . "<td><a href='?component=settings&controller=files&folder=" . $element["workspace"] . "/&task=open'>" . $element["workspace"] . "</a></td>" . "<td>" . $utils->getDirSize($dir_) . "</td><td>" . $utils->formatSize($utils->getFreeSpace($dir_)) . "</td></tr>";
+    "<label><input type='checkbox' name='element[]' value='" . $element["email"] . "' />" . $element["email"] . "</label>"
+       ;
+    
+       if ($element['user_type_id'] == 1) {
+           
+           echo "<a href='" . PATH_WWW . "?component=" . $application->getComponent() . "&controller=" . $application->getController() . "&task=unsetadmin&username=" . $element["email"] . "'/>" . "<img width='16px' align='middle' src='" . $application->getPathTemplate() . "/images/icon-star.png' title='Unset manager'/></a>";
+       } else {
+           
+           echo "<a href='" . PATH_WWW . "?component=" . $application->getComponent() . "&controller=" . $application->getController() . "&task=setadmin&username=" . $element["email"] . "'/>" . "<img width='16px' align='middle' src='" . $application->getPathTemplate() . "/images/icon-star2.png' title='Set manager'/></a> ";
+       }
+       
+       
+       echo "</td><td>" . ($element['user_type_id']==1?"Manager":"Registered"). "</td><td><a href='?component=settings&controller=files&folder=" . $element["workspace"] . "/&task=open'>" . $element["workspace"] . "</a></td>" . "<td>" . $utils->getDirSize($dir_) . "</td><td>" . $utils->formatSize($utils->getFreeSpace($dir_)) . "</td></tr>";
 }
 
 ?>		
@@ -356,27 +472,17 @@ foreach ($data as $key => $element) {
 
 
 
-
-
-
-
-
-					<div style="text-align: right; display: block;">
-
-						<input type="button"
-							onclick="javascript: window.location.href='?component=settings';"
-							name="cancel" value="Return" />
-
-					</div>
-
 					</form>
 
 
-				</div>
-
-			</div>
-		</div>
-	</div>
-</div>
-</div>
-
+									<div style="float: right; padding-left: 10px">
+									
+											<input type="button" class="btn btn-default"
+                							onclick="javascript: window.location.href='?component=settings';"
+                							name="cancel" value="Return" />
+									</div>
+									
+									
+									
+									
+										

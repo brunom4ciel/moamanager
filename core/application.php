@@ -254,6 +254,53 @@ class Application extends AbstractApplication
         return $result;
     }
 
+    
+        
+    
+    /**
+     * Set Software version
+     *
+     * @param string $version	software version
+     *
+     * @return void
+     */
+    public function setSoftwareRemoteVersion($version)
+    {
+        try {
+            $this->session_open();
+            
+            $_SESSION['software']['version'] = $version;
+            
+            $this->session_close();
+        } catch (AppException $e) {
+            throw new AppException($e->getMessage());
+        }
+    }
+    
+    
+    /**
+     * Get Sotware Version
+     *
+     * @return string
+     */
+    public function getSoftwareRemoteVersion()
+    {
+        try {
+            $this->session_open();
+            
+            if (self::is_authentication()) {
+                return $_SESSION['software']['version'];
+            } else {
+                return "";
+            }
+            
+            $this->session_close();
+        } catch (AppException $e) {
+            throw new AppException($e->getMessage());
+        }
+    }
+    
+    
 	/**
 	 * Read username
 	 * 
@@ -425,7 +472,7 @@ class Application extends AbstractApplication
 
         // if(is_null($logout)){
         if (is_null($http_referer))
-            $vars = "&http_referer=" . urlencode(base64_encode($_SERVER["REQUEST_URI"]));
+            $vars = "&http_referer=";/// . urlencode(base64_encode($_SERVER["REQUEST_URI"]));
         else
             $vars = "&http_referer=" . $http_referer;
 

@@ -23,6 +23,39 @@ abstract class Template
 
     private static $title = null;
 
+    private static $disabledMenu = false;
+    
+    /**
+     * sets the show menu.
+     *
+     * @param	boolean	$show enable or disabled menu
+     *
+     * @return	void
+     */
+    public static function setDisabledMenu($disabled = true)
+    {
+        try {
+            self::$disabledMenu = $disabled;
+        } catch (\Exception $e) {
+            exit($e->getMessage());
+        }
+    }
+    /**
+     * get the showmenu.
+     *
+     * @return	string
+     */
+    public static function getDisabledMenu()
+    {
+        try {
+            
+            return self::$disabledMenu;
+        } catch (\Exception $e) {
+            exit($e->getMessage());
+        }
+    }
+    
+    
 	/**
 	 * sets the title.
 	 * 

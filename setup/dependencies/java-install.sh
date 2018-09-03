@@ -3,7 +3,7 @@
 
 # by Bruno Maciel
 
-echo "Install JAVA 9"
+echo "Install Oracle Java Version 8"
 
 sudo apt-get install ppa-purge -y
 #sudo apt-get install python-software-properties -y

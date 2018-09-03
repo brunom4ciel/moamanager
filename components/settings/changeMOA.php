@@ -11,9 +11,13 @@ defined('_EXEC') or die();
 
 use moam\core\Framework;
 use moam\libraries\core\utils\Utils;
+use moam\core\Template;
+
 if (! class_exists('Application')) {
     $application = Framework::getApplication();
 }
+
+Template::setDisabledMenu();
 
 Framework::import("Utils", "core/utils");
 
@@ -219,17 +223,11 @@ function remove(filename){
 
 </script>
 
-<div class="content content-alt">
-	<div class="container" style="width: 70%">
-		<div class="row">
-			<div class="">
-				<div class="card" style="width: 100%">
-
-
-
-					<div class="page-header">
-						<h1>MOA Binary</h1>
-					</div>
+							<div class="page-header">
+        						<h1>
+        							<a href="<?php echo $_SERVER['REQUEST_URI']?>">Binary MOA</a>
+        						</h1>
+        					</div>
 							
 							<?php
 
@@ -287,20 +285,26 @@ function remove(filename){
 						<table>
 							<tr>
 								<td>MOA Binary Upload (*.jar):</td>
-								<td><input type="file" name="jarfile" /></td>
-								<td><input type="submit" name="default" value="update" /></td>
+								<td><input type="file" class="btn btn-default" name="jarfile" /></td>
+								<td>&nbsp;<input type="submit" class="btn btn-success" name="default" value="Send" /></td>
 							</tr>
 						</table>
 						<!-- <input type="submit" name="default" value="default system" />-->
 
 					</form>
 
+					
 
-				</div>
-
-			</div>
-		</div>
-	</div>
-</div>
-</div>
+									<div style="float: right; padding-left: 10px">
+										
+											
+											
+											<input type="button" class="btn btn-default"
+                							onclick="javascript: window.location.href='?component=settings';"
+                							name="cancel" value="Return" />
+									</div>
+									
+									
+									
+									
 

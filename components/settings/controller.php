@@ -16,6 +16,8 @@ use moam\libraries\core\utils\Utils;
 use moam\core\Properties;
 use PDO;
 use moam\core\AppException;
+
+
 if (! class_exists('Application')) {
     $application = Framework::getApplication();
 }
@@ -37,11 +39,11 @@ $files_list = $utils->getListElementsDirectory(Properties::getBase_directory_moa
 
 if (is_file(Properties::getBase_directory_moa() . "bin/" . $application->getUserId() . ".jar")) {
     $moafilename = $application->getUserId() . ".jar";
+    $moafilename .= " (" . $utils->formatSize(filesize(Properties::getBase_directory_moa() . "bin/" . $moafilename)) . ")";
 } else {
     $moafilename = Properties::getBase_directory_moa_jar_default();
 }
 
-$moafilename .= " (" . $utils->formatSize(filesize(Properties::getBase_directory_moa() . "bin/" . $moafilename)) . ")";
 
 Template::addHeader(array(
     "tag" => "link",
@@ -50,28 +52,101 @@ Template::addHeader(array(
     "href" => "" . $application->getPathTemplate() . "/css/style4.css"
 ));
 
-// foreach($files_list_datasets as $item)
-// $a[] = $item;
+Template::setDisabledMenu();
 
-// $files_list_datasets = $a;
+$task = $application->getParameter('task');
 
-// var_dump($files_list_datasets);exit();
+if($task == 'downloadjar')
+{
+   
+    $filename = Properties::getBase_directory_moa()
+            .   "bin"
+            .   DIRECTORY_SEPARATOR    
+            .   Properties::getBase_directory_moa_jar_default();
+
+            
+    if (file_exists($filename)) {
+        
+        header('Content-Description: File Transfer');
+        header('Content-Type: application/octet-stream');
+        header('Content-Disposition: attachment; filename="' . basename($filename) . '"');
+        header('Content-Transfer-Encoding: binary');
+        header('Expires: 0');
+        header('Cache-Control: must-revalidate, post-check=0, pre-check=0');
+        header('Cache-Control: must-revalidate');
+        header('Pragma: public');
+        header('Content-Length: ' . filesize($filename));
+        
+        ob_clean();
+        ob_end_flush();
+        
+        // readfile($file);
+        
+        $handle = fopen($filename, "rb");
+        while (! feof($handle))
+        {
+            echo fread($handle, 1000);
+        }
+        
+        exit();
+    }
+    
+}
+
+if($task == 'downloadlib')
+{
+    
+    $filename = Properties::getBase_directory_moa()
+    .   "lib"
+        .   DIRECTORY_SEPARATOR
+        .   $application->getParameter('filename');
+        
+        
+        if (file_exists($filename)) {
+            
+            header('Content-Description: File Transfer');
+            header('Content-Type: application/octet-stream');
+            header('Content-Disposition: attachment; filename="' . basename($filename) . '"');
+            header('Content-Transfer-Encoding: binary');
+            header('Expires: 0');
+            header('Cache-Control: must-revalidate, post-check=0, pre-check=0');
+            header('Cache-Control: must-revalidate');
+            header('Pragma: public');
+            header('Content-Length: ' . filesize($filename));
+            
+            ob_clean();
+            ob_end_flush();
+            
+            // readfile($file);
+            
+            $handle = fopen($filename, "rb");
+            while (! feof($handle))
+            {
+                echo fread($handle, 1000);
+            }
+            
+            exit();
+        }
+        
+}
+
 ?>
 <script>
 
 
 function confirmCleanDirectory(){
 
- 	var x = confirm("Are you sure you want to delete your temporary files?");
+	return true;
+//  	var x = confirm("Are you sure you want to delete your temporary files?");
 
- 	if (x){
- 	 	var x = confirm("If the temporary files is delete all files in processing will cease to function .\nAre you sure you want to delete your temporary files?");
-		if(x)
-			return true;
-	  	else
-			return false;
- 	}else
-    	return false;
+//  	if (x){
+//  	 	var x = confirm("If the temporary files is delete all files in processing will cease to function .\nAre you sure you want to delete your temporary files?");
+// 		if(x)
+// 			return true;
+// 	  	else
+// 			return false;
+//  	}else
+//     	return false;
 	
 }
 
@@ -91,11 +166,6 @@ function confirmRemoveAccount(){
 	
 }
 </script>
-<div class="content content-alt">
-	<div class="container" style="width: 90%">
-		<div class="row">
-			<div class="">
-				<div class="card" style="width: 100%">
 
 
 
@@ -133,7 +203,7 @@ function confirmRemoveAccount(){
 														<div data-reactid=".1lisbcwokxs.3.0.0.2.0.1.0.0.0.1"
 															class="account-section-item account-section-item-disabled">
 															<span data-reactid=".1lisbcwokxs.3.0.0.2.0.1.0.0.0.1.0">Type:</span>
-															<span data-reactid=".1lisbcwokxs.3.0.0.2.0.1.0.0.0.1.1"> <?php echo $application->getUserType();?></span>
+															<span data-reactid=".1lisbcwokxs.3.0.0.2.0.1.0.0.0.1.1"> <?php echo ($application->getUserType()==1?"Manager":"Registered");?></span>
 														</div>
 														<div data-reactid=".1lisbcwokxs.3.0.0.2.0.1.0.0.0.2"
 															class="account-section-item account-section-item-disabled"></div>
@@ -235,7 +305,12 @@ function confirmRemoveAccount(){
 															class="account-section-item account-section-item-disabled">
 															<span data-reactid=".1lisbcwokxs.3.0.0.2.0.1.0.0.0.1.0">Binary
 																(/bin/):</span> <span
-																data-reactid=".1lisbcwokxs.3.0.0.2.0.1.0.0.0.1.0"><?php echo $moafilename;?></span>
+																data-reactid=".1lisbcwokxs.3.0.0.2.0.1.0.0.0.1.0">
+<a href="<?php echo PATH_WWW . '?component=settings&tmpl=tmpl&task=downloadjar';?>">
+<img width='16px' align='middle' src='<?php echo $application->getPathTemplate()?>/images/icon_download.png' title='Download'/></a>
+
+																<?php echo $moafilename;?> 
+																<?php echo date("Y/m/d H:i:s", filemtime(Properties::getBase_directory_moa()."bin/".Properties::getBase_directory_moa_jar_default()));?></span>
 
 														</div>
 														<div data-reactid=".1lisbcwokxs.3.0.0.2.0.1.0.0.0.2"
@@ -248,7 +323,7 @@ function confirmRemoveAccount(){
 															class="account-section-item">
 															<a data-reactid=".1lisbcwokxs.3.0.0.2.0.1.0.0.1.1.0"
 																href="<?php echo PATH_WWW?>?component=settings&controller=changeMOA"
-																class="account-section-link">Change MOA Binary</a>
+																class="account-section-link">Binary MOA Manager</a>
 														</div>
 
 													</div>
@@ -276,8 +351,13 @@ function confirmRemoveAccount(){
 																	<?php
 
                 for ($i = 0; $i < count($files_list); $i ++) {
-
-                    echo "<span style='margin-left:65px;' data-reactid=\".1lisbcwokxs.3.0.0.2.0.1.0.0.0.1.0\">" . $files_list[$i] . " (" . $utils->formatSize(filesize(Properties::getBase_directory_moa() . "lib/" . $files_list[$i])) . ")" . "</span><br>\n";
+                
+                    echo    "<span style='margin-left:65px;' data-reactid=\".1lisbcwokxs.3.0.0.2.0.1.0.0.0.1.0\">";
+                    
+                    echo    '<a href="'. PATH_WWW . '?component=settings&tmpl=tmpl&task=downloadlib&filename=' . $files_list[$i] . '">';
+                    echo    "<img width='16px' align='middle' src='". $application->getPathTemplate() . "/images/icon_download.png' title='Download'/></a>&nbsp; "; 
+                    
+                    echo $files_list[$i] . " (" . $utils->formatSize(filesize(Properties::getBase_directory_moa() . "lib/" . $files_list[$i])) . ")" . "</span><br>\n";
                 }
 
                 ?>
@@ -341,7 +421,7 @@ function confirmRemoveAccount(){
 														<div data-reactid=".1lisbcwokxs.3.0.0.2.0.1.0.0.1.1"
 															class="account-section-item">
 															<a data-reactid=".1lisbcwokxs.3.0.0.2.0.1.0.0.1.1.0"
-																href="<?php echo PATH_WWW?>?component=settings&controller=cleantmp&task=clean"
+																href="<?php echo PATH_WWW?>?component=settings&controller=cleantmp&task=confirm"
 																onclick='javascript: return confirmCleanDirectory();'
 																class="account-section-link">Clean Directory</a>
 														</div>
@@ -469,8 +549,310 @@ function confirmRemoveAccount(){
 										</section>
 									</div>
 										
+									
+									
+									
+									<div data-reactid=".1lisbcwokxs.3.0.0.2.0"
+										class="account-section collapsable-panel clearfix membership-section-wrapper">
+										<header data-reactid=".1lisbcwokxs.3.0.0.2.0.0"
+											class="account-section-header collapsable-section-toggle">
+											<h2 data-reactid=".1lisbcwokxs.3.0.0.2.0.0.0"
+												class="account-section-heading">
+												<span data-reactid=".1lisbcwokxs.3.0.0.2.0.0.0.0">MOA src/</span>
+
+											</h2>
+										</header>
+										<section data-reactid=".1lisbcwokxs.3.0.0.2.0.1"
+											class="collapsable-section-content account-section-content">
+											<div data-reactid=".1lisbcwokxs.3.0.0.2.0.1.0"
+												class="account-subsection clearfix">
+												<div data-reactid=".1lisbcwokxs.3.0.0.2.0.1.0.0"
+													class="clearfix">
+
+													<div data-reactid=".1lisbcwokxs.3.0.0.2.0.1.0.0.0"
+														class="account-section-group">
+
+														<div data-reactid=".1lisbcwokxs.3.0.0.2.0.1.0.0.0.1"
+															class="account-section-item account-section-item-disabled">
+															
+														</div>
+														<div data-reactid=".1lisbcwokxs.3.0.0.2.0.1.0.0.0.2"
+															class="account-section-item account-section-item-disabled"></div>
+													</div>
+
+													<div style="float:right;">
+
+														<div data-reactid=".1lisbcwokxs.3.0.0.2.0.1.0.0.1.1"
+															class="account-section-item">
+															<a data-reactid=".1lisbcwokxs.3.0.0.2.0.1.0.0.1.1.0"
+																href="<?php echo PATH_WWW?>?component=java&controller=download"
+																class="account-section-link" onclick="document.getElementById('latestversionmoa').href='#';">Download Java src files</a>
+															<?php 
+															
+															
+															$dir_moa = Properties::getBase_directory_moa() . ""
+															. DIRECTORY_SEPARATOR;															
+														
+															$files_list = $utils->getListElementsDirectory1($dir_moa, array("zip"));
+															
+                                                            $ok=FALSE;
+															foreach($files_list as $item)
+															{
+															    if(file_exists($dir_moa . $item["name"]) && $item['type'] == "file")
+															    {$ok = TRUE;
+															?>
+																<br><a id="latestversionmoa" data-reactid=".1lisbcwokxs.3.0.0.2.0.1.0.0.1.1.0"
+																href="<?php echo PATH_WWW?>?component=java&controller=download&filename=<?php echo $item["name"]?>"
+																class="account-section-link">Download last version <?php echo $item["name"]?></a>
+															
+															<?php         
+															    }
+															}
+															
+															if($ok == FALSE)
+															{
+															    echo "<a id=\"latestversionmoa\" href='#'></a>";
+															}
+															?>	
+																
+																
+															<?php if($application->getUserType() == 1){ ?>	
+																<br>
+															<a data-reactid=".1lisbcwokxs.3.0.0.2.0.1.0.0.1.1.0"
+																href="<?php echo PATH_WWW?>?component=java"
+																class="account-section-link">Java Manager 'src files'</a>
+															<?php }?>
+														</div>
+
+													</div>
+
+
+												</div>
+											</div>
+										</section>
+									</div>
+									
+									
+									
 										
 										<?php if($application->getUserType() == 1){ ?>
+										
+										
+										
+										
+										
+										<h1 data-reactid=".1lisbcwokxs.3.0.0.0" class="account-header">Build and Deploy</h1>
+										<div data-reactid=".1lisbcwokxs.3.0.0.2.0"
+										class="account-section collapsable-panel clearfix membership-section-wrapper">
+										<header data-reactid=".1lisbcwokxs.3.0.0.2.0.0"
+											class="account-section-header collapsable-section-toggle">
+											<h2 data-reactid=".1lisbcwokxs.3.0.0.2.0.0.0"
+												class="account-section-heading">
+												<span data-reactid=".1lisbcwokxs.3.0.0.2.0.0.0.0">Build and Deploy</span>
+
+											</h2>
+										</header>
+										<section data-reactid=".1lisbcwokxs.3.0.0.2.0.1"
+											class="collapsable-section-content account-section-content">
+											<div data-reactid=".1lisbcwokxs.3.0.0.2.0.1.0"
+												class="account-subsection clearfix">
+												<div data-reactid=".1lisbcwokxs.3.0.0.2.0.1.0.0"
+													class="clearfix">
+
+													<div data-reactid=".1lisbcwokxs.3.0.0.2.0.1.0.0.0"
+														class="account-section-group">
+
+														<div data-reactid=".1lisbcwokxs.3.0.0.2.0.1.0.0.0.1"
+															class="account-section-item account-section-item-disabled">
+															
+														</div>
+														<div data-reactid=".1lisbcwokxs.3.0.0.2.0.1.0.0.0.2"
+															class="account-section-item account-section-item-disabled"></div>
+													</div>
+
+													<div style="float:right;">
+
+														<div data-reactid=".1lisbcwokxs.3.0.0.2.0.1.0.0.1.1"
+															class="account-section-item">
+															<a data-reactid=".1lisbcwokxs.3.0.0.2.0.1.0.0.1.1.0"
+																href="<?php echo PATH_WWW?>?component=settings&controller=buildmoa"
+																class="account-section-link">Automatically Build MOA and Deploy bin/<?php echo Properties::getBase_directory_moa_jar_default();?></a>
+														</div>
+
+													</div>
+
+
+												</div>
+											</div>
+										</section>
+									</div>
+									
+									
+									
+									
+									
+									
+									
+									
+									
+									
+									
+									
+										<h1 data-reactid=".1lisbcwokxs.3.0.0.0" class="account-header">Update</h1>
+									
+										<div data-reactid=".1lisbcwokxs.3.0.0.2.0"
+										class="account-section collapsable-panel clearfix membership-section-wrapper">
+										<header data-reactid=".1lisbcwokxs.3.0.0.2.0.0"
+											class="account-section-header collapsable-section-toggle">
+											<h2 data-reactid=".1lisbcwokxs.3.0.0.2.0.0.0"
+												class="account-section-heading">
+												<span data-reactid=".1lisbcwokxs.3.0.0.2.0.0.0.0">Software Update</span>
+
+											</h2>
+										</header>
+										<section data-reactid=".1lisbcwokxs.3.0.0.2.0.1"
+											class="collapsable-section-content account-section-content">
+											<div data-reactid=".1lisbcwokxs.3.0.0.2.0.1.0"
+												class="account-subsection clearfix">
+												<div data-reactid=".1lisbcwokxs.3.0.0.2.0.1.0.0"
+													class="clearfix">
+
+													<div data-reactid=".1lisbcwokxs.3.0.0.2.0.1.0.0.0"
+														class="account-section-group">
+
+														<div data-reactid=".1lisbcwokxs.3.0.0.2.0.1.0.0.0.1"
+															class="account-section-item account-section-item-disabled">
+															
+														</div>
+														<div data-reactid=".1lisbcwokxs.3.0.0.2.0.1.0.0.0.2"
+															class="account-section-item account-section-item-disabled"></div>
+													</div>
+
+													<div data-reactid=".1lisbcwokxs.3.0.0.2.0.1.0.0.1"
+														class="account-section-group">
+
+														<div data-reactid=".1lisbcwokxs.3.0.0.2.0.1.0.0.1.1"
+															class="account-section-item">
+															<a data-reactid=".1lisbcwokxs.3.0.0.2.0.1.0.0.1.1.0"
+																href="<?php echo PATH_WWW?>?component=settings&controller=softwareupdate"
+																class="account-section-link">Check for Update</a>
+														</div>
+
+													</div>
+
+
+												</div>
+											</div>
+										</section>
+									</div>
+										
+										<h1 data-reactid=".1lisbcwokxs.3.0.0.0" class="account-header">Users</h1>
+										
+										
+										<div data-reactid=".1lisbcwokxs.3.0.0.2.0"
+										class="account-section collapsable-panel clearfix membership-section-wrapper">
+										<header data-reactid=".1lisbcwokxs.3.0.0.2.0.0"
+											class="account-section-header collapsable-section-toggle">
+											<h2 data-reactid=".1lisbcwokxs.3.0.0.2.0.0.0"
+												class="account-section-heading">
+												<span data-reactid=".1lisbcwokxs.3.0.0.2.0.0.0.0">Users</span>
+
+											</h2>
+										</header>
+										<section data-reactid=".1lisbcwokxs.3.0.0.2.0.1"
+											class="collapsable-section-content account-section-content">
+											<div data-reactid=".1lisbcwokxs.3.0.0.2.0.1.0"
+												class="account-subsection clearfix">
+												<div data-reactid=".1lisbcwokxs.3.0.0.2.0.1.0.0"
+													class="clearfix">
+
+													<div data-reactid=".1lisbcwokxs.3.0.0.2.0.1.0.0.0"
+														class="account-section-group">
+
+														<div data-reactid=".1lisbcwokxs.3.0.0.2.0.1.0.0.0.1"
+															class="account-section-item account-section-item-disabled">
+																
+
+																<?php
+
+            $data_db = $DB->prep_query("SELECT
+	
+	email, workspace
+	
+	FROM  user 
+
+	ORDER by email asc");
+
+            $data_db->bindParam(1, $user_id, PDO::PARAM_INT);
+
+            $error = "";
+
+            try {
+
+                // open transaction
+                $DB->beginTransaction();
+
+                // execute query
+                $data_db->execute();
+
+                // confirm transaction
+                $DB->commit();
+
+                $db_result_error = $data_db->errorInfo();
+
+                if ($db_result_error[2] != "")
+                    $error = $db_result_error[2];
+            } catch (AppException $e) {
+
+                // back transaction
+                $DB->rollback();
+
+                throw new AppException($e->getMessage());
+            }
+
+            foreach ($data_db as $element) {
+
+                $path = $element["workspace"] . DIRECTORY_SEPARATOR . $element["email"];
+
+                echo "<span data-reactid=\".1lisbcwokxs.3.0.0.2.0.1.0.0.0.1.0\">" . $element["email"] . ",</span> <span>" . $utils->getDirSize($path) . "</span><br>\n";
+            }
+
+            ?><?php echo $error;?>
+
+																
+																
+															</div>
+														<div data-reactid=".1lisbcwokxs.3.0.0.2.0.1.0.0.0.2"
+															class="account-section-item account-section-item-disabled"></div>
+													</div>
+
+													<div data-reactid=".1lisbcwokxs.3.0.0.2.0.1.0.0.1"
+														class="account-section-group">
+
+														<div data-reactid=".1lisbcwokxs.3.0.0.2.0.1.0.0.1.1"
+															class="account-section-item">
+															<a data-reactid=".1lisbcwokxs.3.0.0.2.0.1.0.0.1.1.0"
+																href="<?php echo PATH_WWW?>?component=settings&controller=managerUsers"
+																class="account-section-link">Manager</a>
+														</div>
+
+													</div>
+
+
+												</div>
+											</div>
+										</section>
+									</div>
+										
+										
+										
+										
+										
+										
+										<h1 data-reactid=".1lisbcwokxs.3.0.0.0" class="account-header">Preferences</h1>
+										
+										
+										
 										
 										<div data-reactid=".1lisbcwokxs.3.0.0.2.0"
 										class="account-section collapsable-panel clearfix membership-section-wrapper">
@@ -580,101 +962,7 @@ function confirmRemoveAccount(){
 									
 
 
-									<div data-reactid=".1lisbcwokxs.3.0.0.2.0"
-										class="account-section collapsable-panel clearfix membership-section-wrapper">
-										<header data-reactid=".1lisbcwokxs.3.0.0.2.0.0"
-											class="account-section-header collapsable-section-toggle">
-											<h2 data-reactid=".1lisbcwokxs.3.0.0.2.0.0.0"
-												class="account-section-heading">
-												<span data-reactid=".1lisbcwokxs.3.0.0.2.0.0.0.0">Users</span>
-
-											</h2>
-										</header>
-										<section data-reactid=".1lisbcwokxs.3.0.0.2.0.1"
-											class="collapsable-section-content account-section-content">
-											<div data-reactid=".1lisbcwokxs.3.0.0.2.0.1.0"
-												class="account-subsection clearfix">
-												<div data-reactid=".1lisbcwokxs.3.0.0.2.0.1.0.0"
-													class="clearfix">
-
-													<div data-reactid=".1lisbcwokxs.3.0.0.2.0.1.0.0.0"
-														class="account-section-group">
-
-														<div data-reactid=".1lisbcwokxs.3.0.0.2.0.1.0.0.0.1"
-															class="account-section-item account-section-item-disabled">
-																
-
-																<?php
-
-            $data_db = $DB->prep_query("SELECT
-	
-	email, workspace
-	
-	FROM  user 
-
-	ORDER by email asc");
-
-            $data_db->bindParam(1, $user_id, PDO::PARAM_INT);
-
-            $error = "";
-
-            try {
-
-                // open transaction
-                $DB->beginTransaction();
-
-                // execute query
-                $data_db->execute();
-
-                // confirm transaction
-                $DB->commit();
-
-                $db_result_error = $data_db->errorInfo();
-
-                if ($db_result_error[2] != "")
-                    $error = $db_result_error[2];
-            } catch (AppException $e) {
-
-                // back transaction
-                $DB->rollback();
-
-                throw new AppException($e->getMessage());
-            }
-
-            foreach ($data_db as $element) {
-
-                $path = $element["workspace"] . DIRECTORY_SEPARATOR . $element["email"];
-
-                echo "<span data-reactid=\".1lisbcwokxs.3.0.0.2.0.1.0.0.0.1.0\">" . $element["email"] . ",</span> <span>" . $utils->getDirSize($path) . "</span><br>\n";
-            }
-
-            ?><?php echo $error;?>
-
-																
-																
-															</div>
-														<div data-reactid=".1lisbcwokxs.3.0.0.2.0.1.0.0.0.2"
-															class="account-section-item account-section-item-disabled"></div>
-													</div>
-
-													<div data-reactid=".1lisbcwokxs.3.0.0.2.0.1.0.0.1"
-														class="account-section-group">
-
-														<div data-reactid=".1lisbcwokxs.3.0.0.2.0.1.0.0.1.1"
-															class="account-section-item">
-															<a data-reactid=".1lisbcwokxs.3.0.0.2.0.1.0.0.1.1.0"
-																href="<?php echo PATH_WWW?>?component=settings&controller=managerUsers"
-																class="account-section-link">Manager</a>
-														</div>
-
-													</div>
-
-
-												</div>
-											</div>
-										</section>
-									</div>
-
+									
 
 
 
@@ -718,7 +1006,7 @@ function confirmRemoveAccount(){
 
 															<span data-reactid=".1lisbcwokxs.3.0.0.2.0.1.0.0.0.1.0">Pass:
 															</span> <span
-																data-reactid=".1lisbcwokxs.3.0.0.2.0.1.0.0.0.1.0"><?php echo Properties::getDatabasePass()?></span><br>
+																data-reactid=".1lisbcwokxs.3.0.0.2.0.1.0.0.0.1.0">*******</span><br>
 
 														</div>
 														<div data-reactid=".1lisbcwokxs.3.0.0.2.0.1.0.0.0.2"
@@ -843,9 +1131,4 @@ function confirmRemoveAccount(){
 
 
 
-				</div>
-			</div>
-		</div>
-	</div>
-</div>
 
