@@ -10,7 +10,7 @@ namespace moam\components\files;
 defined('_EXEC') or die();
 
 use moam\core\Framework;
-// use moam\core\Application;
+use moam\core\Template;
 use moam\core\Properties;
 use moam\libraries\core\utils\Utils;
 use ZipArchive;
@@ -23,6 +23,14 @@ if (! class_exists('Application')) {
 if (! $application->is_authentication()) {
     $application->alert("Error: you do not have credentials.");
 }
+
+
+Template::addHeader(array("tag"=>"script",
+    "type"=>"text/javascript",
+    "src"=>""
+    . $application->getPathTemplate()
+    . "/javascript/jquery.min.1.5.2.js"));
+
 
 // Framework::import("menu", "core/menu");
 
@@ -192,7 +200,7 @@ if ($task == "folder") {
                 // echo $item."<br>";
             }
 
-            header("Location: " . PATH_WWW . "?component=" . $application->getComponent() . "&controller=" . $application->getController() . "&folder=" . $application->getParameter("folder"));
+            $application->redirect(PATH_WWW . "?component=" . $application->getComponent() . "&controller=" . $application->getController() . "&folder=" . $application->getParameter("folder"));
         } else {
 
             if ($task == 'move') {
@@ -421,7 +429,81 @@ if ($task == "folder") {
                                 header("Location: " . PATH_WWW . "?component=" . $application->getComponent() . "&controller=" . $application->getController() . "&folder=" . $application->getParameter("folder"));
                             } else {
 
+                                if ($task == 'clone') 
+                                {
+                                    
+                                    $element = $application->getParameter("element");
+                                    $dir = PATH_USER_WORKSPACE_STORAGE . $folder;
 
+                                    foreach ($element as $key => $item) 
+                                    {
+                                                                                    
+                                        if (is_file($dir . $item)) 
+                                        {
+                                            if(strpos($item, ".") === false)
+                                            {
+                                                $filename = $item;
+                                                $filename_ext = "";
+                                            }
+                                            else 
+                                            {
+                                                $filename = substr($item, 0, strrpos($item, "."));
+                                                $filename_ext = substr($item, strrpos($item, ".")+1);
+                                            }
+                                            
+                                            $foldernew = $filename;
+                                            $foldernew__ = $filename . "-clone." . $filename_ext;
+                                            $y=0;
+                                            
+                                            while(is_file($dir . $foldernew__)){
+                                                $foldernew__ = $foldernew."-clone-(".$utils->format_number($y++,2).")." . $filename_ext;
+                                            }
+                                            
+                                            $foldernew = $foldernew__;
+                                            
+                                            $source = $dir . $item;
+                                            $destine = $dir . $foldernew;
+                                            
+//                                             echo "source:" . $source . "\n";
+//                                             echo "destine:" . $destine;
+//                                             exit();
+                                            
+                                            $utils->xCopy($source, $destine);
+                                            $utils->set_perms($destine, is_dir($destine));
+                                            
+//                                             exit();
+//                                             $utils->xCopy($dir_source, $dir_destine);
+//                                             $utils->set_perms($dir_destine, true);
+                                            
+                                        } else 
+                                        {
+                                            
+                                            if (is_dir($dir . $item)) 
+                                            {
+                                                
+                                                $foldernew = $item;
+                                                $foldernew__ = $item . "-clone";
+                                                $y=0;
+                                                
+                                                while(is_dir($dir . $foldernew__)){
+                                                    $foldernew__ = $foldernew."-clone-(".$utils->format_number($y++,2).")";
+                                                }                                                
+                                                
+                                                $foldernew = $foldernew__;
+                                                
+                                                $source = $dir . $item;
+                                                $destine = $dir . $foldernew;
+                                                
+                                                $utils->xCopy($source, $destine);
+                                                $utils->set_perms($destine, true);
+                                                
+                                            }
+                                        }
+                                        
+                                    }
+                                }
+                                 
+                                 
                             }
                         }
                     }
@@ -937,6 +1019,18 @@ function sendAction(task){
 	     return;
 
 	}
+
+	if(task == 'clone'){
+
+		if(verificaChecks()==true)
+		{ 
+		
+		}else
+			return;
+	 
+
+	}
+	
 	
 	if(task == 'trash'){
 
@@ -1148,18 +1242,20 @@ File Upload (*.txt, *.zip)</a> <br>
 
 									<div style="float: left;width:100%; padding-top: 10px">
 									
-									<input type="button" class="btn btn-default" value="New folder" name="folder"
-										onclick="javascript: newFolder();" /> || 
-										
-										<input type="button"
-										class="btn btn-danger" value="Delete" name="trash"
-										onclick="javascript: sendAction('trash');" /> || <input
-										type="button" class="btn btn-info" value="Backup" name="backup"
-										onclick="javascript: sendAction('backup');" /> ||  <input
-										type="button" class="btn btn-default" value="zip" name="compress"
-										onclick="javascript: sendAction('zip');" /> <input
-										type="button" class="btn btn-default" value="unzip" name="decompress"
-										onclick="javascript: sendAction('unzip');" /> 
+    									<input type="button" class="btn btn-default" value="New folder" name="folder"
+    										onclick="javascript: newFolder();" /> || 
+    										
+    										<input type="button"
+    										class="btn btn-danger" value="Delete" name="trash"
+    										onclick="javascript: sendAction('trash');" /> || <input
+    										type="button" class="btn btn-info" value="Backup" name="backup"
+    										onclick="javascript: sendAction('backup');" /> ||  <input
+    										type="button" class="btn btn-warning" value="Clone" name="clone"
+    										onclick="javascript: sendAction('clone');" /> || <input
+    										type="button" class="btn btn-default" value="Zip" name="compress"
+    										onclick="javascript: sendAction('zip');" /> <input
+    										type="button" class="btn btn-default" value="UnZip" name="decompress"
+    										onclick="javascript: sendAction('unzip');" /> 
 									</div>
 										
 										<div style="float:left;width:100%;border:0px solid #000;padding:5px;">
@@ -1220,6 +1316,10 @@ foreach ($levels as $key => $item) {
 			</div>
 		</div>
 		
+		<div id="containerbody" style="height:100%;margin-left: -15px;
+margin-right: -15px;list-style-type: none;
+margin: 0;
+overflow-y: scroll;max-height: 400px;" >
 	<table border='1' id="temporary_files" style="width: 100%;">
 										<tr>
 											<th>#</th>
@@ -1274,8 +1374,12 @@ foreach ($files_list as $key => $element) {
 
 ?>		
 	</table>
+	
+	</div>
+	
 							
 							</form>
+	
 	
 	
 
@@ -1317,6 +1421,21 @@ for ($i = 0; $i < (count($levels) - 2); $i ++) {
 			+'&folder=<?php echo $folder_;?>';
 			
 }
+
+
+
+
+function resizeImage(){
+  // browser resized, we count new width/height of browser after resizing
+  var height = window.innerHeight - 380;// || $(window).height();
+
+  document.getElementById("containerbody").setAttribute(
+		   "style", "border:1px solid #ffffff;margin-left: -15px;  margin-right: -15px;list-style-type: none;  margin: 0;  overflow-y: scroll;max-height: "+height+"px");
+}
+
+window.addEventListener("resize", resizeImage);
+
+resizeImage();
 
 </script>
 

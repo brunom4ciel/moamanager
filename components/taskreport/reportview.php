@@ -236,7 +236,14 @@ if ($filename != null) {
 									onclick="javascript: ScriptView('unprocessed');" /><br>
 
   <?php echo $folder. $application->getParameter("filename");?><br>
-								<table border='1' id="report_view" style="width: 100%;">
+  
+	<div id="containerbody" style="border:0px solid #000000;height:100%;margin-left: -15px;
+margin-right: -15px;list-style-type: none;
+margin: 0;
+overflow-y: scroll;max-height: 400px;" >
+
+
+								<table border='1' id="temporary_files" style="width: 100%;">
 									<tr>
 										<th style="width: 40px;">Id</th>
 										<th style="width: 40%;">Script
@@ -571,7 +578,7 @@ if ($length_data > 0) {
 ?>
 			
 	</table>
-
+</div>
 
 
 								</form>
@@ -640,6 +647,20 @@ function ScriptView(command){
 			);
 	
 }
+
+
+function resizeImage()
+{
+  // browser resized, we count new width/height of browser after resizing
+    var height = window.innerHeight - 380;// || $(window).height();
+    
+    document.getElementById("containerbody").setAttribute(
+	   "style", "border:1px solid #ffffff;margin-left: -15px;  margin-right: -15px;list-style-type: none;  margin: 0;  overflow-y: scroll;max-height: "+height+"px");
+}
+
+window.addEventListener("resize", resizeImage);
+
+resizeImage();
 
 
 

@@ -194,17 +194,18 @@ if (isset($_GET['alert'])) {
 				<div class="card" style="width: 100%"><!-- 5 open -->
 				
 					<?php 
-					if($menu == "")
-    				{            				    
+// 					if($menu == "")
+//     				{            				    
     				    
     				            				
-    				}else{?>
-					<div class="page-header">
-						<h1>
-							<a href="<?php echo $_SERVER['REQUEST_URI']?>"><?php echo TITLE_COMPONENT?></a>
-						</h1>
-					</div>
-					<?php }?>
+//     				}else{?>
+<!-- 					<div class="page-header"> -->
+<!-- 						<h1> -->
+<!--							<a href="<?php echo $_SERVER['REQUEST_URI']?>"><?php echo TITLE_COMPONENT?></a>-->
+<!-- 						</h1> -->
+<!-- 					</div> -->
+					<?php
+//  }?>
 					
                     <div class="componentcontainer"><!-- component column open -->
                     	

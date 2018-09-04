@@ -8,12 +8,107 @@
 namespace moam\libraries\core\utils;
 
 use Exception;
+use \RecursiveIteratorIterator;
+use \RecursiveDirectoryIterator;
 use moam\libraries\core\sys\CPULoad;
 
 defined('_EXEC') or die();
 
 class Utils
 {
+    
+    
+    function xCopy($source, $destination)
+    {
+        
+        
+        if(is_dir($source))
+        {
+            
+            if (!file_exists($destination)) {
+                mkdir($destination);
+            }
+            
+            $splFileInfoArr = new RecursiveIteratorIterator(new RecursiveDirectoryIterator($source), RecursiveIteratorIterator::SELF_FIRST);
+            
+            foreach ($splFileInfoArr as $fullPath => $splFileinfo) {
+                //skip . ..
+                if (in_array($splFileinfo->getBasename(), [".", ".."])) {
+                    continue;
+                }
+                //get relative path of source file or folder
+                $path = str_replace($source, "", $splFileinfo->getPathname());
+                
+                if ($splFileinfo->isDir()) {
+                    mkdir($destination . "/" . $path);
+                } else {                    
+                    copy($fullPath, $destination . "/" . $path);
+                }
+            }
+        }
+        else
+        {
+            
+//             $dest = substr($destination, strrpos($destination, DIRECTORY_SEPARATOR)+1);
+//             $dest = substr($dest, 0, strrpos($dest, "."));            
+            
+//             $dir = dirname($destination) . DIRECTORY_SEPARATOR;
+            
+//             $foldernew  = $dest;
+//             $foldernew__ = $dest . "-copy";
+//             $y=0;
+            
+//             while(is_dir($dir . $foldernew__)){
+//                 $foldernew__ = $foldernew."-copy-(".$this->format_number($y++,2).")";
+//             }
+            
+//             $foldernew = $foldernew__;
+            
+//             $this->create_dir($foldernew, $dir);
+            
+//             exit($dir . $foldernew);
+//             echo "". $source . " -> " . $dir . $foldernew ;
+            
+//             exit();
+
+            if(is_file($source))
+            {
+                if(!is_dir($destination))
+                {
+                    copy($source, $destination);                    
+                }                
+            }
+            
+        }
+            
+        
+    }
+    
+    
+    function killPID($pid)
+    {
+        if($this->checkPID($pid))
+        {
+            exec("kill $pid");
+        }
+    }
+    
+    
+    function checkPID($pid)
+    {
+        $result = FALSE;
+        
+        exec("ps aux | grep \"${pid}\" | grep -v grep | awk '{ print $2 }' | head -1", $out);
+        
+        if(!empty($out[0]))
+        {
+//             $result = (int) $out[0];
+            $result = TRUE;
+        }
+        
+        return $result;        
+    }
+    
     
     public function removeDuplicateSpaces($str="")
     {

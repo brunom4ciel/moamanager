@@ -194,6 +194,7 @@ if ($filename != null) {
                     
                     
                     $data = $script . "\n\n" . $data1["data"];
+                    $filesize = $utils->formatSize($size);
                 }
             }
         }

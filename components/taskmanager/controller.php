@@ -12,9 +12,10 @@ defined('_EXEC') or die();
 use moam\core\AppException;
 use moam\core\Framework;
 use moam\core\Properties;
-use moam\libraries\core\menu\Menu;
+// use moam\libraries\core\menu\Menu;
 use moam\libraries\core\db\DBPDO;
 use moam\libraries\core\utils\Utils;
+
 if (! class_exists('Application')) {
     $application = Framework::getApplication();
 }
@@ -23,11 +24,12 @@ if (! $application->is_authentication()) {
     $application->alert("Error: you do not have credentials.");
 }
 
-Framework::import("menu", "core/menu");
+// Framework::import("menu", "core/menu");
 
-if (! class_exists('Menu')) {
-    $menu = new Menu();
-}
+// if (! class_exists('Menu')) {
+//     $menu = new Menu();
+// }
+
 
 Framework::import("DBPDO", "core/db");
 Framework::import("Utils", "core/utils");
@@ -36,6 +38,7 @@ $DB = new DBPDO(Properties::getDatabaseName(), Properties::getDatabaseHost(), Pr
 
 require_once ("task_list.php");
 
+$utils = new Utils();
 $taskList = new TaskList($DB);
 
 $element = $application->getParameter("element");
@@ -64,11 +67,14 @@ try {
             foreach ($element as $pid) {
                 if ($application->getUserType() == 1) { // super user
 
-                    exec("kill $pid");
+//                     exec("kill $pid");
+                    $utils->killPID($pid);
+                    
                 } else {
                     if ($taskList->is_pid_from_user($pid, $user_id)) {
 
-                        exec("kill $pid");
+//                         exec("kill $pid");
+                        $utils->killPID($pid);
                     }
                 }
             }
@@ -106,10 +112,12 @@ try {
                 $pid_aux = $pid + 1;
                 
                 while($endprocess == false){
-                    exec("kill $pid");//echo "kill ".$pid."<br>";
-                    sleep(2);
-                    exec("kill $pid_aux");//echo "kill aux ".$pid_aux."<br>";
-                    sleep(2);
+//                     exec("kill $pid");//echo "kill ".$pid."<br>";
+                    $utils->killPID($pid);
+                    sleep(1);
+//                     exec("kill $pid_aux");//echo "kill aux ".$pid_aux."<br>";
+                    $utils->killPID($pid_aux);
+                    sleep(1);
                     //$realtime_status = $utils->proc_get_status($pid_aux);
                     if (!file_exists("/proc/".$pid)) {
 //                     if($realtime_status != "running"){
@@ -155,10 +163,12 @@ try {
                 $pid_aux = $pid + 1;
                 
                 while($endprocess == false){
-                    exec("kill $pid");//echo "kill ".$pid."<br>";
-                    sleep(2);
-                    exec("kill $pid_aux");//echo "kill aux ".$pid_aux."<br>";
-                    sleep(2);
+                    //                     exec("kill $pid");//echo "kill ".$pid."<br>";
+                    $utils->killPIP($pid);
+                    sleep(1);
+                    //                     exec("kill $pid_aux");//echo "kill aux ".$pid_aux."<br>";
+                    $utils->killPIP($pid_aux);
+                    sleep(1);
                     //$realtime_status = $utils->proc_get_status($pid_aux);
                     if (!file_exists("/proc/".$pid)) {
                         //                     if($realtime_status != "running"){
@@ -283,7 +293,7 @@ function do_this2(){
 
 												top last 40 processes <br> 
 												<input type="button" class="btn btn-default" value="Refresh"
-													name="refresh" onclick="javascript: window.location.reload();" />
+													name="refresh" onclick="javascript: window.location.href = window.location.href;" />
 												| 	
 												<input type="button" class="btn btn-danger" value="Kill process"
 													name="stop" onclick="javascript: sendAction('stop');" />
@@ -314,7 +324,7 @@ function do_this2(){
 
 try {
 
-    $utils = new Utils();
+
 
     if ($application->getUserType() == 1) { // super user
         $rs = $taskList->selectFromSuperUser();
@@ -322,16 +332,32 @@ try {
         $rs = $taskList->selectFromUser($user_id);
     }
 
+    $userid = $application->getUserId();    
     $i = 0;
+    $pid_close = array();
 
-    while ($row = $rs->fetch()) {
+    while ($row = $rs->fetch(\PDO::FETCH_ASSOC)) 
+    {
         $i ++;
 
         $pid = $row["pid"];
 
-        if ($row["process_closed"] == "") {
-            if (file_exists("/proc/".$pid)) {
-                $realtime_status = "running";
+        if (empty($row["process_closed"])) {
+            if (file_exists("/proc/".$pid)) {                
+//                 $cmd = "ps aux | grep " . $pid . " | wc -l";                  
+//                 $result = $utils->runExternal($cmd); 
+
+                if ($utils->checkPID($pid))
+                {
+                    $realtime_status = "running";
+                } 
+                else
+                {
+                    $pid_close[] = array("pid"=>$pid, 
+                                        "userid"=>$userid,
+                                        "id"=>$row["execution_history_id"]);
+                }
+                
             }else{
                 $realtime_status = "closed";
             }
@@ -339,6 +365,8 @@ try {
         } else {
             $realtime_status = "closed";
         }
+        
+        
 
         if ($realtime_status == "closed") {
             $bgcolor = "#cccccc";
@@ -373,6 +401,25 @@ try {
         }
 
     }
+    
+    
+    if(count($pid_close) > 0)
+    {
+        try{
+            
+        
+            foreach($pid_close as $item)
+            {
+                $taskList->pid_setNull($item['id'], $item['pid'], $item['userid']);
+            }
+            
+        } catch (\Exception $e) {
+            
+            $application->alert($e->getMessage());            
+        }
+        
+    }
+    
 } catch (AppException $e) {
     throw new AppException($e->getMessage());
 }

@@ -49,17 +49,31 @@ abstract class AbstractApplication
 //             self::$menu->add($path_www . "?", MENU_HOME);
 
             
-            self::$menu->add($path_www . "?component=files" . $language, MENU_FILE_MANAGER);
-            self::$menu->add($path_www . "?component=scripts", MENU_SCRIPT_MANAGER);
-            self::$menu->add($path_www . "?component=generator" . $language, MENU_SCRIPT_CREATOR);
-            self::$menu->add($path_www . "?component=taskreport&controller=report" . $language, MENU_TASK_REPORT);
-            self::$menu->add($path_www . "?component=extract" . $language, MENU_DATA_EXTRACTION);
-            self::$menu->add($path_www . "?component=statistical&controller=texteditor" . $language, MENU_DATA_ANALYSIS);
+            $style_active = "background-color:#882b21;color:#ffffff;font-weight: bold;";
+            
+            self::$menu->add($path_www . "?component=files" . $language, MENU_FILE_MANAGER,"","","", 
+                (self::getComponent() == 'files'?$style_active:''));
+            
+            self::$menu->add($path_www . "?component=scripts", MENU_SCRIPT_MANAGER, "","","",
+                (self::getComponent() == 'scripts'?$style_active:''));
+            
+            self::$menu->add($path_www . "?component=generator" . $language, MENU_SCRIPT_CREATOR, "","","",
+                (self::getComponent() == 'generator'?$style_active:''));
+            
+            self::$menu->add($path_www . "?component=taskreport&controller=report" . $language, MENU_TASK_REPORT, "","","",
+                (self::getComponent() == 'taskreport'?$style_active:''));
+            
+            self::$menu->add($path_www . "?component=extract" . $language, MENU_DATA_EXTRACTION, "","","",
+                (self::getComponent() == 'extract'?$style_active:''));
+            
+            self::$menu->add($path_www . "?component=statistical&controller=texteditor" . $language, MENU_DATA_ANALYSIS, "","","",
+                (self::getComponent() == 'statistical'?$style_active:''));
            
             self::$menu->addTab();
             
             
-            self::$menu->add($path_www . "?component=systemmonitor" . $language, MENU_SYSTEM_MONITOR);    
+            self::$menu->add($path_www . "?component=systemmonitor" . $language, MENU_SYSTEM_MONITOR, "","","",
+                (self::getComponent() == 'systemmonitor'?$style_active:''));
             
             
 //             self::$menu->add($path_www . "?component=taskinitializer&controller=run" . $language, MENU_TASK_INITIALIZER);
@@ -67,12 +81,17 @@ abstract class AbstractApplication
             
             
             
-            self::$menu->add($path_www . "?component=taskmanager" . $language, MENU_TASK_MANAGER);
+            self::$menu->add($path_www . "?component=taskmanager" . $language, MENU_TASK_MANAGER, "","","",
+                (self::getComponent() == 'taskmanager'?$style_active:''));
             
             self::$menu->addTab();
             
-            self::$menu->add($path_www . "?component=trash" . $language, MENU_TRASH, "", "", "icon_txt.png");
-            self::$menu->add($path_www . "?component=backup" . $language, MENU_BACKUP, "", "", "icon-backup.png");
+            self::$menu->add($path_www . "?component=trash" . $language, MENU_TRASH, "","","",
+                (self::getComponent() == 'trash'?$style_active:''));
+            
+            self::$menu->add($path_www . "?component=backup" . $language, MENU_BACKUP, "","","",
+                (self::getComponent() == 'backup'?$style_active:''));
+            
 //             self::$menu->add($path_www . "?component=settings" . $language, MENU_SETTINGS);            
 //             self::$menu->add($path_www . "?component=user&controller=login&logout" . $language, MENU_LOGOUT);
             

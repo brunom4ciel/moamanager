@@ -27,11 +27,11 @@ ul#nav li a {
 
 
 ul#nav li a:hover{
-    text-decoration:underline;
+    text-decoration: none;
     background: #ccc; }
-    
-    
+        
 
+	
    
    
 table#table_preview_data{
@@ -111,9 +111,7 @@ table#table_preview_data tbody th p{
     background-color: #111;
 }	
 	
-	
-	
-	
+
 	
 	
 	

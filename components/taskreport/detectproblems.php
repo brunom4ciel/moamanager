@@ -162,7 +162,7 @@ function detectProblemsFiles($filename)
 
 
 										
-										<input type="submit" class="btn btn-danger" value="Delete files" name="return"
+										<input type="submit" class="btn btn-danger" value="Delete" name="return"
 										onclick="javascript: return confirmfixedBugs();" />
 										
 										<br> 
@@ -232,21 +232,60 @@ foreach ($files_list as $element) {
 <script type='text/javascript'>
 
 
+
+function verificaChecks() 
+{	
+	var aChk = document.getElementsByName("element[]");  
+	var nenhum = false;
+	
+	for (var i=0;i<aChk.length;i++)
+	{  
+		if (aChk[i].checked == true)
+		{  
+			// CheckBox Marcado... Faça alguma coisa... Ex:
+			//alert(aChk[i].value + " marcado.");
+			nenhum = true;
+			break;
+		//}  else {
+			// CheckBox Não Marcado... Faça alguma outra coisa...
+		}
+	}
+
+	if(nenhum == false)
+	{		
+		alert('You need to select a file.');
+	}
+	
+	return nenhum;
+	
+} 
+
+
 function confirmfixedBugs()
 {
-    
-    var x = confirm("Are you sure you want to delete the files?");
-    
-    if (x){
-    	return true;
-//    	window.location.href='?component=<?php echo $application->getParameter("component");?>'
-//    				+'&controller=<?php echo $application->getParameter("controller");?>'
-//     				+ '&task=clean';
-    	
-    }else
-    {        
-    	return false;
-    }
+
+	if(verificaChecks() == true)
+	{ 
+
+	    var x = confirm("Are you sure you want to delete the files?");
+	    
+	    if (x)
+	    {
+	    	return true;
+	    	
+	    }
+	    else
+	    {        
+	    	return false;
+	    }
+	    
+	}
+	else
+	{
+		return false;
+	}
+
+
 }
 
 function returnPage(){
@@ -269,18 +308,24 @@ $folder = $application->getParameter("folder");
 
 
 
-function do_this2(){
+function do_this2()
+{
 
     var checkboxes = document.getElementsByName('element[]');
     var button = document.getElementById('checkall');
     
-    if(button.checked ==  true){
-        for (var i in checkboxes){
+    if(button.checked ==  true)
+    {
+        for (var i in checkboxes)
+        {
             checkboxes[i].checked = 'FALSE';
         }
         //button.value = 'deselect'
-    }else{
-        for (var i in checkboxes){
+    }
+    else
+    {
+        for (var i in checkboxes)
+        {
             checkboxes[i].checked = '';
         }
        // button.value = 'select';

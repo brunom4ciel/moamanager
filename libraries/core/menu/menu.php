@@ -35,14 +35,15 @@ class Menu
         return count($this->menu);
     }
 
-    public function add($href = "", $label = "", $title = "", $target = "", $img = "")
+    public function add($href = "", $label = "", $title = "", $target = "", $img = "", $style = "")
     {
         $this->menu[] = (object) array(
             "image"=>$img,
             "href" => $href,
             "label" => $label,
             "title" => $title,
-            "target" => $target
+            "target" => $target,
+            "style" => $style
         );
     }
 
@@ -55,24 +56,30 @@ class Menu
     public function toHTML()
     {
         $result = "\n<ul id=\"nav\">\n";
-        $title = "";
-        $target = "";
 
+        
         foreach ($this->menu as $item) 
         {
 
+            $title = "";
+            $target = "";
+            $style = "";
+            
             if($item == null)
             {
                 $result .= "\t<li style='height:3px;border: 3px solid #ccc;'></li>\n";
             }
             else 
             {
-                if (empty($item->title))
+                if (!empty($item->title))
                     $title = " title=\"" . $item->title . "\"";
     
-                if (empty($item->target))
+                if (!empty($item->target))
                     $target = " target=\"" . $item->target . "\"";
-    
+                  
+                if (!empty($item->style))
+                    $style = " style=\"" . $item->style . "\"";
+                                                
                 $result .= "\t<li>";
                 $result .= "";
 
@@ -82,7 +89,7 @@ class Menu
                     //style='background-image: url(\"templates/default/images/menu/" . $item->image . "\");background-position: left top;   background-repeat: no-repeat;padding-left:32px;' 
                 }
                 
-                $result .= "<a " . $title . $target . " href=\"" . $item->href . "\">".$item->label . "</a></li>\n";
+                $result .= "<a " . $title . $target . $style . " href=\"" . $item->href . "\">".$item->label . "</a></li>\n";
             }
         }
 

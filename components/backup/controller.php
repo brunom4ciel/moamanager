@@ -36,6 +36,17 @@ $error = array();
 $task = $application->getParameter("task");
 $folder = $application->getParameter("folder");
 
+$file_extensions =  array(
+    "txt",
+    "tex",
+    "csv",
+    "html",
+    "report",
+    "zip",
+    "data"
+);
+
+
 if ($folder != null) {
     if (substr($folder, strlen($folder) - 1) != "/") {
         $folder .= DIRECTORY_SEPARATOR;
@@ -57,7 +68,7 @@ if ($task == "folder") {} else {
 
             $element = $application->getParameter("element");
 
-            $dir = Properties::getBase_directory_destine($application) . $application->getUser() . DIRECTORY_SEPARATOR . DIRNAME_BACKUP . DIRECTORY_SEPARATOR . $application->getParameter("folder");
+            $dir = $dirBackup . $application->getParameter("folder");
 
             foreach ($element as $key => $item) {
 
@@ -77,8 +88,15 @@ if ($task == "folder") {} else {
                 }
             }
 
-            $application->redirect("?component=" . $application->getComponent() . "&controller=" . $application->getController() . "&folder=" . $application->getParameter("folder"));
-
+            $redirect = array();
+            
+            $redirect['url'] = '?';
+            $redirect['component'] = $application->getComponent();
+            $redirect['controller'] = $application->getController();
+            //$redirect['folder'] = $application->getParameter("folder");
+            
+            $application->redirect($redirect);
+            
         } else {
 
             if ($task == 'move') {
@@ -86,7 +104,7 @@ if ($task == "folder") {} else {
                 $element = $application->getParameter("element");
                 $movedestine = $application->getParameter("movedestine");
 
-                $dir = Properties::getBase_directory_destine($application) . $application->getUser() . DIRECTORY_SEPARATOR . DIRNAME_BACKUP . DIRECTORY_SEPARATOR . $application->getParameter("folder");
+                $dir = $dirBackup . $application->getParameter("folder");
 
                 foreach ($element as $key => $item) {
 
@@ -163,9 +181,14 @@ if ($task == "folder") {} else {
                         }
                     }
                     
-                    $application->redirect("?component=" . $application->getComponent()
-                        . "&controller=" . $application->getController()
-                        . "&folder=" . $application->getParameter("folder"));
+                    $redirect = array();
+                    
+                    $redirect['url'] = '?';
+                    $redirect['component'] = $application->getComponent();
+                    $redirect['controller'] = $application->getController();
+                    //$redirect['folder'] = $application->getParameter("folder");
+                    
+                    $application->redirect($redirect);
                 }
                 
             }
@@ -175,26 +198,10 @@ if ($task == "folder") {} else {
 
 if ($folder == null) {
 
-    $files_list = $utils->getListElementsDirectory1(Properties::getBase_directory_destine($application) . $application->getUser() . DIRECTORY_SEPARATOR . DIRNAME_BACKUP . DIRECTORY_SEPARATOR, array(
-        "txt",
-        "tex",
-        "csv",
-        "html",
-        "report",
-        "zip"
-    ));
+    $files_list = $utils->getListElementsDirectory1($dirBackup, $file_extensions);
 } else {
 
-    $files_list = $utils->getListElementsDirectory1(Properties::getBase_directory_destine($application) . $application->getUser() . DIRECTORY_SEPARATOR . DIRNAME_BACKUP . DIRECTORY_SEPARATOR . $folder, 
-        // .DIRECTORY_SEPARATOR
-        array(
-            "txt",
-            "tex",
-            "csv",
-            "html",
-            "report",
-            "zip"
-        ));
+    $files_list = $utils->getListElementsDirectory1($dirBackup . $folder, $file_extensions);
 }
 
 $dir_list = $utils->getListDirectory(Properties::getBase_directory_destine($application) . $application->getUser() . DIRECTORY_SEPARATOR);
@@ -472,7 +479,7 @@ function do_this(){
 <input type="button" class="btn btn-danger"  value="Empty" name="empty" title="Empty files"
 										onclick="javascript: sendAction('empty');" /> 
 										
-<input type="button" class="btn btn-danger"  value="Remove" name="remove" title="Remove"
+<input type="button" class="btn btn-danger"  value="Delete" name="remove" title="Remove"
 										onclick="javascript: sendAction('remove');" /> 
 										
 </div>
@@ -483,12 +490,15 @@ function do_this(){
 									<select name="movedestine" class="btn btn-default" id=movedestine>		
 		<?php
 
-foreach ($dir_list as $key => $element) {
-
-    // if($element["type"]=="dir"){
-
-    echo "<option value=\"" . $element . "\">" . $element . "</option>";
-    // }
+foreach ($dir_list as $key => $element) 
+{
+    if($element == "/"){
+        echo "<option value=\"" . $element . "\" selected>" . $element . "</option>";
+    }
+    else 
+    {
+        echo "<option value=\"" . $element . "\">" . $element . "</option>";
+    }
 }
 
 ?>
@@ -522,7 +532,10 @@ foreach ($levels as $key => $item) {
 		</div>
 		
 			
-		
+			<div id="containerbody" style="border:0px solid #000000;height:100%;margin-left: -15px;
+margin-right: -15px;list-style-type: none;
+margin: 0;
+overflow-y: scroll;max-height: 400px;" >
 	<table border='1' id="temporary_files" style="width: 100%;">
 										<tr>
 											<th>#</th>
@@ -566,7 +579,9 @@ foreach ($files_list as $key => $element) {
 }
 
 ?>		
-	</table>
+	</table></div>
+	
+	
 									</div>
 							</form>
 
@@ -580,6 +595,22 @@ foreach ($files_list as $key => $element) {
 
 
 historicCookieCheckbox("overwrite_file");
+
+
+
+function resizeImage()
+{
+  // browser resized, we count new width/height of browser after resizing
+    var height = window.innerHeight - 380;// || $(window).height();
+    
+    document.getElementById("containerbody").setAttribute(
+	   "style", "border:1px solid #ffffff;margin-left: -15px;  margin-right: -15px;list-style-type: none;  margin: 0;  overflow-y: scroll;max-height: "+height+"px");
+}
+
+window.addEventListener("resize", resizeImage);
+
+resizeImage();
+
 
 
 </script>	

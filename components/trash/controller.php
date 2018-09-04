@@ -11,7 +11,7 @@ defined('_EXEC') or die();
 
 use moam\core\Framework;
 // use moam\core\Application;
-use moam\core\Properties;
+// use moam\core\Properties;
 use moam\libraries\core\utils\Utils;
 // use moam\libraries\core\menu\Menu;
 
@@ -107,8 +107,17 @@ if ($task == "folder") {
                 }
             }
 
-            $application->redirect("?component=" . $application->getComponent() . "&controller=" . $application->getController() . "&folder=" . $application->getParameter("folder"));
-
+//             $application->redirect("?component=" . $application->getComponent() . "&controller=" . $application->getController() . "&folder=" . $application->getParameter("folder"));
+            
+            $redirect = array();
+            
+            $redirect['url'] = '?';
+            $redirect['component'] = $application->getComponent();
+            $redirect['controller'] = $application->getController();
+            $redirect['folder'] = $application->getParameter("folder");
+            
+            $application->redirect($redirect);
+            
         } else {
 
             if ($task == 'move') {
@@ -210,9 +219,18 @@ if ($task == "folder") {
                         }
                     }
                                         
-                    $application->redirect("?component=" . $application->getComponent() 
-                                    . "&controller=" . $application->getController() 
-                                    . "&folder=" . $application->getParameter("folder"));
+                    $redirect = array();
+                    
+                    $redirect['url'] = '?';
+                    $redirect['component'] = $application->getComponent();
+                    $redirect['controller'] = $application->getController();
+                    //$redirect['folder'] = $application->getParameter("folder");
+                    
+                    $application->redirect($redirect);
+                    
+//                     $application->redirect("?component=" . $application->getComponent() 
+//                                     . "&controller=" . $application->getController() 
+//                                     . "&folder=" . $application->getParameter("folder"));
                 }
                 
             }
@@ -505,7 +523,7 @@ function do_this(){
 <input type="button" class="btn btn-danger"  value="Empty" name="empty" title="Empty files"
 										onclick="javascript: sendAction('empty');" /> 
 										
-<input type="button" class="btn btn-danger"  value="Remove" name="remove" title="Remove"
+<input type="button" class="btn btn-danger"  value="Delete" name="remove" title="Remove"
 										onclick="javascript: sendAction('remove');" /> 
 </div>
 
@@ -518,10 +536,13 @@ function do_this(){
 
 foreach ($dir_list as $key => $element) {
 
-    // if($element["type"]=="dir"){
-
-    echo "<option value=\"" . $element . "\">" . $element . "</option>";
-    // }
+    if($element == "/"){
+        echo "<option value=\"" . $element . "\" selected>" . $element . "</option>";
+    }
+    else
+    {
+        echo "<option value=\"" . $element . "\">" . $element . "</option>";
+    }
 }
 
 ?>
@@ -554,6 +575,12 @@ foreach ($levels as $key => $item) {
 ?>
 					</div>
 		</div>
+		
+	<div id="containerbody" style="border:0px solid #000000;height:100%;margin-left: -15px;
+margin-right: -15px;list-style-type: none;
+margin: 0;
+overflow-y: scroll;max-height: 400px;" >
+	
 		
 	<table border='1' id="temporary_files" style="width: 100%;">
 										<tr>
@@ -599,6 +626,7 @@ foreach ($files_list as $key => $element) {
 
 ?>		
 	</table>
+	</div>
 							
 							
 							
@@ -617,6 +645,21 @@ foreach ($files_list as $key => $element) {
 historicCookieCheckbox("overwrite_file");
 
 
+
+function resizeImage()
+{
+  // browser resized, we count new width/height of browser after resizing
+    var height = window.innerHeight - 380;// || $(window).height();
+    
+    document.getElementById("containerbody").setAttribute(
+	   "style", "border:1px solid #ffffff;margin-left: -15px;  margin-right: -15px;list-style-type: none;  margin: 0;  overflow-y: scroll;max-height: "+height+"px");
+}
+
+window.addEventListener("resize", resizeImage);
+
+resizeImage();
+
+	
 </script>	
 	
 	

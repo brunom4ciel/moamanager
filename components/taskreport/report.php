@@ -247,7 +247,10 @@ foreach ($levels as $key => $item) {
 
 ?>
 		
-		
+		<div id="containerbody" style="border:0px solid #000000;height:100%;margin-left: -15px;
+margin-right: -15px;list-style-type: none;
+margin: 0;
+overflow-y: scroll;max-height: 400px;" >	
 	<table border='1' id="temporary_files" style="width: 100%;">
 										<tr>
 											<th style="width: 70%;">Name</th>
@@ -326,7 +329,7 @@ foreach ($files_list as $key => $element) {
 }
 
 ?>		
-	</table>
+	</table></div>
 							
 							</form>
 
@@ -513,6 +516,25 @@ function sendMOAREST(strURL, filename_from, method){
 
 				//
 }
+
+
+
+
+
+
+function resizeImage()
+{
+  // browser resized, we count new width/height of browser after resizing
+    var height = window.innerHeight - 280;// || $(window).height();
+    
+    document.getElementById("containerbody").setAttribute(
+	   "style", "border:1px solid #ffffff;margin-left: -15px;  margin-right: -15px;list-style-type: none;  margin: 0;  overflow-y: scroll;max-height: "+height+"px");
+}
+
+window.addEventListener("resize", resizeImage);
+
+resizeImage();
+
 
 
 </script>

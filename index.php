@@ -29,7 +29,7 @@ define('_EXEC', 1);
 /**
  * Constant of MOAManager version
  */
-define('MOAMANAGER_VERSION', '1.0.25');
+define('MOAMANAGER_VERSION', '1.0.26');
 define('MOAMANAGER_RELEASES', '2018/09/04');
 
 /**

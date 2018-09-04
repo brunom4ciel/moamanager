@@ -10,8 +10,8 @@ namespace moam\components\home;
 defined('_EXEC') or die();
 
 use moam\core\Framework;
-use moam\core\Application;
-use moam\libraries\core\menu\Menu;
+// use moam\core\Application;
+// use moam\libraries\core\menu\Menu;
 use moam\core\Template;
 use moam\core\Properties;
 use moam\libraries\core\utils\Utils;
@@ -26,11 +26,11 @@ if (! $application->is_authentication()) {
     $application->alert("Error: you do not have credentials.");
 }
 
-Framework::import("menu", "core/menu");
+// Framework::import("menu", "core/menu");
 
-if (! class_exists('Menu')) {
-    $menu = new Menu();
-}
+// if (! class_exists('Menu')) {
+//     $menu = new Menu();
+// }
 
 Template::addHeader(array("tag"=>"script",
     "type"=>"text/javascript",
@@ -318,7 +318,7 @@ hr {
 }
 </style>
 
-
+&nbsp;
 			<div id="usage_machine">
 					<div id="usage_machine" style="text-align: left;display: block;overflow-wrap: break-word;max-width: 100%;">
 								<pre style="font-family: monospace,monospace;font-size: 11px;text-aling:left;max-width: 90%;"><?php 

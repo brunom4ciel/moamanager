@@ -95,19 +95,21 @@ if ($filename != null) {
 
         if ($task == "remove") {
 
-            if (file_exists($filename)) {
+//             if (file_exists($filename)) {
 
-                unlink($filename);
-                header("Location: " . PATH_WWW . "?component=" . $application->getComponent() . "&controller=files");
-            }
+//                 unlink($filename);
+//                 header("Location: " . PATH_WWW . "?component=" . $application->getComponent() . "&controller=files");
+//             }
+
         } else {
 
             if ($task == "new") {
 
                 // exit($filename);
 
-                $data = "";
-                $utils->setContentFile($filename, $data);
+//                 $data = "";
+//                 $utils->setContentFile($filename, $data);
+
             } else {
 
                 $extension = substr($filename, strrpos($filename, ".") + 1);
@@ -194,6 +196,8 @@ if ($filename != null) {
                     
                     
                     $data = $data1["data"];
+                    
+                    $filesize = $utils->formatSize(filesize($filename));
                 }
             }
         }

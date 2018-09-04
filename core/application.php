@@ -495,10 +495,41 @@ class Application extends AbstractApplication
 	 */
     public function redirect($url_to = "")
     {
-        try {
+        try 
+        {
+            
+            if(is_array($url_to))
+            {
+                $url = "";
+                $queryurl = "";
+                
+                foreach($url_to as $key=>$value)
+                {
+                    if($key == 'url')
+                    {
+                        $url = $value;
+                    }
+                    else 
+                    {
+                        if(!empty($queryurl))
+                        {
+                            $queryurl .= "&";
+                        }
+                        
+                        $queryurl .= $key . "=" . $value;
+                    }
+                }
+                
+                $url_to = $url . $queryurl;
+                
+            }
+            
             header("Location: " . $url_to);
             exit();
-        } catch (AppException $e) {
+            
+        } 
+        catch (AppException $e) 
+        {
             throw new AppException($e->getMessage());
         }
     }

@@ -334,15 +334,89 @@ if ($task == "folder") {
                                             $error[] = 'Error: failed - ' . $item;
                                         }
                                     }
-                                } else {
-
-                                    // if(is_dir($dir.$item)){
-
-                                    //
-                                    // }
-                                }
+                                } 
                             }
                         }
+                    }
+                    else 
+                    {
+                        
+                        if ($task == 'clone')
+                        {
+                            
+                            
+                            
+                            $element = $application->getParameter("element");
+                            $dir = PATH_USER_WORKSPACE_STORAGE . DIRNAME_SCRIPT . DIRECTORY_SEPARATOR . $folder;
+                            
+                            foreach ($element as $key => $item)
+                            {
+                                
+                                if (is_file($dir . $item))
+                                {
+                                    if(strpos($item, ".") === false)
+                                    {
+                                        $filename = $item;
+                                        $filename_ext = "";
+                                    }
+                                    else
+                                    {
+                                        $filename = substr($item, 0, strrpos($item, "."));
+                                        $filename_ext = substr($item, strrpos($item, ".")+1);
+                                    }
+                                    
+                                    $foldernew = $filename;
+                                    $foldernew__ = $filename . "-clone." . $filename_ext;
+                                    $y=0;
+                                    
+                                    while(is_file($dir . $foldernew__)){
+                                        $foldernew__ = $foldernew."-clone-(".$utils->format_number($y++,2).")." . $filename_ext;
+                                    }
+                                    
+                                    $foldernew = $foldernew__;
+                                    
+                                    $source = $dir . $item;
+                                    $destine = $dir . $foldernew;
+                                    
+                                    //                                             echo "source:" . $source . "\n";
+                                    //                                             echo "destine:" . $destine;
+                                    //                                             exit();
+                                    
+                                    $utils->xCopy($source, $destine);
+                                    $utils->set_perms($destine, is_dir($destine));
+                                    
+                                    //                                             exit();
+                                    //                                             $utils->xCopy($dir_source, $dir_destine);
+                                    //                                             $utils->set_perms($dir_destine, true);
+                                    
+                                } else
+                                {
+                                    
+                                    if (is_dir($dir . $item))
+                                    {
+                                        
+                                        $foldernew = $item;
+                                        $foldernew__ = $item . "-clone";
+                                        $y=0;
+                                        
+                                        while(is_dir($dir . $foldernew__)){
+                                            $foldernew__ = $foldernew."-clone-(".$utils->format_number($y++,2).")";
+                                        }
+                                        
+                                        $foldernew = $foldernew__;
+                                        
+                                        $source = $dir . $item;
+                                        $destine = $dir . $foldernew;
+                                        
+                                        $utils->xCopy($source, $destine);
+                                        $utils->set_perms($destine, true);
+                                        
+                                    }
+                                }
+                                
+                            }
+                        }
+                        
                     }
                 }
             }
@@ -585,6 +659,32 @@ function create_merge_zipfile($dir, $filename, $element)
 
 <script>
 
+
+function verificaChecks() {
+	
+	var aChk = document.getElementsByName("element[]");  
+	var nenhum = false;
+	
+	for (var i=0;i<aChk.length;i++){  
+		if (aChk[i].checked == true){  
+			// CheckBox Marcado... Faça alguma coisa... Ex:
+			//alert(aChk[i].value + " marcado.");
+			nenhum = true;
+			break;
+		//}  else {
+			// CheckBox Não Marcado... Faça alguma outra coisa...
+		}
+	}
+
+	if(nenhum == false)
+		alert('You need to select a directory or file.');
+		
+	return nenhum;
+	
+	
+} 
+
+
 function ConfirmDelete()
 {
   var x = confirm("Are you sure you want to trash?");
@@ -631,6 +731,17 @@ function newFile(){
 
 function sendAction(task){
 
+	if(task == 'clone'){
+
+		if(verificaChecks()==true)
+		{ 
+		
+		}else
+			return;
+
+	}
+
+	
 	if(task == 'remove'){
 
 	  var x = confirm("Are you sure you want to delete?");
@@ -754,10 +865,14 @@ function do_this2(){
 										value="New file" name="file" onclick="javascript: newFile();" />
 
 									|| <input type="button" class="btn btn-danger" value="Delete" name="remove"
-										onclick="javascript: sendAction('remove');" /> || <input
-										type="button" class="btn btn-default" value="zip" name="compress"
+										onclick="javascript: sendAction('remove');" /> <input
+										type="button" class="btn btn-warning" value="Clone" name="clone"
+										onclick="javascript: sendAction('clone');" />
+										
+										|| <input
+										type="button" class="btn btn-default" value="Zip" name="compress"
 										onclick="javascript: sendAction('zip');" /> <input
-										type="button" class="btn btn-default" value="unzip" name="decompress"
+										type="button" class="btn btn-default" value="UnZip" name="decompress"
 										onclick="javascript: sendAction('unzip');" /> 
 									</div>
 									
@@ -821,6 +936,12 @@ foreach ($levels as $key => $item) {
 </div>
 		</div>
 		
+		
+		<div id="containerbody" style="border:0px solid #000000;height:100%;margin-left: -15px;
+margin-right: -15px;list-style-type: none;
+margin: 0;
+overflow-y: scroll;max-height: 400px;" >
+
 	<table border='1' id="temporary_files" style="width: 100%;">
 										<tr>
 											<th>#</th>
@@ -914,7 +1035,7 @@ foreach ($files_list as $key => $element) {
 
 ?>		
 	</table>
-							
+			</div>				
 							</form>
 	
 	
@@ -958,6 +1079,20 @@ for ($i = 0; $i < (count($levels) - 2); $i ++) {
 			+'&folder=<?php echo $folder_;?>';
 			
 }
+
+
+function resizeImage()
+{
+  // browser resized, we count new width/height of browser after resizing
+    var height = window.innerHeight - 380;// || $(window).height();
+    
+    document.getElementById("containerbody").setAttribute(
+	   "style", "border:1px solid #ffffff;margin-left: -15px;  margin-right: -15px;list-style-type: none;  margin: 0;  overflow-y: scroll;max-height: "+height+"px");
+}
+
+window.addEventListener("resize", resizeImage);
+
+resizeImage();
 
 </script>
 	
