@@ -1442,7 +1442,7 @@ class Utils
             chmod($file, octdec($filePermissions));
         }
         
-        flush();
+//         flush();
     }
     
     

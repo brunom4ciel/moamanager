@@ -40,6 +40,17 @@ $error = array();
 $task = $application->getParameter("task");
 $folder = $application->getParameter("folder");
 
+$file_extensions =  array(
+    "txt",
+    "tex",
+    "csv",
+    "html",
+    "report",
+    "zip",
+    "data"
+);
+
+
 if ($folder != null) {
     if (substr($folder, strlen($folder) - 1) != "/") {
         $folder .= DIRECTORY_SEPARATOR;
@@ -76,7 +87,7 @@ if ($task == "folder") {
 
             $element = $application->getParameter("element");
 
-            $dir = PATH_USER_WORKSPACE_STORAGE . DIRNAME_TRASH . DIRECTORY_SEPARATOR . $application->getParameter("folder");
+            $dir = $dirTrash . $application->getParameter("folder");
 
             foreach ($element as $key => $item) {
 
@@ -96,76 +107,8 @@ if ($task == "folder") {
                 }
             }
 
-            header("Location: " . PATH_WWW . "?component=" . $application->getComponent() . "&controller=" . $application->getController() . "&folder=" . $application->getParameter("folder"));
+            $application->redirect("?component=" . $application->getComponent() . "&controller=" . $application->getController() . "&folder=" . $application->getParameter("folder"));
 
-            /*
-             * $from_folder = App::$base_directory_destine
-             * .$application->getUser()
-             * .DIRECTORY_SEPARATOR
-             * .$application->getParameter("folder");
-             *
-             * $filename = $application->getParameter("filename");
-             *
-             *
-             *
-             * if($filename == null ){
-             *
-             *
-             * if(is_dir($from_folder)){
-             *
-             * //exit($from_folder);
-             * $utils->delTree($from_folder);
-             *
-             * $countDirs = explode("/", $folder);
-             *
-             *
-             * if(count($countDirs)>1){
-             *
-             * $folder="";
-             *
-             * for($i=0; $i<count($countDirs)-2;$i++){
-             *
-             * $folder .= $countDirs[$i]."/";
-             * }
-             *
-             * //exit("sim - ".$folder);
-             * header("Location: ".PATH_WWW
-             * ."?component=".App::getComponent()
-             * ."&controller=".App::getController()
-             * ."&folder=".$folder);//substr($folder,0,strrpos($folder,"/")));
-             * }else{
-             * //exit("bruno2-".$folder);
-             *
-             * header("Location: ".PATH_WWW
-             * ."?component=".App::getComponent()
-             * ."&controller=".App::getController());
-             *
-             * }
-             *
-             *
-             *
-             * }
-             *
-             * }else{
-             *
-             * $filename = App::$base_directory_destine
-             * .$application->getUser()
-             * .DIRECTORY_SEPARATOR
-             * .$filename;
-             * //exit($filename);
-             * if(is_file($filename)){
-             *
-             * unlink($filename);
-             *
-             * header("Location: ".PATH_WWW
-             * ."?component=".App::getComponent()
-             * ."&controller=".App::getController()
-             * ."&folder=".$folder);
-             *
-             * }
-             *
-             * }
-             */
         } else {
 
             if ($task == 'move') {
@@ -173,7 +116,7 @@ if ($task == "folder") {
                 $element = $application->getParameter("element");
                 $movedestine = $application->getParameter("movedestine");
 
-                $dir = PATH_USER_WORKSPACE_STORAGE . DIRNAME_TRASH . DIRECTORY_SEPARATOR . $application->getParameter("folder");
+                $dir = $dirTrash . $application->getParameter("folder");
 
                 foreach ($element as $key => $item) {
 
@@ -237,35 +180,56 @@ if ($task == "folder") {
                 }
 
                 // exit("<br>bruno - move");
-            } else {}
+            } else 
+            {
+                
+                if ($task == "empty") {
+                    
+                    $dir = $dirTrash;
+                    
+                    $files_list = $utils->getListElementsDirectory($dir, $file_extensions);
+                                        
+                    foreach ($files_list as $key => $item) {
+                        
+                        $item = $dir . $item;
+                        
+                        if (is_file($item)) {
+                            
+                            if(!unlink($item))
+                            {
+                                $application->alert("Error: operation not allowed. File: " . $item);
+                            }
+
+                        } else {
+                            
+                            if (is_dir($item)) {
+                                
+                                $utils->set_perms($item, true);    
+                                $utils->delTree($item);
+                            }
+                        }
+                    }
+                                        
+                    $application->redirect("?component=" . $application->getComponent() 
+                                    . "&controller=" . $application->getController() 
+                                    . "&folder=" . $application->getParameter("folder"));
+                }
+                
+            }
         }
     }
 }
 
 if ($folder == null) {
 
-    $files_list = $utils->getListElementsDirectory1(Properties::getBase_directory_destine($application) . $application->getUser() . DIRECTORY_SEPARATOR . DIRNAME_TRASH . DIRECTORY_SEPARATOR, array(
-        "txt",
-        "tex",
-        "csv",
-        "html",
-        "report",
-        "zip",
-        "data"
-    ));
+    $files_list = $utils->getListElementsDirectory1($dirTrash, $file_extensions
+        
+        );
 } else {
 
-    $files_list = $utils->getListElementsDirectory1(Properties::getBase_directory_destine($application) . $application->getUser() . DIRECTORY_SEPARATOR . DIRNAME_TRASH . DIRECTORY_SEPARATOR . $folder, 
+    $files_list = $utils->getListElementsDirectory1($dirTrash . $folder, 
         // .DIRECTORY_SEPARATOR
-        array(
-            "txt",
-            "tex",
-            "csv",
-            "html",
-            "report",
-            "zip",
-            "data"
-        ));
+        $file_extensions);
 }
 
 $dir_list = $utils->getListDirectory(PATH_USER_WORKSPACE_STORAGE);
@@ -434,12 +398,18 @@ function getCookie(cname) {
 
 function sendAction(task){
 
+	if(task == 'empty'){
+
+	  var x = confirm("Are you sure you want to all delete?");
+	  if (!x)
+	     return;
+	}
+	
 	if(task == 'remove'){
 
 	  var x = confirm("Are you sure you want to delete?");
 	  if (!x)
 	     return;
-
 	}
 
 	if(task == 'move'){
@@ -533,6 +503,9 @@ function do_this(){
     <div style="float: left;width:100%; padding-top: 10px">
     
 <input type="button" class="btn btn-danger"  value="Empty" name="empty" title="Empty files"
+										onclick="javascript: sendAction('empty');" /> 
+										
+<input type="button" class="btn btn-danger"  value="Remove" name="remove" title="Remove"
 										onclick="javascript: sendAction('remove');" /> 
 </div>
 

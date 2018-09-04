@@ -55,7 +55,7 @@ if ($task == "folder") {
 
     $foldernew = $application->getParameter("foldernew");
     
-    if (!is_dir($foldernew))
+    if (!is_dir($dir . $foldernew))
     {
         //         mkdir($foldernew, 0777);
         $utils->create_dir($foldernew, $dir);
