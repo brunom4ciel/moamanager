@@ -10,10 +10,11 @@ namespace moam\components\trash;
 defined('_EXEC') or die();
 
 use moam\core\Framework;
-use moam\core\Application;
+// use moam\core\Application;
 use moam\core\Properties;
 use moam\libraries\core\utils\Utils;
-use moam\libraries\core\menu\Menu;
+// use moam\libraries\core\menu\Menu;
+
 if (! class_exists('Application')) {
     $application = Framework::getApplication();
 }
@@ -22,11 +23,11 @@ if (! $application->is_authentication()) {
     $application->alert("Error: you do not have credentials.");
 }
 
-Framework::import("menu", "core/menu");
+// Framework::import("menu", "core/menu");
 
-if (! class_exists('Menu')) {
-    $menu = new Menu();
-}
+// if (! class_exists('Menu')) {
+//     $menu = new Menu();
+// }
 
 Framework::import("Utils", "core/utils");
 
@@ -45,7 +46,7 @@ if ($folder != null) {
     }
 }
 
-$dirTrash = Properties::getBase_directory_destine($application) . $application->getUser() . DIRECTORY_SEPARATOR . DIRNAME_TRASH . DIRECTORY_SEPARATOR;
+$dirTrash = PATH_USER_WORKSPACE_STORAGE . DIRNAME_TRASH . DIRECTORY_SEPARATOR;
 
 if (is_dir($dirTrash)) {} else {
 
@@ -54,19 +55,19 @@ if (is_dir($dirTrash)) {} else {
 
 if ($task == "folder") {
 
-    $foldernew = $application->getParameter("foldernew");
+//     $foldernew = $application->getParameter("foldernew");
 
-    if ($folder == null) {
+//     if ($folder == null) {
 
-        $foldernew = Properties::getBase_directory_destine($application) . $application->getUser() . DIRECTORY_SEPARATOR . $foldernew;
-    } else {
+//         $foldernew = PATH_USER_WORKSPACE_STORAGE . $foldernew;
+//     } else {
 
-        $foldernew = Properties::getBase_directory_destine($application) . $application->getUser() . DIRECTORY_SEPARATOR . $folder . DIRECTORY_SEPARATOR . $foldernew;
-    }
+//         $foldernew = PATH_USER_WORKSPACE_STORAGE . $folder . DIRECTORY_SEPARATOR . $foldernew;
+//     }
 
-    // exit("-".$foldernew);
+//     // exit("-".$foldernew);
 
-    mkdir($foldernew, 0777);
+//     mkdir($foldernew, 0777);
 } else {
 
     if ($task == "rename") {} else {
@@ -75,7 +76,7 @@ if ($task == "folder") {
 
             $element = $application->getParameter("element");
 
-            $dir = Properties::getBase_directory_destine($application) . $application->getUser() . DIRECTORY_SEPARATOR . DIRNAME_TRASH . DIRECTORY_SEPARATOR . $application->getParameter("folder");
+            $dir = PATH_USER_WORKSPACE_STORAGE . DIRNAME_TRASH . DIRECTORY_SEPARATOR . $application->getParameter("folder");
 
             foreach ($element as $key => $item) {
 
@@ -172,7 +173,7 @@ if ($task == "folder") {
                 $element = $application->getParameter("element");
                 $movedestine = $application->getParameter("movedestine");
 
-                $dir = Properties::getBase_directory_destine($application) . $application->getUser() . DIRECTORY_SEPARATOR . DIRNAME_TRASH . DIRECTORY_SEPARATOR . $application->getParameter("folder");
+                $dir = PATH_USER_WORKSPACE_STORAGE . DIRNAME_TRASH . DIRECTORY_SEPARATOR . $application->getParameter("folder");
 
                 foreach ($element as $key => $item) {
 
@@ -183,10 +184,10 @@ if ($task == "folder") {
                             // $movedestine_ = substr($dir,0,strrpos($dir,"/"));
                             // $movedestine_ = substr($movedestine_,0,strrpos($movedestine_,"/")+1);
 
-                            $movedestine_ = Properties::getBase_directory_destine($application) . $application->getUser() . DIRECTORY_SEPARATOR;
+                            $movedestine_ = PATH_USER_WORKSPACE_STORAGE;
                         } else {
 
-                            $movedestine_ = Properties::getBase_directory_destine($application) . $application->getUser() . DIRECTORY_SEPARATOR . $application->getParameter("folder") . $movedestine . DIRECTORY_SEPARATOR;
+                            $movedestine_ = PATH_USER_WORKSPACE_STORAGE . $application->getParameter("folder") . $movedestine . DIRECTORY_SEPARATOR;
                         }
 
                         if (is_file($dir . $item)) {
@@ -233,7 +234,8 @@ if ($folder == null) {
         "csv",
         "html",
         "report",
-        "zip"
+        "zip",
+        "data"
     ));
 } else {
 
@@ -245,15 +247,16 @@ if ($folder == null) {
             "csv",
             "html",
             "report",
-            "zip"
+            "zip",
+            "data"
         ));
 }
 
-$dir_list = $utils->getListDirectory(Properties::getBase_directory_destine($application) . $application->getUser() . DIRECTORY_SEPARATOR);
+$dir_list = $utils->getListDirectory(PATH_USER_WORKSPACE_STORAGE);
 
 foreach ($dir_list as $key => $element) {
 
-    if (trim($element) == DIRNAME_SCRIPT || trim($element) == DIRNAME_TRASH || trim($element) == DIRNAME_BACKUP) {
+    if ( trim($element) == DIRNAME_TRASH ) { //trim($element) == DIRNAME_SCRIPT || || trim($element) == DIRNAME_BACKUP
 
         unset($dir_list[$key]);
     }
@@ -511,9 +514,16 @@ function do_this(){
 
     ?>
     
+    <div style="float: left;width:100%; padding-top: 10px">
     
 <input type="button" class="btn btn-danger"  value="Empty" name="empty" title="Empty files"
-										onclick="javascript: sendAction('remove');" /> || Restore to:
+										onclick="javascript: sendAction('remove');" /> 
+</div>
+
+<div style="float:left;width:100%;border:0px solid #000;padding:5px;">
+											<div style="float: right;">
+											
+ Restore to:
 									<select name="movedestine" class="btn btn-default" id=movedestine>		
 		<?php
 
@@ -528,7 +538,12 @@ foreach ($dir_list as $key => $element) {
 ?>
 													
 												</select> <input type="button" class="btn btn-warning"  value="Restore" name="move"
-										id="move" onclick="javascript: sendAction('move');" title="Restore files" /> <br> <a
+										id="move" onclick="javascript: sendAction('move');" title="Restore files" /> 
+
+</div>
+										
+										<div style="float:left; vertical-align: middle;padding-top:10px;">
+										 <a
 										href="<?php echo PATH_WWW ?>?component=<?php echo $application->getComponent()?>&controller=<?php echo $application->getController();?>">Root</a>
 
 <?php
@@ -548,7 +563,8 @@ foreach ($levels as $key => $item) {
 }
 
 ?>
-		
+					</div>
+		</div>
 		
 	<table border='1' id="temporary_files" style="width: 100%;">
 										<tr>

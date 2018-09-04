@@ -47,9 +47,18 @@ if ($task == "folder") {
 
     $foldernew = PATH_USER_WORKSPACE_STORAGE . DIRNAME_SCRIPT . DIRECTORY_SEPARATOR . $folder . $foldernew;
 
-    if (! is_dir($foldernew)) {
+    
+    if (! is_dir($foldernew))
+    {
         mkdir($foldernew, 0777);
     }
+    else
+    {
+        $application->alert("Error: directory already exists.");
+    }
+    
+    
+    
 } else {
 
     if ($task == "rename") {
@@ -84,36 +93,92 @@ if ($task == "folder") {
 
         if ($task == "remove") {
 
+//             $element = $application->getParameter("element");
+
+//             $dir = PATH_USER_WORKSPACE_STORAGE . DIRNAME_SCRIPT . DIRECTORY_SEPARATOR . $application->getParameter("folder");
+
+//             foreach ($element as $key => $item) {
+
+//                 if (is_file($dir . $item)) {
+                    
+//                     // verifica o formato da extensão do arquivo
+//                     if (in_array(substr($item, strrpos($item, ".") + 1), $files_extensions)) {
+
+//                         $from_file = $dir . $item;
+//                         unlink($from_file);
+//                     }else{
+//                         exit("extension not support.");
+//                     }
+                    
+//                 } else {
+
+//                     if (is_dir($dir . $item)) {
+
+//                         $from_dir = $dir . $item;
+
+//                         $utils->delTree($from_dir);
+//                         // echo "dir - from: ".$from_dir."<br>";
+//                     }
+//                 }
+//             }
+
+//             header("Location: " . PATH_WWW . "?component=" . $application->getComponent() . "&controller=" . $application->getController() . "&folder=" . $application->getParameter("folder"));
+        
+            
             $element = $application->getParameter("element");
-
             $dir = PATH_USER_WORKSPACE_STORAGE . DIRNAME_SCRIPT . DIRECTORY_SEPARATOR . $application->getParameter("folder");
-
+            $movedestine = DIRNAME_TRASH;
+            
             foreach ($element as $key => $item) {
-
-                if (is_file($dir . $item)) {
+                
+                if ($movedestine != $item) {
                     
-                    // verifica o formato da extensão do arquivo
-                    if (in_array(substr($item, strrpos($item, ".") + 1), $files_extensions)) {
-
+                    $movedestine_ = PATH_USER_WORKSPACE_STORAGE . $movedestine . DIRECTORY_SEPARATOR;
+                    
+                    if (is_file($dir . $item)) {
+                        
                         $from_file = $dir . $item;
-                        unlink($from_file);
-                    }else{
-                        exit("extension not support.");
-                    }
-                    
-                } else {
-
-                    if (is_dir($dir . $item)) {
-
-                        $from_dir = $dir . $item;
-
-                        $utils->delTree($from_dir);
-                        // echo "dir - from: ".$from_dir."<br>";
+                        $to_file = $movedestine_ . $item;
+                        
+                        if (file_exists($to_file))
+                        {
+                            chmod($to_file, octdec("0777"));
+                            
+                            if(!unlink($to_file))
+                            {
+                                $application->alert("Error: operation not allowed. File: " . $to_file);
+                            }
+                        }
+                        
+                        rename($from_file, $to_file);
+                        
+                        // echo "file - from: ".$from_file.", to: ".$to_file."<br>";
+                    } else {
+                        
+                        if (is_dir($dir . $item)) {
+                            
+                            // chmod($dir, 0777);
+                            
+                            $from_dir = $dir . $item;
+                            $to_dir = $movedestine_ . $item;
+                            
+                            if (is_dir($to_dir))
+                            {
+                                $utils->set_perms($to_dir, true);
+                                $utils->delTree($to_dir);
+                                //exit("Error: operation not allowed. File: " . $to_file);
+                            }
+                            rename($from_dir, $to_dir);
+                            
+                            // echo "dir - from: ".$from_dir.", to: ".$to_dir."<br>";
+                        }
                     }
                 }
+                // echo $item."<br>";
             }
-
+            
             header("Location: " . PATH_WWW . "?component=" . $application->getComponent() . "&controller=" . $application->getController() . "&folder=" . $application->getParameter("folder"));
+            
         } else {
 
             if ($task == 'move') {
@@ -515,7 +580,7 @@ function create_merge_zipfile($dir, $filename, $element)
 
 function ConfirmDelete()
 {
-  var x = confirm("Are you sure you want to delete?");
+  var x = confirm("Are you sure you want to trash?");
   if (x)
      return true;
   else
@@ -674,6 +739,8 @@ function do_this2(){
 										href="?component=<?php echo $application->getComponent()?>&controller=upload&folder=<?php echo $folder;?>">
 										File Upload (*.txt, *.data or *.zip)</a><br> 
 										
+									<div style="float: left;width:100%; padding-top: 10px">
+										
 										<input type="button" class="btn btn-default"
 										value="New folder" name="folder"
 										onclick="javascript: newFolder();" /> || <input type="button" class="btn btn-default"
@@ -684,7 +751,12 @@ function do_this2(){
 										type="button" class="btn btn-default" value="zip" name="compress"
 										onclick="javascript: sendAction('zip');" /> <input
 										type="button" class="btn btn-default" value="unzip" name="decompress"
-										onclick="javascript: sendAction('unzip');" /> || Move to: <select
+										onclick="javascript: sendAction('unzip');" /> 
+									</div>
+									
+									<div style="float:left;width:100%;border:0px solid #000;padding:5px;">
+											<div style="float: right;">
+ Move to: <select
 										name="movedestine" class="btn btn-default" id=movedestine>		
 		<?php
 
@@ -714,7 +786,11 @@ foreach ($dir_list as $key => $element) {
 ?>
 													
 												</select> <input type="button" class="btn btn-default" value="Move" name="move"
-										id="move" onclick="javascript: sendAction('move');" /> <br> <a
+										id="move" onclick="javascript: sendAction('move');" /> 
+
+</div>
+									<div style="float:left; vertical-align: middle;padding-top:10px;">
+									 <a
 										href="<?php echo PATH_WWW ?>?component=<?php echo $application->getComponent()?>&controller=<?php echo $application->getController();?>">Root</a>
 
 <?php
@@ -735,6 +811,8 @@ foreach ($levels as $key => $item) {
 
 ?>
 
+</div>
+		</div>
 		
 	<table border='1' id="temporary_files" style="width: 100%;">
 										<tr>

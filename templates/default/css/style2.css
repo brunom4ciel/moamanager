@@ -1765,7 +1765,9 @@ textarea.input-lg, select.input-lg[multiple] {
 .btn-success.disabled, .btn-success[disabled], fieldset[disabled] .btn-success, .btn-success.disabled:hover, .btn-success[disabled]:hover, fieldset[disabled] .btn-success:hover, .btn-success.disabled:focus, .btn-success[disabled]:focus, fieldset[disabled] .btn-success:focus, .btn-success.disabled:active, .btn-success[disabled]:active, fieldset[disabled] .btn-success:active, .btn-success.disabled.active, .btn-success.active[disabled], fieldset[disabled] .btn-success.active {
     background-color: #46a546;
     border-color: #378137;
+    color:#cccccc;
 }
+
 .btn-success .badge {
     background-color: #ffffff;
     color: #46a546;
@@ -7660,9 +7662,17 @@ input.paymentTypeOption.ng-valid {
 
 
 
-
+#temporary_files {
+	font-size:11pt;
+		border:1px solid #ccc;
+}
+#temporary_files tr th{
+	padding-left:5px;
+	border:1px solid #ccc;
+}
 #temporary_files tr td{
 	padding-left:5px;
+	border:1px solid #ccc;
 }
 
 .boxlimit{

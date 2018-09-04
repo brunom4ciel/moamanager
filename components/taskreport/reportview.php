@@ -118,10 +118,10 @@ if ($filename != null) {
             if (isset($data["id"])) {
 
                 
-                if($jsonfile->issetKeyValue("filename"))
+                if(isset($data['filename']))//$jsonfile->issetKeyValue("filename"))
                 {
-                    $s = $jsonfile->findDataKeyValue("filename", $filename_f);
-                    
+                    $s = $data;//$jsonfile->findDataKeyValue("filename", $filename_f);
+    
                     // if($s['process'] ==  TRUE)
                     //{
                     $filename_aux = substr($s['filename'], strrpos($s['filename'],DIRECTORY_SEPARATOR)+1);
@@ -157,6 +157,9 @@ if ($filename != null) {
                     if(file_exists($dir . $filename_aux))
                     {                        
                         chmod($dir . $filename_aux, octdec("0777")); 
+                        
+                        
+//                         exit($dir . $filename_aux);
                         
                         if(!unlink($dir . $filename_aux))
                         {
@@ -527,19 +530,24 @@ if ($length_data > 0) {
             
             
             echo "<tr style='background-color:" . $bgcolor . "'><td>  " . $element["id"] 
-            . "</td><td>" . "<a title='Remove' href='javascript:ConfirmDelete(\"" . "?component=" 
-									    . $application->getParameter("component") 
-            . "&controller=" . $application->getParameter("controller") . "&folder=" . $application->getParameter("folder") 
-            . "&id=" . $element["id"] . "&filename=" . $application->getParameter("filename") . "&task=remove\");'>";
+            . "</td><td>";
+            
+            
+            
             
             if($isMedatata)
             {
                 if($checksum)
                 {
-                    echo "<img align='middle' width='24px' src='" . $application->getPathTemplate()
+                    echo "<img align='middle' width='32px' src='" . $application->getPathTemplate()
                     . "/images/icon-security.png' border='0' title='Trusted signature: authenticated data integrity'>";
                 }
             }
+            
+            echo  "<a title='Remove' href='javascript:ConfirmDelete(\"" . "?component="
+                . $application->getParameter("component")
+                . "&controller=" . $application->getParameter("controller") . "&folder=" . $application->getParameter("folder")
+                . "&id=" . $element["id"] . "&filename=" . $application->getParameter("filename") . "&task=remove\");'>";
             
             echo ""
 								    . "<img align='middle' width='24px' src='" . $application->getPathTemplate() 

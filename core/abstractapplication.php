@@ -71,8 +71,8 @@ abstract class AbstractApplication
             
             self::$menu->addTab();
             
-            self::$menu->add($path_www . "?component=trash" . $language, MENU_TRASH);
-            self::$menu->add($path_www . "?component=backup" . $language, MENU_BACKUP);
+            self::$menu->add($path_www . "?component=trash" . $language, MENU_TRASH, "", "", "icon_txt.png");
+            self::$menu->add($path_www . "?component=backup" . $language, MENU_BACKUP, "", "", "icon-backup.png");
 //             self::$menu->add($path_www . "?component=settings" . $language, MENU_SETTINGS);            
 //             self::$menu->add($path_www . "?component=user&controller=login&logout" . $language, MENU_LOGOUT);
             

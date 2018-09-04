@@ -64,9 +64,16 @@ if ($task == "folder") {
 
     // exit("-".$foldernew);
 
-    if (! is_dir($foldernew)) {
+    if (! is_dir($foldernew)) 
+    {
         mkdir($foldernew, 0777);
     }
+    else 
+    {
+        $application->alert("Error: directory already exists.");
+    }
+    
+    
 } else {
 
     if ($task == "rename") {
@@ -95,7 +102,11 @@ if ($task == "folder") {
 
                 if (file_exists($from_file)) {
 
-                    if (file_exists($to_file)) {} else {
+                    if (file_exists($to_file)) {
+                        
+                        $application->alert("Error: a file with this name already exists.");
+                        
+                    } else {
 
                         rename($from_file, $to_file);
 
@@ -109,7 +120,11 @@ if ($task == "folder") {
 
                 if (is_dir($from_folder)) {
 
-                    if (is_dir($to_folder)) {} else {
+                    if (is_dir($to_folder)) {
+                        
+                        $application->alert("Error: a directory with this name already exists.");
+                        
+                    } else {
 
                         rename($from_folder, $to_folder);
 
@@ -122,37 +137,6 @@ if ($task == "folder") {
 
         if ($task == "trash") {
 
-            /*
-             * $element = $application->getParameter("element");
-             *
-             * $dir = Properties::getBase_directory_destine($application)
-             * .$application->getUser()
-             * .DIRECTORY_SEPARATOR
-             * .$application->getParameter("folder");
-             *
-             * foreach($element as $key=>$item){
-             *
-             * if(is_file($dir.$item)){
-             *
-             * $from_file = $dir.$item;
-             * unlink($from_file);
-             * //echo "file - from: ".$from_file."<br>";
-             *
-             * }else{
-             *
-             * if(is_dir($dir.$item)){
-             *
-             * $from_dir = $dir.$item;
-             * $utils->delTree($from_dir);
-             * //echo "dir - from: ".$from_dir."<br>";
-             *
-             * }
-             * }
-             *
-             *
-             *
-             * }
-             */
 
             $element = $application->getParameter("element");
             $movedestine = DIRNAME_TRASH;
@@ -176,7 +160,7 @@ if ($task == "folder") {
                             
                             if(!unlink($to_file))
                             {
-                                exit("Error: operation not allowed. File: " . $to_file);
+                                $application->alert("Error: operation not allowed. File: " . $to_file);
                             }                            
                         }
                         
@@ -237,9 +221,15 @@ if ($task == "folder") {
                             $from_file = $dir . $item;
                             $to_file = $movedestine_ . $item;
 
-                            if (! file_exists($to_file))
+                            if (file_exists($to_file))
+                            {
+                                $application->alert("Error: a file with this name already exists.");
+                                
+                            }else
+                            {
                                 rename($from_file, $to_file);
-
+                            }
+                            
                             // echo "file - from: ".$from_file.", to: ".$to_file."<br>";
                         } else {
 
@@ -250,8 +240,13 @@ if ($task == "folder") {
                                 $from_dir = $dir . $item;
                                 $to_dir = $movedestine_ . $item;
 
-                                if (! is_dir($to_dir))
+                                if (is_dir($to_dir))
+                                {
+                                    $application->alert("Error: a directory with this name already exists.");
+                                }else
+                                {
                                     rename($from_dir, $to_dir);
+                                }
 
                                 // echo "dir - from: ".$from_dir.", to: ".$to_dir."<br>";
                             }
@@ -425,241 +420,7 @@ if ($task == "folder") {
                                 header("Location: " . PATH_WWW . "?component=" . $application->getComponent() . "&controller=" . $application->getController() . "&folder=" . $application->getParameter("folder"));
                             } else {
 
-                                if ($task == 'upload') {
 
-                                    $files_extensions = array(
-                                        "txt"
-                                    );
-
-                                    $uploaddir = Properties::getBase_directory_destine($application) . $application->getUser() . DIRECTORY_SEPARATOR . $folder;
-
-                                    $uploadfile = $uploaddir . basename($_FILES['filedata']['name']);
-
-                                    echo $uploadfile;
-
-                                    exit("bruno");
-
-                                    // verifica se arquivo existe em tmp
-                                    if (is_uploaded_file($_FILES['jarfile']['tmp_name'])) {
-
-                                        // verifica o formato da extensão do arquivo
-                                        if (in_array(substr($uploadfile, strrpos($uploadfile, ".") + 1), $files_extensions)) {
-
-                                            // se o arquivo já existir, apaga
-                                            if (file_exists($uploadfile))
-                                                unlink($uploadfile);
-
-                                            // move o arquivo de tmp para destino
-                                            if (move_uploaded_file($_FILES['jarfile']['tmp_name'], $uploadfile)) {
-
-                                                // verifica se arquivo existe em destino
-                                                if (is_file($uploadfile)) {
-
-                                                    // verifica se diretorio existe
-                                                    if (! is_dir(Properties::getBase_directory_destine($application) . Framework::getUser())) {
-
-                                                        // cria um novo diretório
-                                                        if (mkdir(Properties::getBase_directory_destine($application) . Framework::getUser(), 0777, true))
-
-                                                            // define permissões ao diretório
-                                                            if (! chmod(Properties::getBase_directory_destine($application) . Framework::getUser(), 0777))
-                                                                $error_msg = "Error directory permissions.";
-                                                            else {
-
-                                                                // define permissões ao arquivo
-                                                                if (! chmod($uploadfile, 0777))
-                                                                    $error_msg = "Error setting permissions.";
-                                                                else
-                                                                    $error_msg = "Upload successful";
-                                                            }
-                                                        else {
-                                                            $error_msg = "Error directory not create.";
-                                                        }
-                                                    } else {
-
-                                                        // define permissoes ao arquivo
-                                                        if (! chmod($uploadfile, 0777))
-                                                            $error_msg = "Error setting permissions.";
-                                                        else
-                                                            $error_msg = "Upload successful";
-                                                    }
-                                                } else
-                                                    $error_msg = "Upload successful";
-                                            } else {
-                                                $error_msg = "lammer\n";
-                                            }
-                                        } else {
-                                            $error_msg = "Extension not supported.";
-                                        }
-                                    } else {
-                                        $error_msg = "file not exist.";
-                                    }
-
-                                    var_dump($_FILES);
-                                    exit();
-
-                                    $files_extensions = array(
-                                        "txt"
-                                    );
-
-                                    $uploaddir = Properties::getBase_directory_destine($application) . $application->getUser() . DIRECTORY_SEPARATOR . $folder;
-
-                                    $uploadfile = $uploaddir . basename($_FILES['filedata']['name']);
-
-                                    echo $uploadfile;
-
-                                    exit("bruno");
-
-                                    if (is_uploaded_file($_FILES['filedata']['tmp_name'])) {
-
-                                        if (in_array(substr($uploadfile, strrpos($uploadfile, ".") + 1), $files_extensions)) {
-
-                                            if (file_exists($uploadfile)) {
-
-                                                $i = 1;
-                                                do {
-
-                                                    $extens = substr($uploadfile, strrpos($uploadfile, ".") + 1);
-                                                    $filename = substr($uploadfile, strrpos($uploadfile, "/"), strrpos($uploadfile, "."));
-                                                    $filename = substr($filename, 0, strrpos($filename, "."));
-                                                    $dirnamefile = substr($uploadfile, 0, strrpos($uploadfile, "/"));
-
-                                                    if (strrpos($filename, " - copy")) {
-
-                                                        $filename = substr($filename, 0, strrpos($filename, " - copy"));
-                                                    }
-
-                                                    $uploadfile = $dirnamefile . $filename . " - copy " . $i . "." . $extens;
-                                                    $i ++;
-                                                } while (file_exists($uploadfile));
-
-                                                // echo $uploadfile;
-
-                                                if (move_uploaded_file($_FILES['filedata']['tmp_name'], $uploadfile)) {
-                                                    // echo "Arquivo válido e enviado com sucesso.\n";
-                                                } else {
-                                                    echo "Possível ataque de upload de arquivo!\n";
-                                                }
-                                            } else {
-
-                                                if (move_uploaded_file($_FILES['filedata']['tmp_name'], $uploadfile)) {
-                                                    // echo "Arquivo válido e enviado com sucesso.\n";
-                                                } else {
-                                                    echo "Possível ataque de upload de arquivo!\n";
-                                                }
-                                            }
-                                        } else {
-                                            echo "not extension<br>";
-                                        }
-
-                                        // header("Location: spreadsheet.php?file=".substr($uploadfile,strrpos($uploadfile, "/")));
-                                        // header("Location: index.php".(empty($folder)?"":"?folder=".$folder));
-                                    }
-
-                                    echo '<pre>';
-
-                                    print_r(error_get_last());
-
-                                    print "</pre>";
-                                }
-
-                                /*
-                                 * if($task == 'bruno'){
-                                 *
-                                 *
-                                 * $breakline = 15;
-                                 *
-                                 * if($folder == null){
-                                 *
-                                 * }else{
-                                 *
-                                 * $element = $application->getParameter("element");
-                                 *
-                                 * foreach($element as $key=>$item){
-                                 *
-                                 * }
-                                 *
-                                 * $files_list = $utils->getListElementsDirectory1(
-                                 * Properties::getBase_directory_destine($application)
-                                 * .$application->getUser()
-                                 * .DIRECTORY_SEPARATOR
-                                 * .$folder
-                                 * .$item
-                                 * .DIRECTORY_SEPARATOR
-                                 * , array("txt"));
-                                 *
-                                 *
-                                 *
-                                 * }
-                                 * //var_dump($files_list);exit();
-                                 *
-                                 * $y=1;
-                                 *
-                                 * for($i = 0; $i < 30; $i++){
-                                 *
-                                 * for($z = 1; $z < $breakline+1; $z++){
-                                 *
-                                 * if($z == 1){
-                                 *
-                                 * }else{
-                                 *
-                                 * if($z == 3 || $z == 4 ){
-                                 * //remover
-                                 * //echo $z."-".$y;
-                                 *
-                                 * //exit($files_list[$y]["name"]."-----".$y);
-                                 * //exit();
-                                 * $a = $y+1;
-                                 *
-                                 * //echo strpos($files_list[$y]["name"], "4")."---";
-                                 *
-                                 * if(strpos($files_list[$y]["name"], "".$a) === false){
-                                 * // echo $files_list[$y]["name"]."--".$a."<br>";
-                                 * }else{
-                                 *
-                                 * $from_name = Properties::getBase_directory_destine($application)
-                                 * .$application->getUser()
-                                 * .DIRECTORY_SEPARATOR
-                                 * .$folder
-                                 * .$item
-                                 * .DIRECTORY_SEPARATOR
-                                 * .$files_list[$y]["name"];
-                                 *
-                                 * $to_name = Properties::getBase_directory_destine($application)
-                                 * .$application->getUser()
-                                 * .DIRECTORY_SEPARATOR
-                                 * .$folder
-                                 * .$item
-                                 * .DIRECTORY_SEPARATOR
-                                 * .$files_list[$y]["name"];
-                                 *
-                                 * $to_name = substr($to_name, 0, strrpos($to_name, "."));
-                                 * $to_name .= ".bruno";
-                                 *
-                                 * rename($from_name, $to_name);
-                                 *
-                                 * echo $to_name."<br>";
-                                 *
-                                 *
-                                 * }
-                                 *
-                                 * }
-                                 *
-                                 * }
-                                 *
-                                 * $y++;
-                                 *
-                                 * }
-                                 *
-                                 *
-                                 *
-                                 * }
-                                 *
-                                 *
-                                 *
-                                 *
-                                 * }
-                                 */
                             }
                         }
                     }
@@ -953,7 +714,29 @@ function create_merge_zipfile($dir, $filename, $element)
 
 
 
+function verificaChecks() {
+	
+	var aChk = document.getElementsByName("element[]");  
+	var nenhum = false;
+	
+	for (var i=0;i<aChk.length;i++){  
+		if (aChk[i].checked == true){  
+			// CheckBox Marcado... Faça alguma coisa... Ex:
+			//alert(aChk[i].value + " marcado.");
+			nenhum = true;
+			break;
+		//}  else {
+			// CheckBox Não Marcado... Faça alguma outra coisa...
+		}
+	}
 
+	if(nenhum == false)
+		alert('You need to select a directory or file.');
+		
+	return nenhum;
+	
+	
+} 
 
 
 
@@ -1156,25 +939,44 @@ function sendAction(task){
 	
 	if(task == 'trash'){
 
-	  var x = confirm("Are you sure you want to trash?");
-	  if (!x)
-	     return;
+		if(verificaChecks()==true)
+		{ 
+		
+			 var x = confirm("Are you sure you want to trash?");
+			  if (!x)
+			     return;
+		}else
+			return;
+	 
 
 	}
 
 	if(task == 'move'){
 
-	  var x = confirm("Are you sure you want to move?");
-	  if (!x)
-	     return;
+		if(verificaChecks()==true)
+		{ 
+		
+			 var x = confirm("Are you sure you want to move?");
+			  if (!x)
+			     return;
+		}else
+			return;
+	 
 
 	}
 
 	if(task == 'backup'){
 
-	  var x = confirm("Are you sure you want to backup?");
-	  if (!x)
-	     return;
+		if(verificaChecks()==true)
+		{ 
+		
+			var x = confirm("Are you sure you want to backup?");
+			  if (!x)
+			     return;
+		}else
+			return;
+		
+	  
 
 	}
 
@@ -1187,59 +989,74 @@ function sendAction(task){
 	}
 
 
-	if(task == 'merge'){
+// 	if(task == 'merge'){
 
 
-		var x = confirm("File merge - confirm zip?");
-		if (!x)
-			return;
+// 		var x = confirm("File merge - confirm zip?");
+// 		if (!x)
+// 			return;
 			
-		var filename = prompt("Please enter file name", "New file merge");
+// 		var filename = prompt("Please enter file name", "New file merge");
 
-		var x = confirm("File merge - overwrite file if it exists?");
-		if (x)
-			overwrite = "1";
-		else
-			overwrite = "";
+// 		var x = confirm("File merge - overwrite file if it exists?");
+// 		if (x)
+// 			overwrite = "1";
+// 		else
+// 			overwrite = "";
 		     
-		document.getElementById("filename").value = filename;
-		document.getElementById("overwrite").value = overwrite;
-	}
+// 		document.getElementById("filename").value = filename;
+// 		document.getElementById("overwrite").value = overwrite;
+// 	}
 
 	
 	if(task == 'zip'){
 
+		if(verificaChecks()==true)
+		{ 
+		
+			var x = confirm("File compress - confirm zip?");
+			if (!x)
+				return;
+				
+			var filename = prompt("Please enter file name", "New file compress");
 
-		var x = confirm("File compress - confirm zip?");
-		if (!x)
-			return;
+			var x = confirm("File compress - overwrite file if it exists?");
+			if (x)
+				overwrite = "1";
+			else
+				overwrite = "";
+			     
+			document.getElementById("filename").value = filename;
+			document.getElementById("overwrite").value = overwrite;
 			
-		var filename = prompt("Please enter file name", "New file compress");
-
-		var x = confirm("File compress - overwrite file if it exists?");
-		if (x)
-			overwrite = "1";
-		else
-			overwrite = "";
-		     
-		document.getElementById("filename").value = filename;
-		document.getElementById("overwrite").value = overwrite;
+		}else
+			return;
+		
+		
 	}
 
 
 	if(task == 'unzip'){
 
-		var x = confirm("File extract - confirm unzip?");
-		if (!x)
+		if(verificaChecks()==true)
+		{ 
+		
+			var x = confirm("File extract - confirm unzip?");
+			if (!x)
+				return;
+			
+			var x = confirm("File extract - overwrite file or folder if it exists?");
+			if (x)
+				overwrite = "1";
+			else
+				overwrite = "";
+			     
+			document.getElementById("overwrite").value = overwrite;
+			
+		}else
 			return;
 		
-		var x = confirm("File extract - overwrite file or folder if it exists?");
-		if (x)
-			overwrite = "1";
-		else
-			overwrite = "";
-		     
-		document.getElementById("overwrite").value = overwrite;
+		
 	}
 	
 	
@@ -1327,20 +1144,26 @@ File Upload (*.txt, *.zip)</a> <br>
 									<!-- 
 <input type="button" value="BRUNO-Kill-files-alert" name="bruno" onclick="javascript: sendAction('bruno');" />
 || -->
+
+									<div style="float: left;width:100%; padding-top: 10px">
+									
 									<input type="button" class="btn btn-default" value="New folder" name="folder"
 										onclick="javascript: newFolder();" /> || 
 										
 										<input type="button"
 										class="btn btn-danger" value="Delete" name="trash"
 										onclick="javascript: sendAction('trash');" /> || <input
-										type="button" class="btn btn-default" value="Backup" name="backup"
-										onclick="javascript: sendAction('backup');" /> || <input
-										type="button" class="btn btn-default" value="Merge" name="compredss"
-										onclick="javascript: sendAction('merge');" /> || <input
+										type="button" class="btn btn-info" value="Backup" name="backup"
+										onclick="javascript: sendAction('backup');" /> ||  <input
 										type="button" class="btn btn-default" value="zip" name="compress"
 										onclick="javascript: sendAction('zip');" /> <input
 										type="button" class="btn btn-default" value="unzip" name="decompress"
-										onclick="javascript: sendAction('unzip');" /> || Move to: <select
+										onclick="javascript: sendAction('unzip');" /> 
+									</div>
+										
+										<div style="float:left;width:100%;border:0px solid #000;padding:5px;">
+											<div style="float: right;">
+										 Move to: <select
 										name="movedestine" class="btn btn-default"  id=movedestine>		
 		<?php
 
@@ -1370,7 +1193,10 @@ foreach ($dir_list as $key => $element) {
 ?>
 													
 												</select> <input type="button" class="btn btn-default" value="Move" name="move"
-										id="move" onclick="javascript: sendAction('move');" /> <br> <a
+										id="move" onclick="javascript: sendAction('move');" /> </div>
+										
+										<div style="float:left; vertical-align: middle;padding-top:10px;">
+										 <a
 										href="<?php echo PATH_WWW ?>?component=<?php echo $application->getComponent()?>&controller=<?php echo $application->getController();?>">Root</a>
 
 <?php
@@ -1390,7 +1216,8 @@ foreach ($levels as $key => $item) {
 }
 
 ?>
-		
+			</div>
+		</div>
 		
 	<table border='1' id="temporary_files" style="width: 100%;">
 										<tr>
@@ -1426,6 +1253,9 @@ foreach ($files_list as $key => $element) {
 
         echo "<tr><td>" . $i . "</td><td>" . "<a onclick='javascript: renameFile(this);' name='" . $element["name"] . "' title='Rename' href='#'>" 
             . "<img align='middle' width='24px' src='" . $application->getPathTemplate() . "/images/icon-rename.png' border='0'></a> " 
+            . "<a href='?component=" . $application->getComponent() . "&controller=debug&filename=" . $element["name"]
+            . "&folder=" . $application->getParameter("folder") . "'>"
+            . "<img width='24px' align='middle' src='" . $application->getPathTemplate() . "/images/icon-debug.png' title='Debug'/></a> " 
             . "<a href='?component=" . $application->getComponent() . "&controller=openreadonly&filename=" . $element["name"] 
             . "&folder=" . $application->getParameter("folder") . "'>" 
             . "<img width='16px' align='middle' src='" . $application->getPathTemplate() . "/images/icon-view.png' title='View contents'/></a> " . 

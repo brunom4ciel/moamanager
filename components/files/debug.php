@@ -131,65 +131,65 @@ if ($filename != null) {
 
                     $maxBytesFileLoadPart = Properties::getFileContentsMaxSize();
 
-//                     $size = filesize($filename) /1024;
+                    $size = filesize($filename) /1024;
                     
-//                     //                     $bparted = 20;
+                    //                     $bparted = 20;
                     
-//                     if($size > 3000)
-//                     {
-//                         $bparted = 1000;
-//                     }
-//                     else
-//                     {
-//                         if($size > 1000)
-//                         {
-//                             $bparted = 500;
-//                         }
-//                         else
-//                         {
-//                             $bparted = $maxBytesFileLoadPart;
-//                         }
-//                     }                    
+                    if($size > 3000)
+                    {
+                        $bparted = 1000;
+                    }
+                    else
+                    {
+                        if($size > 1000)
+                        {
+                            $bparted = 500;
+                        }
+                        else
+                        {
+                            $bparted = $maxBytesFileLoadPart;
+                        }
+                    }                    
                     
                     
-                    $data1 = $utils->getContentFilePart($filename, ($maxBytesFileLoadPart * 1024));
-//                     $script = "";
-//                     $output = "";
+                    $data1 = $utils->getContentFilePart($filename, ($bparted * 1024));
+                    $script = "";
+                    $output = "";
                     
-//                     if($utils->isMetadataFileScript($filename))
-//                     {
-//                         $script = $utils->getMetadataValueScript($filename, "script");
-//                         $output = $utils->getMetadataValueScript($filename, "command-output");
+                    if($utils->isMetadataFileScript($filename))
+                    {
+                        $script = $utils->getMetadataValueScript($filename, "script");
+                        $output = $utils->getMetadataValueScript($filename, "command-output");
                         
-//                         if(strpos($data1["data"], "Accuracy:") ===  false)
-//                         {
+                        if(strpos($data1["data"], "Accuracy:") ===  false)
+                        {
                             
-//                         }
-//                         else
-//                         {
-//                             $data1["data"] = substr($data1["data"], strpos($data1["data"], "Accuracy:"));
-//                             $data1["data"] = substr($data1["data"], 0, strpos($data1["data"], "learning evaluation instances"));
-//                         }
-//                     }
-//                     else 
-//                     {
-//                         if(strpos($data1["data"], "learning evaluation instances") === false)
-//                         {
+                        }
+                        else
+                        {
+                            $data1["data"] = substr($data1["data"], strpos($data1["data"], "Accuracy:"));
+                            $data1["data"] = substr($data1["data"], 0, strpos($data1["data"], "learning evaluation instances"));
+                        }
+                    }
+                    else 
+                    {
+                        if(strpos($data1["data"], "learning evaluation instances") === false)
+                        {
                             
                             
-//                         }
-//                         else 
-//                         {
+                        }
+                        else 
+                        {
                             
-//                             $script = substr($data1["data"], 0, strpos($data1["data"], "\n\n"));
+                            $script = substr($data1["data"], 0, strpos($data1["data"], "\n\n"));
                             
-//                             $data1["data"] = substr($data1["data"], strpos($data1["data"], "Accuracy:"));
-//                             $data1["data"] = substr($data1["data"], 0, strpos($data1["data"], "learning evaluation instances"));
+                            $data1["data"] = substr($data1["data"], strpos($data1["data"], "Accuracy:"));
+                            $data1["data"] = substr($data1["data"], 0, strpos($data1["data"], "learning evaluation instances"));
                             
-//                         }
+                        }
                         
                         
-//                     }
+                    }
                         
                     
                     
@@ -204,7 +204,7 @@ if ($filename != null) {
 
 					<div class="page-header">
 						<h1>
-							<a href="<?php echo $_SERVER['REQUEST_URI']?>">Read file</a>
+							<a href="<?php echo $_SERVER['REQUEST_URI']?>">Debug file</a>
 						</h1>
 					</div>
 
@@ -222,23 +222,7 @@ if ($filename != null) {
 									name="folder">
 
 								
-									<div
-										style="margin-left: 5px; display: table; width: 99%; height: 70px; background-color: #F3F781; border: 1px solid #000; text-align: center; vertical-align: middle;">
-										Read-only <br>
-											<?php
-
-        echo "From Original: " . $utils->formatSize(filesize($filename)) . "<br>";
-
-        $extension = substr($filename, strrpos($filename, ".") + 1);
-
-        if ($extension == "zip") {} else {
-            echo "Load: " . $utils->formatSize($data1["size"]);
-        }
-        ?>
-											
-											</div>
-
-
+									
 									<div
 										style="float: left; padding-left: 5px; width: 100%; margin-top: 5px;">
 												
@@ -255,7 +239,10 @@ if ($filename != null) {
 													
 												<input type="text" style="width: 100%" name="filenamenew"
 											value="<?php echo $application->getParameter("filename");?>">
-																						
+											<div style="text-align:justify;">
+											<textarea id="data_aux" style="width: 100%; height: 100px;border:1px solid #c7c7c7;"><?php echo $script;?></textarea>
+											</div>
+											
 										<textarea id="data" style="width: 100%; height: 400px;"
 											name="data"><?php echo $data?></textarea>	
 											
@@ -271,7 +258,9 @@ if ($filename != null) {
 
             ?>
 												
-												
+												<?php if(!empty($output)){?>
+												<pre style="font-family: monospace;background-color:#000000;color:#ffffff;font-size:10pt;">Debug: <?php echo substr($output, 0, 5000);?></pre>
+												<?php }?>
 											</div>
 
 

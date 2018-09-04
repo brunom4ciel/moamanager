@@ -92,7 +92,7 @@ if(IS_AUTHENTICATION){
 				<div class="navbar-header">
 					<a class="navbar-brand" href="<?php echo PATH_WWW;?>"><?php echo (Template::getTitle() == null ? APPLICATION_NAME : Template::getTitle());?></a><?php echo (IS_ADMIN?($isUpdate ? "&nbsp;<a href='?component=settings&controller=softwareupdate' title='Click to software update'>New version ".$version."</a>":""  ):""); ?>
 				</div>
-				<div class="navbar-collapse collapse" collapse="navCollapsed" style="height: 0px;">
+				<div class="navbar-collapse collapse" style="height: 0px;">
 					<ul class="nav navbar-nav navbar-right">
 						
 						<li style="vertical-align: middle;padding:5px;">
@@ -121,7 +121,7 @@ if(IS_AUTHENTICATION){
 				<div class="navbar-header">
 					<a class="navbar-brand" href="<?php echo PATH_WWW;?>"><?php echo (Template::getTitle() == null ? APPLICATION_NAME : Template::getTitle());?></a>
 				</div>
-				<div class="navbar-collapse collapse" collapse="navCollapsed" style="height: 0px;">
+				<div class="navbar-collapse collapse" style="height: 0px;">
 					<ul class="nav navbar-nav navbar-right">
 						<li class="subdued">
 							<a class="subdued" href="<?php echo PATH_WWW;?>?component=about"><?php echo MENU_ABOUT?></a>
@@ -143,7 +143,7 @@ if(IS_AUTHENTICATION){
 		
 <?php
 
-$body = false;
+$body = true;
 		
 if (isset($_GET['alert'])) {
 
@@ -155,8 +155,8 @@ if (isset($_GET['alert'])) {
 			<div class="row">
 				<div class="col-md-6 col-md-offset-3 col-lg-4 col-lg-offset-4">
 					<div class="card">
-						<div class="page-header">
-							<h1>Alert</h1>
+						<div>
+							<img src="<?php echo PATH_WWW;?>templates/default/images/icon-alert.png" />&nbsp;
 							
 							<?php
 
@@ -169,11 +169,6 @@ if (isset($_GET['alert'])) {
 							</div>
 
 
-
-						<a href="javascript: history.go(-1);" style="float: right"><?php echo LABEL_BACK?></a><br>
-
-
-
 					</div>
 				</div>
 			</div>
@@ -181,13 +176,13 @@ if (isset($_GET['alert'])) {
 	</div>
 				
 		<?php
-    } else {
+//     } else {
 
-        $body = true;
+// //         $body = true;
     }
-} else {
+// } else {
 
-    $body = true;
+//     $body = true;
 }
 
 ?>

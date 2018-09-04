@@ -35,9 +35,10 @@ class Menu
         return count($this->menu);
     }
 
-    public function add($href = "", $label = "", $title = "", $target = "")
+    public function add($href = "", $label = "", $title = "", $target = "", $img = "")
     {
         $this->menu[] = (object) array(
+            "image"=>$img,
             "href" => $href,
             "label" => $label,
             "title" => $title,
@@ -72,7 +73,16 @@ class Menu
                 if (empty($item->target))
                     $target = " target=\"" . $item->target . "\"";
     
-                $result .= "\t<li><a" . $title . $target . " href=\"" . $item->href . "\">" . $item->label . "</a></li>\n";
+                $result .= "\t<li>";
+                $result .= "";
+
+                if(!empty($item->image))
+                {
+                    //$result .= "<img width='32px' align='middle' src='templates/default/images/" . $item->image . "'/>";    
+                    //style='background-image: url(\"templates/default/images/menu/" . $item->image . "\");background-position: left top;   background-repeat: no-repeat;padding-left:32px;' 
+                }
+                
+                $result .= "<a " . $title . $target . " href=\"" . $item->href . "\">".$item->label . "</a></li>\n";
             }
         }
 

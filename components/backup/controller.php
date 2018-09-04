@@ -235,7 +235,7 @@ $dir_list = $utils->getListDirectory(Properties::getBase_directory_destine($appl
 
 foreach ($dir_list as $key => $element) {
 
-    if (trim($element) == DIRNAME_SCRIPT || trim($element) == DIRNAME_TRASH || trim($element) == DIRNAME_BACKUP) {
+    if ( trim($element) == DIRNAME_TRASH || trim($element) == DIRNAME_BACKUP) { //trim($element) == DIRNAME_SCRIPT ||
 
         unset($dir_list[$key]);
     }
@@ -492,9 +492,15 @@ function do_this(){
 
     ?>
     
-    
+     <div style="float: left;width:100%; padding-top: 10px">
+     
 <input type="button" class="btn btn-danger" value="Empty" name="empty"
-										onclick="javascript: sendAction('remove');" /> || Restore to:
+										onclick="javascript: sendAction('remove');" />
+</div>
+
+<div style="float:left;width:100%;border:0px solid #000;padding:5px;">
+											<div style="float: right;">
+											Restore to:
 									<select name="movedestine" class="btn btn-default" id=movedestine>		
 		<?php
 
@@ -509,7 +515,11 @@ foreach ($dir_list as $key => $element) {
 ?>
 													
 												</select> <input type="button" class="btn btn-warning" value="Restore" name="move"
-										id="move" onclick="javascript: sendAction('move');" /> <br> <a
+										id="move" onclick="javascript: sendAction('move');" /> 
+</div>
+										
+										<div style="float:left; vertical-align: middle;padding-top:10px;">
+										<a
 										href="<?php echo PATH_WWW ?>?component=<?php echo $application->getComponent()?>&controller=<?php echo $application->getController();?>">Root</a>
 
 <?php
@@ -529,7 +539,10 @@ foreach ($levels as $key => $item) {
 }
 
 ?>
+						</div>
+		</div>
 		
+			
 		
 	<table border='1' id="temporary_files" style="width: 100%;">
 										<tr>

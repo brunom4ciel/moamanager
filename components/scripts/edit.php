@@ -142,11 +142,43 @@ if ($filename != null) {
 
         if ($task == "remove") {
 
-            if (file_exists($filename)) {
+//             if (file_exists($filename)) {
 
-                unlink($filename);
-                header("Location: " . PATH_WWW . "?component=" . $application->getComponent() . "");
+//                 unlink($filename);
+//                 header("Location: " . PATH_WWW . "?component=" . $application->getComponent() . "");
+//             }
+            
+            
+            $filename = basename($filename);
+            
+            $dir = PATH_USER_WORKSPACE_STORAGE . DIRNAME_SCRIPT . DIRECTORY_SEPARATOR . $application->getParameter("folder");
+
+            $movedestine_ = PATH_USER_WORKSPACE_STORAGE . DIRNAME_TRASH . DIRECTORY_SEPARATOR;
+            
+            if (is_file($dir . $filename)) {
+                
+                $from_file = $dir . $filename;
+                $to_file = $movedestine_ . $filename;
+                
+                if (file_exists($to_file))
+                {
+                    chmod($to_file, octdec("0777"));
+                    
+                    if(!unlink($to_file))
+                    {
+                        exit("Error: operation not allowed. File: " . $to_file);
+                    }
+                }
+                
+                rename($from_file, $to_file);
+                
             }
+
+            
+            header("Location: " . PATH_WWW . "?component=" . $application->getComponent() . "&folder=" . $application->getParameter("folder"));
+            
+            
+            
         } else {
 
             // if(in_array(substr($filename,strrpos($filename, ".")+1),

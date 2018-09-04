@@ -780,9 +780,9 @@ class Utils
                 }
                         
                         
-                if(strpos($tagvalue, "\""))
+                if(strpos($tagvalue, "\"/>"))
                 {
-                    $tagvalue = substr($tagvalue,0, strpos($tagvalue, "\""));
+                    $tagvalue = substr($tagvalue,0, strpos($tagvalue, "\"/>"));
                     $keyvalue = $tagvalue;
                     $eof_metadata = true;
                 }
