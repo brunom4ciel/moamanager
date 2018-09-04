@@ -17,16 +17,21 @@ use moam\libraries\core\db\DBPDO;
 // use PDOException;
 use PDO;
 
+exit("home");
 
 if (! class_exists('Application')) {
     $application = Framework::getApplication();
 }
 
-if (! $application->is_authentication()) {
-    $application->alert("Error: you do not have credentials.");
+if (!$application->is_authentication()) {
+//     $application->alert("Error: you do not have credentials.");
+//     ?component=user&controller=login
+//     $application->redirect("?component=user&controller=login");
 }
+else{
 
-$application->redirect("?component=systemmonitor");
+    $application->redirect("?component=systemmonitor");
+}
 
 // Framework::import("menu", "core/menu");
 

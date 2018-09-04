@@ -497,6 +497,7 @@ class Application extends AbstractApplication
     {
         try {
             header("Location: " . $url_to);
+            exit();
         } catch (AppException $e) {
             throw new AppException($e->getMessage());
         }

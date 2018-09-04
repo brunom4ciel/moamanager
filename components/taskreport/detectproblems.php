@@ -97,21 +97,19 @@ function detectProblemsFiles($filename)
                 {
                     $size = filesize($item['filename']) /1024;
                     
-//                     $bparted = 20;
-                    
                     if($size > 3000)
                     {
-                        $bparted = 1000;
+                        $bparted = $size/2;
                     }
-                    else 
+                    else
                     {
-                        if($size > 1000)
+                        if($size > 2000)
                         {
-                            $bparted = 500;
+                            $bparted = 1500;
                         }
                         else
                         {
-                            $bparted = 50;
+                            $bparted = 500;
                         }
                     }
                     

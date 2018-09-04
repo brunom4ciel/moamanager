@@ -129,25 +129,24 @@ if ($filename != null) {
                     // echo "numFile:" . $za->numFiles . "\n";
                 } else {
 
-                    $maxBytesFileLoadPart = Properties::getFileContentsMaxSize();
-
+//                     $maxBytesFileLoadPart = Properties::getFileContentsMaxSize();
                     $size = filesize($filename) /1024;
                     
                     //                     $bparted = 20;
                     
                     if($size > 3000)
                     {
-                        $bparted = 1000;
+                        $bparted = $size/2;
                     }
                     else
                     {
-                        if($size > 1000)
+                        if($size > 2000)
                         {
-                            $bparted = 500;
+                            $bparted = 1500;
                         }
                         else
                         {
-                            $bparted = $maxBytesFileLoadPart;
+                            $bparted = 500;
                         }
                     }                    
                     
@@ -170,6 +169,7 @@ if ($filename != null) {
                             $data1["data"] = substr($data1["data"], strpos($data1["data"], "Accuracy:"));
                             $data1["data"] = substr($data1["data"], 0, strpos($data1["data"], "learning evaluation instances"));
                         }
+                        
                     }
                     else 
                     {
@@ -193,7 +193,7 @@ if ($filename != null) {
                         
                     
                     
-                    $data = $data1["data"];
+                    $data = $script . "\n\n" . $data1["data"];
                 }
             }
         }
@@ -239,14 +239,11 @@ if ($filename != null) {
 													
 												<input type="text" style="width: 100%" name="filenamenew"
 											value="<?php echo $application->getParameter("filename");?>">
-											<div style="text-align:justify;">
-											<textarea id="data_aux" style="width: 100%; height: 100px;border:1px solid #c7c7c7;"><?php echo $script;?></textarea>
-											</div>
-											
+																						
 										<textarea id="data" style="width: 100%; height: 400px;"
 											name="data"><?php echo $data?></textarea>	
 											
-												
+																							
 											<a target="_blank"
 											href="<?php echo PATH_WWW ."?component=resource&tmpl=false&task=open&file=".$application->getParameter("folder").$application->getParameter("filename");?>">
 											[Open]</a> <a

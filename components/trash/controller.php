@@ -189,17 +189,25 @@ if ($task == "folder") {
 
                             $movedestine_ = PATH_USER_WORKSPACE_STORAGE . $application->getParameter("folder") . $movedestine . DIRECTORY_SEPARATOR;
                         }
-
+                        
+                        
                         if (is_file($dir . $item)) {
 
                             // chmod($dir, 0777);
 
                             $from_file = $dir . $item;
                             $to_file = $movedestine_ . $item;
-
-                            if (! file_exists($to_file))
+                            
+                            if (file_exists($to_file))
+                            {
+                                $application->alert("Error: a file with this name already exists.");
+                                
+                            }
+                            else 
+                            {
                                 rename($from_file, $to_file);
-
+                            }
+                            
                             // echo "file - from: ".$from_file.", to: ".$to_file."<br>";
                         } else {
 
@@ -209,9 +217,17 @@ if ($task == "folder") {
 
                                 $from_dir = $dir . $item;
                                 $to_dir = $movedestine_ . $item;
+                                
+//                                 var_dump($to_dir);exit();
 
-                                if (! is_dir($to_dir))
+                                if (is_dir($to_dir))
+                                {
+                                    $application->alert("Error: a directory with this name already exists.");
+                                }
+                                else
+                                {
                                     rename($from_dir, $to_dir);
+                                }
 
                                 // echo "dir - from: ".$from_dir.", to: ".$to_dir."<br>";
                             }

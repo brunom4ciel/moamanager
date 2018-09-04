@@ -54,19 +54,20 @@ if ($task == "folder") {
 
     $foldernew = $application->getParameter("foldernew");
 
-    if ($folder == null) {
+//     if ($folder == null) {
 
-        $foldernew = Properties::getBase_directory_destine($application) . $application->getUser() . DIRECTORY_SEPARATOR . $foldernew;
-    } else {
+//         $foldernew = PATH_USER_WORKSPACE_STORAGE . $foldernew;
+//     } else {
 
-        $foldernew = Properties::getBase_directory_destine($application) . $application->getUser() . DIRECTORY_SEPARATOR . $folder . DIRECTORY_SEPARATOR . $foldernew;
-    }
+//         $foldernew = PATH_USER_WORKSPACE_STORAGE . $folder . DIRECTORY_SEPARATOR . $foldernew;
+//     }
 
     // exit("-".$foldernew);
 
-    if (! is_dir($foldernew)) 
+    if (!is_dir($foldernew)) 
     {
-        mkdir($foldernew, 0777);
+//         mkdir($foldernew, 0777);
+        $utils->create_dir($foldernew, $dir);
     }
     else 
     {

@@ -106,13 +106,23 @@ if ($filename != null) {
     if ($task == "save") {
         
         $data = $application->getParameter("data");
+        
         if(!$utils->setContentFile($filename, $data))
         {
             $utils->set_perms($filename, "0777");
+            
             if(!$utils->setContentFile($filename, $data))
             {
-                exit("Error: modifying the file was not allowed.");
+                $application->alert("Error: modifying the file was not allowed.");
             }
+            else 
+            {
+                $application->redirect(PATH_WWW . "?component=" . $application->getComponent() . "&folder=" . $application->getParameter("folder"));
+            }
+        }
+        else 
+        {
+            $application->redirect(PATH_WWW . "?component=" . $application->getComponent() . "&folder=" . $application->getParameter("folder"));
         }
         
         
@@ -175,7 +185,7 @@ if ($filename != null) {
             }
 
             
-            header("Location: " . PATH_WWW . "?component=" . $application->getComponent() . "&folder=" . $application->getParameter("folder"));
+            $application->redirect(PATH_WWW . "?component=" . $application->getComponent() . "&folder=" . $application->getParameter("folder"));
             
             
             
@@ -189,10 +199,12 @@ if ($filename != null) {
                 // exit($filename);
 
                 $data = "";
-                $utils->setContentFile($filename, $data);
+                $utils->setContentFile($filename, $data);                
+               
             } else {
 
                 $data = $utils->getContentFile($filename);
+                
             }
 
             // }

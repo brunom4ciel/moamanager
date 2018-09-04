@@ -34,6 +34,13 @@ $utils = new Utils();
 
 $task = $application->getParameter("task");
 $folder = $application->getParameter("folder");
+
+if ($folder != null) {
+    if (substr($folder, strlen($folder) - 1) != "/") {
+        $folder .= DIRECTORY_SEPARATOR;
+    }
+}
+
 $error = array();
 $files_extensions = array(
     "txt",
@@ -41,23 +48,23 @@ $files_extensions = array(
     "zip"
 );
 
+$dir = PATH_USER_WORKSPACE_STORAGE . DIRNAME_SCRIPT . DIRECTORY_SEPARATOR . $folder;
+
+
 if ($task == "folder") {
 
     $foldernew = $application->getParameter("foldernew");
-
-    $foldernew = PATH_USER_WORKSPACE_STORAGE . DIRNAME_SCRIPT . DIRECTORY_SEPARATOR . $folder . $foldernew;
-
     
-    if (! is_dir($foldernew))
+    if (!is_dir($foldernew))
     {
-        mkdir($foldernew, 0777);
+        //         mkdir($foldernew, 0777);
+        $utils->create_dir($foldernew, $dir);
     }
     else
     {
         $application->alert("Error: directory already exists.");
     }
-    
-    
+        
     
 } else {
 
