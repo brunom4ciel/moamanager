@@ -146,7 +146,7 @@ if (isset($_FILES['uploadfile'])) {
 							<tr>
 								<td>Upload files (*.java):</td>
 								<td><input type="file" class="btn btn-default" name="uploadfile" /></td>
-								<td><input type="submit" class="btn btn-success" name="default" value="Send" /></td>
+								<td>&nbsp; <input type="submit" class="btn btn-success" name="default" value="Send" /></td>
 							</tr>
 						</table>
 

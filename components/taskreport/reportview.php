@@ -226,14 +226,29 @@ if ($filename != null) {
 
 								<form method="POST"
 								action="<?php echo $_SERVER['PHP_SELF'];?>#save" name="saveform"
-								>								
+								>		
+								
+								<div style="float: left;width:100%; padding-top: 0px">						
 								<input type="button"  class="btn btn-default"
 									value="Script All" name="script"
 									onclick="javascript: ScriptView('all');" /> <input
 									type="button"  class="btn btn-default" value="Script Processed" name="script2"
 									onclick="javascript: ScriptView('processed');" /> <input
 									type="button"  class="btn btn-default" value="Script Unprocessed" name="script3"
-									onclick="javascript: ScriptView('unprocessed');" /><br>
+									onclick="javascript: ScriptView('unprocessed');" />
+
+
+<?php if(!empty($application->getParameter('folder'))){?>
+								<div style="float: right; ">
+									<input type="button" class="btn btn-default" value="Return" name="return"
+										onclick="javascript: returnPage();" />
+								</div>
+									
+									</div>
+									
+										
+<?php }?>	
+
 
   <?php echo $folder. $application->getParameter("filename");?><br>
   
@@ -584,16 +599,6 @@ if ($length_data > 0) {
 								</form>
 
 
-<?php if(!empty($application->getParameter('folder'))){?>
-								<div style="float: right; padding-top: 10px">
-									<input type="button" class="btn btn-default" value="Return" name="return"
-										onclick="javascript: returnPage();" />
-								</div>
-									
-									
-									<br>
-										
-<?php }?>	
 
 	<script>
 
@@ -652,7 +657,7 @@ function ScriptView(command){
 function resizeImage()
 {
   // browser resized, we count new width/height of browser after resizing
-    var height = window.innerHeight - 380;// || $(window).height();
+    var height = window.innerHeight - 350;// || $(window).height();
     
     document.getElementById("containerbody").setAttribute(
 	   "style", "border:1px solid #ffffff;margin-left: -15px;  margin-right: -15px;list-style-type: none;  margin: 0;  overflow-y: scroll;max-height: "+height+"px");

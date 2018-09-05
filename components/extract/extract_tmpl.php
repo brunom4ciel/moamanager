@@ -774,67 +774,7 @@ if($task == "folder"){
                 {
                     $data_values = $data_values2;
                 }
-                
-//                 var_dump($data_values);
-                
-//                 exit("fim");
-                
-                
-//                 if($data_cols_enable_tmpl)
-//                 {                    
-                    
-//                     foreach($data_cols_order_tmpl as $col)
-//                     {
-//                         foreach($data_values as $key=>$item)
-//                         {
-//     //                         echo $key . "=" . $col."\n";
-//                             if($key == $col)
-//                             {
-//                                 if(count($data_cols_filter_tmpl) > 0)
-//                                 {
-                                    
-//                                     foreach($data_cols_filter_tmpl as $filter)
-//                                     {
-//                                         if($key == $filter)
-//                                         {
-//                                             foreach($data_cols_renames_tmpl as $key_find=>$rename_newkey)
-//                                             {
-//                                                 //                                 echo $key . "=" . $rename_col."\n";
-                                                
-//                                                 if($key == $key_find)
-//                                                 {
-//                                                     $key = $rename_newkey;
-//                                                     break;
-//                                                 }
-//                                             }
-//                                             $data_values_aux[$key]  = $item;
-//                                         }
-                                        
-//                                     }
-//                                 }
-//                                 else 
-//                                 {
-//                                     foreach($data_cols_renames_tmpl as $key_find=>$rename_newkey)
-//                                     {
-//                                         //                                 echo $key . "=" . $rename_col."\n";
-                                        
-//                                         if($key == $key_find)
-//                                         {
-//                                             $key = $rename_newkey;
-//                                             break;
-//                                         }
-//                                     }
-//                                     $data_values_aux[$key]  = $item;
-//                                 }
-//                             }
-//                         }
-//                     }
-                                    
-//                     $data_values = $data_values_aux;
-//                 }
-// //                 var_dump($data_values);
-// //                 exit();
-                
+                                
             }
             
             
@@ -1039,10 +979,11 @@ if($task == "folder"){
                 
             }
             
+
             
-            $csv = $application->getParameter("csv");
-            $tex = $application->getParameter("tex");
-            $html = $application->getParameter("html");
+//             $csv = $application->getParameter("csv");
+//             $tex = $application->getParameter("tex");
+//             $html = $application->getParameter("html");
             
             
             $save = $application->getParameter("save");
@@ -1078,18 +1019,41 @@ if($task == "folder"){
                 $overwrite = $application->getParameter("overwrite");
                 $extensions = array();
                 
+                $viewdata = $application->getParameter("viewdata");
                 
-                if($csv != null){
-                    $extensions[] = "csv";
+                
+                switch($viewdata){
+                    
+                    case	"html":{
+                        
+                        $extensions[] = "html";
+                        break;
+                    }
+                    case	"txt":{
+                        
+                        $extensions[] = "txt";
+                        break;
+                    }
+                    case	"tex":{
+                        
+                        $extensions[] = "tex";
+                        break;
+                    }
+                    
                 }
                 
-                if($tex != null){
-                    $extensions[] = "tex";
-                }
                 
-                if($html != null){
-                    $extensions[] = "html";
-                }
+//                 if($csv != null){
+//                     $extensions[] = "csv";
+//                 }
+                
+//                 if($tex != null){
+//                     $extensions[] = "tex";
+//                 }
+                
+//                 if($html != null){
+//                     $extensions[] = "html";
+//                 }
                             
                 if($interval != null){
                     $ic = "(ic)";
@@ -1306,16 +1270,16 @@ if($task == "folder"){
                 }
                 case	"tex":{
                     
-                    header( 'Content-Type: text/plain' );
-                    ob_end_clean();
+//                     header( 'Content-Type: text/plain' );
+//                     ob_end_clean();
                     
-                    echo  $utils->castToTex($result_view);
+                    $result_view =  $utils->castToTex($result_view);
                     
                     
                     //$contLength = ob_get_length();
                     //header( 'Content-Length: '.$contLength);
                     
-                    exit();
+                    //exit();
                     
                     break;
                 }
@@ -1484,7 +1448,7 @@ div#table_id table tr td{
 					
 					//var_dump($aa);exit();
 					//App::setParameter('tmpl',true);
-			    if($viewdata == "txt")
+				if($viewdata == "txt" || $viewdata == "tex")
 			    {			        
 					echo "<pre style='font-size:11px;border: 0px solid #000; text-align:left;font-family: monospace,verdana;'>".$result_view."</pre>";//echo $utils->createSheetHtml($csv);//htmlCSV($csv);
 			    }

@@ -465,26 +465,25 @@ function verificaChecks() {
 		<input type="hidden" name="folder" value="<?php echo $folder;?>"/>
 		<input type="hidden" name="task" id="task" value=""/>		
 		
-		
- 
-    <div class="displayfix">
 
+<table border="0" style="width:100%;font-size:10pt;">
+	<tr>
+		<td valign="top" style="max-width: 200px">
+		<span style="width:100%;border-bottom:1px solid #cccccc">Type of extraction</span><br>
 		
-		<div class="boxlimit">
 		<label><input type="radio" value="0" name="type_extract" id="type_extract" checked="checked" onclick="setCookieRadioBox(this);"/>Average of averages</label>
 		<label><input type="radio" value="1" name="type_extract" id="type_extract" onclick="setCookieRadioBox(this);"/>All means</label>
 		<label><input type="radio" value="2" name="type_extract" id="type_extract" onclick="setCookieRadioBox(this);"/>Scripts</label>
-		
-		</div>
-		
-		<br>
-		<div class="boxlimit" style="margin-top:5px;width:100%">
-					
+		</td>
+		<td valign="top">
+			<span style="width:100%;border-bottom:1px solid #cccccc">Data for extraction</span><br>
 			<label><input type="checkbox" name="accuracy" id="accuracy" value="1" onclick="setCookieCheckbox(this);"/>Accuracy</label>		
 			<label><input type="checkbox" name="timer" id="timer" value="1" onclick="setCookieCheckbox(this);"/>Timer</label>
 			<label><input type="checkbox" name="memory" id="memory" value="1" onclick="setCookieCheckbox(this);"/>Memory</label>
 			
-
+			<label><input type="checkbox" name="interval" id="interval" value="1" onclick="setCookieCheckbox(this);"/>Confidence Interval</label>
+			
+			<br>
 			<label><input type="checkbox" name="dist" id="dist" value="1" onclick="setCookieCheckbox(this);"/>dist</label>
 			<label><input type="checkbox" name="fn" id="fn" value="1" onclick="setCookieCheckbox(this);"/>fn</label>
 			<label><input type="checkbox" name="fp" id="fp" value="1" onclick="setCookieCheckbox(this);"/>fp</label>
@@ -496,44 +495,30 @@ function verificaChecks() {
 			<label><input type="checkbox" name="mcc" id="mcc" value="1" onclick="setCookieCheckbox(this);"/>MCC</label>
 			<label><input type="checkbox" name="f1" id="f1" value="1" onclick="setCookieCheckbox(this);"/>F1</label>
 			<label><input type="checkbox" name="resume" id="resume" value="1" onclick="setCookieCheckbox(this);"/>TP+FN+Others</label>
-			
-			<div class="line"></div>
-			
-			<label><input type="checkbox" name="interval" id="interval" value="1" onclick="setCookieCheckbox(this);"/>Confidence Interval</label>
 					
+						
+		</td>
+		<td valign="top">
+				<span style="width:100%;border-bottom:1px solid #cccccc">Organize the data</span><br>
+				<label>Line break every <input type="text" name="breakline" id="breakline" value="7" style="width:40px;" onchange="setCookieElementValue(this);" /> data.</label>
+					<label>View decimal separator <input type="text" name="decimalformat" id="decimalformat" value="." style="width:40px;" onchange="setCookieElementValue(this);" /></label>
+					
+		</td>
+	</tr>
+	<tr>	
+		<td valign="top" >
 			
-		</div>
-		
-		<div class="boxlimit" style="margin-top:5px;width:100%">
-		
-				
-		Breaking line(s) <input type="text" name="breakline" id="breakline" value="7" style="width:40px;" onchange="setCookieElementValue(this);" /> <br>Decimal separator<label><input type="text" name="decimalformat" id="decimalformat" value="." style="width:40px;" onchange="setCookieElementValue(this);" /></label>
-			
-			
-			
-		</div>
-		<div class="boxlimit" style="margin-top:5px;width:100%">
-		Result Data<br>	
-			
-			<label><input type="radio" name="viewdata" id="viewdata" value="html" checked="checked" onclick="setCookieRadioBox(this);"/>HTML</label>
-			<label><input type="radio" name="viewdata" id="viewdata" value="txt" onclick="setCookieRadioBox(this);"/>TXT</label>
+						<span style="width:100%;border-bottom:1px solid #cccccc">Data display format</span><br>
+						<label><input type="radio" name="viewdata" id="viewdata" value="html" checked="checked" onclick="setCookieRadioBox(this);"/>HTML</label>
+			<label><input type="radio" name="viewdata" id="viewdata" value="txt" onclick="setCookieRadioBox(this);"/>Plain text</label>
 			<label><input type="radio" name="viewdata" id="viewdata" value="tex" onclick="setCookieRadioBox(this);"/>LaTeX</label>
 			
-		</div>
-		
-		<div class="boxlimit" style="margin-top:5px;width:100%">
-		Export File<br>	
-			<label><input type="checkbox" name="tex" id="tex" value="1" onclick="setCookieCheckbox(this);"/>LaTeX</label>
-			<label><input type="checkbox" name="csv" id="csv" value="1" onclick="setCookieCheckbox(this);"/>CSV</label>
-			<label><input type="checkbox" name="html" id="html" value="1" onclick="setCookieCheckbox(this);"/>HTML</label>
 			
-			<label><input type="checkbox" name="save" id="save" value="1" onclick="setCookieCheckbox(this);"/>Save in file</label>
-			<label><input type="checkbox" name="overwrite" id="overwrite" value="1" onclick="setCookieCheckbox(this);"/>Overwrite existing file</label>
-			
-		</div>
+		</td>
+
+		<td valign="top">
 		
-		<div class="boxlimit" style="margin-top:5px;width:100%">
-		Statistical Test<br>	
+			<span style="width:100%;border-bottom:1px solid #cccccc">Statistical Test</span><br>	
 			
 			<label><input type="radio" name="statisticaltest" id="statisticaltest" value="no" checked="checked" onclick="setCookieRadioBox(this);"/>No</label>
 			<label><input type="radio" name="statisticaltest" id="statisticaltest" value="Shaffer" onclick="setCookieRadioBox(this);"/>Shaffer</label>
@@ -541,26 +526,35 @@ function verificaChecks() {
 			<label><input type="radio" name="statisticaltest" id="statisticaltest" value="Holm" onclick="setCookieRadioBox(this);"/>Holm</label>
 			<label><input type="radio" name="statisticaltest" id="statisticaltest" value="Bonferroni-Dunn" onclick="setCookieRadioBox(this);"/>Bonferroni-Dunn</label>
 			<label><input type="radio" name="statisticaltest" id="statisticaltest" value="Bergmann-Hommel" onclick="setCookieRadioBox(this);"/>Bergmann-Hommel</label>
-		</div>
 		
-		<!-- <div class="boxlimit" style="margin-top:5px;width:100%">
-		Process<br>
-			<label><input type="radio" value="0" name="process_type" id="process_type"  onclick="setCookieRadioBox(this);"/>Single Folder</label>
-			<label><input type="radio" value="1" name="process_type" id="process_type" onclick="setCookieRadioBox(this);"/>Merge Folders</label>
-			
-		</div> -->
 		
+		</td>
 		
 
+		
+		<td valign="top">
+			
+			<span style="width:100%;border-bottom:1px solid #cccccc">Export data to file</span><br>
+						
+			<label><input type="checkbox" name="save" id="save" value="1" onclick="setCookieCheckbox(this);"/>Save</label>
+			<label><input type="checkbox" name="overwrite" id="overwrite" value="1" onclick="setCookieCheckbox(this);"/>Overwrite file</label>
+			
+			<div style="float:right;text-align:right;margin-top:-10px;">
+				<input type="button" class="btn btn-success" value="Execute" name="extract" onclick="javascript: if(verificaChecks()==true){ sendAction('extract');}" />
+			
+			</div>
+		
+		</td>
 	
-		<div style="float:right;width:100%;text-align:right;padding-top:5px;">
-			<input type="button" class="btn btn-success" value="Execute" name="extract" onclick="javascript: if(verificaChecks()==true){ sendAction('extract');}" />
-			
-		</div>
-		
-	</div>
+	</tr>
+	
+</table>
+		<div style="margin-top:10px;padding:0px;border:1px solid #cccccc;"></div>
 
-<br>
+		
+		
+
+
 <a href="<?php echo PATH_WWW ?>?component=<?php echo $application->getComponent()?>&controller=<?php echo $application->getController();?>">Root</a>
 
 <?php 
@@ -586,7 +580,11 @@ function verificaChecks() {
 	
 ?>
 		
-		
+			<div id="containerbody" style="height:100%;margin-left: -15px;
+margin-right: -15px;list-style-type: none;
+margin: 0;
+overflow-y: scroll;max-height: 400px;" >
+	
 	<table border='1' id="temporary_files" style="width:100%;">
 		<tr><th>#</th><th style="width:60%;"><label><input type="checkbox" id="checkall" onClick="do_this2()" value="select"/>Name</label></th><th>Size</th><th>DateTime</th></tr>
 <?php
@@ -687,7 +685,7 @@ function verificaChecks() {
 	}
 
 ?>		
-	</table>
+	</table></div>
 	
 
 	
@@ -735,9 +733,9 @@ historicCookieCheckbox("resume");
 historicCookieCheckbox("save");
 historicCookieCheckbox("overwrite");
 
-historicCookieCheckbox("tex");
-historicCookieCheckbox("csv");
-historicCookieCheckbox("html");
+// historicCookieCheckbox("tex");
+// historicCookieCheckbox("csv");
+// historicCookieCheckbox("html");
 
 historicCookieRadiobox('statisticaltest');
 
@@ -750,6 +748,19 @@ historicCookieElementValue("decimalformat", ".");
 
 
 
+function resizeImage()
+{
+	// browser resized, we count new width/height of browser after resizing
+	var height = window.innerHeight - 400;// || $(window).height();
 
+	document.getElementById("containerbody").setAttribute(
+		   "style", "border:1px solid #ffffff;margin-left: -15px;  margin-right: -15px;list-style-type: none;  margin: 0;  overflow-y: scroll;max-height: "+height+"px");
+}
+
+window.addEventListener("resize", resizeImage);
+
+resizeImage();
+
+	
 </script>		
 		

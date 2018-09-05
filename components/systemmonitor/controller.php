@@ -113,215 +113,7 @@ $output = $result["output"];
 
 ?>
 
-
-<style>
-#memory1 {
-	width: 230px;
-	float: left;
-	padding-right: 15px;
-}
-
-#memory1 .progress {
-	border: 2px solid #04B404;
-	height: 44px;
-	width: 220px;
-	margin: 30px auto;
-}
-
-#memory1 .progress .prgbar {
-	background: #81F781;
-	width: <?php echo$memory_dp; ?>%;
-	position: relative;
-	height: 44px;
-	z-index: 999;
-}
-
-#memory1 .progress .prgtext {
-	color: #04B404;
-	text-align: center;
-	font-size: 10px;
-	padding: 6px 0 0;
-	width: 220px;
-	position: absolute;
-	z-index: 1000;
-}
-
-#memory1 .progress .prginfo {
-	margin: 3px 0;
-}
-
-#cpu {
-	width: 230px;
-	float: left;
-	padding-right: 15px;
-}
-
-#cpu .progress {
-	border: 2px solid #FE2E2E;
-	height: 44px;
-	width: 220px;
-	margin: 30px auto;
-}
-
-#cpu .progress .prgbar {
-	background: #F5A9A9;
-	width: <?php echo$cpu_dp; ?>%;
-	position: relative;
-	height: 44px;
-	z-index: 999;
-}
-
-#cpu .progress .prgtext {
-	color: #FE2E2E;
-	text-align: center;
-	font-size: 10px;
-	padding: 6px 0 0;
-	width: 220px;
-	position: absolute;
-	z-index: 1000;
-}
-
-#cpu .progress .prginfo {
-	margin: 3px 0;
-}
-
-#disk {
-	width: 230px;
-	float: left;
-	padding-right: 15px;
-}
-
-#disk .progress {
-	border: 2px solid #5E96E4;
-	height: 44px;
-	width: 220px;
-	margin: 30px auto;
-}
-
-#disk .progress .prgbar {
-	background: #A7C6FF;
-	width: <?php echo$dp; ?>%;
-	position: relative;
-	height: 44px;
-	z-index: 999;
-}
-
-#disk .progress .prgtext {
-	color: #286692;
-	text-align: center;
-	font-size: 10px;
-	padding: 9px 0 0;
-	width: 220px;
-	position: absolute;
-	z-index: 1000;
-}
-
-#disk .progress .prginfo span {
-	font-size: 8px;
-}
-
-#disk .progress .prginfo {
-	margin: 3px 0;
-}
-
-.progress {
-	border: 2px solid #5E96E4;
-	height: 32px;
-	width: 120px;
-	margin: 30px auto;
-}
-
-.progress .prgbar {
-	background: #A7C6FF;
-	width: <?php echo$dp; ?>%;
-	position: relative;
-	height: 32px;
-	z-index: 999;
-}
-
-.progress .prgtext {
-	color: #286692;
-	text-align: center;
-	font-size: 9px;
-	padding: 9px 0 0;
-	width: 120px;
-	position: absolute;
-	z-index: 1000;
-}
-
-.progress .prginfo {
-	margin: 3px 0;
-}
-
-#temporary_files {
-	font-family: verdana, arial, sans-serif;
-	font-size: 11px;
-	color: #333333;
-	border-width: 1px;
-	border-color: #999999;
-	border-collapse: collapse;
-}
-
-#temporary_files th {
-	background: #b5cfd2 url('../../images/cell-blue.jpg');
-	border-width: 1px;
-	padding: 8px;
-	border-style: solid;
-	border-color: #999999;
-}
-
-#temporary_files td {
-	background: #dcddc0 url('../../images/cell-grey.jpg');
-	border-width: 1px;
-	padding: 8px;
-	border-style: solid;
-	border-color: #999999;
-}
-
-#container {
-	border: 1px solid #cccccc;
-	height: 140px;
-}
-
-#left {
-	border: 0px solid red;
-	float: left;
-	width: 100%;
-	height: 100%;
-	font-size: 10px;
-	font-family: arial;
-}
-
-#right {
-	border: 1px solid blue;
-	margin-left: 30%;
-	height: 100%;
-}
-
-#top {
-	border: 1px solid red;
-	height: 80%;
-	overflow-y: scroll;
-}
-
-#bottom {
-	bottom: 0;
-	border: 1px solid red;
-	height: 20%;
-}
-
-hr {
-	bottom: 0;
-	border: none;
-	background-color: #cccccc;
-	height: 1px;
-}
-</style>
-
-&nbsp;
-			<div id="usage_machine">
-					<div id="usage_machine" style="text-align: left;display: block;overflow-wrap: break-word;max-width: 100%;">
-								<pre style="font-family: monospace,monospace;font-size: 11px;text-aling:left;max-width: 90%;"><?php 
+<pre style="font-family: monospace;font-size: 11px;text-aling:left;max-width: 90%;padding:0px;margin:0px;"><?php 
 						
 						$cmd = "w";
 						// $cmd = "uptime| sed 's/,//g'| awk '{print $3\" \"$4\" e \"$5\"h\"}'";
@@ -334,68 +126,20 @@ hr {
 						echo wordwrap(trim($output[0])."\n".$output[1]."\n".$output[2], 80, "\n");
 						
 
+						echo "\n\n";
 						
-						?></pre>
-
-<pre style="font-family: monospace,monospace;font-size: 11px;text-aling:left;overflow-wrap: break-word;max-width: 90%;">
-
-<?php 
 $sysinfo = $utils->getHardwareInfo();
 
 echo wordwrap($sysinfo, 80, "\n");
 
+echo "\n\n";
 
 ?></pre>
-					</div>
-			</div>
+				
 
 							
 
-							<div id="console_cpu">
-
-								<div
-									style="float:left;width:100%">
-									
-									<div id="cpu">
-										<div class='progress'>
-											<div class='prgtext'><?php echo $cpu_dp; ?> % CPU Used</div>
-											<div class='prgbar'></div>
-											<div class='prginfo'>
-
-												<span style='clear: both;'></span>
-											</div>
-										</div>
-									</div>
-									
-									
-
-									<div id="memory1">
-										<div class='progress'>
-											<div class='prgtext'><?php echo $memory_dp; ?> % RAM Used</div>
-											<div class='prgbar'></div>
-											<div class='prginfo'>
-
-												<span style='clear: both;'></span>
-											</div>
-										</div>
-									</div>
-
-									<div id="disk">
-										<div class='progress'>
-											<div class='prgtext'><?php echo $dp; ?>% Disk Used</div>
-											<div class='prgbar'></div>
-											<div class='prginfo'>
-												<span style='float: left;'><?php echo "$du of $dt used"; ?></span>
-												<span style='float: right;'><?php echo "$df of $dt free"; ?></span>
-												<span style='clear: both;'></span>
-											</div>
-										</div>
-									</div>
-									
-									
-								</div>
-
-							</div>
+							
 
 
 							<input type="button" class="btn btn-default" value="Auto Refresh Usage"
@@ -410,9 +154,19 @@ echo wordwrap($sysinfo, 80, "\n");
 							<input type="button" class="btn btn-default" id="buttonrefresh" value="Auto Refresh++"
 								onclick="javascript:if(this.value=='Stop Auto Refresh++'){this.value='Auto Refresh++';cancelViewHardwareInfo=false; }else{ this.value='Stop Auto Refresh++';cancelViewHardwareInfo=true;refreshViewHardwareinfo(); }" />
 					
-						
+							
+							
+							
+<div id="containerbody" style="border:0px solid #000000;height:100%;margin-left: -15px;
+margin-right: -15px;list-style-type: none;
+margin: 0;
+overflow-y: scroll;max-height: 400px;" >
+
+<div id="console_cpu"></div>
 							<div id="temp_files"></div>
 							<div id="console_process"></div>
+</div>
+
 
 
 <div id="console_process2" style="width: 100%; max-width: 100%; border: 0px solid #000; text-align:center;">
@@ -845,6 +599,25 @@ function sendAjaxRequest(url, method, id, callback){
 
 refreshViewTempFiles();
 cancelViewTempFiles=false;
+
+
+
+
+function resizeImage()
+{
+  // browser resized, we count new width/height of browser after resizing
+    var height = window.innerHeight - 370;// || $(window).height();
+    
+    document.getElementById("containerbody").setAttribute(
+	   "style", "border:1px solid #ffffff;margin-left: -15px;  margin-right: -15px;list-style-type: none;  margin: 0;  overflow-y: scroll;max-height: "+height+"px");
+}
+
+window.addEventListener("resize", resizeImage);
+
+resizeImage();
+
+
+
 
 </script>
             	

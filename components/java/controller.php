@@ -420,13 +420,29 @@ function sendAction(task){
 <a
 										href="?component=<?php echo $application->getComponent()?>&controller=upload&folder=<?php echo $folder;?>">File Upload
 										(*.java)</a> <br>
-									<!-- 
-<input type="button" value="BRUNO-Kill-files-alert" name="bruno" onclick="javascript: sendAction('bruno');" />
-|| -->
+									
+
+						<div style="float: left;width:100%; padding-top: 10px">
+						
 									<input type="button" class="btn btn-default" value="New folder" name="folder"
 										onclick="javascript: newFolder();" /> || <input type="button" class="btn btn-danger"
 										value="Delete" name="trash"
-										onclick="javascript: sendAction('remove');" /> || Move to: <select
+										onclick="javascript: sendAction('remove');" /> 
+										
+										
+<?php if(!empty($application->getParameter('folder'))){?>
+								<div style="float: right;">
+									<input type="button" class="btn btn-default"
+                							onclick="javascript: window.location.href='?component=settings';"
+                							name="cancel" value="Return" />
+								</div>								
+<?php }?>	
+						</div>
+						
+						
+						<div style="float:left;width:100%;border:0px solid #000;padding:5px;">
+											<div style="float: right;">
+						 Move to: <select
 										name="movedestine" class="btn btn-default" id=movedestine>		
 		<?php
 
@@ -454,10 +470,15 @@ foreach ($dir_list as $key => $element) {
 }
 
 ?>
+
+
 													
 												</select> <input type="button" class="btn btn-default" value="Move" name="move"
-										id="move" onclick="javascript: sendAction('move');" /> <br> <a
-										href="<?php echo PATH_WWW ?>?component=<?php echo $application->getComponent()?>&controller=<?php echo $application->getController();?>">Root</a>
+										id="move" onclick="javascript: sendAction('move');" /> 
+</div>
+
+<div style="float:left; vertical-align: middle;padding-top:10px;">
+<a href="<?php echo PATH_WWW ?>?component=<?php echo $application->getComponent()?>&controller=<?php echo $application->getController();?>">Root</a>
 
 <?php
 
@@ -476,8 +497,14 @@ foreach ($levels as $key => $item) {
 }
 
 ?>
+</div>
+		</div>
 		
-		
+		<div id="containerbody" style="border:0px solid #000000;height:100%;margin-left: -15px;
+margin-right: -15px;list-style-type: none;
+margin: 0;
+overflow-y: scroll;max-height: 400px;" >
+
 	<table border='1' id="temporary_files" style="width: 100%;">
 										<tr>
 											<th>#</th>
@@ -527,20 +554,27 @@ foreach ($files_list as $key => $element) {
 }
 
 ?>		
-	</table>
+	</table></div>
 							
 							</form>
 	
 	
-	<br>
-	
-									<div style="float: right; padding-left: 10px">
+								
 									
-											<input type="button" class="btn btn-default"
-                							onclick="javascript: window.location.href='?component=settings';"
-                							name="cancel" value="Return" />
-									</div>
-									
-									
-									
+<script>
+
+function resizeImage()
+{
+  // browser resized, we count new width/height of browser after resizing
+    var height = window.innerHeight - 340;// || $(window).height();
+    
+    document.getElementById("containerbody").setAttribute(
+	   "style", "border:1px solid #ffffff;margin-left: -15px;  margin-right: -15px;list-style-type: none;  margin: 0;  overflow-y: scroll;max-height: "+height+"px");
+}
+
+window.addEventListener("resize", resizeImage);
+
+resizeImage();
+
+</script>									
 	

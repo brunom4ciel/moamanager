@@ -35,6 +35,8 @@ if(!$application->is_authentication())
     $application->alert ( "Error: you do not have credentials." );
 }
 
+Template::setDisabledMenu();
+
 // Framework::import("menu", "core/menu");
 
 // if (!class_exists('Menu'))
@@ -1573,7 +1575,20 @@ if($task == "open"){
 									<div style="float: right; padding-left: 10px">
 										
 											
-												<?php 
+
+											
+												<?php if($application->getParameter("task")=="continue"){ ?>
+												
+												<input type="button" id="button_send" class="btn btn-warning" name="button_send" value="Continue" onclick="javascript: sendScripts('restart'); this.disabled=true; this.style.background = '#ffffff'; this.value=this.value+' [disabled]'">	
+												
+												<?php }else{ ?>
+												
+												<input type="button" class="btn btn-success" id="button_send" name="button_send" value="Execute" onclick="javascript: sendScripts('run'); this.disabled=true; this.style.background = '#ffffff'; this.value=this.value+' [disabled]'">	
+												
+												<?php }?>
+												
+												
+										<?php 
 											
 												if($application->getParameter("folder") != "")
 												{
@@ -1585,15 +1600,6 @@ if($task == "open"){
 												}
 											?>
 											
-												<?php if($application->getParameter("task")=="continue"){ ?>
-												
-												<input type="button" id="button_send" class="btn btn-warning" name="button_send" value="Continue" onclick="javascript: sendScripts('restart'); this.disabled=true; this.style.background = '#ffffff'; this.value=this.value+' [disabled]'">	
-												
-												<?php }else{ ?>
-												
-												<input type="button" class="btn btn-success" id="button_send" name="button_send" value="Execute" onclick="javascript: sendScripts('run'); this.disabled=true; this.style.background = '#ffffff'; this.value=this.value+' [disabled]'">	
-												
-												<?php }?>
 									</div>
 									
 									</form>

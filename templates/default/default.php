@@ -233,7 +233,7 @@ if (isset($_GET['alert'])) {
 	</div><!-- 2 close -->	
 </div><!-- 1 close -->
 	
-<div style="width:98%;text-aling:center;font-size:10px; display:flex;  align-items: center;  justify-content:center;margin:10px;"><?php echo APPLICATION_NAME . " Version " . MOAMANAGER_VERSION;?></div>
+<div style="width:98%;text-aling:center;font-size:10px; display:flex;  align-items: center;  justify-content:center;margin-top:-10px;"><?php echo APPLICATION_NAME . " Version " . MOAMANAGER_VERSION;?></div>
 
 	
 		

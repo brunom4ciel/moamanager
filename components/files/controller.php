@@ -1256,6 +1256,14 @@ File Upload (*.txt, *.zip)</a> <br>
     										onclick="javascript: sendAction('zip');" /> <input
     										type="button" class="btn btn-default" value="UnZip" name="decompress"
     										onclick="javascript: sendAction('unzip');" /> 
+    										
+<?php if(!empty($application->getParameter('folder'))){?>
+								<div style="float: right;">
+									<input type="button" class="btn btn-default" value="Return" name="return"
+										onclick="javascript: returnPage();" />
+								</div>								
+<?php }?>	
+    										
 									</div>
 										
 										<div style="float:left;width:100%;border:0px solid #000;padding:5px;">
@@ -1383,16 +1391,6 @@ foreach ($files_list as $key => $element) {
 	
 	
 
-<?php if(!empty($application->getParameter('folder'))){?>
-								<div style="float: right; padding-top: 10px">
-									<input type="button" class="btn btn-default" value="Return" name="return"
-										onclick="javascript: returnPage();" />
-								</div>
-									
-									
-									<br>
-										
-<?php }?>	
 
 
 <script type='text/javascript'>
@@ -1427,7 +1425,7 @@ for ($i = 0; $i < (count($levels) - 2); $i ++) {
 
 function resizeImage(){
   // browser resized, we count new width/height of browser after resizing
-  var height = window.innerHeight - 380;// || $(window).height();
+  var height = window.innerHeight - 300;// || $(window).height();
 
   document.getElementById("containerbody").setAttribute(
 		   "style", "border:1px solid #ffffff;margin-left: -15px;  margin-right: -15px;list-style-type: none;  margin: 0;  overflow-y: scroll;max-height: "+height+"px");
