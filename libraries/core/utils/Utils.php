@@ -384,12 +384,12 @@ class Utils
             }
         }
 
-        $result = "<table class=\"excel\" style=\"float:left;width:auto;display:table-cell;\">" . $table1 . "
+        $result = "<div style='width:100%;float:left'><table class=\"excel\" style=\"float:left;width:20px;display:block;\">" . $table1 . "
 				    </table>
-				    <table class=\"excel\" style=\"float:left;width:auto;display:table-cell;\">
+				    <table class=\"excel\" style=\"float:left;width:97%;display:block;\">
 				        <tbody>" . $table2 . "
 				        </tbody>
-				    </table>";
+				    </table></div>";
 
         return $result;
     }

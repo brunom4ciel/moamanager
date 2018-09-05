@@ -57,6 +57,11 @@ Template::addHeader(array("tag"=>"script",
     . $application->getPathTemplate()
     . "/javascript/base64.js"));
 
+Template::addHeader(array("tag"=>"script",
+    "type"=>"text/javascript",
+    "src"=>""
+    . $application->getPathTemplate()
+    . "/javascript/edit_area/edit_area_full.js"));
 
 $utils = new Utils();
 
@@ -64,7 +69,7 @@ $utils = new Utils();
 $csv = "";
 $result_view = "";
 
-//var_dump($_POST);exit();
+Template::setDisabledMenu();
 
 $task = $application->getParameter("task");
 $folder = $application->getParameter("folder");
@@ -1207,9 +1212,30 @@ if($task == "folder"){
                 
                 case	"html":{
                     
-                    header( 'Content-Type: text/html' );
+//                     header( 'Content-Type: text/html' );
                     
-                    $result_view = $utils->createSheetHtml($result_view);
+                    
+                    if($statisticaltest != 'no')
+                    {
+                        $filename = "AUTOLOAD" . time() . ".tmp";
+                        $utils->setContentFile(PATH_USER_WORKSPACE_PROCESSING . $filename, $result_view);
+                        
+                        
+                        $redirect = array();
+                        
+                        $redirect['url'] = '?';
+                        $redirect['component'] = "statistical";
+                        $redirect['controller'] = "texteditor";
+                        $redirect['filename'] = rawurlencode($filename);
+                        $redirect['task'] = $statisticaltest;
+                        
+                        $application->redirect($redirect);
+                        
+                    }
+                    else 
+                    {
+                        $result_view = $utils->createSheetHtml($result_view);
+                    }
                     
                     break;
                 }
@@ -1253,8 +1279,17 @@ if($task == "folder"){
                         $filename = "AUTOLOAD" . time() . ".tmp";
                         $utils->setContentFile(PATH_USER_WORKSPACE_PROCESSING . $filename, $result_view);
                         
-                        header("Location: index.php?component=statistical&controller=texteditor&filename=" . rawurlencode($filename) . "&task=".$statisticaltest);
                         
+                        $redirect = array();
+                        
+                        $redirect['url'] = '?';
+                        $redirect['component'] = "statistical";
+                        $redirect['controller'] = "texteditor";
+                        $redirect['filename'] = rawurlencode($filename);
+                        $redirect['task'] = $statisticaltest;
+                        
+                        $application->redirect($redirect);
+                         
                     }else{
                         
                        // echo $result_view;
@@ -1378,7 +1413,10 @@ div#table_id table tr td{
 </style>	
 	
 
-							
+  <div id="containerbody" style="height:100%;margin-left: -15px;
+margin-right: -15px;list-style-type: none;
+margin: 0;
+overflow-y: scroll;max-height: 400px;" >  							
 									
 	<!-- 	<input type="button" value="Return" name="return" onclick="javascript: returnPage();" /> 	<br><br>	 -->	
 <?php 
@@ -1433,13 +1471,8 @@ div#table_id table tr td{
 			}else{		
 				?>
 				
-				<div class="page-header">
-        						<h1>
-        							<a href="<?php echo $_SERVER['REQUEST_URI']?>">Result</a>
-        						</h1>
-        					</div>
-        					
-        					
+		
+     					
         					<?php 
 				//if(strlen($csv)>1){
 					
@@ -1466,9 +1499,10 @@ div#table_id table tr td{
 		
 	}
 ?>	
+</div>
 		
-									<div style="float: right; padding-left: 10px;margin-top:20px;">
-										<input type="button" class="btn btn-default" value="Return"
+									<div style="float: right; padding-left: 0px;margin-top:0px;">
+										<input type="button" class="btn btn-default" value="Close"
 											onclick="javascript: returnPage();">
 									</div>
 																
@@ -1476,15 +1510,9 @@ div#table_id table tr td{
 
 
 function returnPage(){
-	//window.history.go(-1);
+	window.close();
 
-	//http://localhost/iea/?component=moa&controller=reportview&filename=maciel.log&folder=New%20Folder/
-
-		window.location.href='?component=<?php echo $application->getParameter("component");?>'
-			+'&controller='
-			+'&folder=<?php echo $application->getParameter("folder");?>'
-			+'&task=open';
-		
+	
 }
 
 
@@ -1494,6 +1522,8 @@ function returnPage(){
 
 
 <script type="text/javascript">
+
+<?php if($type_extract==2){?>
 	// initialisation
 	editAreaLoader.init({
 		id: "data"	// id of the textarea to transform	
@@ -1529,6 +1559,22 @@ function returnPage(){
 		editAreaLoader.execCommand(id, 'set_editable', !editAreaLoader.execCommand(id, 'is_editable'));
 	}
 
+<?php }?>
+
+	function resizeImage()
+	{
+		// browser resized, we count new width/height of browser after resizing
+		var height = window.innerHeight - 220;// || $(window).height();
+
+		document.getElementById("containerbody").setAttribute(
+			   "style", "border:1px solid #ffffff;margin-left: -15px;  margin-right: -15px;list-style-type: none;  margin: 0;  overflow-y: scroll;max-height: "+height+"px");
+	}
+
+	window.addEventListener("resize", resizeImage);
+
+	resizeImage();
+
+	
 </script>
 
 

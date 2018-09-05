@@ -202,7 +202,11 @@ if (in_array($task, $statistical_test_array)) {
 
 ?>
 
+<style>
 
+.dataview{font-size:10px}
+
+</style>
 
 							<form method="POST" action="<?php echo $_SERVER['PHP_SELF'];?>">
 								<input type="hidden"
@@ -218,7 +222,7 @@ if (in_array($task, $statistical_test_array)) {
 										style="float: left; padding-left: 5px; width: 100%; margin-top: 5px;">
 
 
-										<textarea id="data_source" style="width: 100%; height: 400px;"
+										<textarea  class="dataview" id="data_source" style="width: 100%; height: 400px;"
 											name="data_source"><?php echo $data_source?></textarea>
 
 
@@ -227,7 +231,7 @@ if (in_array($task, $statistical_test_array)) {
 
 
 									<div style="float: left; padding-left: 10px">
-										Separador decimal <input type="text" name="decimalformat"
+										View decimal separator <input type="text" name="decimalformat"
 											id="decimalformat" value="," style="width: 40px;" /> <input
 											type="submit" class="btn btn-default" value="Shaffer"
 											onclick="document.forms[0].task.value=this.value"> <input
@@ -248,17 +252,17 @@ if (in_array($task, $statistical_test_array)) {
 											<div
 										style="float: left; padding-left: 5px; width: 100%; margin-top: 5px;">
 
-										<textarea id="data_rank" style="width: 100%; height: 70px;"
+										<textarea class="dataview" id="data_rank" style="width: 100%; height: 70px;"
 											name="data_rank"><?php echo $data_rank?></textarea>
 
-										<textarea id="data_postos" style="width: 100%; height: 400px;"
-											name="data_postos"><?php echo $data_postos?></textarea>
-
-										<textarea id="data_diff_statistical" style="width: 100%; height: 400px;"
+										<textarea class="dataview" id="data_diff_statistical" style="width: 100%; height: 400px;"
 											name="data_diff_statistical"><?php echo $data_diff_statistical?></textarea>
-
+											
+											
+										<textarea class="dataview" id="data_postos" style="width: 100%; height: 400px;"
+											name="data_postos"><?php echo $data_postos?></textarea>
 										
-										<textarea id="data_result" style="width: 100%; height: 400px;"
+										<textarea class="dataview" id="data_result" style="width: 100%; height: 400px;"
 											name="data_result"><?php echo $data_result?></textarea>
 											
 									</div>

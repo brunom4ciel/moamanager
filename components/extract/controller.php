@@ -384,6 +384,7 @@ function historicCookieRadiobox(elementId){
 function sendAction(task){	
 	
 	document.getElementById('task').value = task;
+	document.getElementById('formulario').target='_blank';
 	document.getElementById('formulario').submit();
 	
 }

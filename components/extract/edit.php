@@ -84,9 +84,18 @@ if ($filename != null) {
             $utils->set_perms($filename, "0777");
             if(!$utils->setContentFile($filename, $data))
             {
-                exit("Error: modifying the file was not allowed.");
+                $application->alert("Error: modifying the file was not allowed.");
             }
         }
+        
+        $redirect = array();
+        
+        $redirect['url'] = '?';
+        $redirect['component'] = $application->getComponent();
+        //$redirect['controller'] = $application->getController();
+        $redirect['folder'] = $application->getParameter("folder");
+        
+        $application->redirect($redirect);
         
     } else {
 
@@ -143,11 +152,11 @@ if ($filename != null) {
 									</div>
 
 
-									<div style="float: left; padding-left: 10px">
+									<div style="float: right; padding-left: 10px">
 																			
-										<input type='button' class="btn btn-default" onclick='toogle_editable("data", this);' value='Toggle to read only mode' />
+										<input type='button' class="btn btn-info" onclick='toogle_editable("data", this);' value='Toggle to read only mode' />
 																			
-										<input type="submit" class="btn btn-primary" value="Save"> 
+										<input type="submit" class="btn btn-success" value="Save"> 
 										
 										<input type="button" class="btn btn-default" value="Return" name="return"
 										onclick="javascript: window.history.go(-1);" />
