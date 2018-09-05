@@ -64,29 +64,87 @@ if ($task == "folder") {} else {
 
     if ($task == "rename") {} else {
 
-        if ($task == "remove") {
+        if ($task == "remove") 
+        {
 
+            
             $element = $application->getParameter("element");
-
             $dir = $dirBackup . $application->getParameter("folder");
-
+            $movedestine = DIRNAME_TRASH;
+            
             foreach ($element as $key => $item) {
-
-                if (is_file($dir . $item)) {
-
-                    $from_file = $dir . $item;
-                    unlink($from_file);
-                    // echo "file - from: ".$from_file."<br>";
-                } else {
-
-                    if (is_dir($dir . $item)) {
-
-                        $from_dir = $dir . $item;
-                        $utils->delTree($from_dir);
-                        // echo "dir - from: ".$from_dir."<br>";
+                
+                if ($movedestine != $item) {
+                    
+                    $movedestine_ = PATH_USER_WORKSPACE_STORAGE . $movedestine . DIRECTORY_SEPARATOR;
+                    
+                    if (is_file($dir . $item)) {
+                        
+                        $from_file = $dir . $item;
+                        $to_file = $movedestine_ . $item;
+                        
+                        if (file_exists($to_file))
+                        {
+                            chmod($to_file, octdec("0777"));
+                            
+                            if(!unlink($to_file))
+                            {
+                                $application->alert("Error: operation not allowed. File: " . $to_file);
+                            }
+                        }
+                        
+                        rename($from_file, $to_file);
+                        
+                        // echo "file - from: ".$from_file.", to: ".$to_file."<br>";
+                    } else {
+                        
+                        if (is_dir($dir . $item)) {
+                            
+                            // chmod($dir, 0777);
+                            
+                            $from_dir = $dir . $item;
+                            $to_dir = $movedestine_ . $item;
+                            
+                            if (is_dir($to_dir))
+                            {
+                                $utils->set_perms($to_dir, true);
+                                $utils->delTree($to_dir);
+                                //exit("Error: operation not allowed. File: " . $to_file);
+                            }
+                            rename($from_dir, $to_dir);
+                            
+                            // echo "dir - from: ".$from_dir.", to: ".$to_dir."<br>";
+                        }
                     }
                 }
+                // echo $item."<br>";
             }
+            
+//             $application->redirect("?component=" . $application->getComponent() . "&controller=" . $application->getController() . "&folder=" . $application->getParameter("folder"));
+            
+            
+            
+//             $element = $application->getParameter("element");
+
+//             $dir = $dirBackup . $application->getParameter("folder");
+
+//             foreach ($element as $key => $item) {
+
+//                 if (is_file($dir . $item)) {
+
+//                     $from_file = $dir . $item;
+//                     unlink($from_file);
+//                     // echo "file - from: ".$from_file."<br>";
+//                 } else {
+
+//                     if (is_dir($dir . $item)) {
+
+//                         $from_dir = $dir . $item;
+//                         $utils->delTree($from_dir);
+//                         // echo "dir - from: ".$from_dir."<br>";
+//                     }
+//                 }
+//             }
 
             $redirect = array();
             
@@ -601,7 +659,7 @@ historicCookieCheckbox("overwrite_file");
 function resizeImage()
 {
   // browser resized, we count new width/height of browser after resizing
-    var height = window.innerHeight - 380;// || $(window).height();
+    var height = window.innerHeight - 280;// || $(window).height();
     
     document.getElementById("containerbody").setAttribute(
 	   "style", "border:1px solid #ffffff;margin-left: -15px;  margin-right: -15px;list-style-type: none;  margin: 0;  overflow-y: scroll;max-height: "+height+"px");

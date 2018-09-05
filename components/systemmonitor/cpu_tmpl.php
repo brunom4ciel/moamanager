@@ -10,10 +10,11 @@ namespace moam\components\home;
 defined('_EXEC') or die();
 
 use moam\core\Framework;
-use moam\core\Application;
+// use moam\core\Application;
 use moam\core\Properties;
 use moam\libraries\core\utils\Utils;
 use moam\libraries\core\sys\CPULoad;
+
 if (! class_exists('Application')) {
     $application = Framework::getApplication();
 }
@@ -52,7 +53,7 @@ function get_memory()
 {
     foreach (file('/proc/meminfo') as $ri)
         $m[strtok($ri, ':')] = strtok('');
-    return 100 - round(($m['MemFree'] + $m['Buffers'] + $m['Cached']) / $m['MemTotal'] * 100);
+    return 100 - @round(($m['MemFree'] + $m['Buffers'] + $m['Cached']) / $m['MemTotal'] * 100);
 }
 
 $memory_dp = get_memory();

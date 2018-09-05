@@ -100,37 +100,6 @@ if ($task == "folder") {
 
         if ($task == "remove") {
 
-//             $element = $application->getParameter("element");
-
-//             $dir = PATH_USER_WORKSPACE_STORAGE . DIRNAME_SCRIPT . DIRECTORY_SEPARATOR . $application->getParameter("folder");
-
-//             foreach ($element as $key => $item) {
-
-//                 if (is_file($dir . $item)) {
-                    
-//                     // verifica o formato da extensão do arquivo
-//                     if (in_array(substr($item, strrpos($item, ".") + 1), $files_extensions)) {
-
-//                         $from_file = $dir . $item;
-//                         unlink($from_file);
-//                     }else{
-//                         exit("extension not support.");
-//                     }
-                    
-//                 } else {
-
-//                     if (is_dir($dir . $item)) {
-
-//                         $from_dir = $dir . $item;
-
-//                         $utils->delTree($from_dir);
-//                         // echo "dir - from: ".$from_dir."<br>";
-//                     }
-//                 }
-//             }
-
-//             header("Location: " . PATH_WWW . "?component=" . $application->getComponent() . "&controller=" . $application->getController() . "&folder=" . $application->getParameter("folder"));
-        
             
             $element = $application->getParameter("element");
             $dir = PATH_USER_WORKSPACE_STORAGE . DIRNAME_SCRIPT . DIRECTORY_SEPARATOR . $application->getParameter("folder");
@@ -184,7 +153,7 @@ if ($task == "folder") {
                 // echo $item."<br>";
             }
             
-            header("Location: " . PATH_WWW . "?component=" . $application->getComponent() . "&controller=" . $application->getController() . "&folder=" . $application->getParameter("folder"));
+            $application->redirect("?component=" . $application->getComponent() . "&controller=" . $application->getController() . "&folder=" . $application->getParameter("folder"));
             
         } else {
 
@@ -246,45 +215,43 @@ if ($task == "folder") {
                 // exit("<br>bruno - move");
             } else {
 
-                if ($task == 'zip') {
-
-                    $folder = $application->getParameter("folder");
-
-                    if ($folder != null) {
-                        if (substr($folder, strlen($folder) - 1) != "/") {
-                            $folder .= DIRECTORY_SEPARATOR;
-                        }
-                    }
-
+                if ($task == 'zip') 
+                {                   
+                    
                     $element = $application->getParameter("element");
-
+                    
                     $filename = $application->getParameter("filename");
-
+                    
                     $filename = str_replace(":", "-", $filename);
                     $filename = str_replace("/", "-", $filename);
                     $filename = trim($filename) . ".zip";
-
-                    $dir = PATH_USER_WORKSPACE_STORAGE . DIRNAME_SCRIPT . 
-                    // .DIRECTORY_SEPARATOR
-                    $folder;
-
+                    
+                    $dir = PATH_USER_WORKSPACE_STORAGE . DIRNAME_SCRIPT
+                    . DIRECTORY_SEPARATOR
+                    . $folder;
+                    
+                    
                     if (file_exists($dir . $filename)) {
-
+                        
                         $overwrite = $application->getParameter("overwrite");
-
-                        if ($overwrite == "1") {
+                        
+                        if ($overwrite == "1") 
+                        {
                             unlink($dir . $filename);
-
+                            
                             // create zip
                             create_zipfile($dir, $filename, $element);
                         } else {
                             $error[] = "File name exists in folder.";
                         }
                     } else {
-
+                        
                         // create zip
                         create_zipfile($dir, $filename, $element);
                     }
+                    
+                    
+                    
                 } else {
 
                     if ($task == 'unzip') {

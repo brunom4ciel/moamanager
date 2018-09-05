@@ -142,17 +142,17 @@ echo "\n\n";
 							
 
 
-							<input type="button" class="btn btn-default" value="Auto Refresh Usage"
-								onclick="javascript:if(this.value=='Stop Auto Refresh Usage'){this.value='Auto Refresh Usage';cancelViewCPU=false; }else{ this.value='Stop Auto Refresh Usage';cancelViewCPU=true;refreshViewCPU(); }" />
+							<input type="button" class="btn btn-default" value="Usage Summary"
+								onclick="javascript:updateRefreshpp(this, 0);" />
 							
-							<input type="button" class="btn btn-default" value="Auto Refresh Process"
-								onclick="javascript:if(this.value=='Stop Auto Refresh Process'){this.value='Auto Refresh Process';cancelViewProcess=false; }else{ this.value='Stop Auto Refresh Process';cancelViewProcess=true;refreshViewProcess(); }" />
+							<input type="button" class="btn btn-default" value="Process"
+								onclick="javascript:updateRefreshpp(this, 1);" />
 							
-							<input type="button" class="btn btn-default" value="Auto Refresh Temp Files"
-								onclick="javascript:if(this.value=='Stop Auto Refresh Temp Files'){this.value='Auto Refresh Temp Files';cancelViewTempFiles=false; }else{ this.value='Stop Auto Refresh Temp Files';cancelViewTempFiles=true;refreshViewTempFiles(); }" />
+							<input type="button" class="btn btn-default" value="Temp files"
+								onclick="javascript:updateRefreshpp(this, 2);" />
 
-							<input type="button" class="btn btn-default" id="buttonrefresh" value="Auto Refresh++"
-								onclick="javascript:if(this.value=='Stop Auto Refresh++'){this.value='Auto Refresh++';cancelViewHardwareInfo=false; }else{ this.value='Stop Auto Refresh++';cancelViewHardwareInfo=true;refreshViewHardwareinfo(); }" />
+							<input type="button" class="btn btn-default" id="buttonrefresh" value="RAM & CPU by cores"
+								onclick="javascript: updateRefreshpp(this, 3);" />
 					
 							
 							
@@ -162,17 +162,20 @@ margin-right: -15px;list-style-type: none;
 margin: 0;
 overflow-y: scroll;max-height: 400px;" >
 
-<div id="console_cpu"></div>
+							<div id="console_cpu"></div>
 							<div id="temp_files"></div>
 							<div id="console_process"></div>
+		<div id="console_process2" style="width: 100%; max-width: 100%; border: 0px solid #000; text-align:center;">
+        	<div id="moamram" style="float:left;width: 20%; max-width: 90%; border: 0px solid #000; text-align:center;"></div>
+        	<div id="moamcpu" style="float:left;width: 80%; max-width: 90%; border: 0px solid #000; text-align:center;"></div>
+        </div>
+
+
 </div>
 
 
 
-<div id="console_process2" style="width: 100%; max-width: 100%; border: 0px solid #000; text-align:center;">
-	<div id="moamram" style="float:left;width: 20%; max-width: 90%; border: 0px solid #000; text-align:center;"></div>
-	<div id="moamcpu" style="float:left;width: 80%; max-width: 90%; border: 0px solid #000; text-align:center;"></div>
-</div>
+
 
 
 
@@ -181,37 +184,73 @@ overflow-y: scroll;max-height: 400px;" >
 <script type='text/javascript'>
 
 
+var buttonCancelTimeOut =  [];
+buttonCancelTimeOut.push(true, true, true, true);
+
+var buttonController =  [];
+buttonController.push('cpu_tmpl', 'process_tmpl', 'temp_files_tmpl', 'hardwareinfo_tmpl');
+
+var buttonControllerElement =  [];
+buttonControllerElement.push('console_cpu', 'console_process', 'temp_files', 'console_process2');
+
+var buttonInterval =  [];
+buttonInterval.push(false, false, false, false);
 
 
-// var cancelViewCPU=true;
-// var cancelViewProcess=true;
-var cancelViewHardwareInfo=true;
-var timeoutajust = 500;
+function updateRefreshpp(objElement, indexButton)
+{
+	var label = objElement.value;
+	label_pre = label.substring(0,4);
+			
+	if(label_pre == 'stop')
+	{
+		objElement.value = label.substring(5);
+		buttonCancelTimeOut[indexButton] = true;
+	}
+	else
+	{ 
+		objElement.value = 'stop ' + label;
+		buttonCancelTimeOut[indexButton] = false;
+		refreshPOST(indexButton);
+	}
+}
 
-function refreshViewHardwareinfo(){
-	
-	setTimeout(function () {
-        // Do Something Here
-        // Then recall the parent function to
-        // create a recursive loop.
-        if(cancelViewHardwareInfo==true){
-            
-        	url = 'index.php?component=<?php echo $application->getComponent()?>&controller=hardwareinfo_tmpl&task=view&tmpl=tmpl';
-            method = 'POST';
-            id = 'console_process2';
-            
-        	sendAjaxRequest2(url, method, id, 'refreshViewHardwareinfo();');
-        	timeoutajust = 1000;
+
+function refreshPOST(indexButton)
+{
+
+    if(buttonCancelTimeOut[indexButton] == true)
+    {    	
+    	document.getElementById(buttonControllerElement[indexButton]).innerHTML = '';    	
+//     	clearInterval(buttonInterval[indexButton]);
+    }
+    else
+    {	
+    	controller = buttonController[indexButton];
+        url = 'index.php?component=<?php echo $application->getComponent()?>&controller='+controller+'&task=view&tmpl=tmpl';
+        method = 'POST';
+        id = buttonControllerElement[indexButton];
+
+        if(indexButton == 3)
+        {
+        	sendAjaxRequest2(url, method, id);
         }
-        	
-    }, timeoutajust);
-    
-	
+        else
+        {
+        	sendAjaxRequest(url, method, id);
+        }
+        
+//     	buttonInterval[indexButton] = window.setInterval(function() {
+		setTimeout(function () {    		
+    		refreshPOST(indexButton);
+    	}, 2000);
+    }
+     
 }
 
 
 
-function sendAjaxRequest2(url, method, id, callback){
+function sendAjaxRequest2(url, method, id){
 
 
 	var parameters ="";
@@ -352,28 +391,7 @@ function sendAjaxRequest2(url, method, id, callback){
         			{
 						document.getElementById(keyname).innerHTML = imgs;
         			}
-        			
-//         			if(typeof(objectArray[0]) == 'object')
-//                     {
-//                         headers = array_keys(objectArray[0]);
 
-
-//                         alert("ok");
-                        
-//                         for (i = 0; i < headers.length; i++){
-//                             alert(Base64.decode(headers[i]));
-//                         }
-                        
-//                     }
-
-                    
-			         
-					
-			       // var jsonHtmlTable = ConvertJsonToTable(objectArray, 'jsonTable', null, 'Download');
-			        
-// 					document.getElementById(id).innerHTML = "<br>"+html+"<br>";	
-            			
-            			
             			
         			break;
         		case	401:
@@ -389,96 +407,14 @@ function sendAjaxRequest2(url, method, id, callback){
 
 	HttpReq.send();
 	//refreshViewProcess();
-	eval(callback);
+// 	eval(callback);
 
 }
 
 
 
 
-refreshViewHardwareinfo();
-cancelViewHardwareInfo=false;
-// document.getElementById("buttonrefresh").value='Stop Auto Refresh';
-
-</script>
-
-
-<script type='text/javascript'>
-
-
-
-
-var cancelViewCPU=true;
-var cancelViewProcess=true;
-var cancelViewTempFiles=true;
-
-
-function refreshViewTempFiles(){
-	
-	setTimeout(function () {
-        // Do Something Here
-        // Then recall the parent function to
-        // create a recursive loop.
-        if(cancelViewTempFiles==true){
-            
-            url = 'index.php?component=<?php echo $application->getComponent()?>&controller=temp_files_tmpl&task=view&tmpl=tmpl';
-            method = 'POST';
-            id = 'temp_files';
-            
-        	sendAjaxRequest(url, method, id, 'refreshViewTempFiles();');
-        }
-        	
-    }, 1000);
-    
-	
-}
-
-
-
-function refreshViewCPU(){
-	
-	setTimeout(function () {
-        // Do Something Here
-        // Then recall the parent function to
-        // create a recursive loop.
-        if(cancelViewCPU==true){
-            
-            url = 'index.php?component=<?php echo $application->getComponent()?>&controller=cpu_tmpl&task=view&tmpl=tmpl';
-            method = 'POST';
-            id = 'console_cpu';
-            
-        	sendAjaxRequest(url, method, id, 'refreshViewCPU();');
-        }
-        	
-    }, 1000);
-    
-	
-}
-
-
-function refreshViewProcess(){
-	
-	setTimeout(function () {
-        // Do Something Here
-        // Then recall the parent function to
-        // create a recursive loop.
-        if(cancelViewProcess==true){
-            
-        	url = 'index.php?component=<?php echo $application->getComponent()?>&controller=process_tmpl&task=view&tmpl=tmpl';
-            method = 'POST';
-            id = 'console_process';
-            
-        	sendAjaxRequest(url, method, id, 'refreshViewProcess();');
-        }
-        	
-    }, 1000);
-    
-	
-}
-
-
-
-function sendAjaxRequest(url, method, id, callback){
+function sendAjaxRequest(url, method, id){
 
 
 	var parameters ="";
@@ -590,15 +526,9 @@ function sendAjaxRequest(url, method, id, callback){
 
 	HttpReq.send();
 	//refreshViewProcess();
-	eval(callback);
+// 	eval(callback);
 
 }
-
-
-
-
-refreshViewTempFiles();
-cancelViewTempFiles=false;
 
 
 

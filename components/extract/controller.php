@@ -467,7 +467,7 @@ function verificaChecks() {
 		<input type="hidden" name="task" id="task" value=""/>		
 		
 
-<table border="0" style="width:100%;font-size:10pt;">
+<table style="width:100%;font-size:10pt;">
 	<tr>
 		<td valign="top" style="max-width: 200px">
 		<span style="width:100%;border-bottom:1px solid #cccccc">Type of extraction</span><br>
@@ -752,7 +752,7 @@ historicCookieElementValue("decimalformat", ".");
 function resizeImage()
 {
 	// browser resized, we count new width/height of browser after resizing
-	var height = window.innerHeight - 400;// || $(window).height();
+	var height = window.innerHeight - 350;// || $(window).height();
 
 	document.getElementById("containerbody").setAttribute(
 		   "style", "border:1px solid #ffffff;margin-left: -15px;  margin-right: -15px;list-style-type: none;  margin: 0;  overflow-y: scroll;max-height: "+height+"px");

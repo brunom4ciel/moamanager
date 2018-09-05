@@ -194,6 +194,8 @@ class ParallelProcess extends Utils
         $pool = array();
         $pipes = array();
         $output = array();
+        $tmpfile = array();
+        $tmpfilehandle = array();
         $cpu = array();
         $ram = array();
         $foo = "";
@@ -262,6 +264,8 @@ class ParallelProcess extends Utils
                         
                         $pool[$i] = proc_open($commande["command"], $descriptorspec, $pipes[$i]);
                         $commande_lancee = TRUE;
+                        
+                        $tmpfilehandle[$i] = tmpfile();//tempnam(sys_get_temp_dir(), "file-chainer");
                         
                         
                         $ram[$i] = $this->getHardwareMemoryRamUsage();
@@ -345,8 +349,8 @@ class ParallelProcess extends Utils
                             $jsonfile->load();
                             
                             
-                            if (is_writable($filename)) {
-                                
+                            if (file_exists($filename))//is_writable($filename)) {
+                            {
                                 $tagSearch = $interfacename . " \\";
                                 $script = substr($command, strrpos($command, $tagSearch) + strlen($tagSearch) + 2);
                                 $script = trim($script);
@@ -361,7 +365,27 @@ class ParallelProcess extends Utils
                                 $opts["filename"] = $filename;
                                 $opts["script"] = $script;
                                 $opts["command"] = $command;
-                                $opts["output"] = $output[$i];
+                                
+                                
+                                
+                                if(is_resource($tmpfilehandle[$i]))
+                                {
+                                    rewind($tmpfilehandle[$i]);
+                                    $s = "";
+                                    
+                                    while (($buffer = fgets($tmpfilehandle[$i], 1024)) !== false) {
+                                        $s .= $buffer;
+                                    }
+                                    
+                                    $opts["output"] = base64_encode(gzcompress($s, 9));//$output[$i];
+                                    
+                                    fclose($tmpfilehandle[$i]);
+                                    
+                                }else 
+                                {
+                                    $opts["output"] = "";//$output[$i];
+                                }
+                                
                                 $opts["username"] =  $username;
                                 $opts["timestart"] =  $data['starttime'];
                                 $opts["ramusagem"] =  $ram[$i];
@@ -433,6 +457,17 @@ class ParallelProcess extends Utils
                             
                             $pool[$i] = proc_open($commande["command"], $descriptorspec, $pipes[$i]);
                             $commande_lancee = TRUE;
+                            
+                            $tmpfilehandle[$i] = tmpfile();
+                            
+//                             $tmpfile[$i] = tempnam(sys_get_temp_dir(), "file-chainer");
+                            
+//                             if(is_writable($tmpfile[$i]))
+//                             {
+//                                 $tmpfilehandle[$i] = fopen($tmpfile[$i], "a");
+//                             }
+                            
+                            
                             
                             $ram[$i] = $this->getHardwareMemoryRamUsage();
                             $cpu[$i] = $this->getHardwareCpuUsage();   
@@ -515,7 +550,12 @@ class ParallelProcess extends Utils
                                 foreach ($read as $r)
                                 {
                                     $s = fread($r, 1024);
-                                    $output[$i] .= $s;
+//                                     $output[$i] .= $s;
+                                    
+                                    if(is_resource($tmpfilehandle[$i]))
+                                    {
+                                        fwrite($tmpfilehandle[$i], $s);
+                                    }
                                 }
                             }
                             
@@ -570,7 +610,13 @@ class ParallelProcess extends Utils
                             foreach ($read as $r)
                             {
                                 $s = fread($r, 1024);
-                                $output[$i] .= $s;
+//                                 $output[$i] .= $s;
+                                
+                                if(is_resource($tmpfilehandle[$i]))
+                                {
+                                    fwrite($tmpfilehandle[$i], $s);
+                                }
+                                
                             }
                         }
                         
@@ -585,6 +631,8 @@ class ParallelProcess extends Utils
                         
                         fclose($pipes[$i][1]);
                         fclose($pipes[$i][2]);
+                        
+//                         fclose($tmpfilehandle[$i]);
                         
                         // exit("bruno");
                         $command = $etat["command"];
@@ -605,8 +653,8 @@ class ParallelProcess extends Utils
                         $jsonfile->load();
                         
                         
-                        if (is_writable($filename)) {
-                            
+                        if (file_exists($filename))//is_writable($filename)) {
+                        {
                             $tagSearch = $interfacename . " \\";
                             $script = substr($command, strrpos($command, $tagSearch) + strlen($tagSearch) + 2);
                             $script = trim($script);
@@ -620,7 +668,29 @@ class ParallelProcess extends Utils
                             $opts["filename"] = $filename;
                             $opts["script"] = $script;
                             $opts["command"] = $command;
-                            $opts["output"] = $output[$i];
+                            
+                            
+                            
+                            if(is_resource($tmpfilehandle[$i]))
+                            {
+                                //exit("bruno2");
+                                rewind($tmpfilehandle[$i]);
+                                $s = "";
+                                
+                                while (($buffer = fgets($tmpfilehandle[$i], 1024)) !== false) {
+                                    $s .= $buffer;
+                                }
+                                
+                                $opts["output"] = base64_encode(gzcompress($s, 9));//$output[$i];
+                                
+                                fclose($tmpfilehandle[$i]);
+                                
+                            }else
+                            {
+                                $opts["output"] = "";//$output[$i];
+                            }
+                            
+                            
                             $opts["username"] =  $username;
                             $opts["timestart"] =  $data['starttime'];
                             $opts["ramusagem"] =  $ram[$i];

@@ -534,7 +534,7 @@ class Utils
 	 * 
 	 * @return	void
 	 */
-    public function finsert($handle, $string, $bufferSize = 16384)
+    public function finsert($handle, $string, $bufferSize = 1024)
     {
         $insertionPoint = ftell($handle);
 
@@ -555,6 +555,7 @@ class Utils
 
         // Write back everything starting with the string to insert
         fwrite($handle, $string);
+        
         while (! feof($lastPartHandle)) {
             fwrite($handle, fread($lastPartHandle, $bufferSize), $bufferSize);
         }

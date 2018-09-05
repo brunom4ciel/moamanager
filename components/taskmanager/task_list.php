@@ -36,7 +36,7 @@ class TaskList
             substring(execution_history.script,1,200) as script,
             execution_history.process_initialized,
             execution_history.process_closed,
-            substring(execution_history.command,1,250) as command,
+            substring(execution_history.command,1,1550) as command,
             execution_history.source,
             execution_history.pid
                 
@@ -79,7 +79,7 @@ class TaskList
             substring(execution_history.script,1,200) as script,
             execution_history.process_initialized,
             execution_history.process_closed,
-            substring(execution_history.command,1,250) as command,
+            substring(execution_history.command,1,1550) as command,
             execution_history.source,
             execution_history.pid
 			

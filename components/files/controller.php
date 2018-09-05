@@ -58,6 +58,41 @@ if ($folder != null) {
 $dir = PATH_USER_WORKSPACE_STORAGE . $folder;
 
 
+// $tmpfile = tempnam(sys_get_temp_dir(), "file-chainer");
+
+// $tmpfilehandle = tmpfile();//fopen($tmpfile, "a");
+
+// if(is_resource($tmpfilehandle))
+// {
+//     if(is_writable($tmpfile))
+//     {
+//         fwrite($tmpfilehandle, "teste ---");
+//         fwrite($tmpfilehandle, "teste1 ---");
+//     }
+    
+//     $s = "";
+//     rewind($tmpfilehandle);
+    
+//     while (($buffer = fgets($tmpfilehandle, 1024)) !== false) {
+//         $s .= $buffer;
+//     }
+    
+//     fclose($tmpfilehandle);
+    
+//     //$s = file_get_contents($tmpfile);
+    
+//     //unlink($tmpfile);
+    
+//     var_dump($s);
+    
+//     exit("" . $tmpfile);
+// }
+
+
+
+// exit("--");
+
+
 if ($task == "folder") {
 
     $foldernew = $application->getParameter("foldernew");
@@ -296,6 +331,8 @@ if ($task == "folder") {
                         // create zip
                         create_zipfile($dir, $filename, $element);
                     }
+                    
+                    
                 } else {
 
                     if ($task == 'unzip') {

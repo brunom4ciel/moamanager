@@ -10,7 +10,7 @@ namespace moam\components\home;
 defined('_EXEC') or die();
 
 use moam\core\Framework;
-use moam\core\Application;
+// use moam\core\Application;
 use moam\libraries\core\utils\Utils;
 use moam\core\Properties;
 
@@ -33,14 +33,14 @@ $utils = new Utils();
 
 $task = $application->getParameter("task");
 
-if($task == "kill"){
+// if($task == "kill"){
     
-    $pip = $application->getParameter("pip");
+//     $pip = $application->getParameter("pip");
     
-    echo "disabled to user.";//.$pip;
-    exit();
+//     echo "disabled to user.";//.$pip;
+//     exit();
     
-}
+// }
 
 
 
@@ -54,8 +54,8 @@ $col_names = array("pid"=>"PID",
     "uname"=>"NAME",
     "pmem"=>"%MEN",
     "pcpu"=>"%CPU",
-    "start_time"=>"START_TIME",
-    "cputime"=>"CPU_TIME",
+    "start_time"=>"START",
+    "cputime"=>"TIME",
     "cmd"=>"COMMAND"
     ,"args"=>"ARGS");
 $cols_string = "";
@@ -157,6 +157,5 @@ for($i=1; $i<count($linhas); $i++){
 print json_encode($json)
 
 
-?>	
-	
+?>		
 								

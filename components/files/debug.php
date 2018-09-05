@@ -160,6 +160,16 @@ if ($filename != null) {
                         $script = $utils->getMetadataValueScript($filename, "script");
                         $output = $utils->getMetadataValueScript($filename, "command-output");
                         
+//                         $gz = base64_decode($output);
+                        
+//                         if(!testGZ($gz))
+//                         {
+//                             $output = gzuncompress($gz);
+//                         }      
+
+                        $output = @gzuncompress(base64_decode($output));
+                        
+                        
                         if(strpos($data1["data"], "Accuracy:") ===  false)
                         {
                             
@@ -193,13 +203,26 @@ if ($filename != null) {
                         
                     
                     
-                    $data = $script . "\n\n" . $data1["data"];
+                    $data = $script . "\n\n" . trim($data1["data"]);
                     $filesize = $utils->formatSize($size);
                 }
             }
         }
     }
 }
+
+
+function testGZ($str) 
+{
+    if (strlen($str) < 2) 
+    {
+        return false;
+    }
+    
+    return (ord(substr($str, 0, 1)) == 0x1f && ord(substr($str, 1, 1)) == 0x8b);
+}
+
+
 
 ?>
 

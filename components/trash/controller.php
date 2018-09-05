@@ -649,7 +649,7 @@ historicCookieCheckbox("overwrite_file");
 function resizeImage()
 {
   // browser resized, we count new width/height of browser after resizing
-    var height = window.innerHeight - 380;// || $(window).height();
+    var height = window.innerHeight - 280;// || $(window).height();
     
     document.getElementById("containerbody").setAttribute(
 	   "style", "border:1px solid #ffffff;margin-left: -15px;  margin-right: -15px;list-style-type: none;  margin: 0;  overflow-y: scroll;max-height: "+height+"px");
