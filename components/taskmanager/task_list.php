@@ -147,7 +147,7 @@ class TaskList
     
     
     
-    public function pid_setNull($execution_history_id, $pid, $user_id)
+    public function pid_setNull($execution_history_id)//, $pid)//, $user_id)
     {
         $result = false;
         
@@ -157,13 +157,12 @@ class TaskList
                 
                 execution_history.pid = null
 
-        		WHERE  execution_history.execution_history_id = ?
-                        and user_id=?
-                        and pid = ?");
+        		WHERE  execution_history.execution_history_id = ? and process_closed is null
+                        ");
             
             $rs->bindParam(1, $execution_history_id, PDO::PARAM_INT);
-            $rs->bindParam(2, $user_id, PDO::PARAM_INT);
-            $rs->bindParam(3, $pid, PDO::PARAM_INT);
+//             $rs->bindParam(2, $user_id, PDO::PARAM_INT);
+//             $rs->bindParam(2, $pid, PDO::PARAM_INT);
             
             // open transaction
             $this->DB->beginTransaction();

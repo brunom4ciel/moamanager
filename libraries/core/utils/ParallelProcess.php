@@ -349,7 +349,7 @@ class ParallelProcess extends Utils
                             $jsonfile->load();
                             
                             
-                            if (file_exists($filename))//is_writable($filename)) {
+                            if (is_writable($filename))
                             {
                                 $tagSearch = $interfacename . " \\";
                                 $script = substr($command, strrpos($command, $tagSearch) + strlen($tagSearch) + 2);
@@ -364,8 +364,7 @@ class ParallelProcess extends Utils
                                 $opts = array();
                                 $opts["filename"] = $filename;
                                 $opts["script"] = $script;
-                                $opts["command"] = $command;
-                                
+                                $opts["command"] = $command;                                
                                 
                                 
                                 if(is_resource($tmpfilehandle[$i]))
@@ -653,7 +652,7 @@ class ParallelProcess extends Utils
                         $jsonfile->load();
                         
                         
-                        if (file_exists($filename))//is_writable($filename)) {
+                        if (is_writable($filename))
                         {
                             $tagSearch = $interfacename . " \\";
                             $script = substr($command, strrpos($command, $tagSearch) + strlen($tagSearch) + 2);

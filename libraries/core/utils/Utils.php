@@ -98,12 +98,20 @@ class Utils
     {
         $result = FALSE;
         
-        exec("ps aux | grep \"${pid}\" | grep -v grep | awk '{ print $2 }' | head -1", $out);
-        
+//         exec("ps aux | grep \"${pid}\" | grep -v grep | awk '{ print $2 }' | head -1", $out);
+        exec("ps aux | grep \"${pid}\" | grep -v grep", $out);
+
         if(!empty($out[0]))
         {
+            $str = explode(" ", $out[0]);
+
+            if($str[2] == $pid)
+            {
+                $result = TRUE;
+            }
+//             var_dump($result);exit();            
 //             $result = (int) $out[0];
-            $result = TRUE;
+            
         }
         
         return $result;        
@@ -783,7 +791,7 @@ class Utils
         
         $result =  false;        
         
-        if(file_exists($filename))
+        if(is_readable($filename))
         {
             
             $handle_r = fopen($filename, "rb") or die("Unable to open file!");
@@ -831,7 +839,7 @@ class Utils
         $keyvalue = "";
         
         
-        if(file_exists($filename))
+        if(is_readable($filename))
         {
             
             $handle_r = fopen($filename, "rb") or die("Unable to open file!");
@@ -916,7 +924,7 @@ class Utils
         $hash_file = "";
                 
         
-        if(file_exists($filename))
+        if(is_readable($filename))
         {
             $ok = true;
             
@@ -927,7 +935,7 @@ class Utils
                 $filename_aux = substr($filename_aux, 0, strrpos($filename_aux, "."));
                 $filename_aux .= "_TMP" . time() . $filename_aux_ext;
                 
-                if(!file_exists($filename_aux))
+                if(!is_readable($filename_aux))
                 {
                     $ok = false;
                 }
@@ -986,7 +994,7 @@ class Utils
                 fclose($handle_r);
                 fclose($handle_w); 
                 
-                if(file_exists($filename_aux))
+                if(is_readable($filename_aux))
                 {
                     $hash_file = hash_hmac_file('md5', $filename_aux, $script);
                     unlink($filename_aux);
@@ -1054,7 +1062,7 @@ class Utils
     {
         $result = false;
         
-        if(file_exists($filename))
+        if(is_readable($filename))
         {
             $handle = fopen($filename, "rb");// or die("Unable to open file: " . $filename);
             $result = "";
@@ -1079,21 +1087,25 @@ class Utils
 	 */
     public static function getScriptsNumber($filename)
     {
-        $handle = fopen($filename, "rb") or die("Unable to open file!");
-        $result = 0;
-
-        while (! feof($handle)) {
-            // $str =fread($handle, 9024);
-            $str = fgets($handle, 4096);
-
-            if (!empty(trim($str))) {
-                // echo "-----";
-                // var_dump($str);
-                $result ++;
+        
+        if(is_readable($filename))
+        {
+            $handle = fopen($filename, "rb") or die("Unable to open file!");
+            $result = 0;
+            
+            while (! feof($handle)) {
+                // $str =fread($handle, 9024);
+                $str = fgets($handle, 4096);
+                
+                if (!empty(trim($str))) {
+                    // echo "-----";
+                    // var_dump($str);
+                    $result ++;
+                }
             }
+            
+            fclose($handle);
         }
-
-        fclose($handle);
 
         return $result;
     }
@@ -1108,25 +1120,31 @@ class Utils
 	 */
     public static function getContentFilePart($filename, $maxbytes)
     {
-        $handle = fopen($filename, "rb") or die("Unable to open file!");
-        $result = "";
-
-        $filesize = filesize($filename);
-
         $i = 1;
-        while (! feof($handle)) {
-
-            if (($i * 1024) >= $maxbytes) {
-                $i --;
-                break;
+        $result = "";
+        
+        if(is_readable($filename))
+        {
+            $handle = fopen($filename, "rb") or die("Unable to open file!");
+            $filesize = filesize($filename);            
+            
+            while (! feof($handle)) 
+            {
+                
+                if (($i * 1024) >= $maxbytes) 
+                {
+                    $i --;
+                    break;
+                }
+                
+                $i ++;
+                
+                $result .= fread($handle, 1024);
             }
-
-            $i ++;
-
-            $result .= fread($handle, 1024);
+            
+            fclose($handle);
         }
-
-        fclose($handle);
+        
 
         return array(
             "data" => $result,

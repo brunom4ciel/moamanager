@@ -293,7 +293,7 @@ function do_this2(){
 
 												top last 40 processes <br> 
 												<input type="button" class="btn btn-default" value="Refresh"
-													name="refresh" onclick="javascript: window.location.href = window.location.href;" />
+													name="refresh" onclick="javascript: window.location.href = '?component=taskmanager';" />
 												| 	
 												<input type="button" class="btn btn-danger" value="Kill process"
 													name="stop" onclick="javascript: sendAction('stop');" />
@@ -322,77 +322,77 @@ function do_this2(){
 													</tr>
 <?php
 
-try {
+try 
+{
 
 
 
-    if ($application->getUserType() == 1) { // super user
-        $rs = $taskList->selectFromSuperUser();
-    } else {
-        $rs = $taskList->selectFromUser($user_id);
+    if ($application->getUserType() == 1) 
+    { // super user
+        $rs = $taskList->selectFromSuperUser(0,100);
+    } 
+    else 
+    {
+        $rs = $taskList->selectFromUser($user_id,0,100);
     }
 
     $userid = $application->getUserId();    
     $i = 0;
     $pid_close = array();
 
+
     while ($row = $rs->fetch(\PDO::FETCH_ASSOC)) 
     {
         $i ++;
 
         $pid = $row["pid"];
+        
+        if (empty($row["process_closed"])) 
+        {
 
-        if (empty($row["process_closed"])) {
-            if (file_exists("/proc/".$pid)) {                
-//                 $cmd = "ps aux | grep " . $pid . " | wc -l";                  
-//                 $result = $utils->runExternal($cmd); 
-
-                if ($utils->checkPID($pid))
-                {
-                    $realtime_status = "running";
-                } 
-                else
-                {
-                    $pid_close[] = array("pid"=>$pid, 
-                                        "userid"=>$userid,
-                                        "id"=>$row["execution_history_id"]);
-                }
-                
-            }else{
+            if ($utils->checkPID($pid))
+            {
+                $realtime_status = "running";
+            } 
+            else
+            {
                 $realtime_status = "closed";
+                $pid_close[] = array("pid"=>$pid, 
+                                    "userid"=>$userid,
+                                    "id"=>$row["execution_history_id"]);
             }
+
             
-        } else {
+        }
+        else 
+        {
             $realtime_status = "closed";
         }
         
         
 
-        if ($realtime_status == "closed") {
+        if ($realtime_status == "closed") 
+        {
             $bgcolor = "#cccccc";
-        } else {
+        } 
+        else 
+        {
             $bgcolor = "#505050";
         }
 
-        if($realtime_status == "running"){
+        if($realtime_status == "running")
+        {
 
             echo "<tr style='color:" . $bgcolor . "'><td>" . $pid . "</td><td>" .
-                
-                // ."<a onclick='javascript: renameFolder(this);' name='".$element["name"]."' title='Rename' href='#'>"
-            // ."<img align='middle' width='24px' src='".App::getDirTmpl()."images/icon-rename.png' border='0'></a> "
-            // "<a href='#'
-            // onclick=\"javascript: goEdit('" . $row["execution_history_id"] . "');\">"
-            // . "<img width='24px' align='middle' src='" . $application->getPathTemplate()
-            // . "/images/icon-folder.png' title='Open'/></a> " .
-            
-            // ."<a title='Remove' onclick='javascript: return ConfirmDelete();' href='?component=home&controller=files&task=remove&folder=".$folder.$element["name"]."'>"
-            // ."<img src='".App::getDirTmpl()."images/icon-remove.gif' border='0'></a>
             
             "<label><input type='checkbox' name='element[]' value='" . $pid . "' />" . $row["process_type"] . "</label> " . "</td><td>";
             
-            if ($row["process_type_id"] == "1") {
+            if ($row["process_type_id"] == "1") 
+            {
                 echo $row["source"];
-            } else {
+            } 
+            else 
+            {
                 echo $row["command"];
             }
             
@@ -405,22 +405,34 @@ try {
     
     if(count($pid_close) > 0)
     {
-        try{
-            
-        
+        try
+        {   
+
             foreach($pid_close as $item)
-            {
-                $taskList->pid_setNull($item['id'], $item['pid'], $item['userid']);
-            }
+            {                       
+                $taskList->pid_setNull($item['id']);//, $item['pid'], $item['userid']);                
+            }            
             
-        } catch (\Exception $e) {
+            $redirect = array();
+            
+            $redirect['url'] = '?';
+            $redirect['component'] = $application->getComponent();
+            $redirect['controller'] = $application->getController();
+            
+            $application->redirect($redirect);
+            
+        } 
+        catch (\Exception $e) 
+        {
             
             $application->alert($e->getMessage());            
         }
         
     }
     
-} catch (AppException $e) {
+} 
+catch (AppException $e) 
+{
     throw new AppException($e->getMessage());
 }
 

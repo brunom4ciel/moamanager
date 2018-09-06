@@ -9,7 +9,7 @@
  */
 namespace moam\core;
 
-use moam\libraries\core\menu\Menu;
+// use moam\libraries\core\menu\Menu;
 
 defined('_EXEC') or die();
 
@@ -125,6 +125,7 @@ abstract class AbstractApplication
 	 */
 	public static function getParameter($keyname)
 	{
+	    
 		switch ($_SERVER['REQUEST_METHOD']) {
 			case 'POST':
 

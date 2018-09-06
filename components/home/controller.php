@@ -22,6 +22,8 @@ if (! class_exists('Application')) {
     $application = Framework::getApplication();
 }
 
+exit("ii");
+
 if (!$application->is_authentication()) {
 //     $application->alert("Error: you do not have credentials.");
 //     ?component=user&controller=login

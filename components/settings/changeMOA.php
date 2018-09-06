@@ -28,6 +28,7 @@ $error = array();
 $task = $application->getParameter("task");
 $filename = $application->getParameter("filename");
 
+
 if ($task == "remove") {
 
     $path_jar = PATH_MOA_BIN;
@@ -100,7 +101,9 @@ if ($task == "remove") {
 
 if (isset($_POST['default'])) {
 
-    if (strtolower($_POST['default']) == "update") {
+    
+    
+    if (strtolower($_POST['default']) == "send") {
 
         if (isset($_FILES['jarfile'])) {
 
@@ -112,9 +115,14 @@ if (isset($_POST['default'])) {
 
             $uploaddir = PATH_MOA_BIN;
             $uploadfile = $uploaddir . USERNAME . ".jar"; // basename($_FILES['spreadsheet']['name']);
-
+            
+            
+            
+            
             // verifica se arquivo existe em tmp
             if (is_uploaded_file($_FILES['jarfile']['tmp_name'])) {
+                
+                
 
                 // verifica o formato da extensão do arquivo
                 if (in_array(substr($uploadfile, strrpos($uploadfile, ".") + 1), $files_extensions)) {
@@ -131,44 +139,15 @@ if (isset($_POST['default'])) {
                         $uploadfile = $uploaddir . USERNAME . "-v" . $utils->format_number($y ++, 4) . ".jar";
                     }
 
+                    
+                    
                     // move o arquivo de tmp para destino
                     if (move_uploaded_file($_FILES['jarfile']['tmp_name'], $uploadfile)) {
 
                         // verifica se arquivo existe em destino
                         if (is_file($uploadfile)) {
 
-                            // //verifica se diretorio existe
-                            // if(!is_dir(Properties::getBase_directory_destine().$application->getUser()))
-                            // {
 
-                            // //cria um novo diretório
-                            // if(mkdir(Properties::getBase_directory_destine().$application->getUser(), 0777, true))
-                            // {
-                            // //define permissões ao diretório
-                            // if(!chmod(Properties::getBase_directory_destine().$application->getUser(), 0777))
-                            // $error[] = "Error directory permissions.";
-                            // else{
-                            // //define permissões ao arquivo
-                            // if(!chmod($uploadfile, 0777))
-                            // $error[] = "Error setting permissions.";
-                            // else
-                            // $error[] = "Upload successful";
-                            // }
-
-                            // }
-                            // else {
-                            // $error[] = "Error directory not create.";
-                            // }
-
-                            // }else{
-
-                            // //define permissoes ao arquivo
-                            // if(!chmod($uploadfile, 0777))
-                            // $error[] = "Error setting permissions.";
-                            // else
-                            // $error[] = "Upload successful";
-
-                            // }
                         } else
                             $error[] = "Upload successful";
                     } else {
@@ -188,7 +167,7 @@ if (isset($_POST['default'])) {
         if (file_exists(DEFAULT_MOA_BIN_USER))
             unlink(DEFAULT_MOA_BIN_USER);
 
-        $error[] = "MOA default successful.";
+//         $error[] = "MOA default successful.";
     }
 } else {
     // $error_msg = "Not defined fields";
@@ -273,23 +252,18 @@ function remove(filename){
 							
 							</table>
 
-					<form method="POST" action="<?php echo $_SERVER['PHP_SELF'];?>"
-						name="loginForm" enctype="multipart/form-data">
-						<input type="hidden"
-							value="<?php echo $application->getComponent()?>"
-							name="component"> <input type="hidden"
-							value="<?php echo $application->getController()?>"
-							name="controller">
-
+					<form method="POST" action="<?php echo $_SERVER['PHP_SELF'];?>" name="loginForm" enctype="multipart/form-data">
+						<input type="hidden" name="component" value="<?php echo $application->getComponent()?>"> 
+						<input type="hidden" name="controller" value="<?php echo $application->getController()?>"> 
+							
 						<h2>Upload File</h2>
 						<table>
 							<tr>
-								<td>MOA Binary Upload (*.jar):</td>
-								<td><input type="file" class="btn btn-default" name="jarfile" /></td>
-								<td>&nbsp;<input type="submit" class="btn btn-success" name="default" value="Send" /></td>
+								<td>File Upload (*.jar):</td>
+								<td><input type="file" name="jarfile" class="btn btn-default" /></td>
+								<td>&nbsp; <input type="submit" class="btn btn-success" name="default" value="Send" /></td>
 							</tr>
 						</table>
-						<!-- <input type="submit" name="default" value="default system" />-->
 
 					</form>
 

@@ -153,7 +153,17 @@ if ($task == "folder") {
                 // echo $item."<br>";
             }
             
-            $application->redirect("?component=" . $application->getComponent() . "&controller=" . $application->getController() . "&folder=" . $application->getParameter("folder"));
+//             $application->redirect("?component=" . $application->getComponent() 
+//                 . "&controller=" . $application->getController() . "&folder=" . $application->getParameter("folder"));
+            
+            $redirect = array();
+            
+            $redirect['url'] = '?';
+            $redirect['component'] = $application->getComponent();
+            $redirect['controller'] = $application->getController();
+            $redirect['folder'] = $application->getParameter("folder");
+            
+            $application->redirect($redirect);
             
         } else {
 

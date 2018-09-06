@@ -447,6 +447,8 @@ if($task == "folder"){
         
         $scripts = "";
         
+        
+        
         foreach($element as $key=>$item){
             
             if(is_file($dir.$item)){
@@ -512,7 +514,171 @@ if($task == "folder"){
                     
                     $files = $utils->getListElementsDirectory1($from_dir, array("txt"));
                     
+                    //
+                    // verifica e mantem na listagem apenas os arquivos com mesmo nome do diretório
+                    //
+                    if(substr($from_dir,strrpos($from_dir, DIRECTORY_SEPARATOR)) == DIRECTORY_SEPARATOR)
+                    {
+                        $dirname_project = substr($from_dir,0,strrpos($from_dir, DIRECTORY_SEPARATOR));
+                        $dirname_project = substr($dirname_project,strrpos($dirname_project, DIRECTORY_SEPARATOR)+1);
+                    }
+                    else
+                    {
+                        $dirname_project = substr($from_dir,strrpos($from_dir, DIRECTORY_SEPARATOR));
+                    }
                     
+
+                    $files_names = array();
+                    
+                    foreach($files as $key2=>$item2)
+                    {
+                        $seq = substr($item2['name'], strrpos($item2['name'], "-")+1);
+                        $seq = substr($seq,0,strrpos($seq, "."));
+                        
+                        $f_name = substr($item2['name'], 0, strrpos($item2['name'], "-"));
+                        $f_name .= "-" . $seq;//$utils->format_number($seq,4);
+                        $f_name_ex = substr($item2['name'], strrpos($item2['name'], ".")+1);
+                        $f_name .= "." . $f_name_ex;
+                        
+                        $f = substr($f_name, 0, strrpos($f_name, "-"));
+                        
+                        if(count($files_names) > 0)
+                        {
+                            $find_ok = false;
+                            
+                            foreach($files_names as $key3=>$item3)
+                            {
+                                if($f == $key3)
+                                {
+                                    $files_names[$f]++;
+                                    $find_ok = true;
+                                }
+                            }
+                            
+                            if($find_ok == false)
+                            {
+                                $files_names[$f] = 1;
+                            }
+                        }
+                        else 
+                        {
+                            $files_names[$f] = 1;
+                        }
+                                                
+                    }
+                    
+                    $dirname_project = "";
+                    $dirname_project_last_count = 0;
+                    
+                    foreach($files_names as $key=>$item)
+                    {
+                        if($dirname_project == "")
+                        {
+                            $dirname_project = $key;
+                            $dirname_project_last_count = $item;
+                        }
+                        else
+                        {
+                            if($item > $files_names[$dirname_project])
+                            {
+                                $dirname_project = $key;
+                                $dirname_project_last_count = $item;
+                            }
+                        }
+                    }
+                    
+                    
+                    $files_aux = array();
+                    
+                    foreach($files as $key2=>$item2)
+                    {
+                        $seq = substr($item2['name'], strrpos($item2['name'], "-")+1);
+                        $seq = substr($seq,0,strrpos($seq, "."));
+                        
+                        $f_name = substr($item2['name'], 0, strrpos($item2['name'], "-"));
+                        $f_name .= "-" . $seq;//$utils->format_number($seq,4);
+                        $f_name_ex = substr($item2['name'], strrpos($item2['name'], ".")+1);
+                        $f_name .= "." . $f_name_ex;
+                        
+                        $f = substr($f_name, 0, strrpos($f_name, "-"));
+                        
+                        if($dirname_project == $f)
+                        {
+                            $files_aux[] = $item2;
+                        }
+                                
+                    }
+                    
+                    $files = $files_aux;
+                    
+                    //
+                    // ********************************
+                    // 
+                    
+                    $files2 = array();                    
+                    $lastseq = 0;
+                    $lastseqname = "";
+                                        
+                    foreach($files as $key2=>$item2)
+                    {
+                        $seq = substr($item2['name'], strrpos($item2['name'], "-")+1);
+                        $seq = substr($seq,0,strrpos($seq, "."));
+                        
+//                         while(strpos(substr($seq,0,1), "0") !== false)
+//                         {
+//                             $seq = substr($seq,1);
+//                         }
+                        
+                        $seq = (int) $seq;
+                        
+                        if($lastseq == 0)
+                        {
+                            $lastseq = $seq;
+                            $lastseqname = $item2['name'];
+                            $files2[] = $item2;
+                        }
+                        else 
+                        {
+                            if($seq == $lastseq+1)
+                            {
+                                $lastseq = $seq;
+                                $lastseqname = $item2['name'];
+                                $files2[] = $item2;
+                            }
+                            else 
+                            {
+                                $f_name = substr($item2['name'], 0, strrpos($item2['name'], "-"));
+                                $f_name .= "-" . $utils->format_number($lastseq+1,4);
+                                $f_name_ex = substr($item2['name'], strrpos($item2['name'], ".")+1);
+                                $f_name .= "." . $f_name_ex;
+                                
+//                                 $fp = fopen('data.txt', 'w');
+//                                 fclose($fp);
+//                                 echo $lastseqname . "=" . $f_name;
+//                                 exit($f_name);
+                                $files2[] = array("name"=>$f_name);
+                                $files2[] = $item2;
+                                
+                                $lastseq = $seq;
+                                $lastseqname = $f_name;
+                                
+//                                 if($seq == 191)
+//                                 {
+//                                     var_dump($files2);
+//                                     var_dump($lastseq);
+//                                     var_dump($seq);
+    
+//                                     exit("fim");
+//                                 }
+                                
+                            }
+                        }
+                                               
+                    }
+                    
+                    $files = $files2;
+                                        
+//                     var_dump($files2);exit();
                     
                     foreach($files as $keyname=>$file){
                         
@@ -564,6 +730,7 @@ if($task == "folder"){
                                 else
                                 {
                                     $miningResult = $mining->miningFile($from_dir.$file["name"], $parameters);
+
                                 }
                                 
                                 
@@ -924,13 +1091,16 @@ if($task == "folder"){
                 
                 foreach($item as $key=>$value)
                 {
-                    $itens = explode("\t", $value["resume"]);
-                    
-                    //0 = dist
-                    //7 = mcc
-                    //8 = f1
-                    
-                    $a[] = array("resume"=>$itens[$pos]);
+                    if(strpos($value["resume"], "\t") !== false)
+                    {
+                        $itens = explode("\t", $value["resume"]);
+                        
+                        //0 = dist
+                        //7 = mcc
+                        //8 = f1
+                        
+                        $a[] = array("resume"=>$itens[$pos]);
+                    }
                     
                 }
                 
