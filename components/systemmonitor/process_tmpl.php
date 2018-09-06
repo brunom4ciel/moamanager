@@ -157,6 +157,24 @@ for($i=1; $i<count($linhas); $i++){
 }
 
 
+// $cmd = "ps -e -o " . $cols_string . " --sort=-pcpu,+pmem,+start_time";
+
+// $result = $utils->runExternal($cmd);
+// $output = $result["output"];
+
+// $linhas = explode("\n", $output);
+// $pids_on = array();
+
+// for($i=1; $i<count($linhas); $i++)
+// {
+//     $linha = trim($linhas[$i]);   
+//     $pids_on[] = (int) substr($linha, 0 , strpos($linha, " "));
+// }
+
+
+//$s = $utils->checkPID(28802);
+//var_dump($s);exit();
+
 try
 {    
     $rs = $taskList->selectFromSuperUser(0,100);

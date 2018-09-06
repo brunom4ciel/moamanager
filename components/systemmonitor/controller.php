@@ -196,6 +196,7 @@ buttonControllerElement.push('console_cpu', 'console_process', 'temp_files', 'co
 var buttonInterval =  [];
 buttonInterval.push(false, false, false, false);
 
+var cancelPOST = false;
 
 function updateRefreshpp(objElement, indexButton)
 {
@@ -221,7 +222,9 @@ function refreshPOST(indexButton)
 
     if(buttonCancelTimeOut[indexButton] == true)
     {    	
-    	document.getElementById(buttonControllerElement[indexButton]).innerHTML = '';    	
+    	document.getElementById(buttonControllerElement[indexButton]).innerHTML = '';    
+    	cancelPOST = true;
+    	    	    		
 //     	clearInterval(buttonInterval[indexButton]);
     }
     else
@@ -230,7 +233,8 @@ function refreshPOST(indexButton)
         url = 'index.php?component=<?php echo $application->getComponent()?>&controller='+controller+'&task=view&tmpl=tmpl';
         method = 'POST';
         id = buttonControllerElement[indexButton];
-
+        cancelPOST = false;
+        
         if(indexButton == 3)
         {
         	sendAjaxRequest2(url, method, id);
@@ -330,6 +334,11 @@ function sendAjaxRequest2(url, method, id){
 	    
     HttpReq.onreadystatechange = function() {
         if (HttpReq.readyState == 4) {
+
+        	if(cancelPOST == true)
+        	{
+				return;
+        	}
         	
         	switch(HttpReq.status){
         		
@@ -494,6 +503,11 @@ function sendAjaxRequest(url, method, id){
 	    
     HttpReq.onreadystatechange = function() {
         if (HttpReq.readyState == 4) {
+
+        	if(cancelPOST == true)
+        	{
+				return;
+        	}
         	
         	switch(HttpReq.status){
         		
