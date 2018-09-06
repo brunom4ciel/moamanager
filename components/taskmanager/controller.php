@@ -15,6 +15,7 @@ use moam\core\Properties;
 // use moam\libraries\core\menu\Menu;
 use moam\libraries\core\db\DBPDO;
 use moam\libraries\core\utils\Utils;
+use moam\libraries\core\sys\TaskList;
 
 if (! class_exists('Application')) {
     $application = Framework::getApplication();
@@ -33,10 +34,11 @@ if (! $application->is_authentication()) {
 
 Framework::import("DBPDO", "core/db");
 Framework::import("Utils", "core/utils");
+Framework::import("TaskList", "core/sys");
 
 $DB = new DBPDO(Properties::getDatabaseName(), Properties::getDatabaseHost(), Properties::getDatabaseUser(), Properties::getDatabasePass());
 
-require_once ("task_list.php");
+
 
 $utils = new Utils();
 $taskList = new TaskList($DB);
@@ -408,18 +410,18 @@ try
         try
         {   
 
-            foreach($pid_close as $item)
-            {                       
-                $taskList->pid_setNull($item['id']);//, $item['pid'], $item['userid']);                
-            }            
+//             foreach($pid_close as $item)
+//             {                       
+//                 $taskList->pid_setNull($item['id']);//, $item['pid'], $item['userid']);                
+//             }            
             
-            $redirect = array();
+//             $redirect = array();
             
-            $redirect['url'] = '?';
-            $redirect['component'] = $application->getComponent();
-            $redirect['controller'] = $application->getController();
+//             $redirect['url'] = '?';
+//             $redirect['component'] = $application->getComponent();
+//             $redirect['controller'] = $application->getController();
             
-            $application->redirect($redirect);
+//             $application->redirect($redirect);
             
         } 
         catch (\Exception $e) 

@@ -97,18 +97,27 @@ class Utils
     function checkPID($pid)
     {
         $result = FALSE;
-        
+        $pid=1039;
 //         exec("ps aux | grep \"${pid}\" | grep -v grep | awk '{ print $2 }' | head -1", $out);
         exec("ps aux | grep \"${pid}\" | grep -v grep", $out);
 
         if(!empty($out[0]))
         {
             $str = explode(" ", $out[0]);
-
-            if($str[2] == $pid)
+//             var_dump($str);exit();
+            if(trim($str[1]) == "")
             {
-                $result = TRUE;
+                if($str[2] == $pid)
+                {
+                    $result = TRUE;
+                }
+            }else{
+                if($str[1] == $pid)
+                {
+                    $result = TRUE;
+                }
             }
+            
 //             var_dump($result);exit();            
 //             $result = (int) $out[0];
             

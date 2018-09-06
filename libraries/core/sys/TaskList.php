@@ -5,7 +5,7 @@
  * @copyright  Copyright (C) 2015 - 2017 Open Source CIn/UFPE, Inc. All rights reserved.
  * @license    GNU General Public License version 2 or later; see LICENSE.txt
  */
-namespace moam\components\task_list;
+namespace moam\libraries\core\sys;
 
 defined('_EXEC') or die();
 
@@ -38,11 +38,16 @@ class TaskList
             execution_history.process_closed,
             substring(execution_history.command,1,1550) as command,
             execution_history.source,
-            execution_history.pid
+            execution_history.pid,
+execution_history.user_id,
+user.email
                 
 		FROM execution_history
        INNER JOIN process_type ON
     process_type.process_type_id = execution_history.process_type_id
+        INNER JOIN user ON
+        user.user_id = execution_history.user_id
+
 		where execution_history.process_closed IS NULL and pid is not null
 		ORDER by execution_history.process_type_id asc, execution_history_id DESC"
             . " LIMIT ?,?";
@@ -81,11 +86,15 @@ class TaskList
             execution_history.process_closed,
             substring(execution_history.command,1,1550) as command,
             execution_history.source,
-            execution_history.pid
+            execution_history.pid,
+            execution_history.user_id,
+            user.email
 			
 		FROM execution_history
        INNER JOIN process_type ON 
     process_type.process_type_id = execution_history.process_type_id
+        INNER JOIN user ON
+        user.user_id = execution_history.user_id
 		WHERE  user_id=? and execution_history.process_closed is null and pid is not null
 		
 		ORDER by execution_history.process_type_id asc, 
