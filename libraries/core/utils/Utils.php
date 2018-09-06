@@ -97,7 +97,7 @@ class Utils
     function checkPID($pid)
     {
         $result = FALSE;
-        $pid=1039;
+        //$pid=1039;
 //         exec("ps aux | grep \"${pid}\" | grep -v grep | awk '{ print $2 }' | head -1", $out);
         exec("ps aux | grep \"${pid}\" | grep -v grep", $out);
 

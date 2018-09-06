@@ -309,22 +309,7 @@ foreach ($files_list as $key => $element) {
 
         if (file_exists($dir . $filename_)) {
 
-            
-//             break;
-//             echo $filename." ---sim<br>";
-// exit();
-//             $id = substr($filename_, 0, 4); // strrpos($filename_,"-"));
-//             $id = trim($id);
 
-            
-
-            // if(is_writable($filename)){
-
-            // echo "sim";
-            // }else{
-            // echo "nao";
-            // }
-            
             $filename_f = substr($filename_, strrpos($filename_, DIRECTORY_SEPARATOR));
 
             $find = FALSE;
@@ -376,30 +361,7 @@ foreach ($files_list as $key => $element) {
                 
                 $overwrite = true;
             }
-            
-            
-//             exit("===---");
-            
-//             echo $filename_."<br>";
-//             $data = $jsonfile->getDataKeyValue("filename", $filename_);
-
-//             var_dump($data);exit();
-            
-//             $data['process'] = true;
-            // echo "<br>id=".$id."<br><br>";
-            // var_dump($data);
-            // exit();
-            // $jsonfile->setData($data);
-
-//             $jsonfile->setDataKeyValue("filename", $filename, $data);
-
-//             $jsonfile->save();
-
-            // $jsonfile->load();
-
-//             $jsonfile = null;
-
-            
+        
             
         } else {}
 

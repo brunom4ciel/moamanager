@@ -62,133 +62,262 @@ $task = $application->getParameter("task");
 // return $isRunning;
 // }
 
-try {
+try 
+{
 
-    if ($task == "stop") {
-        if (is_array($element)) {
-            foreach ($element as $pid) {
-                if ($application->getUserType() == 1) { // super user
-
-//                     exec("kill $pid");
-                    $utils->killPID($pid);
-                    
-                } else {
-                    if ($taskList->is_pid_from_user($pid, $user_id)) {
-
-//                         exec("kill $pid");
-                        $utils->killPID($pid);
+    if ($task == "stop"
+        || $task == "killallmyprocesses"
+        || $task == "killallprocesses") 
+    {
+        
+        if ($task == "stop")
+        {
+            if (is_array($element)) 
+            {
+                $pid_list = array();
+                
+                foreach ($element as $pid) 
+                {
+                    if ($application->getUserType() == 1) 
+                    { // super user
+    
+    //                     exec("kill $pid");
+    //                     $utils->killPID($pid);
+                        $pid_list[] = (int) $pid;
+                        
+                    } 
+                    else 
+                    {
+                        if ($taskList->is_pid_from_user($pid, $user_id)) 
+                        {
+    
+    //                         exec("kill $pid");
+    //                         $utils->killPID($pid);
+                            $pid_list[] = (int) $pid;
+                        }
                     }
                 }
             }
         }
-    }else if ($task == "killallmyprocesses") {
-        
-        $utils = new Utils();
-        
-//         if ($application->getUserType() == 1) { // super user
-//             $rs = $taskList->selectFromSuperUser();
-//         } else {
-            $rs = $taskList->selectFromUser($user_id);
-//         }
-        
-        $pid_list = array();
-        
-        while ($row = $rs->fetch()) {
             
-            $pid = $row['pid'];
+        if ($task == "killallmyprocesses")
+        {
+            $rs = $taskList->selectFromUser($user_id);            
+            $pid_list = array();
             
-            if (file_exists("/proc/".$pid)) {
-            //if ($row["process_closed"] == "") {
-                //$realtime_status = $utils->proc_get_status($pid);
+            while ($row = $rs->fetch())
+            {
                 
-               // if($realtime_status == "running"){
+                $pid = $row['pid'];
+                
+                if ($utils->checkPID($pid))
+                {
+                    //if (file_exists("/proc/".$pid)) {
+                    //if ($row["process_closed"] == "") {
+                    //$realtime_status = $utils->proc_get_status($pid);
+                        
+                        // if($realtime_status == "running"){
                     $pid_list[] = (int) $pid;
-               // }
+                        // }                    
+                }
             }
         }
         
-        if (is_array($pid_list) && count($pid_list) > 0) {
-            foreach ($pid_list as $pid) {
+        
+        if ($task == "killallprocesses")
+        {
+            if ($application->getUserType() == 1)
+            { // super user
+                $rs = $taskList->selectFromSuperUser();
+            }
+            else
+            {
+                $rs = $taskList->selectFromUser($user_id);
+            }
+            
+            $pid_list = array();
+            
+            while ($row = $rs->fetch())
+            {                
+                $pid = $row['pid'];
+                
+                if ($utils->checkPID($pid))
+                {
+                    //if (file_exists("/proc/".$pid)) {
+                    //if ($row["process_closed"] == "") {
+                    //$realtime_status = $utils->proc_get_status($pid);
+                        
+                        // if($realtime_status == "running"){
+                    $pid_list[] = (int) $pid;
+                        // }
+                }
+            }
+        }
+        
+            
+        if (is_array($pid_list) && count($pid_list) > 0) 
+        {
+            
+            foreach ($pid_list as $pid) 
+            {
                 
                 $endprocess = false;
                 $pid_aux = $pid + 1;
                 
-                while($endprocess == false){
-//                     exec("kill $pid");//echo "kill ".$pid."<br>";
+                while($endprocess == false)
+                {
+                    //                     exec("kill $pid");//echo "kill ".$pid."<br>";
                     $utils->killPID($pid);
                     sleep(1);
-//                     exec("kill $pid_aux");//echo "kill aux ".$pid_aux."<br>";
+                    //                     exec("kill $pid_aux");//echo "kill aux ".$pid_aux."<br>";
                     $utils->killPID($pid_aux);
                     sleep(1);
                     //$realtime_status = $utils->proc_get_status($pid_aux);
-                    if (!file_exists("/proc/".$pid)) {
-//                     if($realtime_status != "running"){
-                        $endprocess = true;
-                    }
-                }
-            }
-        }
-    
-//         exit("fim");
-        
-        
-    }else if ($task == "killallprocesses") {
-        
-        $utils = new Utils();
-        
-        if ($application->getUserType() == 1) { // super user
-            $rs = $taskList->selectFromSuperUser();
-        } else {
-            $rs = $taskList->selectFromUser($user_id);
-        }
-        
-        $pid_list = array();
-        
-        while ($row = $rs->fetch()) {
-            
-            $pid = $row['pid'];
-            
-            if (file_exists("/proc/".$pid)) {
-                //if ($row["process_closed"] == "") {
-                //$realtime_status = $utils->proc_get_status($pid);
-                
-                // if($realtime_status == "running"){
-                $pid_list[] = (int) $pid;
-                // }
-            }
-        }
-        
-        if (is_array($pid_list) && count($pid_list) > 0) {
-            foreach ($pid_list as $pid) {
-                
-                $endprocess = false;
-                $pid_aux = $pid + 1;
-                
-                while($endprocess == false){
-                    //                     exec("kill $pid");//echo "kill ".$pid."<br>";
-                    $utils->killPIP($pid);
-                    sleep(1);
-                    //                     exec("kill $pid_aux");//echo "kill aux ".$pid_aux."<br>";
-                    $utils->killPIP($pid_aux);
-                    sleep(1);
-                    //$realtime_status = $utils->proc_get_status($pid_aux);
-                    if (!file_exists("/proc/".$pid)) {
+                    if (!$utils->checkPID($pid) || !$utils->checkPID($pid_aux))
+                    {
+                        //if (!file_exists("/proc/".$pid)) {
                         //                     if($realtime_status != "running"){
                         $endprocess = true;
                     }
                 }
             }
         }
-        
-        //         exit("fim");
-        
-        
+            
     }
     
-    else {}
+    
+//     else if ($task == "killallmyprocesses") 
+//     {
+        
+//         $utils = new Utils();
+        
+// //         if ($application->getUserType() == 1) { // super user
+// //             $rs = $taskList->selectFromSuperUser();
+// //         } else {
+//             $rs = $taskList->selectFromUser($user_id);
+// //         }
+        
+//         $pid_list = array();
+        
+//         while ($row = $rs->fetch()) 
+//         {
+            
+//             $pid = $row['pid'];
+            
+// 		    if ($utils->checkPID($pid))
+// 		    { 
+//             //if (file_exists("/proc/".$pid)) {
+//             //if ($row["process_closed"] == "") {
+//                 //$realtime_status = $utils->proc_get_status($pid);
+                
+//                // if($realtime_status == "running"){
+//                     $pid_list[] = (int) $pid;
+//                // }
+//             }
+//         }
+        
+//         if (is_array($pid_list) && count($pid_list) > 0) 
+//         {
+//             foreach ($pid_list as $pid) 
+//             {
+                
+//                 $endprocess = false;
+//                 $pid_aux = $pid + 1;
+                
+//                 while($endprocess == false)
+//                 {
+// //                     exec("kill $pid");//echo "kill ".$pid."<br>";
+//                     $utils->killPID($pid);
+//                     sleep(1);
+// //                     exec("kill $pid_aux");//echo "kill aux ".$pid_aux."<br>";
+//                     $utils->killPID($pid_aux);
+//                     sleep(1);
+//                     //$realtime_status = $utils->proc_get_status($pid_aux);
+//                     if ($utils->checkPID($pid))
+//                     {
+// 		//if (!file_exists("/proc/".$pid)) {
+// //                     if($realtime_status != "running"){
+//                         $endprocess = true;
+//                     }
+//                 }
+//             }
+//         }
+    
+// //         exit("fim");
+        
+        
+//     }
+//     else if ($task == "killallprocesses") 
+//     {
+        
+//         $utils = new Utils();
+        
+//         if ($application->getUserType() == 1) 
+//         { // super user
+//             $rs = $taskList->selectFromSuperUser();
+//         } 
+//         else 
+//         {
+//             $rs = $taskList->selectFromUser($user_id);
+//         }
+        
+//         $pid_list = array();
+        
+//         while ($row = $rs->fetch()) 
+//         {
+            
+//             $pid = $row['pid'];
+            
+// 		    if ($utils->checkPID($pid))
+// 		    {
+//             //if (file_exists("/proc/".$pid)) {
+//                 //if ($row["process_closed"] == "") {
+//                 //$realtime_status = $utils->proc_get_status($pid);
+                
+//                 // if($realtime_status == "running"){
+//                 $pid_list[] = (int) $pid;
+//                 // }
+//             }
+//         }
+        
+//         if (is_array($pid_list) && count($pid_list) > 0) 
+//         {
+//             foreach ($pid_list as $pid) 
+//             {
+                
+//                 $endprocess = false;
+//                 $pid_aux = $pid + 1;
+                
+//                 while($endprocess == false)
+//                 {
+//                     //                     exec("kill $pid");//echo "kill ".$pid."<br>";
+//                     $utils->killPIP($pid);
+//                     sleep(1);
+//                     //                     exec("kill $pid_aux");//echo "kill aux ".$pid_aux."<br>";
+//                     $utils->killPIP($pid_aux);
+//                     sleep(1);
+//                     //$realtime_status = $utils->proc_get_status($pid_aux);
+//                 	if ($utils->checkPID($pid))
+//                 	{
+// 			//if (!file_exists("/proc/".$pid)) {
+//                         //                     if($realtime_status != "running"){
+//                         $endprocess = true;
+//                     }
+//                 }
+//             }
+//         }
+        
+//         //         exit("fim");
+        
+        
+//     }
+    
+//     else {}
     
     
-} catch (AppException $e) {
+} 
+catch (AppException $e) 
+{
     throw new AppException($e->getMessage());
 }
 

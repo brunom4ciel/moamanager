@@ -124,10 +124,35 @@ class ParallelProcess extends Utils
         
         
         $result = $this->datetimeformat->date_diff($startime, $endtime, array(
+            "d",
+            "h",
+            "i",
             "s"
         )); // i-minutes
         
-        $secs = $result['s'];
+        $secs = 0;
+        
+        if(!empty($result['d']))
+        {
+            $secs = ((int) $result['d']) * 86400;
+        }
+        
+        if(!empty($result['h']))
+        {
+            $secs += ((int) $result['h']) * 3600;
+        }
+        
+        if(!empty($result['i']))
+        {
+            $secs += ((int) $result['i']) * 60;
+        }
+        
+        if(!empty($result['s']))
+        {
+            $secs += ((int) $result['s']);
+        }
+        
+//         $secs = $result['s'];
         $diff_dates = $this->formatDatetime($secs);
         
         
@@ -254,7 +279,13 @@ class ParallelProcess extends Utils
                 } 
                 
                 
-                for ($i = 0; $i < $nb_max_process and $commande_lancee == FALSE; $i ++) {
+                for ($i = 0; $i < $nb_max_process and $commande_lancee == FALSE; $i ++) 
+                {
+                    
+//                     if(!isset($pool[$i]))
+//                     {
+//                         $pool[$i] = FALSE;
+//                     }
                     
                     if ($pool[$i] === FALSE) {
                         
@@ -299,6 +330,11 @@ class ParallelProcess extends Utils
                         $jsonfile->save();                        
                         $jsonfile->load();
                         
+                        
+                        $command = $commande["command"];
+                        $filename = substr($command, strrpos($command, ">") + 1);
+                        $filename = trim($filename);
+                        
                         //
                         // ------------START PROCESS ------
                         //
@@ -338,13 +374,25 @@ class ParallelProcess extends Utils
                             $filename = substr($command, strrpos($command, ">") + 1);
                             $filename = trim($filename);
 
+                            if(strpos($filename, "-") !== false)
+                            {
+                                $idSeq = substr($filename, strrpos($filename, "-")+1);
+                                $idSeq = substr($idSeq,0, strrpos($idSeq, "."));
+                                $idSeq = trim($idSeq);
+                                $idSeq = (int) $idSeq;
+                            }
                             
-                            $statusProc = proc_get_status($pool[$i]);                            
-                            $data = $jsonfile->getDataKeyValue("pid", $statusProc["pid"]);                            
+                            $statusProc = proc_get_status($pool[$i]);     
+                            
+                            $data = $jsonfile->getDataKeyValue("id", $idSeq);
+//                             $data = $jsonfile->getDataKeyValue("pid", $statusProc["pid"]);  
+                            
                             $data['running'] = false;
                             $data['process'] = true;
                             $data['endtime'] = time();
-                            $jsonfile->setDataKeyValue("pid", $statusProc["pid"], $data);
+                            
+                            $jsonfile->setDataKeyValue("id", $idSeq, $data);  
+//                             $jsonfile->setDataKeyValue("pid", $statusProc["pid"], $data);
                             $jsonfile->save();
                             $jsonfile->load();
                             
@@ -398,9 +446,9 @@ class ParallelProcess extends Utils
                                 fclose($fp);
                                 
                                 
-                                $idSeq = substr($filename, strrpos($filename, "-")+1);
-                                $idSeq = substr($idSeq,0, strrpos($idSeq, "."));
-                                $idSeq = trim($idSeq);
+//                                 $idSeq = substr($filename, strrpos($filename, "-")+1);
+//                                 $idSeq = substr($idSeq,0, strrpos($idSeq, "."));
+//                                 $idSeq = trim($idSeq);
                                                               
                                 $data = $jsonfile->getDataKeyValue("id", $idSeq);
                                 
@@ -411,6 +459,7 @@ class ParallelProcess extends Utils
                                 {
                                     unlink($filename_workspace);
                                 }
+                                
                                 rename($filename_tmp, $filename_workspace);        
                                 
                                 
@@ -494,6 +543,10 @@ class ParallelProcess extends Utils
                             $jsonfile->load();
                             
                             
+                            
+                            $command = $commande["command"];
+                            $filename = substr($command, strrpos($command, ">") + 1);
+                            $filename = trim($filename);
                             
                             //
                             // ------------START PROCESS ------

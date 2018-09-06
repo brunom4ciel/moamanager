@@ -95,7 +95,7 @@ user.email
     process_type.process_type_id = execution_history.process_type_id
         INNER JOIN user ON
         user.user_id = execution_history.user_id
-		WHERE  user_id=? and execution_history.process_closed is null and pid is not null
+		WHERE  user.user_id=? and execution_history.process_closed is null and execution_history.pid is not null
 		
 		ORDER by execution_history.process_type_id asc, 
                 execution_history_id DESC LIMIT ?,?";

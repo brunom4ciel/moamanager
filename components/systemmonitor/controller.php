@@ -157,7 +157,7 @@ echo "\n\n";
 							<input type="button" class="btn btn-warning" id="buttonrefresdh" value="Clean"
 								onclick="javascript: cancelData();" />
 							
-							
+							<a href="?component=settings&controller=cleantmp&task=confirm">Clean temporary files...</a>
 							
 <div id="containerbody" style="border:0px solid #000000;height:100%;margin-left: -15px;
 margin-right: -15px;list-style-type: none;
