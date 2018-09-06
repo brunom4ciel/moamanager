@@ -153,7 +153,9 @@ echo "\n\n";
 
 							<input type="button" class="btn btn-default" id="buttonrefresh" value="RAM & CPU by cores"
 								onclick="javascript: updateRefreshpp(this, 3);" />
-					
+							
+							<input type="button" class="btn btn-warning" id="buttonrefresdh" value="Clean"
+								onclick="javascript: cancelData();" />
 							
 							
 							
@@ -198,6 +200,14 @@ buttonInterval.push(false, false, false, false);
 
 var cancelPOST = false;
 
+function cancelData()
+{
+	for(var i = 0; i < buttonControllerElement.length; i++)
+	{		
+		document.getElementById(buttonControllerElement[i]).innerHTML = ''; 	
+	}
+}
+
 function updateRefreshpp(objElement, indexButton)
 {
 	var label = objElement.value;
@@ -222,7 +232,7 @@ function refreshPOST(indexButton)
 
     if(buttonCancelTimeOut[indexButton] == true)
     {    	
-    	document.getElementById(buttonControllerElement[indexButton]).innerHTML = '';    
+//     	document.getElementById(buttonControllerElement[indexButton]).innerHTML = '';    
     	cancelPOST = true;
     	    	    		
 //     	clearInterval(buttonInterval[indexButton]);
