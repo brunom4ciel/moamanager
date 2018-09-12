@@ -174,7 +174,8 @@ if ($filename != null) {
                             "hardware-disk"=>"Hardware Disk",
                             "hardware-disk-usage"=>"Hardware disk usage",
                             "hardware-disk-free"=>"Hardware disk free",
-                            "os-system"=>"OS system"
+                            "os-system"=>"OS system",
+                            "command-input"=>"Java Memory",
                         );
                         
                         $tagvalues = array();
@@ -315,6 +316,12 @@ if(!empty($tagvalues))
     {
         foreach($tagvalues as $key=>$value)
         {
+            if($key == "command-input")
+            {
+                $value = substr($value, 0, strpos($value, " -cp"));
+                $value  =substr($value, strpos($value, "-Xmx")+4);
+            }
+            
             echo "<span style='color:blue'>".$tags[$key] . "</span>: " . $value . "<br>";
         }
     }
