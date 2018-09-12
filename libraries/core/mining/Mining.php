@@ -13,60 +13,89 @@ defined('_EXEC') or die;
 
 class Mining{
         
-    function convertCSV($arrayElements, $parameters, $breakline=1){
+    function convertCSV($arrayElements, $parameters, $breakline=1)
+    {
         
         $iteration=0;
         $output="";
         $z=1;
+        $columnCount = 0;
         
-        $decimalformat = $parameters["decimalformat"];
+        $decimalseparator = $parameters["decimalformat"];
+//         $decimalprecision = $parameters["decimalprecision"];
         
-        
-        foreach($arrayElements as $key=>$element){
+        foreach($arrayElements as $key=>$element)
+        {
             
             
-            if($iteration==0){
+//             if($iteration==0){
                 
-                /*if($parameters["column"]==1){
-                 foreach($element as $key2=>$item){
-                 
-                 foreach($item as $key3=>$item3){
-                 $output .= (empty($output)? $key3:"\t".$key3);
-                 }
-                 }
-                 
-                 $output .= "\n";
-                 }*/
-            }
+//                 if($parameters["column"]==1)
+//                 {
+//                     foreach($element as $key2=>$item)
+//                     {                                          
+//                         foreach($item as $key3=>$item3)
+//                         {
+//                             $output .= (empty($output)? $key3:"\t".$key3);
+//                         }
+//                         $columnCount++;
+//                     }
+                    
+                    
+//                     $aux = $output;
+                    
+//                     $zz = count($element) / $breakline;
+//                     $zz = ceil($zz);
+                    
+//                     for($y = 0; $y < $zz; $y++)
+//                     {
+//                         $output .= "\t" . $aux;
+//                     }
+                
+                    
+//                     $output .= "\n";
+//                 }
+                
+                
+//             }
             
             $output2="";
             
-            foreach($element as $key2=>$item){
+            foreach($element as $key2=>$item)
+            {
                 
-                foreach($item as $key3=>$item3){
+                foreach($item as $key3=>$item3)
+                {   
                     
-                    if($decimalformat != ".")
-                        $item3 = str_replace(".", $decimalformat, $item3);
+                    if($decimalseparator != ".")
+                    {
+                        $item3 = str_replace(".", $decimalseparator, $item3);
+                    }
                         
-                        if($z == 1)
-                            $output2 .= $item3;
-                            else
-                                $output2 .= "\t".$item3;
-                                
-                                if($z==$breakline){
-                                    
-                                    $z=1;
-                                    $output2 .= "\n";
-                                    
-                                }else{
-                                    
-                                    $z++;
-                                }
-                                
+                    if($z == 1)
+                    {
+                        $output2 .= $item3;
+                    }
+                    else
+                    {
+                        $output2 .= "\t".$item3;
+                    }
+                    
+                    if($z==$breakline)
+                    {                                    
+                        $z=1;
+                        $output2 .= "\n";
+                        
+                    }else
+                    {                                    
+                        $z++;
+                    }
+                    
                 }
                 
             }
             $output .= $output2;
+            
             
             $iteration++;
         }
@@ -463,16 +492,145 @@ class Mining{
     }
     
     
+    /*
+     * for zero-padding with a length of n
+     *
+     * @param	mixed	$number
+     * @param	string	$format
+     *
+     * @return	void
+     */
+    function format_number($number, $format)
+    {
+        $result = "";
+        
+        $n = floor(strlen($number) / 10);
+        $s = $format - strlen($number);
+        
+        while ($n < $s) {
+            
+            $result .= "0";
+            $n ++;
+        }
+        
+        $result .= $number;
+        
+        return $result;
+    }
+    
+    function decimalen($value, $decimalseparador=".")
+    {
+        $result = 0;
+        
+        if(strpos($value, $decimalseparador) !== false)
+        {
+            $dPrecision = substr($value, strrpos($value, $decimalseparador)+1);
+            $result = strlen($dPrecision);
+        }
+        
+        return $result;
+    }
+    
+    function numeric_format_option($value, $decimalprecision, $decimalseparator)
+    {
+        //$result = floatval($value);
+        $result = $value;
+        
+        if($decimalprecision > 0)
+        {
+            $dPrecision = $this->decimalen($result);    
+        }
+        else
+        {
+            $dPrecision = 0;
+            $value = substr($value, 0, strpos($value,"."));
+        }
+        
+        
+        if($dPrecision > 0)//is_numeric($result))
+        {            
+            
+            if($dPrecision > $decimalprecision)
+            {
+                $result = number_format($result, $decimalprecision, $decimalseparator, ".");
+            }
+            else 
+            {
+                $result = str_replace(".", $decimalseparator, $result);
+            }
+
+            if(strpos($result, $decimalseparator) === false)
+            {
+
+                $result .= $decimalseparator;                
+                
+                $n = 0;
+                while ($n < $decimalprecision) {
+                    
+                    $result .= "0";
+                    $n ++;
+                }
+            }
+            else 
+            {
+                $d = substr($result, strrpos($result, $decimalseparator)+1);
+                $d = strlen($d);
+                
+                $n = $d;
+                while ($n < $decimalprecision) {
+                    
+                    $result .= "0";
+                    $n ++;
+                }
+                 
+//                 var_dump($result);exit();
+            }
+            
+//             $result = $this->format_number($result, $decimalprecision);
+        }
+        else 
+        {
+            $result = $value;
+        }
+        
+        return $result;
+    }
+    
     //Extrai a media da precisão e variação da "confiança"
     
-    function miningFile($file, $parameters){
-        
-        
+    function miningFile($file, $parameters)
+    {
+       
         $json_return = array();
+        
+        if(empty($parameters["decimalformat"]))
+        {
+            $decimalseparator = ".";
+        }
+        else
+        {
+            $decimalseparator = $parameters["decimalformat"];
+        }
+        
+        if(!isset($parameters["decimalprecision"]))
+        {
+            $decimalprecision = 2;
+        }
+        else
+        {
+            if($parameters["decimalprecision"] == null)
+            {
+                $decimalprecision = 2;
+            }
+            else
+            {
+                $decimalprecision = $parameters["decimalprecision"];
+            }
+        }
         
         if(!is_readable($file))
         {
-            
+
             if($parameters["accuracy"]==1)
             {
                 array_push($json_return, array("Accuracy"=>"*"));
@@ -490,6 +648,10 @@ class Mining{
                 $str = implode("\t", array('*','*','*','*','*','*','*','*','*','*','*'));
                 array_push($json_return, array("resume"=>$str));
             }
+            if($parameters["dist"]==1)
+            {
+                array_push($json_return, array("dist"=>"*"));
+            }
             if($parameters["fn"]==1)
             {
                 array_push($json_return, array("fn"=>"*"));
@@ -498,7 +660,30 @@ class Mining{
             {
                 array_push($json_return, array("fp"=>"*"));
             }
-            
+            if($parameters["tn"]==1)
+            {
+                array_push($json_return, array("tn"=>"*"));
+            }
+            if($parameters["tp"]==1)
+            {
+                array_push($json_return, array("tp"=>"*"));
+            }
+            if($parameters["precision"]==1)
+            {
+                array_push($json_return, array("precision"=>"*"));
+            }
+            if($parameters["recall"]==1)
+            {
+                array_push($json_return, array("recall"=>"*"));
+            }
+            if($parameters["mcc"]==1)
+            {
+                array_push($json_return, array("mcc"=>"*"));
+            }
+            if($parameters["f1"]==1)
+            {
+                array_push($json_return, array("f1"=>"*"));
+            }
             return $json_return;
         }
         
@@ -569,15 +754,22 @@ class Mining{
                                                 $tmp = substr($tmp,strpos($tmp, "Mean (CI) =")+strlen("Mean (CI) =")+1);
                                             }
                                             
-                                            $accuracy = $tmp;
+                                            $accuracy = $tmp;                                                                                        
+                                            $accuracy = substr($accuracy,0,strpos($accuracy, ")")+1);                                            
+                                            $accuracy_aux = $accuracy;
                                             
-                                            $accuracy = substr($accuracy,0,strpos($accuracy, ")")+1);
+                                            $accuracy = substr($accuracy,0,strpos($accuracy, "(")-1);
+                                            $accuracy = trim($accuracy);
                                             
-                                            if($parameters["interval"]!=1){
-                                                $accuracy = substr($accuracy,0,strpos($accuracy, "(")-1);
-                                                $accuracy = trim($accuracy);
+                                            
+                                            $accuracy = $this->numeric_format_option($accuracy, $decimalprecision, $decimalseparator);
+                                            
+                                            if($parameters["interval"] == 1){
+                                                $accuracy_aux = substr($accuracy_aux,strpos($accuracy_aux, "(")-1);
+                                                $accuracy_aux = trim($accuracy_aux);
+                                                $accuracy .= " " . $accuracy_aux;
                                             }
-                                            
+                                                         
                                             array_push($json_return, array("Accuracy"=>$accuracy));
                                             
                                         }
@@ -607,14 +799,20 @@ class Mining{
                                             }
                                             
                                             $atime = $tmp;
-                                            
-                                            
                                             $atime = substr($atime,0,strpos($atime, ")")+1);
+                                            $atime_aux = $atime;
                                             
-                                            if($parameters["interval"]!=1){
-                                                $atime = substr($atime,0,strpos($atime, "(")-1);
-                                                $atime = trim($atime);
+                                            $atime = substr($atime,0,strpos($atime, "(")-1);
+                                            $atime = trim($atime);
+                                            
+                                            $atime = $this->numeric_format_option($atime, $decimalprecision, $decimalseparator);
+                                            
+                                            if($parameters["interval"]==1){
+                                                $atime_aux = substr($atime_aux,strpos($atime_aux, "(")-1);
+                                                $atime_aux = trim($atime_aux);
+                                                $atime .= " " . $atime_aux;
                                             }
+                                            
                                             
                                             array_push($json_return, array("Timer"=>$atime));
                                             
@@ -641,14 +839,24 @@ class Mining{
                                                 $tmp = substr($tmp,strpos($tmp, "Mean (CI) =")+strlen("Mean (CI) =")+1);
                                             }
                                             
-                                            $amemory = $tmp;
-                                            
-                                            
+                                            $amemory = $tmp;                                            
                                             $amemory = substr($amemory,0,strpos($amemory, ")")+1);
+                                            $amemory_aux = $amemory;
                                             
-                                            if($parameters["interval"]!=1){
-                                                $amemory = substr($amemory,0,strpos($amemory, "(")-1);
-                                                $amemory = trim($amemory);
+                                            $amemory = substr($amemory,0,strpos($amemory, "(")-1);
+                                            $amemory = trim($amemory);
+                                            
+//                                             if($parameters["interval"]!=1){
+//                                                 $amemory = substr($amemory,0,strpos($amemory, "(")-1);
+//                                                 $amemory = trim($amemory);
+//                                             }
+                                            
+                                            $amemory = $this->numeric_format_option($amemory, $decimalprecision, $decimalseparator);
+                                            
+                                            if($parameters["interval"]==1){
+                                                $amemory_aux = substr($amemory_aux,strpos($amemory_aux, "(")-1);
+                                                $amemory_aux = trim($amemory_aux);
+                                                $amemory .= " " . $amemory_aux;
                                             }
                                             
                                             array_push($json_return, array("Memory"=>$amemory));
@@ -660,7 +868,7 @@ class Mining{
                                     }
                                     
                                     break;
-                                case 'fp':
+                                /*case 'fp':
                                     
                                     if($parameters["fp"]==1){
                                         
@@ -735,11 +943,21 @@ class Mining{
                                         }
                                     }
                                     
-                                    break;
+                                    break;*/
                                     
                                 case 'resume':
                                     
-                                    if($parameters["resume"]==1){
+                                    if($parameters["dist"] == 1
+                                    || $parameters["fn"] == 1
+                                    || $parameters["fp"] == 1
+                                    || $parameters["tn"] == 1
+                                    || $parameters["tp"] == 1
+                                    || $parameters["precision"] == 1
+                                    || $parameters["recall"] == 1
+                                    || $parameters["mcc"] == 1
+                                    || $parameters["f1"] == 1
+                                    || $parameters["resume"] == 1)
+                                    {
                                         
                                         if(isset($start_filter)){
                                             
@@ -788,7 +1006,98 @@ class Mining{
                                                 $buffer = str_replace(" ","", $buffer);
                                                 $buffer = str_replace("\r\n","", $buffer);
                                                 
-                                                array_push($json_return, array("resume"=>$buffer));
+                                                $itens_list = array();
+                                                
+                                                if($parameters["dist"] == 1
+                                                    || $parameters["fn"] == 1
+                                                    || $parameters["fp"] == 1
+                                                    || $parameters["tn"] == 1
+                                                    || $parameters["tp"] == 1
+                                                    || $parameters["precision"] == 1
+                                                    || $parameters["recall"] == 1
+                                                    || $parameters["mcc"] == 1
+                                                    || $parameters["f1"] == 1)
+                                                {
+                                                    
+                                                    if(strpos($buffer, "\t") !== false)
+                                                    {
+                                                        $itens_list = explode("\t", $buffer);
+                                                        
+                                                        //0 = dist
+                                                        //7 = mcc
+                                                        //8 = f1
+                                                        
+                                                    }
+                                                }
+                                                
+                                                
+                                                if($parameters["dist"] == 1)
+                                                {
+                                                    $value = $itens_list[0];
+                                                    $value = $this->numeric_format_option($value, $decimalprecision, $decimalseparator);                                                    
+                                                    array_push($json_return, array("dist"=>$value));
+                                                }
+                                                
+                                                if($parameters["fn"] == 1)
+                                                {
+                                                    $value = $itens_list[1];
+                                                    $value = $this->numeric_format_option($value, $decimalprecision, $decimalseparator);
+                                                    array_push($json_return, array("fn"=>$value));
+                                                }
+                                                
+                                                if($parameters["fp"] == 1)
+                                                {
+                                                    $value = $itens_list[2];
+                                                    $value = $this->numeric_format_option($value, $decimalprecision, $decimalseparator);
+                                                    array_push($json_return, array("tp"=>$value));
+                                                }
+                                                
+                                                if($parameters["tn"] == 1)
+                                                {
+                                                    $value = $itens_list[3];
+                                                    $value = $this->numeric_format_option($value, $decimalprecision, $decimalseparator);
+                                                    array_push($json_return, array("tn"=>$value));
+                                                }
+                                                
+                                                if($parameters["tp"] == 1)
+                                                {
+                                                    $value = $itens_list[4];
+                                                    $value = $this->numeric_format_option($value, $decimalprecision, $decimalseparator);
+                                                    array_push($json_return, array("tp"=>$value));
+                                                }
+                                                
+                                                if($parameters["precision"] == 1)
+                                                {
+                                                    $value = $itens_list[5];
+                                                    $value = $this->numeric_format_option($value, $decimalprecision, $decimalseparator);
+                                                    array_push($json_return, array("precision"=>$value));
+                                                }
+                                                
+                                                if($parameters["recall"] == 1)
+                                                {
+                                                    $value = $itens_list[6];
+                                                    $value = $this->numeric_format_option($value, $decimalprecision, $decimalseparator);
+                                                    array_push($json_return, array("recall"=>$value));
+                                                }
+                                                
+                                                if($parameters["mcc"] == 1)
+                                                {
+                                                    $value = $itens_list[7];//var_dump($value);
+                                                    $value = $this->numeric_format_option($value, $decimalprecision, $decimalseparator);
+                                                    array_push($json_return, array("mcc"=>$value));//exit();
+                                                }
+                                                
+                                                if($parameters["f1"] == 1)
+                                                {
+                                                    $value = $itens_list[8];
+                                                    $value = $this->numeric_format_option($value, $decimalprecision, $decimalseparator);
+                                                    array_push($json_return, array("f1"=>$value));
+                                                }
+                                                
+                                                if($parameters["resume"] == 1)
+                                                {
+                                                    array_push($json_return, array("resume"=>$buffer));
+                                                }
                                                 
                                                 $start_filter = false;
                                             }

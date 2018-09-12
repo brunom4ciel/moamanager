@@ -160,6 +160,32 @@ if ($filename != null) {
                         $script = $utils->getMetadataValueScript($filename, "script");
                         $output = $utils->getMetadataValueScript($filename, "command-output");
                         
+                        $tags = array("software-version"=>"Software Version",
+                            "software-release"=>"Software Release",
+                            "script-cpu-datetime-start"=>"Script CPU datetime start",
+                            "script-cpu-datetime-end"=>"Script CPU datetime end",
+                            "script-cpu-time"=>"Script CPU time",
+                            "script-cpu-usage-start"=>"Script CPU usage start",
+                            "script-cpu-usage-end"=>"Script CPU usage end",
+                            "script-ram-usage-start"=>"Script RAM usage start",
+                            "script-ram-usage-end"=>"Script RAM usage end",
+                            "hardware-cpu"=>"Hardware CPU",                            
+                            "hardware-ram"=>"Hardware RAM",
+                            "hardware-disk"=>"Hardware Disk",
+                            "hardware-disk-usage"=>"Hardware disk usage",
+                            "hardware-disk-free"=>"Hardware disk free",
+                            "os-system"=>"OS system"
+                        );
+                        
+                        $tagvalues = array();
+                        
+                        foreach($tags as $key=>$value)
+                        {
+                            $tagvalues[$key] = $utils->getMetadataValueScript($filename, $key);
+                        }
+                        
+                        
+                        
 //                         $gz = base64_decode($output);
                         
 //                         if(!testGZ($gz))
@@ -261,6 +287,8 @@ function testGZ($str)
             } else {
                 ?>
 													
+													
+												
 												<input type="text" style="width: 100%" name="filenamenew"
 											value="<?php echo $application->getParameter("filename");?>">
 																						
@@ -273,11 +301,32 @@ function testGZ($str)
 											[Open]</a> <a
 											href="<?php echo PATH_WWW."?component=resource&tmpl=false&task=download&file=".$application->getParameter("folder").$application->getParameter("filename");?>">
 											[Download]</a> <?php echo $filesize?>		
-													
+													<br>
 													<?php
             }
 
             ?>
+            
+          <div style="font-size:12px"> 
+<?php 
+if(!empty($tagvalues))
+{
+    if(count($tagvalues) > 0)
+    {
+        foreach($tagvalues as $key=>$value)
+        {
+            echo "<span style='color:blue'>".$tags[$key] . "</span>: " . $value . "<br>";
+        }
+    }
+    
+    ?>
+												
+			
+<?php 
+}?>
+		</div> 										
+            
+												
 												
 												<?php if(!empty($output)){?>
 												<pre style="font-family: monospace;background-color:#000000;color:#ffffff;font-size:10pt;">Debug: <?php echo substr($output, 0, 5000);?></pre>

@@ -268,10 +268,9 @@ if($task == "folder"){
         
         $element = $application->getParameter("element");
         
+        $metricstract = $application->getParameter("metricstract");
         
-        $accuracy = $application->getParameter("accuracy");
-        $timer = $application->getParameter("timer");
-        $memory = $application->getParameter("memory");
+        
         //$fp = $application->getParameter("fp");
         //	$fn = $application->getParameter("fn");
         $interval = $application->getParameter("interval");
@@ -280,43 +279,65 @@ if($task == "folder"){
         $detector = $application->getParameter("detector");
         $detectorsum = $application->getParameter("detectorsum");
         
-        $dist = $application->getParameter("dist");
-        $fn = $application->getParameter("fn");
-        $fp = $application->getParameter("fp");
-        $tn = $application->getParameter("tn");
-        $tp = $application->getParameter("tp");
-        $precision = $application->getParameter("precision");
-        $recall = $application->getParameter("recall");
-        $mcc = $application->getParameter("mcc");
-        $f1 = $application->getParameter("f1");
+        $metrics = array();
+        $metrics["accuracy"] = null;
+        $metrics["timer"] = null;
+        $metrics["memory"] = null;
+        $metrics["dist"] = null;
+        $metrics["fn"] = null;
+        $metrics["fp"] = null;
+        $metrics["tn"] = null;
+        $metrics["tp"] = null;
+        $metrics["precision"] = null;
+        $metrics["recall"] = null;
+        $metrics["mcc"] = null;
+        $metrics["f1"] = null; 
         
+        if(!empty($metricstract))
+        {
+            $metrics[$metricstract] = 1;     
+        }
+        
+        
+        
+        $column = $application->getParameter("column");
         
         // 			$process_type = $application->getParameter("process_type");
         $decimalformat = $application->getParameter("decimalformat");
         
-        if($dist == 1
-            || $fn == 1
-            || $fp == 1
-            || $tn == 1
-            || $tp == 1
-            || $precision == 1
-            || $recall == 1
-            || $mcc == 1
-            || $f1 == 1)
+        $decimalprecision = $application->getParameter("decimalprecision");
+        
+        if($decimalprecision == null)
         {
-            $resume = 1;
+            $decimalprecision = 2;
         }
         
-        $parameters = array("accuracy"=>($accuracy==null?0:1),
+        if(empty($decimalformat))
+        {
+            $decimalformat = ".";
+        }
+
+        
+        $parameters = array("accuracy"=>($metrics["accuracy"]==null?0:1),
             "type_extract"=>($type_extract==null?0:1),
-            "timer"=>($timer==null?0:1),
-            "memory"=>($memory==null?0:1),
+            "timer"=>($metrics["timer"]==null?0:1),
+            "memory"=>($metrics["memory"]==null?0:1),
             //"fp"=>($fp==null?0:1),
             //"fn"=>($fn==null?0:1),
-            "column"=>(empty($_POST['column'])?0:1),
+            "column"=>($column==null?0:1),
             "interval"=>($interval==null?0:1),
-            "resume"=>($resume==null?0:1),
+            "dist"=>($metrics["dist"]==null?0:1),
+            "fn"=>($metrics["fn"]==null?0:1),
+            "fp"=>($metrics["fp"]==null?0:1),
+            "tn"=>($metrics["tn"]==null?0:1),
+            "tp"=>($metrics["tp"]==null?0:1),
+            "precision"=>($metrics["precision"]==null?0:1),
+            "recall"=>($metrics["recall"]==null?0:1),
+            "mcc"=>($metrics["mcc"]==null?0:1),
+            "f1"=>($metrics["f1"]==null?0:1),
+            "resume"=>($metrics["resume"]==null?0:1),
             "decimalformat"=>($decimalformat==null?".":$decimalformat),
+            "decimalprecision"=>($decimalprecision==null?".":$decimalprecision),
             "detector"=>($detector==null?0:1),
             //  "mcc"=>($mcc==null?0:1),
         // "f1"=>($f1==null?0:1),
@@ -435,6 +456,18 @@ if($task == "folder"){
                     
                 }
             }
+            else 
+            {
+                
+                
+//                 foreach($data_tmpl as $key=>$item){
+                    
+//                     if(substr(trim($item),0,1)!="#" && trim($item) != ""){
+//                         //                     $tmpl_lines[] = trim($item);
+//                         array_push($mining_store2, array("dirname"=>$datasets_name, "results"=>array(array("Dataset"=>trim($item)))));
+//                     }
+//                 }
+            }
             
             
             //if(count($mining_store2) > 0)
@@ -502,7 +535,8 @@ if($task == "folder"){
                 
             }else{
                 
-                if(is_dir($dir.$item)){
+                if(is_dir($dir.$item))
+                {
                     
                     $two_folders++;
                     
@@ -567,26 +601,35 @@ if($task == "folder"){
                                                 
                     }
                     
+                    
+                    
                     $dirname_project = "";
                     $dirname_project_last_count = 0;
                     
-                    foreach($files_names as $key=>$item)
+                    foreach($files_names as $key=>$item5)
                     {
                         if($dirname_project == "")
                         {
                             $dirname_project = $key;
-                            $dirname_project_last_count = $item;
+                            $dirname_project_last_count = $item5;
                         }
                         else
                         {
                             if($item > $files_names[$dirname_project])
                             {
                                 $dirname_project = $key;
-                                $dirname_project_last_count = $item;
+                                $dirname_project_last_count = $item5;
                             }
                         }
                     }
                     
+                    
+                    
+                    
+                    
+                    //
+                    // ********************************
+                    // 
                     
                     $files_aux = array();
                     
@@ -611,9 +654,6 @@ if($task == "folder"){
                     
                     $files = $files_aux;
                     
-                    //
-                    // ********************************
-                    // 
                     
                     $files2 = array();                    
                     $lastseq = 0;
@@ -652,33 +692,25 @@ if($task == "folder"){
                                 $f_name_ex = substr($item2['name'], strrpos($item2['name'], ".")+1);
                                 $f_name .= "." . $f_name_ex;
                                 
-//                                 $fp = fopen('data.txt', 'w');
-//                                 fclose($fp);
-//                                 echo $lastseqname . "=" . $f_name;
-//                                 exit($f_name);
                                 $files2[] = array("name"=>$f_name);
                                 $files2[] = $item2;
                                 
                                 $lastseq = $seq;
                                 $lastseqname = $f_name;
                                 
-//                                 if($seq == 191)
-//                                 {
-//                                     var_dump($files2);
-//                                     var_dump($lastseq);
-//                                     var_dump($seq);
-    
-//                                     exit("fim");
-//                                 }
-                                
                             }
                         }
                                                
                     }
                     
+                    //
+                    // **********************************************
+                    // 
+                    
                     $files = $files2;
                                         
-//                     var_dump($files2);exit();
+                    
+
                     
                     foreach($files as $keyname=>$file){
                         
@@ -756,6 +788,7 @@ if($task == "folder"){
         }
         
         
+//         var_dump($mining_store);exit();
 //        
         
         if($two_folders > 1){
@@ -1025,94 +1058,116 @@ if($task == "folder"){
             unset($mining_store2);
         }
         
-        if($dist == 1
-            || $fn == 1
-            || $fp == 1
-            || $tn == 1
-            || $tp == 1
-            || $precision == 1
-            || $recall == 1
-            || $mcc == 1
-            || $f1 == 1)
-        {
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+//         if($dist == 1
+//             || $fn == 1
+//             || $fp == 1
+//             || $tn == 1
+//             || $tp == 1
+//             || $precision == 1
+//             || $recall == 1
+//             || $mcc == 1
+//             || $f1 == 1)
+//         {
             
-            $mining_store_aux = array();
+//             $mining_store_aux = array();
             
-            //$pos = array(0,1,2,3,4,5,6,7,8);
+//             //$pos = array(0,1,2,3,4,5,6,7,8);
             
-            if($dist == 1)
-            {
-                $pos  = 0;
-            }
+//             if($dist == 1)
+//             {
+//                 $pos  = 0;
+//             }
             
-            if($fn == 1)
-            {
-                $pos  = 1;
-            }
+//             if($fn == 1)
+//             {
+//                 $pos  = 1;
+//             }
             
-            if($fp == 1)
-            {
-                $pos  = 2;
-            }
+//             if($fp == 1)
+//             {
+//                 $pos  = 2;
+//             }
             
-            if($tn == 1)
-            {
-                $pos  = 3;
-            }
+//             if($tn == 1)
+//             {
+//                 $pos  = 3;
+//             }
             
-            if($tp == 1)
-            {
-                $pos  = 4;
-            }
+//             if($tp == 1)
+//             {
+//                 $pos  = 4;
+//             }
             
-            if($precision == 1)
-            {
-                $pos  = 5;
-            }
+//             if($precision == 1)
+//             {
+//                 $pos  = 5;
+//             }
             
-            if($recall == 1)
-            {
-                $pos  = 6;
-            }
+//             if($recall == 1)
+//             {
+//                 $pos  = 6;
+//             }
             
-            if($mcc == 1)
-            {
-                $pos  = 7;
-            }
+//             if($mcc == 1)
+//             {
+//                 $pos  = 7;
+//             }
             
-            if($f1 == 1)
-            {
-                $pos  = 8;
-            }
+//             if($f1 == 1)
+//             {
+//                 $pos  = 8;
+//             }
             
-            foreach($mining_store as $item)
-            {
-                $a = array();
+//             foreach($mining_store as $item)
+//             {
+//                 $a = array();
                 
-                foreach($item as $key=>$value)
-                {
-                    if(strpos($value["resume"], "\t") !== false)
-                    {
-                        $itens = explode("\t", $value["resume"]);
+//                 foreach($item as $key=>$value)
+//                 {
+//                     if(strpos($value["resume"], "\t") !== false)
+//                     {
+//                         $itens = explode("\t", $value["resume"]);
                         
-                        //0 = dist
-                        //7 = mcc
-                        //8 = f1
+//                         //0 = dist
+//                         //7 = mcc
+//                         //8 = f1
                         
-                        $a[] = array("resume"=>$itens[$pos]);
-                    }
+//                         $a[] = array("resume"=>$itens[$pos]);
+//                     }
                     
-                }
+//                 }
                 
-                array_push($mining_store_aux, $a);
+//                 array_push($mining_store_aux, $a);
                 
-            }
+//             }
             
-            //
-            $mining_store = $mining_store_aux;
-        }
+//             //
+//             $mining_store = $mining_store_aux;
+//         }
         
         
+        
+//         var_dump($mining_store);exit();
         
         
         
@@ -1121,7 +1176,7 @@ if($task == "folder"){
             
         }else{
             
-            $resume = $application->getParameter("resume");
+            $resume = $metrics['resume'];//$application->getParameter("resume");
             $detector = $application->getParameter("detector");
             
             if($resume == 1){
@@ -1230,77 +1285,77 @@ if($task == "folder"){
 //                     $extensions[] = "html";
 //                 }
                             
-                if($interval != null){
-                    $ic = "(ic)";
-                }else{
-                    $ic = "";
-                }
+//                 if($interval != null){
+//                     $ic = "(ic)";
+//                 }else{
+//                     $ic = "";
+//                 }
                 
-                if($accuracy != null){
-                    $accu = "-accuracy";
-                }else{
-                    $accu = "";
-                }
+//                 if($metrics['accuracy'] != null){
+//                     $accu = "-accuracy";
+//                 }else{
+//                     $accu = "";
+//                 }
                 
-                if($timer != null){
-                    $tim = "-timer";
-                }else{
-                    $tim = "";
-                }
+//                 if($metrics['timer'] != null){
+//                     $tim = "-timer";
+//                 }else{
+//                     $tim = "";
+//                 }
                 
-                if($memory != null){
-                    $mem = "-memory";
-                }else{
-                    $mem = "";
-                }
+//                 if($metrics['memory'] != null){
+//                     $mem = "-memory";
+//                 }else{
+//                     $mem = "";
+//                 }
                 
-                if($fn != null){
-                    $fn = "-fn";
-                }else{
-                    $fn = "";
-                }
-                if($fp != null){
-                    $fp = "-fp";
-                }else{
-                    $fp = "";
-                }
-                if($tn != null){
-                    $tn = "-tn";
-                }else{
-                    $tn = "";
-                }
-                if($tp != null){
-                    $tp = "-tp";
-                }else{
-                    $tp = "";
-                }
+//                 if($metrics['fn'] != null){
+//                     $fn = "-fn";
+//                 }else{
+//                     $fn = "";
+//                 }
+//                 if($metrics['fp'] != null){
+//                     $fp = "-fp";
+//                 }else{
+//                     $fp = "";
+//                 }
+//                 if($metrics['tn'] != null){
+//                     $tn = "-tn";
+//                 }else{
+//                     $tn = "";
+//                 }
+//                 if($metrics['tp'] != null){
+//                     $tp = "-tp";
+//                 }else{
+//                     $tp = "";
+//                 }
                 
-                if($precision != null){
-                    $precicion = "-precision";
-                }else{
-                    $precicion = "";
-                }
-                if($recall != null){
-                    $recall = "-recall";
-                }else{
-                    $recall = "";
-                }
-                if($mcc != null){
-                    $mcc = "-mcc";
-                }else{
-                    $mcc = "";
-                }
-                if($f1 != null){
-                    $f1 = "-f1";
-                }else{
-                    $f1 = "";
-                }
+//                 if($metrics['precision'] != null){
+//                     $precicion = "-precision";
+//                 }else{
+//                     $precicion = "";
+//                 }
+//                 if($metrics['recall'] != null){
+//                     $recall = "-recall";
+//                 }else{
+//                     $recall = "";
+//                 }
+//                 if($metrics['mcc'] != null){
+//                     $mcc = "-mcc";
+//                 }else{
+//                     $mcc = "";
+//                 }
+//                 if($metrics['f1'] != null){
+//                     $f1 = "-f1";
+//                 }else{
+//                     $f1 = "";
+//                 }
                 
                                                             
                 foreach($extensions as $extension){
                     
                     
-                    $filename = $filename_to_save.$accu.$tim.$mem.$ic.$fp.$fn.$tp.$tn.$precicion.$recall.$mcc.$f1.".".$extension;
+                    $filename = $filename_to_save."-".$metricstract.".".$extension;
                     
                     if(file_exists($filename))
                         if($overwrite != null)

@@ -224,12 +224,15 @@ function historicCookieElementValue(elementId, defaultValue){
 
 	var elementCookieHistoric = getCookie(elementId);
 	
-	if(elementCookieHistoric=="")//{
-		elementCookieValue=defaultValue;//=defaultValue;"";
-	//}else
+	if(elementCookieHistoric=="")
+	{
+		//elementCookieValue=defaultValue;//=defaultValue;"";
+		document.getElementById(elementId).value = defaultValue;
+	}else{
 	//	elementCookieValue=elementCookieHistoric;
 	
-	document.getElementById(elementId).value = Base64.decode(elementCookieHistoric);
+		document.getElementById(elementId).value = Base64.decode(elementCookieHistoric);
+	}
 }
 
 
@@ -478,31 +481,33 @@ function verificaChecks() {
 		</td>
 		<td valign="top">
 			<span style="width:100%;border-bottom:1px solid #cccccc">Data for extraction</span><br>
-			<label><input type="checkbox" name="accuracy" id="accuracy" value="1" onclick="setCookieCheckbox(this);"/>Accuracy</label>		
-			<label><input type="checkbox" name="timer" id="timer" value="1" onclick="setCookieCheckbox(this);"/>Timer</label>
-			<label><input type="checkbox" name="memory" id="memory" value="1" onclick="setCookieCheckbox(this);"/>Memory</label>
+			<label><input type="radio" name="metricstract" id="metricstract" value="accuracy" onclick="setCookieRadioBox(this);"/>Accuracy</label>		
+			<label><input type="radio" name="metricstract" id="metricstract" value="timer" onclick="setCookieRadioBox(this);"/>Timer</label>
+			<label><input type="radio" name="metricstract" id="metricstract" value="memory" onclick="setCookieRadioBox(this);"/>Memory</label>
 			
 			<label><input type="checkbox" name="interval" id="interval" value="1" onclick="setCookieCheckbox(this);"/>Confidence Interval</label>
 			
-			<br>
-			<label><input type="checkbox" name="dist" id="dist" value="1" onclick="setCookieCheckbox(this);"/>dist</label>
-			<label><input type="checkbox" name="fn" id="fn" value="1" onclick="setCookieCheckbox(this);"/>fn</label>
-			<label><input type="checkbox" name="fp" id="fp" value="1" onclick="setCookieCheckbox(this);"/>fp</label>
-			<label><input type="checkbox" name="tn" id="tn" value="1" onclick="setCookieCheckbox(this);"/>tn</label>
-			<label><input type="checkbox" name="tp" id="tp" value="1" onclick="setCookieCheckbox(this);"/>tp</label>
-			<label><input type="checkbox" name="precision" id="precision" value="1" onclick="setCookieCheckbox(this);"/>precision</label>
-			<label><input type="checkbox" name="recall" id="recall" value="1" onclick="setCookieCheckbox(this);"/>recall</label>
 			
-			<label><input type="checkbox" name="mcc" id="mcc" value="1" onclick="setCookieCheckbox(this);"/>MCC</label>
-			<label><input type="checkbox" name="f1" id="f1" value="1" onclick="setCookieCheckbox(this);"/>F1</label>
-			<label><input type="checkbox" name="resume" id="resume" value="1" onclick="setCookieCheckbox(this);"/>TP+FN+Others</label>
+			<br>
+			<label><input type="radio" name="metricstract" id="metricstract" value="dist" onclick="setCookieRadioBox(this);"/>dist</label>
+			<label><input type="radio" name="metricstract" id="metricstract" value="fn" onclick="setCookieRadioBox(this);"/>fn</label>
+			<label><input type="radio" name="metricstract" id="metricstract" value="fp" onclick="setCookieRadioBox(this);"/>fp</label>
+			<label><input type="radio" name="metricstract" id="metricstract" value="tn" onclick="setCookieRadioBox(this);"/>tn</label>
+			<label><input type="radio" name="metricstract" id="metricstract" value="tp" onclick="setCookieRadioBox(this);"/>tp</label>
+			<label><input type="radio" name="metricstract" id="metricstract" value="precision" onclick="setCookieRadioBox(this);"/>precision</label>
+			<label><input type="radio" name="metricstract" id="metricstract" value="recall" onclick="setCookieRadioBox(this);"/>recall</label>
+			
+			<label><input type="radio" name="metricstract" id="metricstract" value="mcc" onclick="setCookieRadioBox(this);"/>MCC</label>
+			<label><input type="radio" name="metricstract" id="metricstract" value="f1" onclick="setCookieRadioBox(this);"/>F1</label>
+			<label><input type="radio" name="metricstract" id="metricstract" value="resume" onclick="setCookieRadioBox(this);"/>TP+FN+Others</label>
 					
 						
 		</td>
 		<td valign="top">
 				<span style="width:100%;border-bottom:1px solid #cccccc">Organize the data</span><br>
 				<label>Line break every <input type="text" name="breakline" id="breakline" value="7" style="width:40px;" onchange="setCookieElementValue(this);" /> data.</label>
-					<label>View decimal separator <input type="text" name="decimalformat" id="decimalformat" value="." style="width:40px;" onchange="setCookieElementValue(this);" /></label>
+					<label>Decimal separator <input type="text" name="decimalformat" id="decimalformat" value="." style="width:40px;" onchange="setCookieElementValue(this);" /></label>
+					<label>and precision<input type="text" name="decimalprecision" id="decimalprecision" value="2" style="width:40px;" onchange="setCookieElementValue(this);" /></label>
 					
 		</td>
 	</tr>
@@ -653,7 +658,10 @@ overflow-y: scroll;max-height: 400px;" >
 			}
 			
 			
-			
+			echo  "<a href='?component=files&controller=debug&filename=" . $element["name"]
+			. "&folder=" . $application->getParameter("folder") . "' target='_blank'>"
+             . "<img width='24px' align='middle' src='" . $application->getPathTemplate() . "/images/icon-debug.png' title='Debug'/></a> " ;
+    
 			echo			"<a href='?component=".$application->getComponent()."&task=download&type_extract=1&controller=extract_tmpl&filename=".$element["name"]."&folder=".$application->getParameter("folder")."'>"				
 				."<img width='16px' align='middle' src='".$application->getPathTemplate()."/images/icon_download.png' title='Download'/></a> "
 				;
@@ -702,7 +710,7 @@ overflow-y: scroll;max-height: 400px;" >
 
 
 
-
+historicCookieRadiobox('metricstract');
 
 historicCookieRadiobox('type_extract');
 
@@ -710,26 +718,28 @@ historicCookieRadiobox('type_extract');
 historicCookieElementValue("breakline", "2");
 //historicCookieElementValue("phone");
 
-historicCookieCheckbox("accuracy");
-historicCookieCheckbox("timer");
-historicCookieCheckbox("memory");
+// historicCookieCheckbox("accuracy");
+// historicCookieCheckbox("timer");
+// historicCookieCheckbox("memory");
 historicCookieCheckbox("interval");
 //historicCookieCheckbox("detector");
 //historicCookieCheckbox("detectorsum");
 
 
-historicCookieCheckbox("dist");
-historicCookieCheckbox("fn");
-historicCookieCheckbox("fp");
-historicCookieCheckbox("tn");
-historicCookieCheckbox("tp");
-historicCookieCheckbox("precision");
-historicCookieCheckbox("recall");
+// historicCookieCheckbox("column");
 
-historicCookieCheckbox("mcc");
-historicCookieCheckbox("f1");
+// historicCookieCheckbox("dist");
+// historicCookieCheckbox("fn");
+// historicCookieCheckbox("fp");
+// historicCookieCheckbox("tn");
+// historicCookieCheckbox("tp");
+// historicCookieCheckbox("precision");
+// historicCookieCheckbox("recall");
 
-historicCookieCheckbox("resume");
+// historicCookieCheckbox("mcc");
+// historicCookieCheckbox("f1");
+
+// historicCookieCheckbox("resume");
 
 historicCookieCheckbox("save");
 historicCookieCheckbox("overwrite");
@@ -746,6 +756,7 @@ historicCookieRadiobox('process_type');
 
 
 historicCookieElementValue("decimalformat", ".");
+historicCookieElementValue("decimalprecision", "2");
 
 
 
