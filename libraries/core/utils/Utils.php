@@ -17,6 +17,55 @@ defined('_EXEC') or die();
 class Utils
 {
     
+    function rank_avg($value, $array, $order = 0) {
+        // sort
+        if ($order) sort ($array); else rsort($array);
+        // add item for counting from 1 but 0
+        array_unshift($array, $value+1);
+        // select all indexes vith the value
+        $keys = array_keys($array, $value);
+        if (count($keys) == 0) return NULL;
+        // calculate the rank
+        return array_sum($keys) / count($keys);
+    }
+    
+    
+    function avgColsArray($arr)
+    {
+        $result = array();
+        $countRows = 0;
+        
+        foreach($arr as $key=>$item)
+        {
+            foreach($item as $key2=>$value)
+            {
+                $result[$key2] += $value;
+            }
+            $countRows++;
+        }
+        
+        foreach($result as $key=>$value)
+        {
+            $result[$key] = floatval($result[$key] / $countRows);
+        }
+        
+        return $result;
+    }
+    
+    function sumColsArray($arr)
+    {
+        $result = array();
+        foreach($arr as $key=>$item)
+        {
+            foreach($item as $key2=>$value)
+            {
+                $result[$key2] += $value;       
+            }            
+        }
+        
+        return $result;
+    }
+    
     
     function xCopy($source, $destination)
     {

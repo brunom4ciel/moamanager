@@ -1365,7 +1365,7 @@ if($task == "folder"){
                                 
                                 switch($extension){
                                     
-                                    case "csv":
+                                    case "txt":
                                         
                                         $data = $data_csv;
                                         
@@ -1445,12 +1445,22 @@ if($task == "folder"){
                         $filename = "AUTOLOAD" . time() . ".tmp";
                         $utils->setContentFile(PATH_USER_WORKSPACE_PROCESSING . $filename, $result_view);
                         
-                        
+                                                
                         $redirect = array();
                         
                         $redirect['url'] = '?';
                         $redirect['component'] = "statistical";
-                        $redirect['controller'] = "texteditor";
+                        
+                      
+                        if($statisticaltest == 'NemenyiGraph')
+                        {
+                            $redirect['controller'] = "graphnemenyi";
+                        }
+                        else 
+                        {
+                            $redirect['controller'] = "texteditor";
+                        }                        
+                        
                         $redirect['filename'] = rawurlencode($filename);
                         $redirect['task'] = $statisticaltest;
                         
@@ -1509,7 +1519,17 @@ if($task == "folder"){
                         
                         $redirect['url'] = '?';
                         $redirect['component'] = "statistical";
-                        $redirect['controller'] = "texteditor";
+                        
+                        if($statisticaltest == 'NemenyiGraph')
+                        {
+                            $redirect['controller'] = "graphnemenyi";
+                        }
+                        else
+                        {
+                            $redirect['controller'] = "texteditor";
+                        } 
+                        
+
                         $redirect['filename'] = rawurlencode($filename);
                         $redirect['task'] = $statisticaltest;
                         

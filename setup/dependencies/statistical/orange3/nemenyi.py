@@ -1,10 +1,17 @@
-import Orange
-import matplotlib.pyplot as plt
-import sys, math
-import os
-from matplotlib.backends.backend_pdf import PdfPages
-import time 
-from datetime import date
+
+try:
+	import Orange
+	import matplotlib.pyplot as plt
+	import sys, math
+	import os
+	from matplotlib.backends.backend_pdf import PdfPages
+	import time 
+	from datetime import date
+except ModuleNotFoundError as err:
+    # Error handling
+    print(err)
+    exit()
+    
 
 def isnan(value):
   try:
@@ -13,45 +20,40 @@ def isnan(value):
       return False
       
 filename = sys.argv[1]
-
 contents = ''
-with open(filename, 'r') as f:
-	contents = f.read()
+
+try:
+	with open(filename, 'r') as f:
+		contents = f.read()
+except IOError:
+    print("could not read")
+
+#with open(filename, 'r') as f:
+#	contents = f.read()
 	
 contents_list = contents.split("\n")
 
-dir_path_outputs = os.path.dirname(os.path.abspath(__file__))+'/outputs/'
-
-if not os.path.exists(dir_path_outputs):
-	try:
-		os.makedirs(dir_path_outputs)
-	except OSError:
-		pass
-basename_file = os.path.basename(filename)
-basename_file = basename_file.split('.')[0]		
-dir_path_outputs = dir_path_outputs+'/'+basename_file+'/'
-
-if not os.path.exists(dir_path_outputs):
-	try:
-		os.makedirs(dir_path_outputs)
-	except OSError:
-		pass
+#filename_output = os.path.dirname(os.path.abspath(__file__))+'/'
+	
+if len(sys.argv) > 3:
+	format_destine=sys.argv[3]
+else:
+	format_destine='png'
 
 if len(sys.argv) > 2:
-	format_destine=sys.argv[2]
+	filename_output=sys.argv[2]
 else:
-	format_destine='multiple'
+	filename_output=os.path.dirname(os.path.abspath(__file__))+'/example-tmp.'+format_destine
 
-if format_destine == 'multiple':
-	# The PDF document
-	pdf_pages = PdfPages(dir_path_outputs+'multiplefiles-output.pdf')
 
-dir_path_outputs = dir_path_outputs+'/'+format_destine+'/'
-if not os.path.exists(dir_path_outputs):
-	try:
-		os.makedirs(dir_path_outputs)
-	except OSError:
-		pass		
+try:
+	new_path = filename_output
+	new_days = open(new_path,'w')
+	new_days.write("test")
+	new_days.close()
+except IOError:
+    print("could not write")
+
 
 i=0
 n=1
@@ -82,11 +84,17 @@ while i < len(contents_list):
 				t.remove(item)
 			else:	
 				list_parameters.append(item)
-		filename_output = list_parameters[0]		
-		number_of_datasets = int(list_parameters[1])
+		filename_output1 = list_parameters[0]		
+		number_of_datasets = int(list_parameters[1])		
 		cd = Orange.evaluation.compute_CD(list_values, number_of_datasets, alpha='0.05',test='nemenyi') #tested on 30 datasets
-		Orange.evaluation.graph_ranks(list_values, list_names, cd=cd, width=12, textspace=1, alpha=0.05, nameref=filename_output)
+		Orange.evaluation.graph_ranks(list_values, list_names, cd=cd, width=12, textspace=1, alpha=0.05, nameref=filename_output1)
 
+		#print(filename_output1)
+		#print(number_of_datasets)
+		#print(list_values)
+		#exit()
+		
+		
 		#plt.show()
 		
 		#Supported formats: emf, eps, pdf, png, ps, raw, rgba, svg, svgz.
@@ -94,7 +102,8 @@ while i < len(contents_list):
 		#plt.savefig(dir_path_outputs+filename_output+".eps", format='eps', dpi=900)
 		#plt.savefig(dir_path_outputs+filename_output+".pdf", format='pdf', dpi=300)
 		#plt.savefig(dir_path_outputs+filename_output+".png", format='png', dpi=300, bbox_inches="tight")
-		
+		#print("="+format_destine)
+
 		if format_destine == 'multiple':
 			f = plt.gcf()  # f = figure(n) if you know the figure number
 			f.set_size_inches(11.69,8.27)
@@ -106,9 +115,10 @@ while i < len(contents_list):
 		elif format_destine == 'pdf':
 			plt.savefig(dir_path_outputs+filename_output+".pdf", format='pdf', dpi=300)
 		elif format_destine == 'png':
-			plt.savefig(dir_path_outputs+filename_output+".png", format='png', dpi=300, bbox_inches="tight")
-		elif format_destine == 'eps':
-			
+			#print(filename_output)
+			plt.savefig(filename_output, format='png', dpi=300, bbox_inches="tight")
+			#plt.savefig(dir_path_outputs+filename_output+".png", format='png', dpi=300, bbox_inches="tight")
+		elif format_destine == 'eps':			
 			plt.savefig(dir_path_outputs+filename_output+".eps", format='eps', dpi=300)	
 			
 		n = 0
