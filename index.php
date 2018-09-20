@@ -29,20 +29,20 @@ define('_EXEC', 1);
 /**
  * Constant of MOAManager version
  */
-define('MOAMANAGER_VERSION', '1.0.28');
-define('MOAMANAGER_RELEASES', '2018/09/12');
+define('MOAMANAGER_VERSION', '1.0.29');
+define('MOAMANAGER_RELEASES', '2018/09/20');
 
 /**
  * Constant of MOA version
  */
-define('MOA_VERSION', '2014.0.1');
-define('MOA_RELEASES', '2018/08/30');
+define('MOA_VERSION', '2014.0.2');
+define('MOA_RELEASES', '2018/09/20');
 
 /**
  * Constant of Statistical Tests version
  */
-define('STATISTICAL_TESTS_VERSION', '1.0.1');
-define('STATISTICAL_TESTS_RELEASES', '2018/08/30');
+define('STATISTICAL_TESTS_VERSION', '1.0.2');
+define('STATISTICAL_TESTS_RELEASES', '2018/09/20');
 
 
 /**

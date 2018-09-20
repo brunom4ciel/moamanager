@@ -11,8 +11,9 @@ defined('_EXEC') or die();
 
 use moam\core\Framework;
 use moam\libraries\core\utils\Utils;
-// use moam\libraries\core\menu\Menu;
+use moam\core\Template;
 use moam\core\Properties;
+use \DirectoryIterator;
 
 if (! class_exists('Application')) {
     $application = Framework::getApplication();
@@ -21,6 +22,37 @@ if (! class_exists('Application')) {
 if (! $application->is_authentication()) {
     $application->alert("Error: you do not have credentials.");
 }
+
+Template::setDisabledMenu();
+
+/*
+// Optionally Disable browser caching on "Back"
+header( 'Cache-Control: no-store, no-cache, must-revalidate' );
+header( 'Expires: Sun, 1 Jan 2000 12:00:00 GMT' );
+header( 'Last-Modified: ' . gmdate('D, d M Y H:i:s') . 'GMT' );
+
+$post_hash = md5( json_encode( $_POST ) );
+
+if( session_start() )
+{
+    $post_resubmitted = isset( $_SESSION[ 'post_hash' ] ) && $_SESSION[ 'post_hash' ] == $post_hash;
+    $_SESSION[ 'post_hash' ] = $post_hash;
+    session_write_close();
+}
+else
+{
+    $post_resubmitted = false;
+}
+
+if ( $post_resubmitted ) {
+  // POST was resubmitted
+}
+else
+{
+  // POST was submitted normally
+}
+
+*/
 
 // Framework::import("menu", "core/menu");
 
@@ -34,18 +66,68 @@ $utils = new Utils();
 $data_source = $application->getParameter("data_source");
 $task = $application->getParameter("task");
 $filename_autoload = $application->getParameter("filename");
+$decimalprecision = $application->getParameter("decimalprecision");
+$order = $application->getParameter("order");
+$caption = $application->getParameter("caption");
+$source = $application->getParameter("source");
+$folder = $application->getParameter("folder");
+$downloadfile = $application->getParameter("downloadfile");
+
+if($downloadfile == null)
+{
+	$downloadfile = "png";	
+}
+
+$data_rank = "";
+
 $data_result = "";
 $data_diff_statistical = "";
-
+$src_img = "";
+    
 $statistical_test_array = array(
     "Nemenyi"
 );
 
+if($decimalprecision == null)
+{
+	$decimalprecision = 2;
+}
+else
+{
+	$decimalprecision = intval($decimalprecision);
+	
+	if(!is_int($decimalprecision))
+	{
+		$decimalprecision = 2;
+	}
+}
+
+if($order == null)
+{
+	$order = 0;
+}
+else
+{
+	$order = intval($order);
+	
+	if($order == 0)
+	{
+		$order = 0;
+	}
+	else
+	{
+		$order = 1;
+	}
+}
+	
 if(!empty($filename_autoload))
 {
-	$data_source = $utils->getContentFile(PATH_USER_WORKSPACE_PROCESSING . $filename_autoload);
-	unlink(PATH_USER_WORKSPACE_PROCESSING . $filename_autoload);
-	$task = "Shaffer";
+	if(is_readable(PATH_USER_WORKSPACE_PROCESSING . $filename_autoload))
+	{		
+		$data_source = $utils->getContentFile(PATH_USER_WORKSPACE_PROCESSING . $filename_autoload);
+		unlink(PATH_USER_WORKSPACE_PROCESSING . $filename_autoload);
+		$task = "Nemenyi";
+	}
 }
 
 if (in_array($task, $statistical_test_array)) {
@@ -57,7 +139,7 @@ if (in_array($task, $statistical_test_array)) {
     $data_source2 = str_replace(",", ".", $data_source);
 
     $data_s = explode("\n", $data_source2);
-
+    
     $countRows = 0;
     $countCols = 0;
     $cols_names = "";
@@ -111,62 +193,97 @@ if (in_array($task, $statistical_test_array)) {
         }
     }
     
-    $rank_avg = array();
+    /*$rank_avg = array();
     
-    for($i = 0; $i < count($data_values); $i++)
+    for($i = 1; $i <= count($data_values); $i++)
     {
         for($z = 0; $z < count($data_values[$i]); $z++)
         {
-            $rank_avg[$i][$z] = $utils->rank_avg($data_values[$i][$z], $data_values[$i], 1);
+            $rank_avg[$i][$z] = $utils->rank_avg($data_values[$i][$z], $data_values[$i], 0);
         }        
-    }
+    }*/
     
-    $data_values = $utils->avgColsArray($rank_avg);
+
+    $rank_avg = $utils->friedman_postos($data_values, $order);
+
+    $data_values_wins = @$utils->winsColsArray($rank_avg);
+    //var_dump($data_values_wins);//exit();
     
+    $data_values_ties = @$utils->tiesColsArray($rank_avg);
+    $data_values_losses = @$utils->lossesColsArray($rank_avg);
     
+    $data_values = @$utils->avgColsArray($rank_avg, $decimalprecision);
+    //$data_values_sum = @$utils->sumColsArray($rank_avg, $decimalprecision);
+                
+        
     $cols_names = trim($cols_names);
     
-    $s = explode(" ", $cols_names);
+    $s = explode("\t", $cols_names);
     
     $d = array();
+    //$d2 = array();
+    $d3 = array();
+    $d4 = array();
+    $d5 = array();
     
     for($i = 0; $i < count($data_values); $i++)
     {
         $d[$s[$i]] = $data_values[$i];
+		//$d2[$s[$i]] = $data_values_sum[$i];
+		$d3[$s[$i]] = (isset($data_values_wins[$i])?$data_values_wins[$i]:0);
+		$d4[$s[$i]] = (isset($data_values_ties[$i])?$data_values_ties[$i]:0);
+		$d5[$s[$i]] = (isset($data_values_losses[$i])?$data_values_losses[$i]:0);
     }
-    
+        
+        //var_dump($d3);exit();
+        
     $data_values = $d;
+    //$data_values_sum = $d2;
+    $data_values_wins = $d3;
+    $data_values_ties = $d4;
+    $data_values_losses = $d5;
     
-    arsort($data_values);
+    asort($data_values);  
+    
+    /*$d = array();
+    
+    foreach($data_values as $key=>$value)
+    {
+        $d[$key] = $data_values_sum[$key];
+    }
+    $data_values_sum = $d;*/
+    
+    $d = array();
+    
+    foreach($data_values as $key=>$value)
+    {
+        $d[$key] = $data_values_wins[$key];
+    }
+    $data_values_wins = $d;
+    
+    $d = array();
+    
+    foreach($data_values as $key=>$value)
+    {
+        $d[$key] = $data_values_ties[$key];
+    }
+    $data_values_ties = $d;
+        
+	$d = array();
+    
+    foreach($data_values as $key=>$value)
+    {
+        $d[$key] = $data_values_losses[$key];
+    }
+    $data_values_losses = $d;
+    
     
     $data_source2 = implode("\t", $data_values);
+    //$data_source2_sum = implode("\t", $data_values_sum);
+    $data_source2_wins = implode("\t", $data_values_wins);
+    $data_source2_ties = implode("\t", $data_values_ties);
+    $data_source2_losses = implode("\t", $data_values_losses);
     
-
-    if ($letter == true) 
-    {
-        $countRows --;
-
-        $data_s = explode("\n", $data_source2);
-
-        // var_dump($data_s);
-        // exit("fim");
-
-        $start = true;
-        $data_source2 = "";
-
-        foreach ($data_s as $rows) 
-        {
-            if ($start == true)
-            {
-                $start = false;
-            }
-            else
-            {
-                $data_source2 .= $rows . "\n";
-            }
-        }
-    }
-
     //$cols_names = trim($cols_names);
     $aux = "";
     
@@ -183,10 +300,49 @@ if (in_array($task, $statistical_test_array)) {
     $cols_names = $aux;
     
     $data_source2 = str_replace(".", ",", $data_source2);
+	//$data_source2_sum = str_replace(".", ",", $data_source2_sum);
+	
+	$data_rank = $cols_names 
+				. "\n" . $data_source2 
+				//. "\n" . $data_source2_sum 
+				. "\n" . $data_source2_wins
+				. "\n" . $data_source2_ties
+				. "\n" . $data_source2_losses;
+	
 
+    
+		if(empty($filename_autoload))
+		{
+			$filename_autoload = str_replace("/","-",$caption);
+		}
+
+		$filename_img = $filename_autoload;
+		
+		if(strrpos($filename_img, ".") !== false)
+		{		
+			$filename_img = substr($filename_img, 0, strrpos($filename_img, "."));
+			
+			if(substr($filename_img, strlen($filename_img)-1) == "-")
+			{
+				$filename_img = substr($filename_img, 0, strlen($filename_img)-1);
+			}
+		}
+		
+		$filename_img2 = $filename_img;
+		
+		
+		if(empty($caption))
+		{
+			$caption = $filename_img;
+		}
+		
+		$caption = $source . " - " .$caption;
+		
     $data_destine = $cols_names . "\n"  // .ucfirst($task)."\n"
         .  $data_source2 . "\n"
-        . $task . "\t" . $countRows;
+        . $caption . "\t" . $countRows;
+        
+               
 
     $filename = PATH_USER_WORKSPACE_PROCESSING . "tmp" . str_replace(" ", "-", microtime()) . "";
 //     $filename = sys_get_temp_dir() . "/tmp" . str_replace(" ", "-", microtime()) . "";
@@ -201,93 +357,74 @@ if (in_array($task, $statistical_test_array)) {
 
     if (is_file($filename . ".tmp")) {
         
-        $command = "sudo -u www-data /usr/bin/python3 " . $nemenyi_bin . "  " . $filename . ".tmp  " . $filename . "-output.png png 2>&1";
-        echo $command . "\n\n";
+        /*$filename_img = $filename_autoload;
+        $filename_img = substr($filename_img, 0, strrpos($filename_img, "."));
         
+        if(substr($filename_img, strlen($filename_img)-1) == "-")
+        {
+			$filename_img = substr($filename_img, 0, strlen($filename_img)-1);
+		}*/
+        
+        $filename_img .= time() . ".png";
+        $filename_img = PATH_USER_WORKSPACE_PROCESSING . $filename_img;
+        
+        if(is_file($filename_img))
+        {
+			unlink($filename_img);
+		}
+		
+        $command = "python3 " . $nemenyi_bin . "  " . $filename . ".tmp  " . $filename_img . " png";        
         $command = escapeshellcmd($command);
+        
+        $filename_img2 .= time() . "." . $downloadfile;
+        $filename_img2 = PATH_USER_WORKSPACE_PROCESSING . $filename_img2;
+        
+        if(is_file($filename_img2))
+        {
+			unlink($filename_img2);
+		}
+		
+        $command2 = "python3 " . $nemenyi_bin . "  " . $filename . ".tmp  " . $filename_img2 . " " . $downloadfile;        
+        $command2 = escapeshellcmd($command2);
+        
 //         $output = $utils->runExternal($command);
         exec($command);
         sleep(1);
+        exec($command2);
+        sleep(1);        
         
-//         var_dump($output);
+		if(is_readable($filename . ".tmp"))
+		{
+			unlink($filename . ".tmp");
+		}
     }
 
+    $files_tmp = array("png","pdf","eps");
+	$dir = new DirectoryIterator(PATH_USER_WORKSPACE_PROCESSING);
+	$now = time();
+	foreach ($dir as $file) 
+	{
+		if ($file->isFile()) 
+		{		
+			if(in_array($file->getExtension(), $files_tmp))
+			{			
+				//echo $file->getBasename() . "\n";
+				//echo "now=".$now ."\ntime=". $file->getCTime() . "\ndiff=". ($now - $file->getCTime()) . "\n\n";
+				
+				if ($now - $file->getCTime() >= 60 * 60) // 1 hour 
+				{
+					//echo $file->getBasename() . "\n";
+					unlink(PATH_USER_WORKSPACE_PROCESSING . $file->getBasename());
+				}
+			}
+		}
+	}
+
     
-    exit();
-    
-    if (is_file($filename . "-output.tmp")) {
-        $data_result = $utils->getContentFile($filename . "-output.tmp");
-
-        $s = explode("\n\n", $data_result);
-
-        $data_postos = trim($s[4]);
-
-        $data_postos = str_replace(".", ",", $data_postos);
-        
-        $data_diff_statistical  = trim($s[6])."\n\n";
-		$data_diff_statistical  .= trim($s[7])."\n\n";
-		$data_diff_statistical  .= trim($s[8]);
-		
-        $data_rank = trim($s[5]);
-
-        $data_rank = explode("\n", $data_rank);
-
-        $data_rank = $data_rank[1];
-
-        $data_order = explode("\t", $data_rank);
-        $data_order2 = $data_order;
-
-        sort($data_order);
-
-        $test = array();
-        $index = 1;
-
-        foreach ($data_order as $item) {
-            foreach ($data_order2 as $key2 => $item2) {
-                if ($item == $item2) {
-                    $data_order2[$key2] = array(
-                        "order" => $index,
-                        "value" => $item2
-                    );
-
-                    // array_push($test, array("order"=>$index, "value"=>$item2));
-                }
-            }
-
-            $index ++;
-        }
-
-        $data_rank = "";
-        $data_rank2 = "";
-
-        foreach ($data_order2 as $row) {
-            $row["value"] = str_replace(".", ",", $row["value"]);
-
-            if (empty($data_rank)) {
-                $data_rank = $row["value"];
-                $data_rank2 = $row["order"];
-            } else {
-                $data_rank .= "\t" . $row["value"];
-                $data_rank2 .= "\t" . $row["order"];
-            }
-        }
-
-        $data_rank = $data_rank . "\n" . $data_rank2;
-
-        // var_dump($data_order2);
-        // echo $data_rank;
-        // exit();
-
-        // $data_order = explode("\t", $data_rank);
-
-        // sort($data_order);
-
-        // $data_rank = str_replace(".", ",", $data_rank);
-
-        // $data_rank .= "\n" . implode("\t", $data_order);
-
-        unlink($filename . "-output.tmp");
-        unlink($filename . ".tmp");
+    if (is_file($filename_img)) {
+		$filename = substr($filename_img, strrpos($filename_img, "/")+1);
+		$filename2 = substr($filename_img2, strrpos($filename_img2, "/")+1);
+        $src_img = "?component=statistical&controller=figure&filename=" . urlencode($filename);
     }
 }
 
@@ -295,9 +432,55 @@ if (in_array($task, $statistical_test_array)) {
 
 <style>
 
-.dataview{font-size:10px}
+.dataview{font-size:10px;}
+.tableviewrank td{font-size:11px;padding:4px;border-spacing: 4px;text-align:center;}
+
+/* DivTable.com */
+.divTable{
+	display: table;
+	width: 100%;
+}
+.divTableRow {
+	display: table-row;
+}
+.divTableHeading {
+	background-color: #EEE;
+	display: table-header-group;
+}
+.divTableCell, .divTableHead {
+	border: 1px solid #999999;
+	display: table-cell;
+	padding: 3px 10px;
+	font-size:11px;
+}
+.divTableHeading {
+	background-color: #EEE;
+	display: table-header-group;
+	font-weight: bold;
+}
+.divTableFoot {
+	background-color: #EEE;
+	display: table-footer-group;
+	font-weight: bold;
+}
+.divTableBody {
+	display: table-row-group;
+}
 
 </style>
+
+<h1><?php echo $source . " - /" . $folder;?></h1>
+
+<?php
+	if(!empty($src_img)){
+?>
+
+	<img style="width:100%" src="<?php echo $src_img;?>" />
+	<br />
+	<a href="?component=statistical&controller=figure&attachment=true&filename=<?php echo urlencode($filename2);?>">Download file</a>
+<?php
+}
+?>
 
 							<form method="POST" action="<?php echo $_SERVER['PHP_SELF'];?>">
 								<input type="hidden"
@@ -306,41 +489,249 @@ if (in_array($task, $statistical_test_array)) {
 									value=<?php echo $application->getController()?>
 									name="controller"> <input type="hidden" value="Nemenyi"
 									name="task" id="task">
-
-								
+									<input type="hidden" value="<?php echo $source;?>"
+									name="source" id="source">
+									<input type="hidden" value="<?php echo $folder;?>"
+									name="folder" id="folder">
+																	
 
 									<div
-										style="float: left; padding-left: 5px; width: 100%; margin-top: 5px;">
+										style="float: left; width: 100%; margin-top: 5px;">	
+										<?php
+										
+										if(!empty($data_rank))
+										{
+											$data = explode("\n",$data_rank);
+											$data_names = explode("\t",$data[0]);
+											$data_values_avg = explode("\t",$data[1]);
+											//$data_values_sum = explode("\t",$data[2]);
+											$data_values_wins = explode("\t",$data[2]);
+											$data_values_ties = explode("\t",$data[3]);
+											$data_values_losses = explode("\t",$data[4]);
+												
+											$custom = array();
+											$index = 0;
+											$data_rank_view = "";
+											$aux = "";
+											
+											foreach($data_names as $value)
+											{
+												if($index != 0)
+												{
+													$data_rank_view .= "\t";
+													$aux .= "\t";
+												}
+												
+												$data_rank_view .= $value;
+												$custom[$index] = array("key"=>$value,"sum"=>0,"avg"=>0, "wins"=>0, "ties"=>0,"losses"=>0);
+												$index++;
+												$aux .= $index;
+											}
+											$data_rank_view .=  "\n" . $aux . "\n";	
+											$index = 0;
+																	
+											foreach($data_values_avg as $value)
+											{
+												if($index != 0)
+												{
+													$data_rank_view .= "\t";													
+												}
+												
+												$data_rank_view .= $value;
+												$custom[$index]["avg"] = $value;
+												$index++;												
+											}
+											
+											/*$data_rank_view .= "\n";	
+											$index = 0;				
+																	
+											foreach($data_values_sum as $value)
+											{
+												if($index != 0)
+												{
+													$data_rank_view .= "\t";
+												}
+												
+												$data_rank_view .= $value;
+												$custom[$index]["sum"] = $value;
+												$index++;
+											}*/
+											$data_rank_view .= "\n";	
+											$index = 0;	
+											
+											foreach($data_values_wins as $value)
+											{
+												if($index != 0)
+												{
+													$data_rank_view .= "\t";
+												}
+												
+												$data_rank_view .= $value;
+												$custom[$index]["wins"] = $value;
+												$index++;
+											}
+											
+											$data_rank_view .= "\n";	
+											$index = 0;	
+											
+											foreach($data_values_ties as $value)
+											{
+												if($index != 0)
+												{
+													$data_rank_view .= "\t";
+												}
+												
+												$data_rank_view .= $value;
+												$custom[$index]["ties"] = $value;
+												$index++;
+											}
+											
+											$data_rank_view .= "\n";	
+											$index = 0;	
+											
+											foreach($data_values_losses as $value)
+											{
+												if($index != 0)
+												{
+													$data_rank_view .= "\t";
+												}
+												
+												$data_rank_view .= $value;
+												$custom[$index]["losses"] = $value;
+												$index++;
+											}
+											
+											
+											$data_rank_view .= "\n";// . $aux;
+											$index = 1;
+											
+											echo "<div style='float:left;width:auto;border: 1px solid #999999;font-size:12px;text-aling:center;padding: 3px 3px;'>";
+											echo "<div style='text-align: center; border-bottom:1px solid #eeeeee;font-weight: bold;width: inherit;'>Named</div>";
+											echo "<div style='text-align: center; width: inherit;border-bottom:1px solid #eeeeee;font-weight: bold;'>Order</div>";
+											echo "<div style='text-align: center; width: inherit;border-bottom:1px solid #eeeeee;font-weight: bold;'>Average</div>";
+											//echo "<div style='text-align: center; width: inherit;border-bottom:1px solid #eeeeee;'>Sum</div>";											
+											echo "<div style='text-align: center; width: inherit;font-weight: bold;'>Wins</div>";
+											echo "<div style='text-align: center; width: inherit;font-weight: bold;'>Ties</div>";
+											echo "<div style='text-align: center; width: inherit;font-weight: bold;'>Losses</div>";
+											echo "</div>";
+												
+											foreach($custom as $item)
+											{
+												
+												echo "<div style='float:left;width:auto;border: 1px solid #999999;font-size:12px;text-aling:center;padding: 3px 3px;'>";
+												echo "<div style='text-align: center; border-bottom:1px solid #eeeeee;font-weight: bold;width: inherit;'>" . $item['key'] . "</div>";
+												echo "<div style='text-align: center; width: inherit;border-bottom:1px solid #eeeeee;font-weight: bold;'>" . $index . "</div>";
+												echo "<div style='text-align: center; width: inherit;border-bottom:1px solid #eeeeee;'>" . $item['avg'] . "</div>";
+												//echo "<div style='text-align: center; width: inherit;border-bottom:1px solid #eeeeee;'>" . $item['sum'] . "</div>";												
+												echo "<div style='text-align: center; width: inherit;border-bottom:1px solid #eeeeee;'>" . $item['wins'] . "</div>";
+												echo "<div style='text-align: center; width: inherit;border-bottom:1px solid #eeeeee;'>" . $item['ties'] . "</div>";
+												echo "<div style='text-align: center; width: inherit;'>" . $item['losses'] . "</div>";
+												echo "</div>";
+												$index++;
+											}
+											
+											//echo "<table border=1 class='tableviewrank'>";
+											//echo "<tr>";
+											/*echo '
+											<div class="divTable" style="border: 1px solid #000;" >
+											<div class="divTableBody">
+												<div class="divTableRow">';
+												
+											foreach($data_names as $value)
+											{
+												echo '<div class="divTableCell">' . $value . "</div>";
+											}
+											echo "</div>";
+											echo '<div class="divTableRow">';
+											
+											foreach($data_values as $value)
+											{
+												echo '<div class="divTableCell">' . $value . "</div>";
+											}
+											echo "</div>
+													</div>
+												</div>";*/
+										}
+										?>
+										
+
+											</div>
 
 
-										<textarea  class="dataview" id="data_source" style="width: 100%; height: 400px;"
+									<div style="float: left;width: 100%; margin-top: 5px;">
+										 <label>Caption <input type="text" value="<?php echo $caption;?>"
+									name="caption" id="caption"></label>
+									
+									<label>Precision<input type="text" name="decimalprecision" id="decimalprecision" value="<?php echo $decimalprecision;?>" style="width:40px;" /></label>
+					
+									<label>Rank order <select name="order" id="order">
+													<option value="0">ASC</option>
+													<option value="1">DESC</option>
+												</select>
+									</label>
+									
+									
+										<span style="width:100%;border-bottom:1px solid #cccccc">Download file format</span>										
+										<label><input type="radio" name="downloadfile" id="downloadfile" value="png"/>png</label>
+										<label><input type="radio" name="downloadfile" id="downloadfile" value="eps"/>eps</label>
+										<label><input type="radio" name="downloadfile" id="downloadfile" value="pdf"/>pdf</label>
+										
+										<input
+											type="submit" class="btn btn-success" value="Execute"> 
+											
+									</div>
+											
+									<div
+										style="float: left;  width: 100%; margin-top: 5px;">
+
+										<textarea  class="dataview" id="rankview" style="width: 100%; height: 50px;"
+											name="rankview"><?php echo $data_rank_view?></textarea>
+											
+										<textarea  class="dataview" id="data_source" style="width: 100%; height: 200px;"
 											name="data_source"><?php echo $data_source?></textarea>
 
 
 
-									</div>
-
-
-									<div style="float: left; padding-left: 10px">
-										View decimal separator <input type="text" name="decimalformat"
-											id="decimalformat" value="," style="width: 40px;" /> <input
-											type="submit" class="btn btn-default" value="Nemenyi"
-											onclick="document.forms[0].task.value=this.value"> 
-									</div>
-											
-											<?php
-
-        if (! empty($data_result_img)) {
-            ?>
-											<div
-										style="float: left; padding-left: 5px; width: 100%; margin-top: 5px;">
-
-<img src="<?php echo $data_result_img?>"/>
-											
-									</div>
-											
-											<?php }?>
+									</div>		
 					
 
 							</form>
 
+<script>
+
+
+function SetSelectIndexRadio(idElement, elementText)
+{
+	//var elementObj = document.getElementById(idElement);
+	var elementObj = document.getElementsByName(idElement);
+	
+	for (var i = 0; i < elementObj.length; i++) 
+	{		
+		if (elementObj[i].value == elementText) 
+		{
+			elementObj[i].checked = true;
+			break;
+		}
+	}
+}
+
+function SetSelectIndex(idElement, elementText)
+{
+    var elementObj = document.getElementById(idElement);
+//alert("id"+elementObj.id);
+
+    for(i = 0; i < elementObj.length; i++)
+    {
+      // check the current option's text if it's the same with the input box
+      if (elementObj.options[i].value == elementText)
+      {
+         elementObj.selectedIndex = i;
+         break;
+      }     
+    }
+}
+
+SetSelectIndex("order","<?php echo $order?>");
+SetSelectIndexRadio("downloadfile", "<?php echo $downloadfile?>");
+
+</script>

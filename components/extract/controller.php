@@ -533,8 +533,8 @@ function verificaChecks() {
 			<label><input type="radio" name="statisticaltest" id="statisticaltest" value="Bonferroni-Dunn" onclick="setCookieRadioBox(this);"/>Bonferroni-Dunn</label>
 			<label><input type="radio" name="statisticaltest" id="statisticaltest" value="Bergmann-Hommel" onclick="setCookieRadioBox(this);"/>Bergmann-Hommel</label>
 		
-			<!-- <label><input type="radio" name="statisticaltest" id="statisticaltest" value="NemenyiGraph" onclick="setCookieRadioBox(this);"/>Nemenyi Graph</label>
-			 -->
+			 <label><input type="radio" name="statisticaltest" id="statisticaltest" value="NemenyiGraph" onclick="setCookieRadioBox(this);"/>Nemenyi Graph</label>
+			
 			 
 		</td>
 		

@@ -292,6 +292,7 @@ if($task == "folder"){
         $metrics["recall"] = null;
         $metrics["mcc"] = null;
         $metrics["f1"] = null; 
+        $metrics["resume"] = null; 
         
         if(!empty($metricstract))
         {
@@ -1010,6 +1011,8 @@ if($task == "folder"){
             $cols_count = count($data_matriz);
             $oef = false;
             $eof_lines = false;
+            $eof = false;
+            
             while($eof == false)
             {
                 $first_col = true;
@@ -1442,15 +1445,46 @@ if($task == "folder"){
                     
                     if($statisticaltest != 'no')
                     {
-                        $filename = "AUTOLOAD" . time() . ".tmp";
-                        $utils->setContentFile(PATH_USER_WORKSPACE_PROCESSING . $filename, $result_view);
+						if(!empty($folder))
+						{
+							$folder2 = str_replace("/", "-", $folder);
+							
+							if(substr($folder2, strlen($folder2)-1) == "-")
+							{
+								$folder2 = substr($folder2, 0, strlen($folder2)-1);
+							}
+		
+							$filename = $folder2 . ".tmp";
+						}
+						else
+						{
+							$filename = "AUTOLOAD" . time() . ".tmp";
+						}
                         
-                                                
+                        if(is_file(PATH_USER_WORKSPACE_PROCESSING . $filename))
+                        {
+							unlink(PATH_USER_WORKSPACE_PROCESSING . $filename);
+						}
+						
+                        $utils->setContentFile(PATH_USER_WORKSPACE_PROCESSING . $filename, $result_view);
+                                                                        
                         $redirect = array();
                         
                         $redirect['url'] = '?';
                         $redirect['component'] = "statistical";
+                        $redirect['folder'] = $folder;
                         
+                        foreach($metrics as $key=>$value)
+                        {
+							if(!empty($metrics[$key]))
+							{
+								if($metrics[$key])
+								{
+									$redirect['source'] = @ucfirst($key);
+								}
+							}
+								
+						}
                       
                         if($statisticaltest == 'NemenyiGraph')
                         {
@@ -1511,7 +1545,29 @@ if($task == "folder"){
                     
                     if($statisticaltest != 'no')
                     {
-                        $filename = "AUTOLOAD" . time() . ".tmp";
+                        if(!empty($folder))
+						{
+							$folder2 = str_replace("/", "-", $folder);
+							
+							if(substr($folder2, strlen($folder2)-1) == "-")
+							{
+								$folder2 = substr($folder2, 0, strlen($folder2)-1);
+							}
+		
+							$filename = $folder2 . ".tmp";
+						}
+						else
+						{
+							$filename = "AUTOLOAD" . time() . ".tmp";
+						}
+                        
+                    
+                        if(is_file(PATH_USER_WORKSPACE_PROCESSING . $filename))
+                        {
+							unlink(PATH_USER_WORKSPACE_PROCESSING . $filename);
+						}
+						
+                        //$filename = "AUTOLOAD" . time() . ".tmp";
                         $utils->setContentFile(PATH_USER_WORKSPACE_PROCESSING . $filename, $result_view);
                         
                         
@@ -1519,6 +1575,7 @@ if($task == "folder"){
                         
                         $redirect['url'] = '?';
                         $redirect['component'] = "statistical";
+                        $redirect['folder'] = $folder;
                         
                         if($statisticaltest == 'NemenyiGraph')
                         {
@@ -1532,6 +1589,19 @@ if($task == "folder"){
 
                         $redirect['filename'] = rawurlencode($filename);
                         $redirect['task'] = $statisticaltest;
+                        
+                        foreach($metrics as $key=>$value)
+                        {
+							if(!empty($metrics[$key]))
+							{
+								if($metrics[$key])
+								{
+									$redirect['source'] = @ucfirst($key);
+								}
+							}
+								
+						}
+                        
                         
                         $application->redirect($redirect);
                          

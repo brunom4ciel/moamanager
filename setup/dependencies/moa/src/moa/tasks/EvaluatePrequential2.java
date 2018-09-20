@@ -296,21 +296,22 @@ public class EvaluatePrequential2 extends MainTask {
         int frequency, curr, sz, wt, realPos, pos;
         boolean toleranceArea, drift;
         String lineValues = "";
-        accuracy = frequency = 0;
-        double accuracy_sum = 0;
+        
+        boolean firstDump = true;
+//        boolean preciseCPUTiming = false;
+        long evaluateStartTime = 0;
+        long lastEvaluateStartTime = 0;
+        double RAMHours = 0.0;
+        
+        long evaluateTime = 0;
+        double time = 0;
+        double timeIncrement = 0;
+        double RAMHoursIncrement = 0;        
         
         for (int i = 1; i <= this.repetitionOption.getValue(); i++) {
             learningCurve = new LearningCurve("learning evaluation instances");
             prepareClassOptions(monitor, repository);
-            
-            if(i>1){
-            	accuracy_sum += (accuracy/frequency);
-            	monitor.setCurrentActivity("Step "+i+" of "+this.repetitionOption.getValue()+" "+String.format("%.2f", (accuracy_sum/(i-1)))+"%", -1.0);            
-            }else{
-            	monitor.setCurrentActivity("Step "+i+" of "+this.repetitionOption.getValue(), -1.0); 
-            }
-            
-            accuracy = ctime = memory = 0.0; curr = pos = 0; accuracy = frequency = 0;
+            accuracy = ctime = memory = 0.0; frequency = curr = pos = 0;
             fp = fn = 0.0;
             drift = false;
             Classifier learner = (Classifier) getPreparedClassOption(this.learnerOption);
@@ -329,9 +330,8 @@ public class EvaluatePrequential2 extends MainTask {
             long instancesProcessed = 0;
             int maxSeconds = this.timeLimitOption.getValue();
             int secondsElapsed = 0;
-//            monitor.setCurrentActivity("Evaluating learner...", -1.0);
-            
-            
+            monitor.setCurrentActivity("Evaluating learner...", -1.0);
+
             File dumpFile = this.dumpFileOption.getFile();
             PrintStream immediateResultStream = null;
             if (dumpFile != null) {
@@ -365,11 +365,12 @@ public class EvaluatePrequential2 extends MainTask {
                             "Unable to open prediction result file: " + outputPredictionFile, ex);
                 }
             }
-            boolean firstDump = true;
-            boolean preciseCPUTiming = TimingUtils.enablePreciseTiming();
-            long evaluateStartTime = TimingUtils.getNanoCPUTimeOfCurrentThread();
-            long lastEvaluateStartTime = evaluateStartTime;
-            double RAMHours = 0.0;
+            firstDump = true;
+//            preciseCPUTiming = TimingUtils.enablePreciseTiming();
+            evaluateStartTime = TimingUtils.getNanoCPUTimeOfCurrentThread();
+            lastEvaluateStartTime = evaluateStartTime;
+            RAMHours = 0.0;
+            
             while (stream.hasMoreInstances()
                     && ((maxInstances < 0) || (instancesProcessed < maxInstances))
                     && ((maxSeconds < 0) || (secondsElapsed < maxSeconds))) {
@@ -426,29 +427,30 @@ public class EvaluatePrequential2 extends MainTask {
 
                 if (instancesProcessed % this.sampleFrequencyOption.getValue() == 0
                         || stream.hasMoreInstances() == false) {
-                    long evaluateTime = TimingUtils.getNanoCPUTimeOfCurrentThread();
-                    double time = TimingUtils.nanoTimeToSeconds(evaluateTime - evaluateStartTime);
-                    double timeIncrement = TimingUtils.nanoTimeToSeconds(evaluateTime - lastEvaluateStartTime);
-                    double RAMHoursIncrement = learner.measureByteSize() / (1024.0 * 1024.0 * 1024.0); //GBs
+                    evaluateTime = TimingUtils.getNanoCPUTimeOfCurrentThread();
+                    time = TimingUtils.nanoTimeToSeconds(evaluateTime - evaluateStartTime);
+                    timeIncrement = TimingUtils.nanoTimeToSeconds(evaluateTime - lastEvaluateStartTime);
+                    RAMHoursIncrement = learner.measureByteSize() / (1024.0 * 1024.0 * 1024.0); //GBs
                     RAMHoursIncrement *= (timeIncrement / 3600.0); //Hours
                     RAMHours += RAMHoursIncrement;
                     lastEvaluateStartTime = evaluateTime;
+                    
                     learningCurve.insertEntry(new LearningEvaluation(
                             new Measurement[]{
-                                new Measurement(//"learning evaluation instances",instancesProcessed
+                                new Measurement(
                                         "learning evaluation instances",
-                                        instancesProcessed
-                                        ),
-                                new Measurement(//"",0
-                                        "evaluation time ("
-                                        + (preciseCPUTiming ? "cpu ": "") + "seconds)"
-                                        ,
-                                        time
-                                        ),
-                                new Measurement(//"",0
+                                        instancesProcessed),
+                                new Measurement(
+                                      "evaluation time",
+                                      0),
+//                                new Measurement(
+//                                        "evaluation time ("
+//                                        + (preciseCPUTiming ? "cpu "
+//                                                : "") + "seconds)",
+//                                        time),
+                                new Measurement(
                                         "model cost (RAM-Hours)",
-                                        RAMHours
-                                        )
+                                        RAMHours)
                             },
                             evaluator, learner));
 
@@ -478,9 +480,13 @@ public class EvaluatePrequential2 extends MainTask {
                             estimatedRemainingInstances = maxRemaining;
                         }
                     }
+                    
+                    monitor.setCurrentActivity("Evaluating learner...", -1.0);
+                    
                     monitor.setCurrentActivityFractionComplete(estimatedRemainingInstances < 0 ? -1.0
                             : (double) instancesProcessed
                             / (double) (instancesProcessed + estimatedRemainingInstances));
+                    
                     if (monitor.resultPreviewRequested()) {
                         monitor.setLatestResultPreview(learningCurve.copy());
                     }
@@ -507,8 +513,6 @@ public class EvaluatePrequential2 extends MainTask {
             TN.add(tn);
         }
         
-        monitor.setCurrentActivity("Execution "+this.repetitionOption.getValue()+" of "+this.repetitionOption.getValue(), -1.0);
-        
         InstanceStreamGenerators stream = (InstanceStreamGenerators) getPreparedClassOption(this.streamOption);
         
         printStatistics(meanAccuracy,"Accuracy");
@@ -521,8 +525,6 @@ public class EvaluatePrequential2 extends MainTask {
         System.out.println("Mean Distance\t\tFN\tFP\tTN\t\tTP\tPrecision\tRecall\t\tMCC\t\tF1");
         System.out.println(lineValues);
 
-        //LearningCurve learningCurve2 = new LearningCurve("");
-        
         return learningCurve;
     }
 }

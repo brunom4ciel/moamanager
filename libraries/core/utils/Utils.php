@@ -17,6 +17,25 @@ defined('_EXEC') or die();
 class Utils
 {
     
+    function friedman_postos($data_values, $order=0)
+    {
+		$rank_avg = array();
+    
+		for($i = 1; $i <= count($data_values); $i++)
+		{
+			for($z = 0; $z < count($data_values[$i]); $z++)
+			{
+				if(isset($data_values[$i][$z]) && isset($data_values[$i]))
+				{
+					$rank_avg[$i][$z] = $this->rank_avg($data_values[$i][$z], $data_values[$i], $order);
+				}
+				
+			}        
+		}
+		
+		return $rank_avg;
+	}
+    
     function rank_avg($value, $array, $order = 0) {
         // sort
         if ($order) sort ($array); else rsort($array);
@@ -30,7 +49,7 @@ class Utils
     }
     
     
-    function avgColsArray($arr)
+    function avgColsArray($arr, $decimalprecision=2)
     {
         $result = array();
         $countRows = 0;
@@ -47,26 +66,165 @@ class Utils
         foreach($result as $key=>$value)
         {
             $result[$key] = floatval($result[$key] / $countRows);
+            $result[$key] = number_format($result[$key], $decimalprecision);
         }
         
         return $result;
     }
     
-    function sumColsArray($arr)
+    function sumColsArray($arr, $decimalprecision=2)
     {
         $result = array();
         foreach($arr as $key=>$item)
         {
             foreach($item as $key2=>$value)
             {
-                $result[$key2] += $value;       
+                $result[$key2] += $value;    
+                $result[$key2] = number_format($result[$key2], $decimalprecision);   
             }            
         }
         
         return $result;
     }
     
+    function winsColsArray($arr)
+    {
+        $result = array();
+        
+        foreach($arr as $item)
+        {
+			foreach($item as $k=>$v)
+			{
+				$result[$k] = 0;
+			}
+			break;
+		}
+                
+        foreach($arr as $key=>$item)
+        {
+			$aux = $item;        
+			asort($aux);
+			$best_value = 0;
+			
+			foreach($aux as $key1=>$val)
+			{
+				$best_value = $val;
+				break;
+			}
+						 //var_dump($aux);var_dump($item);
+						 //exit();       
+			if(!is_float($best_value))
+			{
+				foreach($item as $key2=>$value)
+				{
+					//echo $key2 . "=".$value ."==". $aux;//exit();
+					
+					if($value == $best_value)
+					{
+						$result[$key2] += 1; 					
+					}
+				}  
+			}
+			
+            //var_dump($item);var_dump($result);var_dump($aux[0]);exit();          
+        }
+        
+        //var_dump($result);exit();
+        
+        return $result;
+    }
     
+    function tiesColsArray($arr)
+    {
+		$result = array();
+        
+        foreach($arr as $item)
+        {
+			foreach($item as $k=>$v)
+			{
+				$result[$k] = 0;
+			}
+			break;
+		}
+                
+        foreach($arr as $key=>$item)
+        {
+			$aux = $item;        
+			asort($aux);
+			$best_value = 0;
+			
+			foreach($aux as $key1=>$val)
+			{
+				$best_value = $val;
+				break;				
+			}
+			
+			if(is_float($best_value))
+			{
+				foreach($item as $key2=>$value)
+				{
+					//echo $key2 . "=".$value ."==". $aux;//exit();
+					
+					if($value == $best_value)
+					{
+						$result[$key2] += 1; 					
+					}
+				}
+			}     
+            
+            
+            //var_dump($item);var_dump($result);var_dump($aux[0]);exit();          
+        }
+        
+        //var_dump($result);exit();
+        
+        return $result;
+	}
+    
+    function lossesColsArray($arr)
+    {
+		$result = array();
+        
+        foreach($arr as $item)
+        {
+			foreach($item as $k=>$v)
+			{
+				$result[$k] = 0;
+			}
+			break;
+		}
+                
+        foreach($arr as $key=>$item)
+        {
+			$aux = $item;        
+			asort($aux);
+			$best_value = 0;
+			
+			foreach($aux as $key1=>$val)
+			{
+				$best_value = $val;
+				break;				
+			}
+						
+			foreach($item as $key2=>$value)
+			{
+				//echo $key2 . "=".$value ."==". $aux;//exit();
+				
+				if($value != $best_value)
+				{
+					$result[$key2] += 1; 					
+				}
+			}  
+			
+            //var_dump($item);var_dump($result);var_dump($aux[0]);exit();          
+        }
+        
+        //var_dump($result);exit();
+        
+        return $result;
+	}
+	
+	
     function xCopy($source, $destination)
     {
         

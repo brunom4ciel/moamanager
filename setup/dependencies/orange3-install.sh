@@ -26,6 +26,16 @@ sudo chmod 777 -R /opt/moamanager/orange3
 
 mv -f /opt/moamanager/statistical/orange3/scoring.py /opt/moamanager/orange3/Orange/evaluation/scoring.py
 
+python_dist="${python3 -c 'import site; print(site.getsitepackages()[0])'"
+
+sudo pip3 install --target="${python_dist}" bottleneck
+sudo pip3 install --target="${python_dist}" pyparsing
+sudo pip3 install --target="${python_dist}" pyqt5
+sudo pip3 install --target="${python_dist}" sklearn
+
+
+#sudo -H -u www-data pip3 install bottleneck
+
 
 
 
