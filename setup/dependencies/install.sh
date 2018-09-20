@@ -25,4 +25,6 @@ sh friedman-install.sh
 
 sh moamanager-install.sh
 
+sh orange3-install.sh
+
 sh checking-installed.sh
