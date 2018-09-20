@@ -24,7 +24,11 @@ pip3 install -r requirements.txt
 python3 setup.py develop
 
 sudo chmod 777 -R /opt/moamanager/orange3
- 
+
+sudo mkdir $dir_opt_moamanager_statistical_orange3
+
+sudo chmod 777 -R $dir_opt_moamanager_statistical_orange3
+
 #dir=$(pwd)
 
 mv -f $currentpath/statistical/orange3/* $dir_opt_moamanager_statistical_orange3
