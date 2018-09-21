@@ -473,7 +473,7 @@ class Application extends AbstractApplication
         // if(is_null($logout)){
         if (is_null($http_referer) || empty($http_referer))
 		{
-			$vars = "&http_referer=";/// . urlencode(base64_encode($_SERVER["REQUEST_URI"]));
+			$vars = "&http_referer=" . urlencode(base64_encode($_SERVER["REQUEST_URI"]));
         }
         else
         {

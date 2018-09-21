@@ -47,7 +47,18 @@ if (isset($_GET["logout"]))
 else if ($application->is_authentication())
 {    
 //     header("Location: " . PATH_WWW . "?component=home");
-    $application->redirect("?component=home");
+
+    $http_referer = $application->getParameter("http_referer");
+    if(is_null($http_referer) || empty($http_referer))
+    {
+        $redirect = "?component=home";
+    }
+    else 
+    {
+        $redirect = urldecode(base64_decode($http_referer));
+    }
+     
+    $application->redirect($redirect);
 }
 
 
