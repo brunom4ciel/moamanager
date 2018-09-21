@@ -37,12 +37,14 @@ Template::setDisabledMenu();
 
 
 
-if (isset($_GET["logout"])) {
-
+if (isset($_GET["logout"])) 
+{
+	unset($_GET['logout']);
     $http_referer = $application->getParameter("http_referer");
     $application->logout($http_referer);
     
-} else if ($application->is_authentication())
+} 
+else if ($application->is_authentication())
 {    
 //     header("Location: " . PATH_WWW . "?component=home");
     $application->redirect("?component=home");

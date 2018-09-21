@@ -314,6 +314,7 @@ if (in_array($task, $statistical_test_array)) {
 		if(empty($filename_autoload))
 		{
 			$filename_autoload = str_replace("/","-",$caption);
+			$filename_autoload = str_replace(" ", "", $filename_autoload);
 		}
 
 		$filename_img = $filename_autoload;
@@ -326,17 +327,30 @@ if (in_array($task, $statistical_test_array)) {
 			{
 				$filename_img = substr($filename_img, 0, strlen($filename_img)-1);
 			}
+			
+			$filename_img = $source . "-" . $filename_img;
+			$filename_img = str_replace(" ", "-", $filename_img);
 		}
 		
 		$filename_img2 = $filename_img;
 		
 		
+		
 		if(empty($caption))
 		{
 			$caption = $filename_img;
+			$caption2 = $filename_img;
+		}else
+		{
+			$caption2 = $caption;
+			$caption2 = str_replace(" ", "", $caption2);
 		}
 		
-		$caption = $source . " - " .$caption;
+		
+		
+		//$caption = $source . " - " .$caption;
+		
+		//var_dump($caption2);exit();
 		
     $data_destine = $cols_names . "\n"  // .ucfirst($task)."\n"
         .  $data_source2 . "\n"

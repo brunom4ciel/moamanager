@@ -381,7 +381,7 @@ class Application extends AbstractApplication
 
             $this->session_end();
 
-            if (is_null($http_referer)) {
+            if (is_null($http_referer) || empty($http_referer)) {
 
                 $this->alert("logout Successfully.");
             } else {
@@ -471,17 +471,22 @@ class Application extends AbstractApplication
         // $controller = $this->getParameter( "controller" );//App::getParameter ( "controller" );
 
         // if(is_null($logout)){
-        if (is_null($http_referer))
-            $vars = "&http_referer=";/// . urlencode(base64_encode($_SERVER["REQUEST_URI"]));
+        if (is_null($http_referer) || empty($http_referer))
+		{
+			$vars = "&http_referer=";/// . urlencode(base64_encode($_SERVER["REQUEST_URI"]));
+        }
         else
-            $vars = "&http_referer=" . $http_referer;
+        {
+			$vars = "&http_referer=" . urlencode($http_referer);
+		}
 
-        if ($this->is_authentication()) {
-
+        if ($this->is_authentication()) 
+        {
             $_GET['alert'] = true;
             $_GET['msg'] = $msg;
-        } else {
-
+        } 
+        else 
+        {
             $this->redirect(PATH_WWW . "?component=user&controller=login&msg=" . urlencode($msg) . $vars);
         }
     }
@@ -523,7 +528,7 @@ class Application extends AbstractApplication
                 $url_to = $url . $queryurl;
                 
             }
-            
+
             header("Location: " . $url_to);
             exit();
             
