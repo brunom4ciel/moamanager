@@ -60,7 +60,7 @@ $utils = new Utils();
 
 $csv = "";
 
-$exterions = array("tex", "csv", "html", "txt");
+$exterions = array("tex", "csv", "html", "txt", "tmpl");
 
 //var_dump($_POST);exit();
 
@@ -74,19 +74,10 @@ if($folder != null){
 }
 
 
-
-
 if($task == "folder"){
     
-    
-    
 }else{
-    
-    
-    
-    
-    
-    
+       
 }
 
 if($folder == null){
@@ -555,7 +546,42 @@ function verificaChecks() {
 		</td>
 	
 	</tr>
+
+	<?php
 	
+		$dir = PATH_USER_WORKSPACE_STORAGE;
+		$tmpl_files = $utils->getListFilesFromDirectory($dir . $folder, array("tmpl"));
+
+
+		$template = false;
+		if(is_array($tmpl_files))
+		{
+			if(count($tmpl_files) > 0)
+			{
+				$template = true;
+	?>
+	<tr>
+		<td colspan="3">
+			<span style="width:100%;border-bottom:1px solid #cccccc">Template file</span><br>
+	<select name="template_file" class="btn btn-default" id="template_file">
+												
+	<?php 
+			
+	foreach($tmpl_files as $key=>$element)
+	{			
+		echo "<option value=\"".$element."\">".$element . "</option>";					
+	}
+
+	?>
+	</select>
+		</td>
+	</tr>
+	<?php
+
+			}
+		}
+
+	?>
 </table>
 		<div style="margin-top:10px;padding:0px;border:1px solid #cccccc;"></div>
 
@@ -633,9 +659,9 @@ overflow-y: scroll;max-height: 400px;" >
 			
 			echo "<tr><td>".$i."</td><td>";
 			
-			if($element["name"] == "template.txt")
+			if($extension_file == "tmpl")//$element["name"] == "template.txt")
 			{
-			    if(in_array($extension_file, array("txt"))){
+			    if(in_array($extension_file, array("txt", "tmpl"))){
 			        
 			        echo "<a href='?component=".$application->getComponent()."&task=view&&controller=edit&filename=".$element["name"]."&folder=".$application->getParameter("folder")."'>"
                         ."<img width='16px' align='middle' src='".$application->getPathTemplate()."/images/icon-view.png' title='Edit'/></a> ";
@@ -659,11 +685,15 @@ overflow-y: scroll;max-height: 400px;" >
 			
 			}
 			
-			
+			if(in_array($extension_file, array("txt")))
+			{
 			echo  "<a href='?component=files&controller=debug&filename=" . $element["name"]
 			. "&folder=" . $application->getParameter("folder") . "' target='_blank'>"
              . "<img width='24px' align='middle' src='" . $application->getPathTemplate() . "/images/icon-debug.png' title='Debug'/></a> " ;
     
+			}
+		
+		
 			echo			"<a href='?component=".$application->getComponent()."&task=download&type_extract=1&controller=extract_tmpl&filename=".$element["name"]."&folder=".$application->getParameter("folder")."'>"				
 				."<img width='16px' align='middle' src='".$application->getPathTemplate()."/images/icon_download.png' title='Download'/></a> "
 				;
@@ -764,8 +794,18 @@ historicCookieElementValue("decimalprecision", "2");
 
 function resizeImage()
 {
+	<?php 
+		if($template == true)
+		{
+			$width = 410;
+		}
+		else
+		{
+			$width = 350;
+		}
+	?>
 	// browser resized, we count new width/height of browser after resizing
-	var height = window.innerHeight - 350;// || $(window).height();
+	var height = window.innerHeight - <?php echo $width;?>;// || $(window).height();
 
 	document.getElementById("containerbody").setAttribute(
 		   "style", "border:1px solid #ffffff;margin-left: -15px;  margin-right: -15px;list-style-type: none;  margin: 0;  overflow-y: scroll;max-height: "+height+"px");
@@ -775,6 +815,6 @@ window.addEventListener("resize", resizeImage);
 
 resizeImage();
 
-	
+
 </script>		
 		

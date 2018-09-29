@@ -364,8 +364,33 @@ if($task == "folder"){
         if($type_extract!=2)
         {
             
+            $template_file = $application->getParameter("template_file");
             
-            $filename_template_dataset = $dir . "template.txt";
+            if($template_file != null)
+            {
+				$filename_template_dataset = $dir . $template_file;
+			}
+            
+            /*foreach($element as $key=>$item)
+            {            
+				$ext = "";
+				
+				if(is_file($dir . $item))
+				{					
+					if(strpos($item,".") !== false)
+					{
+						$ext = substr($item, strrpos($item, ".")+1);
+						
+						if(in_array($ext, array("tmpl")))
+						{
+							$filename_template_dataset = $dir . $item;
+						}
+					}
+				}
+				
+			}*/
+
+            //$filename_template_dataset = $dir . "template.txt";
             $template_user = FALSE;
             
             if(file_exists($filename_template_dataset))
@@ -406,16 +431,20 @@ if($task == "folder"){
                     
                     if(isset($s->filter))
                     {
-                        if(isset($s->filter->list))
+                        if(isset($s->filter->columns))
                         {
-                            $data_filter_tmpl = $s->filter->list;
+                            $data_filter_tmpl = $s->filter->columns;
+                        }
+                        if(isset($s->filter->lines))
+                        {
+                            $data_filter_lines_tmpl = $s->filter->lines;
                         }
                         if(isset($s->filter->enable))
                         {
                             $data_filter_enable_tmpl = $s->filter->enable;
                         }
                     }
-                                    
+                               
                     if(isset($s->datasets))
                     {
                         if(isset($s->datasets->list))
@@ -871,27 +900,69 @@ if($task == "folder"){
                 
                 if($data_filter_enable_tmpl)
                 {
-                    if($data_order_enable_tmpl)
-                    {
-                        $s = $data_values_aux2;
-                    }
-                    else
-                    {
-                        $s = $data_values;
-                    }
-                    
-                    foreach($data_filter_tmpl as $col)
-                    {
-                        foreach($s as $key=>$item)
-                        {
-                            //                         echo $key . "=" . $col."\n";
-                            if($key == $col)
-                            {
-                                $data_values_aux3[$key]  = $item;
-                            }
-                        }
-                    }
+					if(count($data_filter_tmpl)>0)
+					{
+						if($data_order_enable_tmpl)
+						{
+							$s = $data_values_aux2;
+						}
+						else
+						{
+							$s = $data_values;
+						}
+						
+						foreach($data_filter_tmpl as $col)
+						{
+							foreach($s as $key=>$item)
+							{
+								//                         echo $key . "=" . $col."\n";
+								if($key == $col)
+								{
+									$data_values_aux3[$key]  = $item;
+								}
+							}
+						}
+					}
+					
+					if(count($data_filter_lines_tmpl)>0)
+					{
+						if(count($data_filter_tmpl)>0)
+						{
+							$s = $data_values_aux3;
+						}
+						else
+						{
+							if($data_order_enable_tmpl)
+							{
+								$s = $data_values_aux2;
+							}
+							else
+							{
+								$s = $data_values;
+							}
+						}
+						
+						$data_values_aux3 = array();
+						
+						foreach($data_filter_lines_tmpl as $line)
+						{
+							foreach($s as $key=>$item)
+							{
+								foreach($item as $index=>$value)
+								{
+									if($index == $line)
+									{
+										$data_values_aux3[$key][$index]  = $value;
+									}
+								}
+							}
+						}
+
+					}
+					
+					
                 }
+                
                 
                    
                 $data_values_aux4 = array();
@@ -900,9 +971,9 @@ if($task == "folder"){
                 {
                     if($data_filter_enable_tmpl || $data_order_enable_tmpl)
                     {
-                        if($data_filter_enable_tmpl)
+                        if($data_filter_enable_tmpl && count($data_filter_tmpl)>0)
                         {
-                            $s = $data_values_aux3;
+							$s = $data_values_aux3;							
                         }
                         else 
                         {
@@ -939,8 +1010,7 @@ if($task == "folder"){
                         $data_values2[$key] = $item;
                     }
                 }
-                
-                
+
                 
                 if(count($data_values_aux4) > 0)
                 {
@@ -976,26 +1046,28 @@ if($task == "folder"){
                 }
                 
                 
+                
                 if(count($data_values2) > 0)
-                {
+                {					
                     $data_values = $data_values2;
                 }
-                                
+       
             }
             
             
             $index = 0;
             $data_matriz = array();
             
-            //var_dump($data_values);
+           
             
             foreach($data_values as $key=>$item)
             {
                 $data_matriz[$index][] = $key;
                 //             var_dump($key);exit("=");
-                for($i = 0; $i < count($data_values[$key]);$i++)
+                //for($i = 0; $i < count($data_values[$key]);$i++)
+                foreach($data_values[$key] as $key2=>$value)
                 {
-                    $data_matriz[$index][] = $data_values[$key][$i];
+                    $data_matriz[$index][] = $value;//$data_values[$key][$i];
                     //var_dump( $data_values[$key][$i] );//. ", ";
                 }
                 
@@ -1221,33 +1293,37 @@ if($task == "folder"){
             
             $save = $application->getParameter("save");
             
-            if($save != null){
-                
+            if($save != null)
+            {                
                 
                 //var_dump($_POST);
                 
                 $element = $application->getParameter("element");
                 
-                $dir = Properties::getBase_directory_destine($application)
-                .$application->getUser()
-                .DIRECTORY_SEPARATOR
-                .$application->getParameter("folder");
+                $dir = PATH_USER_WORKSPACE_STORAGE . $folder; //$application->getParameter("folder");
                 
                 
-                foreach($element as $key=>$item){
+                /*foreach($element as $key=>$item){
                     
                     if(is_file($dir.$item)){
                         
-                        $filename_to_save = $dir.$item;;//.DIRECTORY_SEPARATOR;
+                        $filename_to_save = $dir.$item;//.DIRECTORY_SEPARATOR;
                         
                     }else{
                         
-                        $filename_to_save = $dir.$item;;//.DIRECTORY_SEPARATOR;
+                        $filename_to_save = $dir.$item;//.DIRECTORY_SEPARATOR;
                         
                     }
                     
-                }
+                }*/
                 
+                $filename_to_save = str_replace(DIRECTORY_SEPARATOR , "-", $folder);
+                
+                if($filename_to_save != null){
+					if(substr($filename_to_save, strlen($filename_to_save)-1)=="-"){
+						$filename_to_save = substr($filename_to_save, 0, strlen($filename_to_save)-1);
+					}
+				}                
                 
                 $overwrite = $application->getParameter("overwrite");
                 $extensions = array();
@@ -1276,128 +1352,70 @@ if($task == "folder"){
                 }
                 
                 
-//                 if($csv != null){
-//                     $extensions[] = "csv";
-//                 }
-                
-//                 if($tex != null){
-//                     $extensions[] = "tex";
-//                 }
-                
-//                 if($html != null){
-//                     $extensions[] = "html";
-//                 }
-                            
-//                 if($interval != null){
-//                     $ic = "(ic)";
-//                 }else{
-//                     $ic = "";
-//                 }
-                
-//                 if($metrics['accuracy'] != null){
-//                     $accu = "-accuracy";
-//                 }else{
-//                     $accu = "";
-//                 }
-                
-//                 if($metrics['timer'] != null){
-//                     $tim = "-timer";
-//                 }else{
-//                     $tim = "";
-//                 }
-                
-//                 if($metrics['memory'] != null){
-//                     $mem = "-memory";
-//                 }else{
-//                     $mem = "";
-//                 }
-                
-//                 if($metrics['fn'] != null){
-//                     $fn = "-fn";
-//                 }else{
-//                     $fn = "";
-//                 }
-//                 if($metrics['fp'] != null){
-//                     $fp = "-fp";
-//                 }else{
-//                     $fp = "";
-//                 }
-//                 if($metrics['tn'] != null){
-//                     $tn = "-tn";
-//                 }else{
-//                     $tn = "";
-//                 }
-//                 if($metrics['tp'] != null){
-//                     $tp = "-tp";
-//                 }else{
-//                     $tp = "";
-//                 }
-                
-//                 if($metrics['precision'] != null){
-//                     $precicion = "-precision";
-//                 }else{
-//                     $precicion = "";
-//                 }
-//                 if($metrics['recall'] != null){
-//                     $recall = "-recall";
-//                 }else{
-//                     $recall = "";
-//                 }
-//                 if($metrics['mcc'] != null){
-//                     $mcc = "-mcc";
-//                 }else{
-//                     $mcc = "";
-//                 }
-//                 if($metrics['f1'] != null){
-//                     $f1 = "-f1";
-//                 }else{
-//                     $f1 = "";
-//                 }
                 
                                                             
-                foreach($extensions as $extension){
+                foreach($extensions as $extension)
+                {
                     
                     
-                    $filename = $filename_to_save."-".$metricstract.".".$extension;
-                    
+                    $filename = $dir . $metricstract . "-" . $filename_to_save . "." . $extension;
+                    					
                     if(file_exists($filename))
+                    {
                         if($overwrite != null)
+                        {
                             unlink($filename);
-                            else
-                                break;
-                                
-                                switch($extension){
-                                    
-                                    case "txt":
-                                        
-                                        $data = $data_csv;
-                                        
-                                        break;
-                                    case "html":
-                                        
-                                        $data = $utils->castToHTML($data_csv);
-                                        
-                                        break;
-                                    case "tex":
-                                        
-                                        $data = $utils->castToTex($data_csv);
-                                        
-                                        $title = substr($filename_to_save,
-                                            strrpos($filename_to_save,
-                                                DIRECTORY_SEPARATOR)+1);
-                                        
-                                        $title = str_replace(" ", "-", $title);
-                                        
-                                        $data = str_replace("%title%", $title, $data);
-                                        
-                                        $data = str_replace("%label%",$title, $data);
-                                        
-                                        
-                                        break;
-                                }
-                                
-                                
-                                $utils->setContentFile($filename, $data);
+						}
+						else
+                        {
+							$filename_to_save__ = $filename_to_save;
+							$y=1;
+							
+							while(is_file($dir . $metricstract . "-" . $filename_to_save__ . "." . $extension))
+							{
+								$filename_to_save__ = $filename_to_save."-" . $y . "";
+								$y++;
+							}
+							
+							$filename = $dir . $metricstract . "-" . $filename_to_save__ . "." . $extension;
+							//break;
+						}    
+					}
+					
+						
+					switch($extension)
+					{
+						
+						case "txt":
+							
+							$data = $data_csv;
+							
+							break;
+						case "html":
+							
+							$data = $utils->castToHTML($data_csv);
+							
+							break;
+						case "tex":
+							
+							$data = $utils->castToTex($data_csv);
+							
+							$title = substr($filename_to_save,
+								strrpos($filename_to_save,
+									DIRECTORY_SEPARATOR)+1);
+							
+							$title = str_replace(" ", "-", $title);
+							
+							$data = str_replace("%title%", $title, $data);
+							
+							$data = str_replace("%label%",$title, $data);
+							
+							
+							break;
+					}
+						
+						
+						$utils->setContentFile($filename, $data);
                                 
                                 
                 }

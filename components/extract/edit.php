@@ -46,7 +46,7 @@ $filename = $application->getParameter("filename");
 if (strrpos($filename, ".") > - 1) {
 
     if (in_array(substr($filename, strrpos($filename, ".") + 1), array(
-        "txt"
+        "txt", "tmpl"
     ))) {
 
 //         $filename = substr($filename, 0, strrpos($filename, "."));

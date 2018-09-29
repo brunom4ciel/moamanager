@@ -554,7 +554,7 @@ if ($folder == null) {
 
     $files_list = $utils->getListElementsDirectory1(Properties::getBase_directory_destine($application) . $application->getUser() . DIRECTORY_SEPARATOR, array(
         "txt",
-        "tex",
+        "tex","tmpl",
         "csv",
         "html",
         "report",
@@ -570,7 +570,7 @@ if ($folder == null) {
             // .DIRECTORY_SEPARATOR
             array(
                 "txt",
-                "tex",
+                "tex","tmpl",
                 "csv",
                 "html",
                 "report",
@@ -582,7 +582,7 @@ if ($folder == null) {
             // .DIRECTORY_SEPARATOR
             array(
                 "txt",
-                "tex",
+                "tex","tmpl",
                 "csv",
                 "html",
                 "report",

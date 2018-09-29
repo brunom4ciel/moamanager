@@ -89,6 +89,7 @@ class Utils
     
     function winsColsArray($arr)
     {
+		//var_dump($arr);
         $result = array();
         
         foreach($arr as $item)
@@ -111,13 +112,27 @@ class Utils
 				$best_value = $val;
 				break;
 			}
-						 //var_dump($aux);var_dump($item);
+			
+			$firstvalue = $best_value;
+			$ties = 0;
+			
+			foreach($item as $key2=>$value)
+			{
+				if($firstvalue == $value)
+				{
+					$ties += 1;
+				}					
+			} 
+				//echo $best_value . "=" . $losses."\n";
+				
+						 //var_dump($best_value);//var_dump($item);
 						 //exit();       
-			if(!is_float($best_value))
+			if($ties < 2)
 			{
 				foreach($item as $key2=>$value)
 				{
 					//echo $key2 . "=".$value ."==". $aux;//exit();
+					//echo $best_value . "=" . $losses."\n";
 					
 					if($value == $best_value)
 					{
@@ -126,10 +141,14 @@ class Utils
 				}  
 			}
 			
+			
+			
+			
             //var_dump($item);var_dump($result);var_dump($aux[0]);exit();          
         }
         
-        //var_dump($result);exit();
+        //var_dump($result);
+        //exit();
         
         return $result;
     }
@@ -159,7 +178,18 @@ class Utils
 				break;				
 			}
 			
-			if(is_float($best_value))
+			$firstvalue = $best_value;
+			$ties = 0;
+			
+			foreach($item as $key2=>$value)
+			{
+				if($firstvalue == $value)
+				{
+					$ties += 1;
+				}					
+			} 
+			
+			if($ties > 1)//is_float($best_value))
 			{
 				foreach($item as $key2=>$value)
 				{
@@ -1590,6 +1620,49 @@ class Utils
                     if ($type == "dir") {
 
                         array_push($files_list, $file);
+                    }
+            }
+
+            closedir($handle);
+        }
+
+        sort($files_list);
+
+        return $files_list;
+    }
+    
+    /*
+	 * get list of files
+	 * 
+	 * @param	string	$base_directory_destine	real path.
+	 * @param 	string	$filter	array with values
+	 * 
+	 * @return	mixed
+	 */
+    public function getListFilesFromDirectory($base_directory_destine, $filter = array("data"))
+    {
+        $files_list = array();
+
+        if ($handle = opendir($base_directory_destine)) {
+
+            /* Esta é a forma correta de varrer o diretório */
+            while (false !== ($file = readdir($handle))) {
+
+                if (is_dir($base_directory_destine . $file))
+                    $type = "dir";
+                else
+                    $type = "file";
+
+                if ($file != "." && $file != "..")
+                    if ($type == "dir") {
+
+                        //array_push($files_list, $file);
+                    } else {
+
+                        if (in_array(substr($file, strrpos($file, ".") + 1), $filter)) {
+
+                            array_push($files_list, $file);
+                        }
                     }
             }
 

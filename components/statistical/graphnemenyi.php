@@ -207,7 +207,7 @@ if (in_array($task, $statistical_test_array)) {
     $rank_avg = $utils->friedman_postos($data_values, $order);
 
     $data_values_wins = @$utils->winsColsArray($rank_avg);
-    //var_dump($data_values_wins);//exit();
+    //var_dump($rank_avg);exit();
     
     $data_values_ties = @$utils->tiesColsArray($rank_avg);
     $data_values_losses = @$utils->lossesColsArray($rank_avg);
@@ -481,21 +481,27 @@ if (in_array($task, $statistical_test_array)) {
 	display: table-row-group;
 }
 
+#inner {
+  display: table;
+  margin: 0 auto;
+}
+
 </style>
 
 <h1><?php echo $source . " - /" . $folder;?></h1>
 
+
 <?php
 	if(!empty($src_img)){
 ?>
-
-	<img style="width:100%" src="<?php echo $src_img;?>" />
-	<br />
-	<a href="?component=statistical&controller=figure&attachment=true&filename=<?php echo urlencode($filename2);?>">Download file</a>
+<div id="outer" style="width:100%">
+	<div id="inner">	
+		<img style="width:100%" src="<?php echo $src_img;?>" />
+	</div>
+</div>	
 <?php
 }
 ?>
-
 							<form method="POST" action="<?php echo $_SERVER['PHP_SELF'];?>">
 								<input type="hidden"
 									value="<?php echo $application->getComponent()?>"
@@ -509,8 +515,15 @@ if (in_array($task, $statistical_test_array)) {
 									name="folder" id="folder">
 																	
 
+<div id="outer" style="width:100%">
+  
+
+
 									<div
-										style="float: left; width: 100%; margin-top: 5px;">	
+										id="inner">	
+										
+
+
 										<?php
 										
 										if(!empty($data_rank))
@@ -537,7 +550,9 @@ if (in_array($task, $statistical_test_array)) {
 												}
 												
 												$data_rank_view .= $value;
-												$custom[$index] = array("key"=>$value,"sum"=>0,"avg"=>0, "wins"=>0, "ties"=>0,"losses"=>0);
+												$custom[$index] = array("key"=>$value,"sum"=>0,"avg"=>0, 
+																		"wins"=>0, "ties"=>0,"losses"=>0,
+																		"lossesorder"=>0, "lossesorder2"=>0);
 												$index++;
 												$aux .= $index;
 											}
@@ -602,6 +617,7 @@ if (in_array($task, $statistical_test_array)) {
 											
 											$data_rank_view .= "\n";	
 											$index = 0;	
+											$losses = array();
 											
 											foreach($data_values_losses as $value)
 											{
@@ -612,8 +628,129 @@ if (in_array($task, $statistical_test_array)) {
 												
 												$data_rank_view .= $value;
 												$custom[$index]["losses"] = $value;
+												$losses[] = $value;
 												$index++;
 											}
+											
+											//$rank_losses_order = $utils->avgColsArray($custom[$index]["losses"]);
+											//var_dump($rank_losses_order);exit("=");
+											
+											$index = 0;	
+											foreach($losses as $value)
+											{												
+												$losses2[$index][] = $utils->rank_avg($value, $losses, 1);
+												$index++;
+											}
+											
+											
+											
+											$data_rank_view .= "\n";	
+											$index = 0;	
+											
+											foreach($losses2 as $item)
+											{
+												/*if($index != 0)
+												{
+													$data_rank_view .= "\t";
+												}*/
+												
+												foreach($item as $key=>$value)
+												{
+													//$data_rank_view .= $value;
+													$custom[$index]["lossesorder"] = $value;
+												}
+																								
+												$index++;
+											}
+											
+											
+											//var_dump($custom);exit("==");
+											
+											$index = 0;
+											$losses = array();
+											
+											foreach($custom as $item)
+											{
+												
+												foreach($item as $key=>$value)
+												{
+													if($key == 'lossesorder2')
+													{
+														$losses[] =  
+															$custom[$index]["wins"]
+															+ ($custom[$index]["ties"]/2);
+													}
+												}
+												
+												$index++;
+											}
+											
+											$index = 0;	
+											foreach($losses as $value)
+											{												
+												$losses2[$index][] = $utils->rank_avg($value, $losses, 0);
+												$index++;
+											}
+											
+											$index = 0;	
+											
+											foreach($losses2 as $item)
+											{
+												foreach($item as $key=>$value)
+												{
+													/*if($index != 0)
+													{
+														$data_rank_view .= "\t";
+													}
+													
+													$data_rank_view .= $value;*/
+													
+													$custom[$index]["lossesorder2"] = intval($value);
+												}
+																								
+												$index++;
+											}											
+											
+
+											$index = 0;
+											$losses = array();
+											
+											foreach($custom as $item)
+											{												
+												$losses[] = $custom[$index]["lossesorder2"] + $custom[$index]["lossesorder"];																								
+												$index++;
+											}
+											
+											$index = 0;	
+											$losses2 = array();
+											
+											foreach($losses as $value)
+											{												
+												$losses2[$index][] = $utils->rank_avg($value, $losses, 1);
+												$index++;
+											}
+											
+											$index = 0;
+											
+											foreach($losses2 as $item)
+											{
+												if($index != 0)
+												{
+													$data_rank_view .= "\t";
+												}
+												
+												foreach($item as $key=>$value)
+												{
+													$data_rank_view .= $value;
+													$custom[$index]["lossesorder"] = $value;
+												}
+																								
+												$index++;
+											}
+											
+											//var_dump($losses2);exit();
+											
+											//var_dump($custom);exit();
 											
 											
 											$data_rank_view .= "\n";// . $aux;
@@ -624,9 +761,11 @@ if (in_array($task, $statistical_test_array)) {
 											echo "<div style='text-align: center; width: inherit;border-bottom:1px solid #eeeeee;font-weight: bold;'>Order</div>";
 											echo "<div style='text-align: center; width: inherit;border-bottom:1px solid #eeeeee;font-weight: bold;'>Average</div>";
 											//echo "<div style='text-align: center; width: inherit;border-bottom:1px solid #eeeeee;'>Sum</div>";											
-											echo "<div style='text-align: center; width: inherit;font-weight: bold;'>Wins</div>";
-											echo "<div style='text-align: center; width: inherit;font-weight: bold;'>Ties</div>";
-											echo "<div style='text-align: center; width: inherit;font-weight: bold;'>Losses</div>";
+											echo "<div style='text-align: center; width: inherit;font-weight: bold;border-bottom:1px solid #eeeeee;'>Wins</div>";
+											echo "<div style='text-align: center; width: inherit;font-weight: bold;border-bottom:1px solid #eeeeee;'>Ties</div>";
+											echo "<div style='text-align: center; width: inherit;font-weight: bold;border-bottom:1px solid #eeeeee;'>Losses</div>";
+											//echo "<div style='text-align: center; width: inherit;font-weight: bold;border-bottom:1px solid #eeeeee;'>Order</div>";
+											echo "<div style='text-align: center; width: inherit;font-weight: bold;'>Order</div>";
 											echo "</div>";
 												
 											foreach($custom as $item)
@@ -634,15 +773,20 @@ if (in_array($task, $statistical_test_array)) {
 												
 												echo "<div style='float:left;width:auto;border: 1px solid #999999;font-size:12px;text-aling:center;padding: 3px 3px;'>";
 												echo "<div style='text-align: center; border-bottom:1px solid #eeeeee;font-weight: bold;width: inherit;'>" . $item['key'] . "</div>";
-												echo "<div style='text-align: center; width: inherit;border-bottom:1px solid #eeeeee;font-weight: bold;'>" . $index . "</div>";
+												echo "<div style='text-align: center; width: inherit;border-bottom:1px solid #eeeeee;'>" . $index . "</div>";
 												echo "<div style='text-align: center; width: inherit;border-bottom:1px solid #eeeeee;'>" . $item['avg'] . "</div>";
 												//echo "<div style='text-align: center; width: inherit;border-bottom:1px solid #eeeeee;'>" . $item['sum'] . "</div>";												
 												echo "<div style='text-align: center; width: inherit;border-bottom:1px solid #eeeeee;'>" . $item['wins'] . "</div>";
 												echo "<div style='text-align: center; width: inherit;border-bottom:1px solid #eeeeee;'>" . $item['ties'] . "</div>";
-												echo "<div style='text-align: center; width: inherit;'>" . $item['losses'] . "</div>";
+												echo "<div style='text-align: center; width: inherit;border-bottom:1px solid #eeeeee;'>" . $item['losses'] . "</div>";
+												//echo "<div style='text-align: center; width: inherit;border-bottom:1px solid #eeeeee;'>" . $item['lossesorder'] . "</div>";
+												echo "<div style='text-align: center; width: inherit;'>" . $item['lossesorder'] . "</div>";
 												echo "</div>";
 												$index++;
 											}
+											
+											
+											
 											
 											//echo "<table border=1 class='tableviewrank'>";
 											//echo "<tr>";
@@ -669,7 +813,22 @@ if (in_array($task, $statistical_test_array)) {
 										?>
 										
 
-											</div>
+											<br />
+
+<?php
+	if(!empty($src_img)){
+?>
+
+	<a href="?component=statistical&controller=figure&attachment=&filename=<?php echo urlencode($filename2);?>">Download file</a>&nbsp;
+<?php
+}
+?>
+	<a target="_blank" href="?component=statistical&controller=printpreview&attachment=false&tmpl=tmpl&filename=<?php echo urlencode($filename);?>&datasource=<?php echo urlencode(base64_encode($data_rank));?>">Print Preview</a>
+										
+										
+										</div>
+</div>
+
 
 
 									<div style="float: left;width: 100%; margin-top: 5px;">

@@ -627,7 +627,8 @@ class ParallelProcess extends Utils
         // Attend que toutes les commandes restantes se terminent
         $fim = FALSE;
         
-        while ($fim == FALSE) {
+        while ($fim == FALSE) 
+        {
             
             //usleep(50000);
             
@@ -636,7 +637,8 @@ class ParallelProcess extends Utils
             
             for ($i = 0; $i < $nb_max_process; $i ++) {
                 
-                if (is_resource($pool[$i])) {
+                if (is_resource($pool[$i])) 
+                {
                     
                     $read = array();
                     
@@ -657,7 +659,8 @@ class ParallelProcess extends Utils
                         {
                             // should never happen - something died
                             
-                        }else
+                        }
+                        else
                         {
                             foreach ($read as $r)
                             {
@@ -678,7 +681,8 @@ class ParallelProcess extends Utils
                     
                     $etat = proc_get_status($pool[$i]);
                     
-                    if ($etat['running'] == FALSE) {
+                    if ($etat['running'] == FALSE) 
+                    {
                         
                         
                         fclose($pipes[$i][1]);
@@ -769,6 +773,7 @@ class ParallelProcess extends Utils
                             {
                                 unlink($filename_workspace);
                             }
+                            
                             rename($filename_tmp, $filename_workspace);
 
 
@@ -797,20 +802,26 @@ class ParallelProcess extends Utils
                             }
                         }
                         
-                        if ($execution_history_id != null) {
+                        if ($execution_history_id != null) 
+                        {
                             $this->execution_history->closed_process($execution_history_id, $process_closed);
                         }
                         
                         //
                         // ------------END CLOSED PROCESS ------
                         //
-                    } else {
+                    } 
+                    else 
+                    {
                         
-                        if ($etat['running'] == TRUE) {
+                        if ($etat['running'] == TRUE) 
+                        {
                             $exist_process_running = TRUE;
                         }
                     }
-                } else {
+                } 
+                else 
+                {
                     // $killCount++;
                 }
             }
