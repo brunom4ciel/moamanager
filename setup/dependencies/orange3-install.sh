@@ -4,6 +4,9 @@
 
 echo "Install Orange3"
 
+currentpath=$(dirname $(readlink -f $0))
+dir_opt_moamanager_statistical_orange3=/opt/moamanager/statistical/orange3/
+
 sudo apt-get install python-pip -y
 sudo apt-get install python3-dev python3-numpy python3-scipy linuxbrew-wrapper python3-pip -y
 
@@ -24,7 +27,7 @@ sudo chmod 777 -R /opt/moamanager/orange3
  
 #dir=$(pwd)
 
-mv -f /opt/moamanager/statistical/orange3/scoring.py /opt/moamanager/orange3/Orange/evaluation/scoring.py
+#mv -f /opt/moamanager/statistical/orange3/scoring.py /opt/moamanager/orange3/Orange/evaluation/scoring.py
 
 python_dist="${python3 -c 'import site; print(site.getsitepackages()[0])'"
 
@@ -35,6 +38,12 @@ sudo pip3 install --target="${python_dist}" sklearn
 
 
 #sudo -H -u www-data pip3 install bottleneck
+
+
+cp -rv $currentpath/statistical/orange3/* $dir_opt_moamanager_statistical_orange3
+
+cp -rv /opt/moamanager/statistical/orange3/scoring.py /opt/moamanager/orange3/Orange/evaluation/scoring.py
+
 
 
 

@@ -1893,6 +1893,29 @@ class Utils
     }
     
     
+    
+    function getDirContents($dir, &$results = array())
+    {
+    
+		$files = scandir($dir);
+		
+		foreach($files as $key => $value){
+			$path = realpath($dir.DIRECTORY_SEPARATOR.$value);
+			if(is_dir($path) == false) {
+				$results[] = $path;
+			}
+			else if($value != "." && $value != "..") {
+				getDirContents($path, $results);
+				if(is_dir($path) == false) {
+					$results[] = $path;
+				}
+			}
+		}
+		return $results;
+		
+	}
+    
+    
 }
 
 ?>

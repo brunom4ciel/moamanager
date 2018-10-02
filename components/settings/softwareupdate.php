@@ -29,8 +29,9 @@ Framework::import("Utils", "core/utils");
 $utils = new Utils();
 
 $dirProcess = Properties::getBase_directory_destine_exec()
-.$application->getUser()
-.DIRECTORY_SEPARATOR;
+//.$application->getUser()
+//.DIRECTORY_SEPARATOR
+;
 
 /* gets the data from a URL */
 function get_data($url) {

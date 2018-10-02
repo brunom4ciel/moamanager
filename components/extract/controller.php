@@ -566,6 +566,7 @@ function verificaChecks() {
 	<select name="template_file" class="btn btn-default" id="template_file">
 												
 	<?php 
+		echo "<option value=\"\"></option>";	
 			
 	foreach($tmpl_files as $key=>$element)
 	{			

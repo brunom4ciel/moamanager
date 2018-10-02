@@ -913,7 +913,7 @@ function confirmRemoveAccount(){
 											class="account-section-header collapsable-section-toggle">
 											<h2 data-reactid=".1lisbcwokxs.3.0.0.2.0.0.0"
 												class="account-section-heading">
-												<span data-reactid=".1lisbcwokxs.3.0.0.2.0.0.0.0">Defines</span>
+												<span data-reactid=".1lisbcwokxs.3.0.0.2.0.0.0.0">Configuration</span>
 
 											</h2>
 										</header>

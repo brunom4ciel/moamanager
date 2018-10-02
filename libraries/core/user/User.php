@@ -10,7 +10,7 @@ namespace moam\libraries\core\user;
 defined('_EXEC') or die();
 
 use moam\core\AppException;
-use moam\core\Framework;
+// use moam\core\Framework;
 use PDOException;
 use PDO;
 
@@ -267,15 +267,14 @@ class User
 
                 if ($data_db[0]["exist"] > 0) {
 
-                    // remover
-
+                    // update
                     $data_db = $this->db->prep_query("UPDATE
 										user
-									password = ?
+									SET password = ?
 									WHERE email = ?");
 
-                    $data_db->bindParam(1, $email, PDO::PARAM_STR);
-                    $data_db->bindParam(2, $newpwd, PDO::PARAM_STR);
+                    $data_db->bindParam(1, $newpwd, PDO::PARAM_STR);
+                    $data_db->bindParam(2, $email, PDO::PARAM_STR);                    
 
                     if ($data_db->execute()) {
                         $result = true;

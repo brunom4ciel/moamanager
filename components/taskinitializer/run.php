@@ -232,8 +232,21 @@ if($task == "open"){
             
             $version_software = $application->getParameter("version_software");
             $moa_menory_used =  $application->getParameter("memory_used");
-            $moa_memory_unit =  "M";
+            //$moa_memory_unit =  "M";
             
+            /*
+             * parser unit memory
+             * if(empty($moa_menory_used))
+            {
+                $moa_menory_used = "1000M";
+            }
+            else 
+            {
+                $unit = substr($moa_menory_used, strlen($moa_menory_used)-1);
+                $value = substr($moa_menory_used, 0, strlen($moa_menory_used)-1);
+                
+                $moa_menory_used
+            }*/
             
             $application->setParameter("java", base64_decode($application->getParameter("java")));
             
@@ -488,7 +501,7 @@ if($task == "open"){
                                         {
                                             
                                             $cmd = Properties::getFileJavaExec()
-                                            ." -Xmx".$moa_menory_used.$moa_memory_unit." -jar \""
+                                            ." -Xmx".$moa_menory_used." -jar \""
                                             .Properties::getBase_directory_moa()
                                             ."bin"
                                             .DIRECTORY_SEPARATOR
@@ -506,7 +519,7 @@ if($task == "open"){
                                         {
                                             
                                             $cmd = Properties::getFileJavaExec()
-                                            ." -Xmx".$moa_menory_used.$moa_memory_unit." -cp \""
+                                            ." -Xmx".$moa_menory_used." -cp \""
                                             .Properties::getBase_directory_moa()
                                             ."bin"
                                             .DIRECTORY_SEPARATOR
@@ -775,7 +788,7 @@ if($task == "open"){
                     if($javap == "runnable"){
                         
                         $cmd = Properties::getFileJavaExec()
-                        ." -Xmx".$moa_menory_used.$moa_memory_unit." -jar \""
+                        ." -Xmx".$moa_menory_used." -jar \""
                         .Properties::getBase_directory_moa()
                         ."bin"
                         .DIRECTORY_SEPARATOR
@@ -791,7 +804,7 @@ if($task == "open"){
                     }else {
                         
                         $cmd = Properties::getFileJavaExec()
-                        ." -Xmx".$moa_menory_used.$moa_memory_unit." -cp \""
+                        ." -Xmx".$moa_menory_used." -cp \""
                         .Properties::getBase_directory_moa()
                         ."bin"
                         .DIRECTORY_SEPARATOR
@@ -1054,7 +1067,7 @@ if($task == "open"){
                 
                 $version_software =  $application->getParameter("version_software");
                 $moa_menory_used =  $application->getParameter("memory_used");
-                $moa_memory_unit =  "M";
+                //$moa_memory_unit =  "M";
                 
                 
                 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -1147,7 +1160,7 @@ if($task == "open"){
                                 if($javap == "runnable"){
                                     
                                     $cmd = Properties::getFileJavaExec()
-                                    ." -Xmx".$moa_menory_used.$moa_memory_unit." -jar \""
+                                    ." -Xmx".$moa_menory_used." -jar \""
                                     .Properties::getBase_directory_moa()
                                     ."bin"
                                     .DIRECTORY_SEPARATOR
@@ -1163,7 +1176,7 @@ if($task == "open"){
                                 }else{
                                     
                                     $cmd = Properties::getFileJavaExec()
-                                    ." -Xmx".$moa_menory_used.$moa_memory_unit." -cp \""
+                                    ." -Xmx".$moa_menory_used." -cp \""
                                     .Properties::getBase_directory_moa()
                                     ."bin"
                                     .DIRECTORY_SEPARATOR
@@ -1443,23 +1456,8 @@ if($task == "open"){
 													<tr>
 														<td>Memory Used By Process
 														</td>
-														<td><select name="memory_used" class="btn btn-default" id="memory_used" onchange="setCookieElementSelectValue(this);">
-													<option value="512">512</option>
-													<option value="768">768</option>
-													<option value="1000">1000</option>
-													<option value="1500">1500</option>
-													<option value="2000">2000</option>
-													<option value="2500">2500</option>
-													<option value="3000">3000</option>
-													<option value="4000">4000</option>
-													<option value="5000">5000</option>
-<!-- 													<option value="6000">6</option> -->
-<!-- 													<option value="7000">7</option> -->
-<!-- 													<option value="8000">8</option> -->
-<!-- 													<option value="9000">9</option> -->
-<!-- 													<option value="10000">10000</option> -->
-												</select> 
-												Megabyte unit of measurement
+														<td>														
+												<input type="text" id="memory_used" name="memory_used" onchange="setCookieElementValue(this);"/> Example: 1000M, 1G, 3500M
 														</td>
 													</tr>
 													<tr>
@@ -1824,7 +1822,8 @@ function historicCookieRadiobox(elementId){
 
 
 historicCookieElementSelectValue("parallel_process");
-historicCookieElementSelectValue("memory_used");
+// historicCookieElementSelectValue("memory_used");
+historicCookieElementValue("memory_used", "1000M");
 historicCookieElementValue("email", "<?php echo $application->getUser()?>");
 historicCookieCheckbox("notification");
 historicCookieElementValue("interfacename", "moa.DoTask");
@@ -1964,9 +1963,9 @@ function sendMOAREST(strURL, content, method){
 		parallel_process = parallel_process.options[parallel_process.selectedIndex].value;
 		
 
-
-	var memory_used = document.getElementById('memory_used');
-		memory_used = memory_used.options[memory_used.selectedIndex].value;
+	var memory_used = document.getElementById('memory_used').value;
+	//var memory_used = document.getElementById('memory_used');
+	//	memory_used = memory_used.options[memory_used.selectedIndex].value;
 		
 		
 	var dirstorage = document.getElementById('dirstorage');

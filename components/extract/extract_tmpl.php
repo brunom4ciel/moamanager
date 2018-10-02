@@ -950,7 +950,7 @@ if($task == "folder"){
 							{
 								foreach($item as $index=>$value)
 								{
-									if($index == $line)
+									if($index == $line-1)
 									{
 										$data_values_aux3[$key][$index]  = $value;
 									}

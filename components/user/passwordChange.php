@@ -25,7 +25,7 @@ if (! class_exists('Application')) {
 Template::setDisabledMenu();
 
 
-$error_msg = "";
+$error_msg = array();
 
 if (isset($_GET["msg"])) {
 
@@ -57,35 +57,50 @@ if (isset($_GET["msg"])) {
 
                 if ($user->user_exists($application->getUser())) {
 
-                    $error_msg = "Successfully";
+                    //$error_msg[] = "Successfully";
 
                     $credentials = $user->getCredentials($application->getUser());
 
-                    if ($oldpwd == $credentials["password"]) {
+                    if ($oldpwd == $credentials["password"]) { //$newpwd
 
-                        $user->changePassword($application->getUser(), $newpwd);
+                        $result = $user->changePassword($application->getUser(), $newpwd);
 
-                        $mail = new UsageReportMail();
-
-                        $body = "<html><head></head><body><h1>Change password</h1>
+                        if($result)
+                        {
+                            $error_msg[] = "Password updated successfully.";
+                            
+                            $mail = new UsageReportMail();
+                            
+                            $body = "<html><head></head><body><h1>Change password</h1>
 								<h3>email: {$credentials["email"]}<br>
 								<h3>password: {$newpwd}<br>
 								<hr><br>
-								<center>From {Framework::getApp_title()}</center>
+								<center>MOAManager</center>
 								</body></html>"; // email: ".$email."password: ".$password;
-
-                        $subject = "Change password";
-
-                        if ($mail->sendMail($application->getUser(), $body, $subject)) {
-
-                            $error_msg = "Change password. Send your mail.";
-                        } else {
-                            $error_msg = "Error: send mail";
+                            
+                            $subject = "Change password";
+                            
+                            if ($mail->sendMail($application->getUser(), $body, $subject)) {
+                                
+                                $error_msg[] = "E-mail successfully sent.";
+                            } else {
+                                $error_msg[] = "Error while sending e-mail.";
+                            }
                         }
+                        else
+                        {
+                            $error_msg[] = "Error: the password has not been changed.";
+                        }
+                        
+                        
                     } else {
 
-                        $error_msg = "Error: old and new passwords are different.";
+                        $error_msg[] = "Error: old and new passwords are different.";
                     }
+                }
+                else 
+                {
+                    $error_msg[] = "unsuccessfully";
                 }
 
                 // }else{
@@ -117,10 +132,21 @@ if (isset($_GET["msg"])) {
 								
 							<?php
 
-    if (! empty($error_msg)) {
-
-        echo $error_msg;
+    if (! empty($error_msg)) 
+    {        
+        if(is_array($error_msg))
+        {
+            foreach($error_msg as $item)
+            {
+                echo $item . "<br />";
+            }
+        }
+        else 
+        {
+           echo $error_msg;
+        }
     }
+        
     ?>
 							</div>
 

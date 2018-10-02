@@ -28,8 +28,9 @@ Framework::import("Utils", "core/utils");
 $utils = new Utils();
 
 $dirProcess = Properties::getBase_directory_destine_exec()
-.$application->getUser()
-.DIRECTORY_SEPARATOR;
+//.$application->getUser()
+//.DIRECTORY_SEPARATOR
+;
 
 $chmod = "0777";
 
