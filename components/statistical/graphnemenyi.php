@@ -158,14 +158,21 @@ if (in_array($task, $statistical_test_array)) {
             $i = 1;
             foreach ($rows_s as $cols) 
             {
-                if (is_numeric(trim($cols))) 
+				$cols_ = str_replace(",", ".", $cols);
+				
+				if($cols_names != "")
+				{
+					$cols_names .= "\t";
+				}
+				
+                if (is_numeric(trim($cols_))) 
                 {
-                    $cols_names .= " A" . $i;
+                    $cols_names .= "A" . $i;
                     $i ++;
                 } 
                 else 
                 {
-                    $cols_names .= $cols . "\t";
+                    $cols_names .= $cols;// . "\t";
                     $letter = true;
                 }
 
@@ -192,6 +199,29 @@ if (in_array($task, $statistical_test_array)) {
             $countRows ++;
         }
     }
+    
+    //$data_source = $cols_names . "\n" ;
+    
+    $aux1 = "";    
+    foreach($data_values as $item)
+    {
+		$aux2 = "";
+		
+		foreach($item as $key=>$value)
+		{
+			if($aux2 != "")
+			{
+				$aux2 .= "\t";
+			}
+			
+			$aux2 .= $value;
+		}
+        $aux1 .= $aux2 . "\n";
+    }    
+
+    $data_source = trim($cols_names) . "\n" . trim($aux1);
+    
+
     
     /*$rank_avg = array();
     

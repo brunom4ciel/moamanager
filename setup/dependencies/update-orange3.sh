@@ -7,7 +7,13 @@ echo "Update Orange3"
 currentpath=$(dirname $(readlink -f $0))
 dir_opt_moamanager_statistical_orange3=/opt/moamanager/statistical/orange3/
 
+mkdir $dir_opt_moamanager_statistical_orange3
+
+chmod 777 -R $dir_opt_moamanager_statistical_orange3
+
 cd /opt/moamanager/
+
+mv /opt/moamanager/orange3/ /opt/moamanager/orange3aux/
 
 git clone https://github.com/biolab/orange3
 

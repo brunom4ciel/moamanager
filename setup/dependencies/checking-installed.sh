@@ -17,7 +17,10 @@ cat << "EOF"
 #   |_|  |_|\___/_/ \_\_|  |_\__,_|_||_\__,_\__, \___|_|  
 #                                           |___/         
 
+open http://localhost/moamanager/
 EOF
+
+
 
 #xdg-open http://localhost/moamanager/
 #python -m webbrowser -t "http://localhost/moamanager/"

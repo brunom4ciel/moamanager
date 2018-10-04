@@ -7,6 +7,10 @@ echo "Install Orange3"
 currentpath=$(dirname $(readlink -f $0))
 dir_opt_moamanager_statistical_orange3=/opt/moamanager/statistical/orange3/
 
+mkdir $dir_opt_moamanager_statistical_orange3
+
+chmod 777 -R $dir_opt_moamanager_statistical_orange3
+
 sudo apt-get install python-pip -y
 sudo apt-get install python3-dev python3-numpy python3-scipy linuxbrew-wrapper python3-pip -y
 

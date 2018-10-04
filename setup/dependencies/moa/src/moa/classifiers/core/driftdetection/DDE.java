@@ -2,7 +2,6 @@
  *    DDE.java
  *    Copyright (C) 2017 Maciel, Barros 
  *    @authors Bruno I. F. Maciel (bifm@cin.ufpe.br)
- *		Silas Garrido T. C. Santos (sgtcs@cin.ufpe.br)	
  *             	Roberto S. M. Barros (roberto@cin.ufpe.br) 
  *             
  *    @version $Version: 1 $
@@ -30,7 +29,7 @@ import moa.options.ClassOption;
 import moa.tasks.TaskMonitor;
 
 /**
- * DDE: Drift Detection Ensemble Method
+ * DDE.M1: Drift Detection Ensemble Method 1
  * published as:
  * <p>Bruno I. F. Maciel and Roberto S. M. Barros</p>
  * 
@@ -41,7 +40,6 @@ import moa.tasks.TaskMonitor;
  *     (ICTAI) Vietri sul Mare, Italy, November 9-11, 2015</p>
  * 
  * @author Bruno Iran Ferreira Maciel (bifm@cin.upe.br)
- * @author Silas Garrido T. C. Santos (sgtcs@cin.ufpe.br)
  * @author Roberto Souto Maior Barros (roberto@cin.ufpe.br)
  * @version $Revision: 1 $
  */
@@ -53,7 +51,7 @@ public class DDE extends AbstractChangeDetector {
             "maxValue",
             'x',
             "Max Value",
-            300, 0, Integer.MAX_VALUE);
+            100, 0, Integer.MAX_VALUE);
     
     public StringOption DetectorsOption = new StringOption("detectors", 'd',
             "detectors - comma separated values", "HDDM_A_Test,HDDM_W_Test,DDM");    
@@ -61,7 +59,7 @@ public class DDE extends AbstractChangeDetector {
     public IntOption driftLevelOption = new IntOption("sensibility",
             's', "Number of detectors needed to identify warning or drift.", 1, 1, 5);
                 
-    protected int outlier = 300;    
+    protected int outlier = 100;    
     protected int [] result;
     private double driftLevel = 0;
     private double warningLevel = 0;      
@@ -125,7 +123,7 @@ public class DDE extends AbstractChangeDetector {
     			resetLearning();
     			this.isInitialized = true;
             	this.isChangeDetected = true;            	
-//            	System.out.println(instNumber+" DRIFT driftLevel="+driftLevel+", warningLevel="+warningLevel);
+            	System.out.println(instNumber+" DRIFT driftLevel="+driftLevel+", warningLevel="+warningLevel);
         	}else{ 
             	this.isWarningZone = true; 
 //            	System.out.println(instNumber+" WARNING driftLevel="+driftLevel+", warningLevel="+warningLevel);
