@@ -13,8 +13,8 @@ if (version_compare(PHP_VERSION, MOAM_MINIMUM_PHP, '<')) {
     die('Your host needs to use PHP ' . MOAM_MINIMUM_PHP . ' or higher to run this version of MOAM!');
 }
 
-set_time_limit(92000000000); //
-error_reporting(E_ALL | E_STRICT);
+set_time_limit(-1);//9200000000000); //
+//error_reporting(E_ALL | E_STRICT);
 ini_set('display_errors', '0');
 error_reporting(0);
 //ini_set('memory_limit', '8G');

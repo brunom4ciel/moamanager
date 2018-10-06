@@ -745,7 +745,7 @@ def graph_ranks(avranks, names, cd=None, cdmethod=None, lowv=None, highv=None,
             text((begin + end) / 2, distanceh - 0.05, "Critical Distance="+str(float("{0:.4f}".format(cd))),
              ha="center", va="bottom")
              
-        text(((begin+end))+2.4, distanceh - 0.05, "Nemenyi post-hoc test with α="+str(alpha)+str(" - "+nameref),
+        text(((begin+end))+2.4, distanceh - 0.05, "Nemenyi post-hoc test with α="+str(alpha)+str(" "+nameref),
              ha="center", va="bottom")     
 				
         # no-significance lines

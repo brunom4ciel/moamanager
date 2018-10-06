@@ -49,10 +49,3 @@ cp -rv $currentpath/statistical/orange3/* $dir_opt_moamanager_statistical_orange
 cp -rv /opt/moamanager/statistical/orange3/scoring.py /opt/moamanager/orange3/Orange/evaluation/scoring.py
 
 
-
-
-
-
-
-
-

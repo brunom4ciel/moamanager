@@ -29,10 +29,11 @@ $files_tmp = array("png","pdf","eps");
 $filename = $application->getParameter("filename");
 $attachment = $application->getParameter("attachment");
 $file = PATH_USER_WORKSPACE_PROCESSING . $filename;
+$file_ext = substr($file, strrpos($file, ".")+1);
 
-if(in_array(substr($file, strrpos($file, ".")+1) , $files_tmp))
+if(in_array($file_ext, $files_tmp))
 {	
-	if($attachment == null)
+	if($attachment == null || $file_ext == "png")
 	{
 		header("Content-type: image/png");
 		header('Expires: 0');

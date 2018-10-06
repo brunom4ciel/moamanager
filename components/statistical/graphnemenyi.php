@@ -72,10 +72,16 @@ $caption = $application->getParameter("caption");
 $source = $application->getParameter("source");
 $folder = $application->getParameter("folder");
 $downloadfile = $application->getParameter("downloadfile");
+$columns = $application->getParameter("columns");
 
 if($downloadfile == null)
 {
 	$downloadfile = "png";	
+}
+
+if($columns == null)
+{
+	$columns = "0";
 }
 
 $data_rank = "";
@@ -144,6 +150,7 @@ if (in_array($task, $statistical_test_array)) {
     $countCols = 0;
     $cols_names = "";
     $letter = false;
+    $cols_names1 = array();
 
     $data_values = array();
     $index_row = 0;
@@ -159,20 +166,16 @@ if (in_array($task, $statistical_test_array)) {
             foreach ($rows_s as $cols) 
             {
 				$cols_ = str_replace(",", ".", $cols);
-				
-				if($cols_names != "")
-				{
-					$cols_names .= "\t";
-				}
+				$cols_ = str_replace("\n", "", $cols_);
 				
                 if (is_numeric(trim($cols_))) 
                 {
-                    $cols_names .= "A" . $i;
+                    $cols_names1[] = "A" . $i;//$cols_names .= "A" . $i;
                     $i ++;
                 } 
                 else 
                 {
-                    $cols_names .= $cols;// . "\t";
+                    $cols_names1[] = trim($cols);//$cols_names .= $cols;// . "\t";
                     $letter = true;
                 }
 
@@ -219,9 +222,17 @@ if (in_array($task, $statistical_test_array)) {
         $aux1 .= $aux2 . "\n";
     }    
 
+	$original_columns = array();
+	
+	if($columns == "1")
+	{
+		$original_columns = $cols_names1;
+	}
+	
+	$cols_names = implode("\t", $cols_names1);
+	
     $data_source = trim($cols_names) . "\n" . trim($aux1);
     
-
     
     /*$rank_avg = array();
     
@@ -267,6 +278,7 @@ if (in_array($task, $statistical_test_array)) {
         
         //var_dump($d3);exit();
         
+    $data_values_original = $data_values;    
     $data_values = $d;
     //$data_values_sum = $d2;
     $data_values_wins = $d3;
@@ -307,75 +319,144 @@ if (in_array($task, $statistical_test_array)) {
     }
     $data_values_losses = $d;
     
-    
-    $data_source2 = implode("\t", $data_values);
-    //$data_source2_sum = implode("\t", $data_values_sum);
-    $data_source2_wins = implode("\t", $data_values_wins);
-    $data_source2_ties = implode("\t", $data_values_ties);
-    $data_source2_losses = implode("\t", $data_values_losses);
-    
-    //$cols_names = trim($cols_names);
-    $aux = "";
-    
-    foreach($data_values as $key=>$item)
+    if($columns == "0")
     {
-        if($aux != "")
-        {
-            $aux .= "\t";
-        }
+		$data_source2 = implode("\t", $data_values);
+		//$data_source2_sum = implode("\t", $data_values_sum);
+		$data_source2_wins = implode("\t", $data_values_wins);
+		$data_source2_ties = implode("\t", $data_values_ties);
+		$data_source2_losses = implode("\t", $data_values_losses);
         
-        $aux .= $key;
-    }
+		//$cols_names = trim($cols_names);
+		$aux = "";
+		
+		foreach($data_values as $key=>$item)
+		{
+			if($aux != "")
+			{
+				$aux .= "\t";
+			}
+			
+			$aux .= $key;
+		}
+		
+		$cols_names = $aux;
+		
+		$data_source2 = str_replace(".", ",", $data_source2);
+		//$data_source2_sum = str_replace(".", ",", $data_source2_sum);
+		
+		$data_rank = $cols_names 
+					. "\n" . $data_source2 
+					//. "\n" . $data_source2_sum 
+					. "\n" . $data_source2_wins
+					. "\n" . $data_source2_ties
+					. "\n" . $data_source2_losses;
+		
+	}
+
+	if($columns == "1")
+	{
+		
+		$data_values_wins1 = array();
+		
+		foreach($original_columns as $item)
+		{
+			foreach($data_values_wins as $key=>$value)
+			{
+				if($key == $item)
+				{
+					$data_values_wins1[] = $value;
+				}					
+			}						
+		}
+		
+		$data_values_ties1 = array();
+		
+		foreach($original_columns as $item)
+		{
+			foreach($data_values_ties as $key=>$value)
+			{
+				if($key == $item)
+				{
+					$data_values_ties1[] = $value;
+				}					
+			}						
+		}	
+		
+		$data_values_losses1 = array();
+		
+		foreach($original_columns as $item)
+		{
+			foreach($data_values_losses as $key=>$value)
+			{
+				if($key == $item)
+				{
+					$data_values_losses1[] = $value;
+				}					
+			}						
+		}		
+		
+		$data_source2 = implode("\t", $data_values_original);
+		$data_source2_wins = implode("\t", $data_values_wins1);
+		$data_source2_ties = implode("\t", $data_values_ties1);
+		$data_source2_losses = implode("\t", $data_values_losses1);
+		$cols_names = implode("\t", $original_columns);
     
-    $cols_names = $aux;
-    
-    $data_source2 = str_replace(".", ",", $data_source2);
-	//$data_source2_sum = str_replace(".", ",", $data_source2_sum);
-	
-	$data_rank = $cols_names 
+		$data_rank = $cols_names 
 				. "\n" . $data_source2 
 				//. "\n" . $data_source2_sum 
 				. "\n" . $data_source2_wins
 				. "\n" . $data_source2_ties
 				. "\n" . $data_source2_losses;
+		
+		$data_rank = trim($data_rank);
+		
+	}
 	
-
+	
+	
+	
+	
+	
+	
+	
+	
     
-		if(empty($filename_autoload))
-		{
-			$filename_autoload = str_replace("/","-",$caption);
-			$filename_autoload = str_replace(" ", "", $filename_autoload);
-		}
+	if(empty($filename_autoload))
+	{
+		$filename_autoload = str_replace("/","-",$caption);
+		$filename_autoload = str_replace(" ", "", $filename_autoload);
+	}
 
-		$filename_img = $filename_autoload;
+	$filename_img = $filename_autoload;
+	
+	if(strrpos($filename_img, ".") !== false)
+	{		
+		$filename_img = substr($filename_img, 0, strrpos($filename_img, "."));
 		
-		if(strrpos($filename_img, ".") !== false)
-		{		
-			$filename_img = substr($filename_img, 0, strrpos($filename_img, "."));
-			
-			if(substr($filename_img, strlen($filename_img)-1) == "-")
-			{
-				$filename_img = substr($filename_img, 0, strlen($filename_img)-1);
-			}
-			
-			$filename_img = $source . "-" . $filename_img;
-			$filename_img = str_replace(" ", "-", $filename_img);
+		if(substr($filename_img, strlen($filename_img)-1) == "-")
+		{
+			$filename_img = substr($filename_img, 0, strlen($filename_img)-1);
 		}
 		
-		$filename_img2 = $filename_img;
-		
-		
-		
-		if(empty($caption))
-		{
-			$caption = $filename_img;
-			$caption2 = $filename_img;
-		}else
-		{
-			$caption2 = $caption;
-			$caption2 = str_replace(" ", "", $caption2);
-		}
-		
+		$filename_img = $source . "-" . $filename_img;
+		$filename_img = str_replace(" ", "-", $filename_img);
+	}
+	
+	$filename_img2 = $filename_img;
+	
+	
+	
+	if(empty($caption))
+	{
+		$caption = $filename_img;
+		$caption2 = $filename_img;
+	}else
+	{
+		$caption2 = $caption;
+		$caption2 = str_replace(" ", "", $caption2);
+	}
+	
 		
 		
 		//$caption = $source . " - " .$caption;
@@ -576,46 +657,23 @@ if (in_array($task, $statistical_test_array)) {
 												if($index != 0)
 												{
 													$data_rank_view .= "\t";
-													$aux .= "\t";
+													//$aux .= "\t";
 												}
 												
 												$data_rank_view .= $value;
 												$custom[$index] = array("key"=>$value,"sum"=>0,"avg"=>0, 
 																		"wins"=>0, "ties"=>0,"losses"=>0,
-																		"lossesorder"=>0, "lossesorder2"=>0);
+																		"lossesorder"=>0, "lossesorder2"=>0, "avgrank"=>0, "allwins"=>0);
 												$index++;
-												$aux .= $index;
+												//$aux .= $index;
 											}
-											$data_rank_view .=  "\n" . $aux . "\n";	
-											$index = 0;
-																	
-											foreach($data_values_avg as $value)
-											{
-												if($index != 0)
-												{
-													$data_rank_view .= "\t";													
-												}
-												
-												$data_rank_view .= $value;
-												$custom[$index]["avg"] = $value;
-												$index++;												
-											}
+											$data_rank_view .=  "\n";// . $aux . "\n";	
 											
-											/*$data_rank_view .= "\n";	
-											$index = 0;				
-																	
-											foreach($data_values_sum as $value)
-											{
-												if($index != 0)
-												{
-													$data_rank_view .= "\t";
-												}
-												
-												$data_rank_view .= $value;
-												$custom[$index]["sum"] = $value;
-												$index++;
-											}*/
-											$data_rank_view .= "\n";	
+											
+								
+											// *********
+											// wins
+											// 
 											$index = 0;	
 											
 											foreach($data_values_wins as $value)
@@ -630,7 +688,17 @@ if (in_array($task, $statistical_test_array)) {
 												$index++;
 											}
 											
-											$data_rank_view .= "\n";	
+											$data_rank_view .= "\n";
+											
+											// *********
+											// wins
+											// *****************
+											
+											
+											// *********
+											// ties
+											//
+											
 											$index = 0;	
 											
 											foreach($data_values_ties as $value)
@@ -646,6 +714,17 @@ if (in_array($task, $statistical_test_array)) {
 											}
 											
 											$data_rank_view .= "\n";	
+											
+											// *********
+											// ties
+											// *****************
+											
+											
+											
+											// *********
+											// losses
+											//
+											
 											$index = 0;	
 											$losses = array();
 											
@@ -662,28 +741,165 @@ if (in_array($task, $statistical_test_array)) {
 												$index++;
 											}
 											
+											$data_rank_view .= "\n";
+											
+											// *********
+											// losses
+											// *****************
+											
+											
+											// *********
+											// wins + ties
+											//
+											
+											$index = 0;	
+											
+											foreach($custom as $key=>$item)
+											{
+												$custom[$key]["allwins"] = $custom[$key]["wins"] + $custom[$key]["ties"];
+												
+												if($index != 0)
+												{
+													$data_rank_view .= "\t";
+												}
+												
+												$data_rank_view .= $custom[$key]["allwins"];
+												
+												$index++;
+											}
+														
+											$data_rank_view .= "\n";
+																						
+											// *********
+											// wins + ties
+											// *****************
+											
+											
+											// *********
+											// average rank
+											// 
+											$index = 0;
+																	
+											foreach($data_values_avg as $value)
+											{
+												if($index != 0)
+												{
+													$data_rank_view .= "\t";													
+												}
+												
+												$data_rank_view .= $value;
+												$custom[$index]["avg"] = $value;
+												$index++;												
+											}
+											
+											$data_rank_view .= "\n";
+											
+											// *********
+											// average rank
+											// *****************
+												
+											
+											// *********
+											// position average 
+											// 
+											$index = 0;
+											$position_avg = array();
+																	
+											foreach($custom as $index=>$item)
+											{
+												foreach($item as $key=>$value)
+												{
+													if($key == "avg")
+													{
+														$position_avg[$index] = $value;
+													}
+												}
+										
+											}
+											
+											$aux_position_avg = $position_avg;
+											
+											asort($position_avg);
+												
+											$index = 1;
+											$aux_avg = array();
+											
+											foreach($position_avg as $key=>$value)
+											{
+												foreach($aux_position_avg as $key2=>$value2)
+												{
+													if($value == $value2)
+													{
+														//$aux_avg[$key] = $index;
+														$custom[$key]["avgrank"] = $index;
+														$index++;
+													}
+												}
+												
+											}
+											
+
+											/*foreach($aux_avg as $key=>$value)
+											{
+												$custom[$key]["avgrank"] = $value;
+											}*/
+											
+											$index = 0;
+											
+											for($i = 0; $i < count($custom); $i++)
+											{
+												if($index != 0)
+												{
+													$data_rank_view .= "\t";													
+												}
+												
+												$data_rank_view .= $custom[$i]["avgrank"];
+												$index++;
+											}											
+											
+																						
+											$data_rank_view .= "\n";
+											
+											// *********
+											// position average
+											// *****************
+											
+											
+											
+											
+											/*$index = 0;	
+											$losses = array();
+											
+											foreach($data_values_losses as $value)
+											{
+												if($index != 0)
+												{
+													$data_rank_view .= "\t";
+												}
+												
+												$data_rank_view .= $value;
+												$custom[$index]["losses"] = $value;
+												$losses[] = $value;
+												$index++;
+											}*/
+											
 											//$rank_losses_order = $utils->avgColsArray($custom[$index]["losses"]);
 											//var_dump($rank_losses_order);exit("=");
 											
-											$index = 0;	
+											/*$index = 0;	
 											foreach($losses as $value)
 											{												
 												$losses2[$index][] = $utils->rank_avg($value, $losses, 1);
 												$index++;
-											}
+											}*/
 											
 											
 											
-											$data_rank_view .= "\n";	
-											$index = 0;	
+											//$data_rank_view .= "\n";	
+											/*$index = 0;	
 											
 											foreach($losses2 as $item)
-											{
-												/*if($index != 0)
-												{
-													$data_rank_view .= "\t";
-												}*/
-												
+											{												
 												foreach($item as $key=>$value)
 												{
 													//$data_rank_view .= $value;
@@ -691,7 +907,7 @@ if (in_array($task, $statistical_test_array)) {
 												}
 																								
 												$index++;
-											}
+											}*/
 											
 											
 											//var_dump($custom);exit("==");
@@ -727,14 +943,7 @@ if (in_array($task, $statistical_test_array)) {
 											foreach($losses2 as $item)
 											{
 												foreach($item as $key=>$value)
-												{
-													/*if($index != 0)
-													{
-														$data_rank_view .= "\t";
-													}
-													
-													$data_rank_view .= $value;*/
-													
+												{													
 													$custom[$index]["lossesorder2"] = intval($value);
 												}
 																								
@@ -747,7 +956,7 @@ if (in_array($task, $statistical_test_array)) {
 											
 											foreach($custom as $item)
 											{												
-												$losses[] = $custom[$index]["lossesorder2"] + $custom[$index]["lossesorder"];																								
+												$losses[] = intval($custom[$index]["lossesorder2"]) + intval($custom[$index]["lossesorder"]);																								
 												$index++;
 											}
 											
@@ -761,84 +970,124 @@ if (in_array($task, $statistical_test_array)) {
 											}
 											
 											$index = 0;
+											$aux_losses = array();
 											
 											foreach($losses2 as $item)
-											{
-												if($index != 0)
-												{
-													$data_rank_view .= "\t";
-												}
-												
+											{												
 												foreach($item as $key=>$value)
 												{
-													$data_rank_view .= $value;
 													$custom[$index]["lossesorder"] = $value;
+													$aux_losses[] = $value;
 												}
 																								
 												$index++;
 											}
 											
+											$index = 1;
+											$index_aux = 0;
+											$aux = array();
+											$aux2 = array();
+											
+											
+											asort($aux_losses);											
+											
+											
+											foreach($aux_losses as $key=>$item)
+											{
+												if(count($aux) == 0)
+												{
+													$aux[$key] = $index;	
+													$aux2[] = $item;																																																
+												}	
+												else
+												{
+													if($aux2[count($aux2)-1] == $item)
+													{
+														$aux[$key] = $index;
+														$aux2[] = $item;	
+													}
+													else
+													{
+														$index++;
+														$aux[$key] = $index;	
+														$aux2[] = $item;														
+													}														
+													
+													$index_aux++;												
+												}
+																								
+											}
+											
+															//var_dump($aux_losses);							
+											//var_dump($aux);exit();
+											
+											$index = 0;
+											$data_rank_view_s = array();
+											
+											foreach($aux as $key=>$item)
+											{
+												$custom[$key]["lossesorder"] = $item;
+												$data_rank_view_s[$key] = $item;
+											}
+											
+											$index = 0;
+											
+											foreach($data_rank_view_s as $key=>$item)
+											{
+												if($index != 0)
+												{
+													$data_rank_view .= "\t";
+												}
+												$data_rank_view .= $data_rank_view_s[$index];
+												$index++;
+											}
+
+											
+											
+											
 											//var_dump($losses2);exit();
 											
 											//var_dump($custom);exit();
 											
-											
+										
+
+
 											$data_rank_view .= "\n";// . $aux;
 											$index = 1;
 											
 											echo "<div style='float:left;width:auto;border: 1px solid #999999;font-size:12px;text-aling:center;padding: 3px 3px;'>";
-											echo "<div style='text-align: center; border-bottom:1px solid #eeeeee;font-weight: bold;width: inherit;'>Named</div>";
-											echo "<div style='text-align: center; width: inherit;border-bottom:1px solid #eeeeee;font-weight: bold;'>Order</div>";
-											echo "<div style='text-align: center; width: inherit;border-bottom:1px solid #eeeeee;font-weight: bold;'>Average</div>";
+											echo "<div style='text-align: center; border-bottom:1px solid #eeeeee;font-weight: bold;width: inherit;'>Named</div>";											
 											//echo "<div style='text-align: center; width: inherit;border-bottom:1px solid #eeeeee;'>Sum</div>";											
 											echo "<div style='text-align: center; width: inherit;font-weight: bold;border-bottom:1px solid #eeeeee;'>Wins</div>";
 											echo "<div style='text-align: center; width: inherit;font-weight: bold;border-bottom:1px solid #eeeeee;'>Ties</div>";
 											echo "<div style='text-align: center; width: inherit;font-weight: bold;border-bottom:1px solid #eeeeee;'>Losses</div>";
+											echo "<div style='text-align: center; width: inherit;font-weight: bold;border-bottom:1px solid #eeeeee;'>All Wins</div>";
 											//echo "<div style='text-align: center; width: inherit;font-weight: bold;border-bottom:1px solid #eeeeee;'>Order</div>";
-											echo "<div style='text-align: center; width: inherit;font-weight: bold;'>Order</div>";
+											echo "<div style='text-align: center; width: inherit;border-bottom:1px solid #eeeeee;font-weight: bold;'>Average Rank</div>";
+											echo "<div style='text-align: center; width: inherit;border-bottom:1px solid #eeeeee;font-weight: bold;'>Position Average</div>";											
+											echo "<div style='text-align: center; width: inherit;font-weight: bold;'>Position Wins</div>";
 											echo "</div>";
 												
 											foreach($custom as $item)
 											{
 												
 												echo "<div style='float:left;width:auto;border: 1px solid #999999;font-size:12px;text-aling:center;padding: 3px 3px;'>";
-												echo "<div style='text-align: center; border-bottom:1px solid #eeeeee;font-weight: bold;width: inherit;'>" . $item['key'] . "</div>";
-												echo "<div style='text-align: center; width: inherit;border-bottom:1px solid #eeeeee;'>" . $index . "</div>";
-												echo "<div style='text-align: center; width: inherit;border-bottom:1px solid #eeeeee;'>" . $item['avg'] . "</div>";
+												echo "<div style='text-align: center; border-bottom:1px solid #eeeeee;font-weight: bold;width: inherit;'>" . $item['key'] . "</div>";		
+												
 												//echo "<div style='text-align: center; width: inherit;border-bottom:1px solid #eeeeee;'>" . $item['sum'] . "</div>";												
 												echo "<div style='text-align: center; width: inherit;border-bottom:1px solid #eeeeee;'>" . $item['wins'] . "</div>";
 												echo "<div style='text-align: center; width: inherit;border-bottom:1px solid #eeeeee;'>" . $item['ties'] . "</div>";
 												echo "<div style='text-align: center; width: inherit;border-bottom:1px solid #eeeeee;'>" . $item['losses'] . "</div>";
+												echo "<div style='text-align: center; width: inherit;border-bottom:1px solid #eeeeee;'>" . $item['allwins'] . "</div>";
 												//echo "<div style='text-align: center; width: inherit;border-bottom:1px solid #eeeeee;'>" . $item['lossesorder'] . "</div>";
+												echo "<div style='text-align: center; width: inherit;border-bottom:1px solid #eeeeee;'>" . $item['avg'] . "</div>";
+												echo "<div style='text-align: center; width: inherit;border-bottom:1px solid #eeeeee;'>" . $item['avgrank'] . "</div>";
 												echo "<div style='text-align: center; width: inherit;'>" . $item['lossesorder'] . "</div>";
 												echo "</div>";
 												$index++;
 											}
 											
-											
-											
-											
-											//echo "<table border=1 class='tableviewrank'>";
-											//echo "<tr>";
-											/*echo '
-											<div class="divTable" style="border: 1px solid #000;" >
-											<div class="divTableBody">
-												<div class="divTableRow">';
-												
-											foreach($data_names as $value)
-											{
-												echo '<div class="divTableCell">' . $value . "</div>";
-											}
-											echo "</div>";
-											echo '<div class="divTableRow">';
-											
-											foreach($data_values as $value)
-											{
-												echo '<div class="divTableCell">' . $value . "</div>";
-											}
-											echo "</div>
-													</div>
-												</div>";*/
+
 										}
 										?>
 										
@@ -847,10 +1096,17 @@ if (in_array($task, $statistical_test_array)) {
 
 <?php
 	if(!empty($src_img)){
-?>
-
-	<a href="?component=statistical&controller=figure&attachment=&filename=<?php echo urlencode($filename2);?>">Download file</a>&nbsp;
+		
+		$file_ext = substr($filename2, strrpos($filename2, ".")+1);
+		if($file_ext == "png"){
+?>	
+	<a target="_blank" href="?component=statistical&controller=figure&attachment=&filename=<?php echo urlencode($filename2);?>">Download file</a>&nbsp;
 <?php
+	}else{
+?>
+	<a href="?component=statistical&controller=figure&attachment=true&filename=<?php echo urlencode($filename2);?>">Download file</a>&nbsp;
+<?php		
+	}
 }
 ?>
 	<a target="_blank" href="?component=statistical&controller=printpreview&attachment=false&tmpl=tmpl&filename=<?php echo urlencode($filename);?>&datasource=<?php echo urlencode(base64_encode($data_rank));?>">Print Preview</a>
@@ -864,6 +1120,12 @@ if (in_array($task, $statistical_test_array)) {
 									<div style="float: left;width: 100%; margin-top: 5px;">
 										 <label>Caption <input type="text" value="<?php echo $caption;?>"
 									name="caption" id="caption"></label>
+									
+									<label>Order View Columns <select name="columns" id="columns">
+													<option value="0">Average Rank</option>
+													<option value="1">Original</option>
+												</select>
+									</label>
 									
 									<label>Precision<input type="text" name="decimalprecision" id="decimalprecision" value="<?php echo $decimalprecision;?>" style="width:40px;" /></label>
 					
@@ -887,7 +1149,7 @@ if (in_array($task, $statistical_test_array)) {
 									<div
 										style="float: left;  width: 100%; margin-top: 5px;">
 
-										<textarea  class="dataview" id="rankview" style="width: 100%; height: 50px;"
+										<textarea  class="dataview" id="rankview" style="width: 100%; height: 150px;"
 											name="rankview"><?php echo $data_rank_view?></textarea>
 											
 										<textarea  class="dataview" id="data_source" style="width: 100%; height: 200px;"
@@ -935,6 +1197,7 @@ function SetSelectIndex(idElement, elementText)
 }
 
 SetSelectIndex("order","<?php echo $order?>");
+SetSelectIndex("columns","<?php echo $columns?>");
 SetSelectIndexRadio("downloadfile", "<?php echo $downloadfile?>");
 
 </script>
