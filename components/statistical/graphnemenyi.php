@@ -1119,7 +1119,7 @@ if (in_array($task, $statistical_test_array)) {
 
 									<div style="float: left;width: 100%; margin-top: 5px;">
 										 <label>Caption <input type="text" value="<?php echo $caption;?>"
-									name="caption" id="caption"></label>
+									name="caption" id="caption" style="width:500px"></label><br>
 									
 									<label>Order View Columns <select name="columns" id="columns">
 													<option value="0">Average Rank</option>

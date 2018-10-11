@@ -359,10 +359,13 @@ class ParallelProcess extends Utils
 
                         
                         // $contadorList++;
-                    } else {
+                    } 
+                    else 
+                    {
                         $etat = @proc_get_status($pool[$i]);
                         
-                        if ($etat['running'] == FALSE) {
+                        if ($etat['running'] == FALSE) 
+                        {
                             
                             fclose($pipes[$i][1]);
                             fclose($pipes[$i][2]);
@@ -420,7 +423,8 @@ class ParallelProcess extends Utils
                                     rewind($tmpfilehandle[$i]);
                                     $s = "";
                                     
-                                    while (($buffer = fgets($tmpfilehandle[$i], 1024)) !== false) {
+                                    while (($buffer = fgets($tmpfilehandle[$i], 1024)) !== false) 
+                                    {
                                         $s .= $buffer;
                                     }
                                     
@@ -428,7 +432,8 @@ class ParallelProcess extends Utils
                                     
                                     fclose($tmpfilehandle[$i]);
                                     
-                                }else 
+                                }
+                                else 
                                 {
                                     $opts["output"] = "";//$output[$i];
                                 }
@@ -484,14 +489,16 @@ class ParallelProcess extends Utils
                             foreach ($pross_ids as $key => $item)
                             // for($q = 0; $q < count($pross_ids); $q++)
                             {
-                                if ($pross_ids[$key]["pid"] == $pid) {
+                                if ($pross_ids[$key]["pid"] == $pid) 
+                                {
                                     $execution_history_id = $pross_ids[$key]["id"];
                                     unset($pross_ids[$key]);
                                     break;
                                 }
                             }
                             
-                            if ($execution_history_id != null) {
+                            if ($execution_history_id != null) 
+                            {
                                 $this->execution_history->closed_process($execution_history_id, $process_closed);
                             }
                             
@@ -635,48 +642,13 @@ class ParallelProcess extends Utils
             $exist_process_running = FALSE;
             $killCount = 1;
             
-            for ($i = 0; $i < $nb_max_process; $i ++) {
+            for ($i = 0; $i < $nb_max_process; $i ++) 
+            {
                 
                 if (is_resource($pool[$i])) 
                 {
                     
-                    $read = array();
                     
-                    if (! feof($pipes[$i][1]))
-                    {
-                        $read[] = $pipes[$i][1];
-                    }
-                    if (! feof($pipes[$i][2]))
-                    {
-                        $read[] = $pipes[$i][2];
-                    }
-                    
-                    if ($read)
-                    {
-                        $ready = @stream_select($read, $write = NULL, $ex = NULL, 2);
-                        
-                        if ($ready === false)
-                        {
-                            // should never happen - something died
-                            
-                        }
-                        else
-                        {
-                            foreach ($read as $r)
-                            {
-                                $s = fread($r, 1024);
-//                                 $output[$i] .= $s;
-                                
-                                if(is_resource($tmpfilehandle[$i]))
-                                {
-                                    fwrite($tmpfilehandle[$i], $s);
-                                }
-                                
-                            }
-                        }
-                        
-                        
-                    }
                     
                     
                     $etat = proc_get_status($pool[$i]);
@@ -733,7 +705,8 @@ class ParallelProcess extends Utils
                                 rewind($tmpfilehandle[$i]);
                                 $s = "";
                                 
-                                while (($buffer = fgets($tmpfilehandle[$i], 1024)) !== false) {
+                                while (($buffer = fgets($tmpfilehandle[$i], 1024)) !== false) 
+                                {
                                     $s .= $buffer;
                                 }
                                 
@@ -795,7 +768,8 @@ class ParallelProcess extends Utils
                         foreach ($pross_ids as $key => $item)
                         // for($q = 0; $q < count($pross_ids); $q++)
                         {
-                            if ($pross_ids[$key]["pid"] == $pid) {
+                            if ($pross_ids[$key]["pid"] == $pid) 
+                            {
                                 $execution_history_id = $pross_ids[$key]["id"];
                                 unset($pross_ids[$key]);
                                 break;
@@ -814,6 +788,45 @@ class ParallelProcess extends Utils
                     else 
                     {
                         
+                        $read = array();
+                    
+						if (! feof($pipes[$i][1]))
+						{
+							$read[] = $pipes[$i][1];
+						}
+						if (! feof($pipes[$i][2]))
+						{
+							$read[] = $pipes[$i][2];
+						}
+						
+						if ($read)
+						{
+							$ready = @stream_select($read, $write = NULL, $ex = NULL, 2);
+							
+							if ($ready === false)
+							{
+								// should never happen - something died
+								
+							}
+							else
+							{
+								foreach ($read as $r)
+								{
+									$s = fread($r, 1024);
+	//                                 $output[$i] .= $s;
+									
+									if(is_resource($tmpfilehandle[$i]))
+									{
+										fwrite($tmpfilehandle[$i], $s);
+									}
+									
+								}
+							}                        
+							
+						}
+						
+						
+                    
                         if ($etat['running'] == TRUE) 
                         {
                             $exist_process_running = TRUE;
