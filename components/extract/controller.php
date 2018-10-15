@@ -475,7 +475,7 @@ function verificaChecks() {
 			<label><input type="radio" name="metricstract" id="metricstract" value="accuracy" onclick="setCookieRadioBox(this);"/>Accuracy</label>		
 			<label><input type="radio" name="metricstract" id="metricstract" value="timer" onclick="setCookieRadioBox(this);"/>Timer</label>
 			<label><input type="radio" name="metricstract" id="metricstract" value="memory" onclick="setCookieRadioBox(this);"/>Memory</label>
-			
+			<label><input type="radio" name="metricstract" id="metricstract" value="dissimilarity" onclick="setCookieRadioBox(this);"/>Dissimilarity</label>
 			<label><input type="checkbox" name="interval" id="interval" value="1" onclick="setCookieCheckbox(this);"/>Confidence Interval</label>
 			
 			

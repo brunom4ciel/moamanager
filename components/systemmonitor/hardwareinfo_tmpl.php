@@ -10,10 +10,11 @@ namespace moam\components\home;
 defined('_EXEC') or die();
 
 use moam\core\Framework;
-use moam\core\Application;
-use moam\core\Properties;
+// use moam\core\Application;
+// use moam\core\Properties;
 use moam\libraries\core\utils\Utils;
-use moam\libraries\core\sys\CPULoad;
+// use moam\libraries\core\sys\CPULoad;
+
 if (! class_exists('Application')) {
     $application = Framework::getApplication();
 }

@@ -40,7 +40,7 @@ define('PHPMAILER_FROMNAME', 'Bruno Maciel');
 
 define('PLIVO_AUTH_ID', '');
 define('PLIVO_AUTH_TOKEN', '');
-define('MAXIMUM_NUMBER_OF_PROCESSES_IN_PARALLEL', 16);
+define('MAXIMUM_NUMBER_OF_PROCESSES_IN_PARALLEL', 20);
 
 // define('PATH_WWW_TEMPLATE', PATH_WWW . 'default');
 

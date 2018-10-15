@@ -321,7 +321,7 @@ function downloadfile(){
 	// initialisation
 	editAreaLoader.init({
 		id: "data"	// id of the textarea to transform	
-			,start_highlight: true	
+			,start_highlight: false	
 			,font_size: "8"
 			,is_editable: false
 			,word_wrap: true

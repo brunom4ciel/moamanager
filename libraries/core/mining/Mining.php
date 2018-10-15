@@ -643,6 +643,10 @@ class Mining{
             {
                 array_push($json_return, array("Memory"=>"*"));
             }
+            if($parameters["dissimilarity"]==1)
+            {
+                array_push($json_return, array("Dissimilarity"=>"*"));
+            }            
             if($parameters["resume"]==1)
             {
                 $str = implode("\t", array('*','*','*','*','*','*','*','*','*','*','*'));
@@ -720,13 +724,20 @@ class Mining{
                             if(strpos($buffer, "Accuracy:")>-1){
                                 $startFind = "accuracy";
                                 $accuracy_open = true;
-                            }else if(strpos($buffer, "Time:")>-1){
+                            }
+                            else if(strpos($buffer, "Time:")>-1){
                                 $startFind = "time";
-                            }else if(strpos($buffer, "Memory (B/s):")>-1){
+                            }
+                            else if(strpos($buffer, "Memory (B/s):")>-1){
                                 $startFind = "memory";
-                            }else if(strpos($buffer, "Mean Distance")>-1){
+                            }
+                            else if(strpos($buffer, "Mean Distance")>-1){
                                 $startFind = "resume";
-                            }else{
+                            }
+                            else if(strpos($buffer, "Dissimilarity")>-1){
+                                $startFind = "dissimilarity";
+                            }
+                            else{
                                 if($strategy == "Error" && $accuracy_open == false)
                                 {
                                     $startFind = "Error";
@@ -867,10 +878,10 @@ class Mining{
                                         }
                                     }
                                     
-                                    break;
-                                /*case 'fp':
+                                    break;                                
+                                case 'dissimilarity':
                                     
-                                    if($parameters["fp"]==1){
+                                    if($parameters["dissimilarity"]==1){
                                         
                                         //if(strpos($buffer, "Confidence Interval =")>-1){
                                         if(strpos($buffer, "Confidence Interval =")>-1 || strpos($buffer, "Mean (CI) =")>-1){
@@ -887,16 +898,27 @@ class Mining{
                                                 $tmp = substr($tmp,strpos($tmp, "Mean (CI) =")+strlen("Mean (CI) =")+1);
                                             }
                                             
-                                            $amemory = $tmp;
-                                            
+                                            $amemory = $tmp;                                            
                                             $amemory = substr($amemory,0,strpos($amemory, ")")+1);
+                                            $amemory_aux = $amemory;
                                             
-                                            if($parameters["interval"]!=1){
-                                                $amemory = substr($amemory,0,strpos($amemory, "(")-1);
-                                                $amemory = trim($amemory);
+                                            $amemory = substr($amemory,0,strpos($amemory, "(")-1);
+                                            $amemory = trim($amemory);
+                                            
+//                                             if($parameters["interval"]!=1){
+//                                                 $amemory = substr($amemory,0,strpos($amemory, "(")-1);
+//                                                 $amemory = trim($amemory);
+//                                             }
+                                            
+                                            $amemory = $this->numeric_format_option($amemory, $decimalprecision, $decimalseparator);
+                                            
+                                            if($parameters["interval"]==1){
+                                                $amemory_aux = substr($amemory_aux,strpos($amemory_aux, "(")-1);
+                                                $amemory_aux = trim($amemory_aux);
+                                                $amemory .= " " . $amemory_aux;
                                             }
                                             
-                                            array_push($json_return, array("fp"=>$amemory));
+                                            array_push($json_return, array("Dissimilarity"=>$amemory));
                                             
                                             //fim
                                             
@@ -904,47 +926,7 @@ class Mining{
                                         }
                                     }
                                     
-                                    break;
-                                    
-                                case 'fn':
-                                    
-                                    if($parameters["fn"]==1){
-                                        
-                                        //if(strpos($buffer, "Confidence Interval =")>-1){
-                                        if(strpos($buffer, "Confidence Interval =")>-1 || strpos($buffer, "Mean (CI) =")>-1){
-                                            //$amemory = $buffer;
-                                            
-                                            //$amemory = substr($amemory,strpos($amemory, "Memory (B/s):")+12);
-                                            //$amemory = substr($amemory,strpos($amemory, "Confidence Interval =")+22);
-                                            
-                                            $tmp = $buffer;
-                                            
-                                            if(strpos($buffer, "Confidence Interval =")!==false){
-                                                $tmp = substr($tmp,strpos($tmp, "Confidence Interval =")+strlen("Confidence Interval =")+1);
-                                            }elseif(strpos($buffer, "Mean (CI) =")!==false){
-                                                $tmp = substr($tmp,strpos($tmp, "Mean (CI) =")+strlen("Mean (CI) =")+1);
-                                            }
-                                            
-                                            $amemory = $tmp;
-                                            
-                                            
-                                            $amemory = substr($amemory,0,strpos($amemory, ")")+1);
-                                            
-                                            if($parameters["interval"]!=1){
-                                                $amemory = substr($amemory,0,strpos($amemory, "(")-1);
-                                                $amemory = trim($amemory);
-                                            }
-                                            
-                                            array_push($json_return, array("fn"=>$amemory));
-                                            
-                                            //fim
-                                            
-                                            break 2;
-                                        }
-                                    }
-                                    
-                                    break;*/
-                                    
+                                    break;    
                                 case 'resume':
                                     
                                     if($parameters["dist"] == 1

@@ -62,15 +62,24 @@ else
     $filename .= ".data";
 }
 
+$folder = $application->getParameter("folder");
 
+if($folder != null){
+    if(substr($folder, strlen($folder)-1)!="/"){
+        $folder .= DIRECTORY_SEPARATOR;
+    }
+}
 
-$filenamenew = $application->getParameter("filename");
+$dir = PATH_USER_WORKSPACE_STORAGE . $folder;
+
+$filenamenew = $application->getParameter("filenamenew");
+$filenamenew_ext = substr($filenamenew, strrpos($filenamenew, ".") + 1);
 
 if(!empty($filenamenew))
 {
     if (strrpos($filenamenew, ".") > - 1) {
         
-        if (in_array(substr($filenamenew, strrpos($filenamenew, ".") + 1), array(
+        if (in_array($filenamenew_ext, array(
             "data", "txt"
         ))) {
             
@@ -87,7 +96,7 @@ if(!empty($filenamenew))
     }
 }
 
-$folder = $application->getParameter("folder");
+//$folder = $application->getParameter("folder");
 $dirScriptsName = "scripts";
 
 $data = "";
@@ -100,6 +109,7 @@ if ($filename != null) {
     . DIRECTORY_SEPARATOR . $dirScriptsName . DIRECTORY_SEPARATOR . $folder . 
     // .DIRECTORY_SEPARATOR
     $filename;// . $extension_scripts;
+    
 
     $task = $application->getParameter("task");
 
@@ -117,12 +127,12 @@ if ($filename != null) {
             }
             else 
             {
-                $application->redirect(PATH_WWW . "?component=" . $application->getComponent() . "&folder=" . $application->getParameter("folder"));
+                //$application->redirect(PATH_WWW . "?component=" . $application->getComponent() . "&folder=" . $application->getParameter("folder"));
             }
         }
         else 
         {
-            $application->redirect(PATH_WWW . "?component=" . $application->getComponent() . "&folder=" . $application->getParameter("folder"));
+            //$application->redirect(PATH_WWW . "?component=" . $application->getComponent() . "&folder=" . $application->getParameter("folder"));
         }
         
         
@@ -130,7 +140,8 @@ if ($filename != null) {
         $filenamenew = Properties::getBase_directory_destine($application) . $application->getUser() 
         . DIRECTORY_SEPARATOR . $dirScriptsName . DIRECTORY_SEPARATOR . $folder . 
         // .DIRECTORY_SEPARATOR
-        $application->getParameter("filenamenew"); // /.$extension_scripts;
+        $filenamenew;
+        //$application->getParameter("filenamenew"); // /.$extension_scripts;
 
         if ($application->getParameter("filenamenew") != $application->getParameter("filename")) {
 
@@ -145,7 +156,7 @@ if ($filename != null) {
 
                 rename($filename, $filenamenew);
 
-                $application->setParameter("filename", substr($filenamenew, strrpos($filenamenew, "/") + 1, strrpos($filenamenew, ".")));
+                $application->setParameter("filename", substr($filenamenew, strrpos($filenamenew, "/") + 1)); //, strrpos($filenamenew, ".")
             }
         }
     } else {
@@ -285,7 +296,7 @@ function returnPage()
 	// initialisation
 	editAreaLoader.init({
 		id: "data"	// id of the textarea to transform	
-			,start_highlight: true	
+			,start_highlight: false	
 			,font_size: "8"
 			,is_editable: true
 			,word_wrap: true
@@ -315,6 +326,7 @@ function returnPage()
 		}
 		
 		editAreaLoader.execCommand(id, 'set_editable', !editAreaLoader.execCommand(id, 'is_editable'));
+		editAreaLoader.execCommand(id, 'set_word_wrap', true);
 	}
 
 </script>

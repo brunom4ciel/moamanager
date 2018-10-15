@@ -283,6 +283,7 @@ if($task == "folder"){
         $metrics["accuracy"] = null;
         $metrics["timer"] = null;
         $metrics["memory"] = null;
+        $metrics["dissimilarity"] = null;
         $metrics["dist"] = null;
         $metrics["fn"] = null;
         $metrics["fp"] = null;
@@ -323,6 +324,7 @@ if($task == "folder"){
             "type_extract"=>($type_extract==null?0:1),
             "timer"=>($metrics["timer"]==null?0:1),
             "memory"=>($metrics["memory"]==null?0:1),
+            "dissimilarity"=>($metrics["dissimilarity"]==null?0:1),
             //"fp"=>($fp==null?0:1),
             //"fn"=>($fn==null?0:1),
             "column"=>($column==null?0:1),

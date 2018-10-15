@@ -10,7 +10,7 @@ namespace moam\components\home;
 defined('_EXEC') or die();
 
 use moam\core\Framework;
-use moam\core\Application;
+// use moam\core\Application;
 use moam\core\Properties;
 use moam\libraries\core\utils\Utils;
 if (! class_exists('Application')) {
