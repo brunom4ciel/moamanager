@@ -130,11 +130,15 @@ if ($filename != null) {
                 } else {
 
 //                     $maxBytesFileLoadPart = Properties::getFileContentsMaxSize();
-                    $size = filesize($filename) /1024;
+                    //$size = filesize($filename) /1024;
                     
-                    //                     $bparted = 20;
+                    $detect = "learning evaluation instances";
+                    $size = $utils->getContentFileSizeDetectPart($filename, $detect);
                     
-                    if($size > 3000)
+                    
+                    //exit("=".$size);
+                    
+                    /*if($size > 3000)
                     {
                         $bparted = $size/2;
                     }
@@ -142,16 +146,17 @@ if ($filename != null) {
                     {
                         if($size > 2000)
                         {
-                            $bparted = 1500;
+                            $bparted = 2500;
                         }
                         else
                         {
                             $bparted = 500;
                         }
-                    }                    
+                    }*/                    
                     
                     
-                    $data1 = $utils->getContentFilePart($filename, ($bparted * 1024));
+                    $data1 = $utils->getContentFilePart($filename, $size);//($bparted * 1024));
+                    
                     $script = "";
                     $output = "";
                     
@@ -197,6 +202,8 @@ if ($filename != null) {
                         $output = @gzuncompress(base64_decode($output));
                         
                         
+                        
+                        
                         if(strpos($data1["data"], "Accuracy:") ===  false)
                         {
                             
@@ -204,8 +211,9 @@ if ($filename != null) {
                         else
                         {
                             $data1["data"] = substr($data1["data"], strpos($data1["data"], "Accuracy:"));
-                            $data1["data"] = substr($data1["data"], 0, strpos($data1["data"], "learning evaluation instances"));
+                            //$data1["data"] = substr($data1["data"], 0, strpos($data1["data"], "learning evaluation instances"));
                         }
+                                                
                         
                     }
                     else 
@@ -221,8 +229,7 @@ if ($filename != null) {
                             $script = substr($data1["data"], 0, strpos($data1["data"], "\n\n"));
                             
                             $data1["data"] = substr($data1["data"], strpos($data1["data"], "Accuracy:"));
-                            $data1["data"] = substr($data1["data"], 0, strpos($data1["data"], "learning evaluation instances"));
-                            
+                            $data1["data"] = substr($data1["data"], 0, strpos($data1["data"], "learning evaluation instances"));                            
                         }
                         
                         
@@ -298,9 +305,9 @@ function testGZ($str)
 											
 																							
 											<a target="_blank"
-											href="<?php echo PATH_WWW ."?component=resource&tmpl=false&task=open&file=".$application->getParameter("folder").$application->getParameter("filename");?>">
+											href="<?php echo PATH_WWW ."?component=resource&tmpl=tmpl&task=open&file=".$application->getParameter("folder").$application->getParameter("filename");?>">
 											[Open]</a> <a
-											href="<?php echo PATH_WWW."?component=resource&tmpl=false&task=download&file=".$application->getParameter("folder").$application->getParameter("filename");?>">
+											href="<?php echo PATH_WWW."?component=resource&tmpl=tmpl&task=download&file=".$application->getParameter("folder").$application->getParameter("filename");?>">
 											[Download]</a> <?php echo $filesize?>		
 													<br>
 													<?php
@@ -335,8 +342,17 @@ if(!empty($tagvalues))
             
 												
 												
-												<?php if(!empty($output)){?>
-												<pre style="font-family: monospace;background-color:#000000;color:#ffffff;font-size:10pt;">Debug: <?php echo substr($output, 0, 5000);?></pre>
+												<?php if(!empty($output))
+												    {
+												        if($task != "fulldebug")
+												        {
+												            $output = substr($output, 0, 5000);
+												        }
+												    ?>												
+												<pre style="font-family: monospace;background-color:#000000;color:#ffffff;font-size:10pt;">Debug: <?php echo $output?></pre>
+												<a
+											href="<?php echo PATH_WWW."?component=files&controller=debug&task=fulldebug&filename=".$application->getParameter("filename")."&folder=".$application->getParameter("folder");?>">
+											[Full Debug]</a>
 												<?php }?>
 											</div>
 

@@ -10,7 +10,8 @@ namespace moam\components\resource;
 defined('_EXEC') or die();
 
 use moam\core\Framework;
-// use moam\core\Application;
+use moam\core\Template;
+
 use moam\core\Properties;
 if (! class_exists('Application')) {
     $application = Framework::getApplication();
@@ -54,6 +55,10 @@ if (file_exists($file)) {
     while (! feof($handle)) {
         echo fread($handle, 1000);
     }
+    
+    fclose($handle);
+    
+
 } else {
     // echo "Error: file not found.";
     $application->alert("Error: file not found.");

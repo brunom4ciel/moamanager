@@ -1355,6 +1355,46 @@ class Utils
 
         return $result;
     }
+    
+    
+    
+    
+    /*
+     * get str size partial data in file
+     *
+     * @param	string	$filename	file name with real path.
+     * @param	string	$maxbytes	size bytes
+     *
+     * @return	string
+     */
+    public static function getContentFileSizeDetectPart($filename, $detect="")
+    {
+        $result = "";
+        
+        if(is_readable($filename))
+        {
+            $handle = fopen($filename, "rb") or die("Unable to open file!");
+            $filesize = filesize($filename);
+            
+            while (!feof($handle))
+            {               
+                $data = fread($handle, 512);
+                $result .= $data;
+                
+                if(strpos($result, $detect) !== FALSE)
+                {
+                    $result = substr($result, 0, strpos($result, $detect));
+                    break;
+                }
+            }
+            
+            fclose($handle);
+        }        
+        
+        return (int) mb_strlen($result, '8bit');
+    }
+    
+    
 
 	/*
 	 * get partial data in file
@@ -1366,7 +1406,6 @@ class Utils
 	 */
     public static function getContentFilePart($filename, $maxbytes)
     {
-        $i = 1;
         $result = "";
         
         if(is_readable($filename))
@@ -1374,18 +1413,17 @@ class Utils
             $handle = fopen($filename, "rb") or die("Unable to open file!");
             $filesize = filesize($filename);            
             
-            while (! feof($handle)) 
+            while (!feof($handle)) 
             {
+                $data = fread($handle, 1024);
+                $result .= $data; 
                 
-                if (($i * 1024) >= $maxbytes) 
-                {
-                    $i --;
+                if (mb_strlen($result, '8bit') > $maxbytes) 
+                { 
+                    $result = substr($result, 0, $maxbytes);
                     break;
                 }
                 
-                $i ++;
-                
-                $result .= fread($handle, 1024);
             }
             
             fclose($handle);
@@ -1394,7 +1432,7 @@ class Utils
 
         return array(
             "data" => $result,
-            "size" => ($i * 1024)
+            "size" => mb_strlen($result, '8bit')
         );
     }
 

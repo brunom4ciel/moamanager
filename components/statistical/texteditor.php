@@ -43,7 +43,8 @@ $statistical_test_array = array(
     "Holm",
     "Shaffer",
     "Bergmann-Hommel",
-    "Kullback-Leibler-Divergence"
+    "Kullback-Leibler",
+    "Minkowski"
 );
 
 if(!empty($filename_autoload))
@@ -55,7 +56,7 @@ if(!empty($filename_autoload))
 
 if (in_array($task, $statistical_test_array)) {
     
-    if($task == "Kullback-Leibler-Divergence")
+    if($task == "Kullback-Leibler" || $task == "Minkowski")
     {
         
         $data_source2 = $data_source;
@@ -145,67 +146,147 @@ if (in_array($task, $statistical_test_array)) {
         
         $data_source = trim($cols_names) . "\n" . trim($aux1);
         
-        $d1 = array();
-        $d2 = array();
+        if($task == "Kullback-Leibler")
+        {            
         
-        $data_values_cols = 0;
-        
-        foreach($data_values as $item)
-        {
-            foreach($item as $key=>$value)
-            {
-                $data_values_cols++;
-            }
-            break;
-        }
-        
-        $str_equals = "";
-        $str_not_equals = "";
-        $kl_data = array();
-        $kl_rank = array();
-        
-        for($col_ref = 0; $col_ref < $data_values_cols; $col_ref++)
-        {
-            $d1 = get_data_col($data_values, $col_ref);
-            $d1_colname = $cols_names1[$col_ref];
+            $d1 = array();
+            $d2 = array();
             
-            for($col_next = $col_ref + 1; $col_next < $data_values_cols; $col_next++)
+            $data_values_cols = 0;
+            
+            foreach($data_values as $item)
             {
-                $d2 = get_data_col($data_values, $col_next);
-                $d2_colname = $cols_names1[$col_next];
-                
-                $kl = kl($d1, $d2);
-                
-                if($kl >= -0.5 && $kl <= 0.5)
+                foreach($item as $key=>$value)
                 {
-                    $str_equals .= "KL Divergence between " . $d1_colname . " and " . $d2_colname . "  = " . $kl . "<br>";
+                    $data_values_cols++;
                 }
-                else
-                {
-                    $str_not_equals .= "KL Divergence between " . $d1_colname . " and " . $d2_colname . "  = " . $kl . "<br>";
-                }
-                
-                $kl_data[$d1_colname][$d2_colname] = $kl;
-                $kl_rank[] = $kl;
+                break;
             }
-        }
-        
-        sort($kl_rank);
-        
-        //var_dump($kl_rank);exit();
-        for($i = 0; $i < count($kl_rank); $i++)
-        {
-            foreach($kl_data as $key=>$item)
+            
+            $str_equals = "";
+            $str_not_equals = "";
+            $kl_data = array();
+            $kl_rank = array();
+            
+            for($col_ref = 0; $col_ref < $data_values_cols; $col_ref++)
             {
-                foreach($item as $key2=>$item2)
+                $d1 = get_data_col($data_values, $col_ref);
+                $d1_colname = $cols_names1[$col_ref];
+                
+                for($col_next = $col_ref + 1; $col_next < $data_values_cols; $col_next++)
                 {
-                    //var_dump($item2);exit();
-                    if($item2 == $kl_rank[$i])
+                    $d2 = get_data_col($data_values, $col_next);
+                    $d2_colname = $cols_names1[$col_next];
+                    
+                    $kl = kl($d1, $d2);
+                    
+                    if($kl >= -0.5 && $kl <= 0.5)
                     {
-                        echo $key. " and " . $key2 . " = " . $item2 . "<br>";
+                        $str_equals .= "KL Divergence between " . $d1_colname . " and " . $d2_colname . "  = " . $kl . "<br>";
+                    }
+                    else
+                    {
+                        $str_not_equals .= "KL Divergence between " . $d1_colname . " and " . $d2_colname . "  = " . $kl . "<br>";
+                    }
+                    
+                    $kl_data[$d1_colname][$d2_colname] = $kl;
+                    $kl_rank[] = $kl;
+                }
+            }
+            
+            sort($kl_rank);
+            
+            //var_dump($kl_rank);exit();
+            for($i = 0; $i < count($kl_rank); $i++)
+            {
+                foreach($kl_data as $key=>$item)
+                {
+                    foreach($item as $key2=>$item2)
+                    {
+                        //var_dump($item2);exit();
+                        if($item2 == $kl_rank[$i])
+                        {
+                            echo $key. " and " . $key2 . " = " . $item2 . "<br>";
+                        }
                     }
                 }
             }
+        
+        }
+        else 
+        {
+            
+            if($task == "Minkowski")
+            {
+                $d1 = array();
+                $d2 = array();
+                
+                $data_values_cols = 0;
+                
+                foreach($data_values as $item)
+                {
+                    foreach($item as $key=>$value)
+                    {
+                        $data_values_cols++;
+                    }
+                    break;
+                }
+                
+                $str_equals = "";
+                $str_not_equals = "";
+                $kl_data = array();
+                $kl_rank = array();
+                
+                for($col_ref = 0; $col_ref < $data_values_cols; $col_ref++)
+                {
+                    $d1 = get_data_col($data_values, $col_ref);
+                    $d1_colname = $cols_names1[$col_ref];
+                    
+                    for($col_next = $col_ref + 1; $col_next < $data_values_cols; $col_next++)
+                    {
+                        $d2 = get_data_col($data_values, $col_next);
+                        $d2_colname = $cols_names1[$col_next];
+                        
+                        $mk = minkowski($d1, $d2);
+                        
+                        
+                        
+                        /*if($kl >= -0.5 && $kl <= 0.5)
+                        {
+                            $str_equals .= "KL Divergence between " . $d1_colname . " and " . $d2_colname . "  = " . $kl . "<br>";
+                        }
+                        else
+                        {
+                            $str_not_equals .= "KL Divergence between " . $d1_colname . " and " . $d2_colname . "  = " . $kl . "<br>";
+                        }*/
+                        
+                        $kl_data[$d1_colname][$d2_colname] = $mk;
+                        $kl_rank[] = $mk;
+                        
+                    }
+                }
+                          
+                
+                sort($kl_rank);
+                
+                //var_dump($kl_rank);exit();
+                for($i = 0; $i < count($kl_rank); $i++)
+                {
+                    foreach($kl_data as $key=>$item)
+                    {
+                        foreach($item as $key2=>$item2)
+                        {
+                            //var_dump($item2);exit();
+                            if($item2 == $kl_rank[$i])
+                            {
+                                echo $key. " and " . $key2 . " = " . $item2 . "<br>";
+                            }
+                        }
+                    }
+                }
+                
+            }
+            
         }
         
         
@@ -405,6 +486,39 @@ function kl($p1, $p2)
 }
 
 
+
+/**
+ * Minkowski distance between the two arrays of type double.
+ * NaN will be treated as missing values and will be excluded from the
+ * calculation. Let m be the number non-missing values, and n be the
+ * number of all values. The returned distance is pow(n * d / m, 1/p),
+ * where d is the p-pow of distance between non-missing values.
+ */
+function minkowski($x, $y) 
+{
+    if (count($x) != count($y))
+    {
+        exit("Arrays have different length: x[%d], y[%d]");
+    }
+    
+    $p = 1;
+    $n = count($x);
+    $m = 0;
+    $dist = 0.0;
+    
+    for ($i = 0; $i < $n; $i++) 
+    {
+        $m++;
+        $d = abs($x[$i] - $y[$i]);
+        $dist += pow($d, $p);
+    }
+    
+    $dist = $n * $dist / $m;
+    
+    return pow($dist, 1.0/$p);
+}
+
+
 ?>
 
 <style>
@@ -448,7 +562,9 @@ function kl($p1, $p2)
 											onclick="document.forms[0].task.value=this.value"> <input
 											type="submit" class="btn btn-default" value="Bergmann-Hommel"
 											onclick="document.forms[0].task.value=this.value"> <input
-											type="submit" class="btn btn-default" value="Kullback-Leibler-Divergence"
+											type="submit" class="btn btn-default" value="Kullback-Leibler"
+											onclick="document.forms[0].task.value=this.value"> <input
+											type="submit" class="btn btn-default" value="Minkowski"
 											onclick="document.forms[0].task.value=this.value">
 									</div>
 											

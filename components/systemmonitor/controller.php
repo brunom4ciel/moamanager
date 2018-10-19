@@ -113,7 +113,7 @@ $output = $result["output"];
 
 ?>
 
-<pre style="font-family: monospace;font-size: 11px;text-aling:left;max-width: 90%;padding:0px;margin:0px;"><?php 
+<pre style="font-family: monospace;font-size: 14px;text-aling:left;max-width: 90%;padding:0px;margin:0px;"><?php 
 						
 						$cmd = "w";
 						// $cmd = "uptime| sed 's/,//g'| awk '{print $3\" \"$4\" e \"$5\"h\"}'";
