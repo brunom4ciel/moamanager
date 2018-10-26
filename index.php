@@ -30,8 +30,8 @@ define('_EXEC', 1);
 /**
  * Constant of MOAManager version
  */
-define('MOAMANAGER_VERSION', '1.0.30');
-define('MOAMANAGER_RELEASES', '2018/10/02');
+define('MOAMANAGER_VERSION', '1.0.31');
+define('MOAMANAGER_RELEASES', '2018/10/25');
 
 /**
  * Constant of MOA version

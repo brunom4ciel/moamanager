@@ -11,7 +11,7 @@ defined('_EXEC') or die();
 
 use moam\core\Framework;
 // use moam\core\Application;
-use moam\core\Properties;
+// use moam\core\Properties;
 use moam\core\Template;
 use moam\libraries\core\utils\Utils;
 // use moam\libraries\core\menu\Menu;
@@ -46,40 +46,37 @@ $folder = $application->getParameter("folder");
 $data = "";
 $task = $application->getParameter("task");
 
+if ($folder != null) {
+    if (substr($folder, strlen($folder) - 1) != "/") {
+        $folder .= DIRECTORY_SEPARATOR;
+    }
+}
+
+$dir = PATH_USER_WORKSPACE_STORAGE . $folder;
+
+
 if ($filename != null) {
 
-    $filename = Properties::getBase_directory_destine($application) . $application->getUser() . DIRECTORY_SEPARATOR . $folder . 
+    $filename = $dir . //Properties::getBase_directory_destine($application) . $application->getUser() . DIRECTORY_SEPARATOR . $folder . 
     // .DIRECTORY_SEPARATOR
     $filename; // .$extension_scripts;
 
     if($task == "clean")
     {        
-        $dir = PATH_USER_WORKSPACE_STORAGE . $folder;
-        
         $element = $application->getParameter("element");
 
         foreach ($element as $key => $item) 
-        {       
-            if(file_exists($dir . $item))
+        { 
+            if(file_exists(PATH_USER_WORKSPACE_STORAGE . $item))
             {
-                unlink($dir . $item);
+                unlink(PATH_USER_WORKSPACE_STORAGE . $item);
             }
-        }
-        
-//         $files_list = detectProblemsFiles($filename);
-        
-//         foreach ($files_list as $element) {
-            
-//             if(file_exists($element['name']))
-//             {
-//                 unlink($element['name']);
-//             }
-//         }        
+        }   
     }
 }
 
 // Framework::includeLib("JsonFile.php");
-function detectProblemsFiles($filename)
+function detectProblemsFiles($filename, $folder="")
 {
     $result = array();
     $jsonfile = new JsonFile();
@@ -95,33 +92,43 @@ function detectProblemsFiles($filename)
             {
                 if(file_exists($item['filename']))
                 {
-                    $size = filesize($item['filename']) /1024;
+                    //$size = filesize($item['filename']) /1024;
                     
-                    if($size > 3000)
+                    $detect = "learning evaluation instances";
+                    $size = $utils->getContentFileSizeDetectPart($item['filename'], $detect);
+                    
+                    if($size > 0)
                     {
-                        $bparted = $size/2;
+                        $data1 = $utils->getContentFilePart($item['filename'], $size);
                     }
                     else
                     {
-                        if($size > 2000)
+                        if(strpos($item['filename'], $folder) !== FALSE)
                         {
-                            $bparted = 1500;
+                            $f_name = str_replace($folder,"",$item['filename']);
                         }
-                        else
+                        else 
                         {
-                            $bparted = 500;
-                        }
-                    }
-                    
-                    $content = $utils->getContentFilePart($item['filename'], ($bparted * 1024));
-                    
-                    if(strrpos($content["data"], "Accuracy:") === FALSE)//if(filesize($item['filename']) < 1000)
-                    {
-                        $result[] = array("name"=>$item['filename'],
+                            $f_name = $item['filename'];
+                        }                                              
+                        
+                        $result[] = array("name"=>$f_name,
                             "size"=>$utils->filesize_formatted($item['filename']),
                             "datetime"=>date("Y/m/d H:i:s", filemtime($item['filename']))
                         );
                     }
+
+
+                    
+//                     $content = $utils->getContentFilePart($item['filename'], ($bparted * 1024));
+                    
+//                     if(strrpos($content["data"], "Accuracy:") === FALSE)//if(filesize($item['filename']) < 1000)
+//                     {
+//                         $result[] = array("name"=>$item['filename'],
+//                             "size"=>$utils->filesize_formatted($item['filename']),
+//                             "datetime"=>date("Y/m/d H:i:s", filemtime($item['filename']))
+//                         );
+//                     }
                 }
             }
            
@@ -169,7 +176,7 @@ function detectProblemsFiles($filename)
 	
 	<?php 
 	
-	$files_list = detectProblemsFiles($filename);
+	$files_list = detectProblemsFiles($filename, $dir);
 	
 	if(count($files_list) > 0){			
 	    if(count($files_list) > 1){?>						
@@ -194,16 +201,19 @@ function detectProblemsFiles($filename)
 
 foreach ($files_list as $element) {
 
-    $basep = Properties::getBase_directory_destine($application) . $application->getUser() . DIRECTORY_SEPARATOR;
+    $basep = PATH_USER_WORKSPACE_STORAGE ;//$dir; //Properties::getBase_directory_destine($application) . $application->getUser() . DIRECTORY_SEPARATOR;
     
+    $filename = $dir . $element['name'];    
     
-    $f_dirname = substr($element['name'], strlen($basep));
+    $f_dirname = substr($filename, strlen($basep));
     $f_dirname = substr($f_dirname, 0, strrpos($f_dirname, DIRECTORY_SEPARATOR)+1);
     
-    $f_name = substr($element['name'], strrpos($element['name'], DIRECTORY_SEPARATOR)+1);
+    $f_name = substr($filename, strrpos($filename, DIRECTORY_SEPARATOR)+1);
+    
+    $filename_ref = str_replace($basep,"",$filename);//, strlen($basep));
     
     echo "<tr><td> "    
-     . "<label><input type='checkbox' name='element[]' value='" . $f_name . "' />"
+    . "<label><input type='checkbox' name='element[]' value='" . $filename_ref . "' />"
     . "<a href='?component=" . $application->getComponent() . "&controller=openreadonly&filename=" . $f_name 
     . "&folder=" . $f_dirname 
     . "&filename2=" . $application->getParameter("filename")

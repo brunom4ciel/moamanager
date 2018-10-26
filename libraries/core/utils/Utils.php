@@ -1190,7 +1190,55 @@ class Utils
             if(self::setContentFile($filename_aux, ""))
             {
                 
-                $handle_r = fopen($filename, "rb") or die("Unable to open file!");
+                $detect = "learning evaluation instances";
+                $size = self::getContentFileSizeDetectPart($filename, $detect);
+                
+                if($size > 0)
+                {
+                    $data1 = self::getContentFilePart($filename, $size);
+                    
+                    $data = explode(PHP_EOL, $data1["data"]);
+                    
+                    $result = "";
+                    
+                    foreach($data as $item)
+                    {
+                        if(substr($item, 0, strlen("<meta-data")) != "<meta-data")
+                        {
+                            break;
+                        }
+                        else
+                        {
+                            $result .= $item . "\n";
+                        }
+                    }
+                    
+                    $line_seek = strlen($result)+1;//$data1["data"]);
+                    
+                    $handle_r = fopen($filename, "rb") or die("Unable to open file!");
+                    $handle_w = fopen($filename_aux, "w");// or die("Unable to open file!");
+                    
+                    fseek($handle_r, 0, SEEK_SET);                    
+                    fseek($handle_r, $line_seek);
+                    
+                    while (! feof($handle_r))
+                    {
+                        $data = fread($handle_r, 1024);
+                        fwrite($handle_w, $data);
+                    }
+                    
+                    fclose($handle_r);
+                    fclose($handle_w);
+                    
+                    if(is_readable($filename_aux))
+                    {
+                        $hash_file = hash_hmac_file('md5', $filename_aux, $script);
+                        unlink($filename_aux);
+                    }
+                    
+                }
+
+                /*$handle_r = fopen($filename, "rb") or die("Unable to open file!");
                 $handle_w = fopen($filename_aux, "w");// or die("Unable to open file!");
                 
                 $eof_metadata = false;
@@ -1244,7 +1292,7 @@ class Utils
                 {
                     $hash_file = hash_hmac_file('md5', $filename_aux, $script);
                     unlink($filename_aux);
-                }
+                }*/
                                 
             }             
                 
@@ -1370,6 +1418,7 @@ class Utils
     public static function getContentFileSizeDetectPart($filename, $detect="")
     {
         $result = "";
+        $findDetect = FALSE;
         
         if(is_readable($filename))
         {
@@ -1384,6 +1433,7 @@ class Utils
                 if(strpos($result, $detect) !== FALSE)
                 {
                     $result = substr($result, 0, strpos($result, $detect));
+                    $findDetect = TRUE;
                     break;
                 }
             }
@@ -1391,7 +1441,15 @@ class Utils
             fclose($handle);
         }        
         
-        return (int) mb_strlen($result, '8bit');
+        if($findDetect)
+        {
+            return (int) mb_strlen($result, '8bit');
+        }
+        else 
+        {
+            return -1;
+        }
+        
     }
     
     

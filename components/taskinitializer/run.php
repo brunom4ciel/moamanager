@@ -203,7 +203,7 @@ if($task == "open"){
         
     }else{
         
-        
+        //$aux_dir_workspace = str_replace(PATH_USER_WORKSPACE_STORAGE,"", $aux_dir_workspace);
         if($task == "run"){
             
             $parallel = new ParallelProcess();

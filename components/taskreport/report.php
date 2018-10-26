@@ -298,7 +298,11 @@ foreach ($files_list as $key => $element) {
 
         // }
 
-        echo "<tr><td> <img align='middle' width='32px' src='" . $application->getPathTemplate() . "/images/icon-report.png'/>  " . "<a href='?component=" . $application->getParameter("component") . "&controller=reportview&filename=" . $element["name"] . "&folder=" . $application->getParameter("folder") . "'>" . $element["name"] . "</a> [" . $percentProcess_msg . "]";
+        echo "<tr><td> <img align='middle' width='32px' src='" . $application->getPathTemplate() . "/images/icon-report.png'/>  " 
+                . "<a href='?component=" . $application->getParameter("component") 
+                . "&controller=reportview1&filename=" . $element["name"] 
+                . "&folder=" . $application->getParameter("folder") . "'>" 
+                . $element["name"] . "</a> [" . $percentProcess_msg . "]";
 
         // $percentProcess=80;
 

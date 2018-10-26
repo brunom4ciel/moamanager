@@ -57,6 +57,15 @@ $folder = $application->getParameter("folder");
 $task = $application->getParameter("task");
 $command = $application->getParameter("command");
 
+if ($folder != null) {
+    if (substr($folder, strlen($folder) - 1) != "/") {
+        $folder .= DIRECTORY_SEPARATOR;
+    }
+}
+
+$dir = PATH_USER_WORKSPACE_STORAGE . $folder;
+
+
 if ($command == null)
     $command = 'all';
 
@@ -88,11 +97,46 @@ if ($filename != null) {
 
         foreach ($data as $key => $element) {
 
-            if ($command == 'all') {
+            if ($command == 'all') 
+            {
                 $script .= $element["script"] . "\n\n";
-            } else {
-
-                if ($command == "processed") { // echo $element["process"];
+                
+            } 
+            else 
+            {
+                
+                if(strpos($element["filename"], PATH_USER_WORKSPACE_STORAGE) !== false)
+                {
+                    //old
+                
+                }
+                else
+                {
+                    //new
+                    $element["filename"] = PATH_USER_WORKSPACE_STORAGE .  $element["filename"];
+                    
+                }
+                
+                
+                $file_real = $element["filename"];
+                
+                if (file_exists($file_real)) 
+                {
+                    if ($command == "processed")
+                    {
+                        $script .= $element["script"] . "\n\n";
+                    }
+                } 
+                else 
+                {
+                    if ($command == "unprocessed")
+                    {
+                        $script .= $element["script"] . "\n\n";
+                    }
+                }
+                
+                
+                /*if ($command == "processed") { // echo $element["process"];
                     if ($element["process"] == true) {
                         $script .= $element["script"] . "\n\n";
                     }
@@ -102,7 +146,8 @@ if ($filename != null) {
                             $script .= $element["script"] . "\n\n";
                         }
                     }
-                }
+                }*/
+                
             }
         }
     }
