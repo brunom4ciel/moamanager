@@ -13,7 +13,7 @@ chmod 777 -R $dir_opt_moamanager_statistical_orange3
 
 cd /opt/moamanager/
 
-mv /opt/moamanager/orange3/ /opt/moamanager/orange3aux/
+#mv /opt/moamanager/orange3/ /opt/moamanager/orange3aux/
 
 git clone https://github.com/biolab/orange3
 
@@ -27,10 +27,6 @@ python3 setup.py develop
 cp -rv $currentpath/statistical/orange3/* $dir_opt_moamanager_statistical_orange3
 
 cp -rv /opt/moamanager/statistical/orange3/scoring.py /opt/moamanager/orange3/Orange/evaluation/scoring.py
-
-
-
-
 
 
 

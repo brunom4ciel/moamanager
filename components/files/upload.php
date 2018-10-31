@@ -46,7 +46,8 @@ if (isset($_FILES['uploadfile'])) {
 
     $files_extensions = array(
         "txt",
-        "zip"
+        "zip",
+        "tmpl"
     );
 
     $uploaddir = Properties::getBase_directory_destine($application) . $application->getUser() . DIRECTORY_SEPARATOR . $folder;

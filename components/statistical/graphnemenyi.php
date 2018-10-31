@@ -89,6 +89,7 @@ $data_rank = "";
 $data_result = "";
 $data_diff_statistical = "";
 $src_img = "";
+$body_rank_postos =  "";
     
 $statistical_test_array = array(
     "Nemenyi"
@@ -247,8 +248,36 @@ if (in_array($task, $statistical_test_array)) {
 
     $rank_avg = $utils->friedman_postos($data_values, $order);
 
+    $body_rank_postos = "";
+    
+    foreach($rank_avg as $item)
+    {
+        $newline = "";        
+        
+        foreach($item as $key=>$value)
+        {
+            if($newline != "")
+            {
+                $newline .= "\t";
+            }
+            
+            $newline .= $value;
+        }
+        
+        if($body_rank_postos != "")
+        {
+            $body_rank_postos .= "\n";
+        }
+        
+        $body_rank_postos .= $newline;
+    }
+    
+    
+    $body_rank_postos = $cols_names . "\n" . $body_rank_postos;
+    
+    
     $data_values_wins = @$utils->winsColsArray($rank_avg);
-    //var_dump($rank_avg);exit();
+    
     
     $data_values_ties = @$utils->tiesColsArray($rank_avg);
     $data_values_losses = @$utils->lossesColsArray($rank_avg);
@@ -1149,14 +1178,17 @@ if (in_array($task, $statistical_test_array)) {
 									<div
 										style="float: left;  width: 100%; margin-top: 5px;">
 
-										<textarea  class="dataview" id="rankview" style="width: 100%; height: 150px;"
-											name="rankview"><?php echo $data_rank_view?></textarea>
-											
 										<textarea  class="dataview" id="data_source" style="width: 100%; height: 200px;"
 											name="data_source"><?php echo $data_source?></textarea>
+											
+										<textarea  class="dataview" id="rankview" style="width: 100%; height: 150px;"
+											name="rankview"><?php echo $data_rank_view?></textarea>
+																					
+<?php if($body_rank_postos != ""){?>
+										<textarea  class="dataview" id="body_rank_postos" style="width: 100%; height: 200px;"
+											name="body_rank_postos"><?php echo $body_rank_postos?></textarea>
 
-
-
+<?php }?>
 									</div>		
 					
 
