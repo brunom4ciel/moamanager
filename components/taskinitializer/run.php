@@ -85,6 +85,12 @@ $filename = $application->getParameter("filename");
 $folder = $application->getParameter("folder");
 $task = $application->getParameter("task");
 
+if ($folder != null) {
+    if (substr($folder, strlen($folder) - 1) != "/") {
+        $folder .= DIRECTORY_SEPARATOR;
+    }
+}
+
 $user_id    =   $application->getUserId();
 
 $data	="";
@@ -122,9 +128,7 @@ if($task == "open"){
     
     if($filename!=null){
         
-        $filename = Properties::getBase_directory_destine($application)
-        .$application->getUser()
-        .DIRECTORY_SEPARATOR
+        $filename = PATH_USER_WORKSPACE_STORAGE
         .DIRNAME_SCRIPT
         .DIRECTORY_SEPARATOR
         .$folder
@@ -148,58 +152,14 @@ if($task == "open"){
         
         
         
-        $filename = Properties::getBase_directory_destine($application)
-        .$application->getUser()
-        .DIRECTORY_SEPARATOR
+        $filename = PATH_USER_WORKSPACE_STORAGE
         .$folder
         //.DIRECTORY_SEPARATOR
         . $application->getParameter("filename")
         ;
-        
-        //exit("gg".$filename);
-        
-        //Framework::includeLib("JsonFile.php");
-        
-//         $jsonfile = new JsonFile();
-        
-//         $jsonfile->open($filename);
-        
-//         $data2 = $jsonfile->getData();
-        
-//         $length_data = count($data);
-//         $length_process= 0;
-        
+                
         $data = "";
-        
-//         if($length_data>0){
-            
-//             foreach($data2 as $key=>$element){
-                
-//                 if(is_array($element)){
-                    
-//                     //if($element["process"]==false){
-                    
-//                     $data  .= $element["script"]."\n\n";
-                    
-//                     //}
-                    
-//                 }
-                
-//             }
-            
-//         }
-        
-        
-        
-        /*	$parallel = new ParallelProcess();
-        
-        $parallel->pool_execute($filename,
-        $lines_cmd,
-        $application->getParameter("parallel_process"),
-        $dirProcess,
-        $dirStorage);*/
-        
-        
+
         
     }else{
         
@@ -209,9 +169,7 @@ if($task == "open"){
             $parallel = new ParallelProcess();
             
             
-            $dirProcess = Properties::getBase_directory_destine_exec()
-            .$application->getUser()
-            .DIRECTORY_SEPARATOR;
+            $dirProcess = PATH_USER_WORKSPACE_PROCESSING;
             
             $application->setParameter("memory_used", base64_decode($application->getParameter("memory_used")));
             $application->setParameter("version_software", base64_decode($application->getParameter("version_software")));
@@ -338,9 +296,7 @@ if($task == "open"){
                 $foldernew__ = $foldernew;
                 $y=0;
                 
-                while(is_dir(Properties::getBase_directory_destine($application)
-                    .$application->getUser()
-                    .DIRECTORY_SEPARATOR
+                while(is_dir(PATH_USER_WORKSPACE_STORAGE
                     .$foldernew__))
                 {
                     $foldernew__ = $foldernew."-new-(".$utils->format_number($y,4).")";
@@ -349,15 +305,15 @@ if($task == "open"){
                           
                 $foldernew = $foldernew__;
                 
+                
+                
                 $dirStorage = $utils->create_dir($foldernew, 
-                            Properties::getBase_directory_destine($application)
-                            .$application->getUser() . DIRECTORY_SEPARATOR
+                    PATH_USER_WORKSPACE_STORAGE
                             ,"0777");
                                 
                 if(!$dirStorage)
                 {
-                    exit("error: not permission in" .  Properties::getBase_directory_destine($application)
-                        .$application->getUser() . DIRECTORY_SEPARATOR);
+                    exit("error: not permission in" .  PATH_USER_WORKSPACE_STORAGE);
                 }
                 
 
@@ -369,9 +325,7 @@ if($task == "open"){
                 
                 $files = new Files();
                 
-                $from_folder =  Properties::getBase_directory_destine($application)
-                    .$application->getUser()
-                    .DIRECTORY_SEPARATOR
+                $from_folder =  PATH_USER_WORKSPACE_STORAGE
                     ."scripts"
                     .DIRECTORY_SEPARATOR;
                 
@@ -428,8 +382,7 @@ if($task == "open"){
                                     if(!$aux_result)
                                     {
                                         exit("error: not permission in" 
-                                            .  Properties::getBase_directory_destine($application)
-                                            .$application->getUser() . DIRECTORY_SEPARATOR);
+                                            .  PATH_USER_WORKSPACE_STORAGE);
                                     }
                                     
                                 }
@@ -449,8 +402,7 @@ if($task == "open"){
                                     
                                     if(!$aux_result)
                                     {
-                                        exit("error: not permission in" .  Properties::getBase_directory_destine($application)
-                                            .$application->getUser() . DIRECTORY_SEPARATOR);
+                                        exit("error: not permission in" .  PATH_USER_WORKSPACE_STORAGE);
                                     }
                                     
 //                                     $aux_dir .= $aux_filename . DIRECTORY_SEPARATOR;  
@@ -688,9 +640,7 @@ if($task == "open"){
                 $foldernew__ = $foldernew;
                 $y=0;
                 
-                while(is_dir(Properties::getBase_directory_destine($application)
-                    .$application->getUser()
-                    .DIRECTORY_SEPARATOR
+                while(is_dir(PATH_USER_WORKSPACE_STORAGE
                     .$foldernew__)){
                         $foldernew__ = $foldernew."-new-(".$utils->format_number($y,4).")";
                         $y++;
@@ -699,18 +649,23 @@ if($task == "open"){
                 
                 $foldernew = $foldernew__;
                 
+                
+                
+                
+                
+                
                 $dirStorage = $utils->create_dir($foldernew,
-                    Properties::getBase_directory_destine($application)
-                    .$application->getUser() . DIRECTORY_SEPARATOR
+                    PATH_USER_WORKSPACE_STORAGE
                     ,"0777");
                 
                 if(!$dirStorage){
-                    exit("error: not permission in" .  Properties::getBase_directory_destine($application)
-                        .$application->getUser() . DIRECTORY_SEPARATOR);
+                    exit("error: not permission in" .  PATH_USER_WORKSPACE_STORAGE);
                 }
                 
                 
                 $aux_dir_workspace = $dirStorage;
+                
+
                 
                 //*************************************************
                 //
@@ -720,21 +675,20 @@ if($task == "open"){
                 $data = $application->getParameter("data");
                 
                 
-                $folder = $application->getParameter("folder");
+//                 $folder = $application->getParameter("folder");
                 
-                if ($folder != null) {
-                    if (substr($folder, strlen($folder) - 1) != "/") {
-                        $folder .= DIRECTORY_SEPARATOR;
-                    }
-                }
+//                 if ($folder != null) {
+//                     if (substr($folder, strlen($folder) - 1) != "/") {
+//                         $folder .= DIRECTORY_SEPARATOR;
+//                     }
+//                 }
                 
                 $dir = PATH_USER_WORKSPACE_STORAGE . $folder;
-                
+                $dir = str_replace(DIRECTORY_SEPARATOR.DIRECTORY_SEPARATOR, DIRECTORY_SEPARATOR, $dir);
                 
                 if(empty($application->getParameter("dirstorage")))
                 {
                     $filename = $dir
-                    . $application->getParameter("dirstorage")
                     . DIRNAME_SCRIPT
                     . DIRECTORY_SEPARATOR
                     . $application->getParameter("filename");
@@ -742,12 +696,11 @@ if($task == "open"){
                 else
                 {
                     $filename = $dir
-                    . $application->getParameter("dirstorage")
-                    . DIRECTORY_SEPARATOR
                     . DIRNAME_SCRIPT
                     . DIRECTORY_SEPARATOR
                     . $application->getParameter("filename");
                 }
+                                
                 
                 $data = $utils->getContentFile($filename);
                 
@@ -838,6 +791,7 @@ if($task == "open"){
                         "endtime"=>"",
                         "user"=>$username
                     );
+                    
                     
                     
 //                     $lines_cmd[] = $cmd;
@@ -1044,23 +998,16 @@ if($task == "open"){
                 
                 $filename = str_replace(" ", "", $filename);
                 
-                $filename = Properties::getBase_directory_destine($application)
-                .$application->getUser()
-                .DIRECTORY_SEPARATOR
+                $filename = PATH_USER_WORKSPACE_STORAGE
                 .$folder
                 //.DIRECTORY_SEPARATOR
                 .$filename
                 ;
                 
-                $dirProcess = Properties::getBase_directory_destine_exec()
-                .$application->getUser()
-                .DIRECTORY_SEPARATOR;
+                $dirProcess = PATH_USER_WORKSPACE_PROCESSING;
                 
-                $dirStorage = Properties::getBase_directory_destine($application)
-                .$application->getUser()
-                .DIRECTORY_SEPARATOR
+                $dirStorage = PATH_USER_WORKSPACE_STORAGE
                 .$folder;
-                
                 
                 
                 
@@ -1528,9 +1475,7 @@ if($task == "open"){
 													<option value=""></option>
 													<?php 
 													
-													$files_list = $utils->getListDirectory(Properties::getBase_directory_destine($application)
-																					.$application->getUser()
-																					.DIRECTORY_SEPARATOR);
+													$files_list = $utils->getListDirectory(PATH_USER_WORKSPACE_STORAGE);
 																	
 													foreach($files_list as $key=>$element){
 													

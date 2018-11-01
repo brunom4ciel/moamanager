@@ -688,6 +688,22 @@ class Mining{
             {
                 array_push($json_return, array("f1"=>"*"));
             }
+            if($parameters["mdr"]==1)
+            {
+                array_push($json_return, array("mdr"=>"*"));
+            }
+            if($parameters["mtfa"]==1)
+            {
+                array_push($json_return, array("mtfa"=>"*"));
+            }
+            if($parameters["mtd"]==1)
+            {
+                array_push($json_return, array("mtd"=>"*"));
+            }
+            if($parameters["mtr"]==1)
+            {
+                array_push($json_return, array("mtr"=>"*"));
+            }
             return $json_return;
         }
         
@@ -938,7 +954,11 @@ class Mining{
                                     || $parameters["recall"] == 1
                                     || $parameters["mcc"] == 1
                                     || $parameters["f1"] == 1
-                                    || $parameters["resume"] == 1)
+                                    || $parameters["resume"] == 1
+                                    || $parameters["mdr"] == 1
+                                    || $parameters["mtfa"] == 1
+                                    || $parameters["mtd"] == 1
+                                    || $parameters["mtr"] == 1)
                                     {
                                         
                                         if(isset($start_filter)){
@@ -998,7 +1018,11 @@ class Mining{
                                                     || $parameters["precision"] == 1
                                                     || $parameters["recall"] == 1
                                                     || $parameters["mcc"] == 1
-                                                    || $parameters["f1"] == 1)
+                                                    || $parameters["f1"] == 1
+                                                    || $parameters["mdr"] == 1
+                                                    || $parameters["mtfa"] == 1
+                                                    || $parameters["mtd"] == 1
+                                                    || $parameters["mtr"] == 1)
                                                 {
                                                     
                                                     if(strpos($buffer, "\t") !== false)
@@ -1074,6 +1098,46 @@ class Mining{
                                                     $value = $itens_list[8];
                                                     $value = $this->numeric_format_option($value, $decimalprecision, $decimalseparator);
                                                     array_push($json_return, array("f1"=>$value));
+                                                }
+                                                
+                                                if($parameters["mdr"] == 1)
+                                                {
+                                                    if(isset($itens_list[9]))
+                                                    {
+                                                        $value = $itens_list[9];
+                                                        $value = $this->numeric_format_option($value, $decimalprecision, $decimalseparator);
+                                                        array_push($json_return, array("mdr"=>$value));
+                                                    }
+                                                }
+                                                
+                                                if($parameters["mtfa"] == 1)
+                                                {
+                                                    if(isset($itens_list[10]))
+                                                    {
+                                                        $value = $itens_list[10];
+                                                        $value = $this->numeric_format_option($value, $decimalprecision, $decimalseparator);
+                                                        array_push($json_return, array("mtfa"=>$value));
+                                                    }
+                                                }
+                                                
+                                                if($parameters["mtd"] == 1)
+                                                {
+                                                    if(isset($itens_list[11]))
+                                                    {
+                                                        $value = $itens_list[11];
+                                                        $value = $this->numeric_format_option($value, $decimalprecision, $decimalseparator);
+                                                        array_push($json_return, array("mtd"=>$value));
+                                                    }
+                                                }
+                                                
+                                                if($parameters["mtr"] == 1)
+                                                {
+                                                    if(isset($itens_list[12]))
+                                                    {
+                                                        $value = $itens_list[12];
+                                                        $value = $this->numeric_format_option($value, $decimalprecision, $decimalseparator);
+                                                        array_push($json_return, array("mtr"=>$value));
+                                                    }
                                                 }
                                                 
                                                 if($parameters["resume"] == 1)

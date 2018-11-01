@@ -294,6 +294,10 @@ if($task == "folder"){
         $metrics["mcc"] = null;
         $metrics["f1"] = null; 
         $metrics["resume"] = null; 
+        $metrics["mdr"] = null;
+        $metrics["mtfa"] = null;
+        $metrics["mtd"] = null;
+        $metrics["mtr"] = null; 
         
         if(!empty($metricstract))
         {
@@ -339,6 +343,10 @@ if($task == "folder"){
             "mcc"=>($metrics["mcc"]==null?0:1),
             "f1"=>($metrics["f1"]==null?0:1),
             "resume"=>($metrics["resume"]==null?0:1),
+            "mdr"=>($metrics["mdr"]==null?0:1),
+            "mtfa"=>($metrics["mtfa"]==null?0:1),
+            "mtd"=>($metrics["mtd"]==null?0:1),
+            "mtr"=>($metrics["mre"]==null?0:1),
             "decimalformat"=>($decimalformat==null?".":$decimalformat),
             "decimalprecision"=>($decimalprecision==null?".":$decimalprecision),
             "detector"=>($detector==null?0:1),
@@ -1431,7 +1439,7 @@ if($task == "folder"){
             
             if($resume == 1){
                 
-                $labels = array("Dist.","FN","FP","TN","TP","Precision","Recall","MCC","F1");
+                $labels = array("Dist.","FN","FP","TN","TP","Precision","Recall","MCC","F1", "MDR", "MTFA", "MTD", "MTR");
                 //-815.95 (+-1936.92)		467	13	599417		103	0.887931	0.000171804	0.400363313	0.000343542
                 
                 $result_view = implode("\t", $labels)."\n";
@@ -1537,7 +1545,7 @@ if($task == "folder"){
                     
                     if($resume == 1){
                         
-                        $labels = array("Dist.","FN","FP","TN","TP","Precision","Recall","\tMCC\t","F1");
+                        $labels = array("Dist.","FN","FP","TN","TP","Precision","Recall","\tMCC\t","F1", "MDR", "MTFA", "MTD", "MTR");
                         //-815.95 (+-1936.92)		467	13	599417		103	0.887931	0.000171804	0.400363313	0.000343542
                         
                         $result_view = implode("\t", $labels)."\n";
