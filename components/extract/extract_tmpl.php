@@ -346,7 +346,7 @@ if($task == "folder"){
             "mdr"=>($metrics["mdr"]==null?0:1),
             "mtfa"=>($metrics["mtfa"]==null?0:1),
             "mtd"=>($metrics["mtd"]==null?0:1),
-            "mtr"=>($metrics["mre"]==null?0:1),
+            "mtr"=>($metrics["mtr"]==null?0:1),
             "decimalformat"=>($decimalformat==null?".":$decimalformat),
             "decimalprecision"=>($decimalprecision==null?".":$decimalprecision),
             "detector"=>($detector==null?0:1),
@@ -802,7 +802,7 @@ if($task == "folder"){
                                 else
                                 {
                                     $miningResult = $mining->miningFile($from_dir.$file["name"], $parameters);
-
+  
                                 }
                                 
                                 
