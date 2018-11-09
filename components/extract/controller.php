@@ -475,6 +475,12 @@ function verificaChecks() {
 			<label><input type="radio" name="metricstract" id="metricstract" value="accuracy" onclick="setCookieRadioBox(this);"/>Accuracy</label>		
 			<label><input type="radio" name="metricstract" id="metricstract" value="timer" onclick="setCookieRadioBox(this);"/>Timer</label>
 			<label><input type="radio" name="metricstract" id="metricstract" value="memory" onclick="setCookieRadioBox(this);"/>Memory</label>
+			
+			<label><input type="radio" name="metricstract" id="metricstract" value="mdr" onclick="setCookieRadioBox(this);"/>MDR</label>			
+			<label><input type="radio" name="metricstract" id="metricstract" value="mtd" onclick="setCookieRadioBox(this);"/>MTD</label>
+			<label><input type="radio" name="metricstract" id="metricstract" value="mtfa" onclick="setCookieRadioBox(this);"/>MTFA</label>
+			<label><input type="radio" name="metricstract" id="metricstract" value="mtr" onclick="setCookieRadioBox(this);"/>MTR</label>
+			
 			<label><input type="radio" name="metricstract" id="metricstract" value="dissimilarity" onclick="setCookieRadioBox(this);"/>Dissimilarity</label>
 			<label><input type="checkbox" name="interval" id="interval" value="1" onclick="setCookieCheckbox(this);"/>Confidence Interval</label>
 			
@@ -490,11 +496,6 @@ function verificaChecks() {
 			
 			<label><input type="radio" name="metricstract" id="metricstract" value="mcc" onclick="setCookieRadioBox(this);"/>MCC</label>
 			<label><input type="radio" name="metricstract" id="metricstract" value="f1" onclick="setCookieRadioBox(this);"/>F1</label>
-			
-			<label><input type="radio" name="metricstract" id="metricstract" value="mdr" onclick="setCookieRadioBox(this);"/>MDR</label>
-			<label><input type="radio" name="metricstract" id="metricstract" value="mtfa" onclick="setCookieRadioBox(this);"/>MTFA</label>
-			<label><input type="radio" name="metricstract" id="metricstract" value="mtd" onclick="setCookieRadioBox(this);"/>MTD</label>
-			<label><input type="radio" name="metricstract" id="metricstract" value="mtr" onclick="setCookieRadioBox(this);"/>MTR</label>
 			
 			<label><input type="radio" name="metricstract" id="metricstract" value="resume" onclick="setCookieRadioBox(this);"/>TP+FN+Others</label>		
 						

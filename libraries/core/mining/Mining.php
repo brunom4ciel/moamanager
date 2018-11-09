@@ -753,6 +753,18 @@ class Mining{
                             else if(strpos($buffer, "Dissimilarity")>-1){
                                 $startFind = "dissimilarity";
                             }
+                            else if(strpos($buffer, "MDR:")>-1){
+                                $startFind = "mdr";
+                            }
+                            else if(strpos($buffer, "MTD:")>-1){
+                                $startFind = "mtd";
+                            }
+                            else if(strpos($buffer, "MTFA:")>-1){
+                                $startFind = "mtfa";
+                            }
+                            else if(strpos($buffer, "MTR:")>-1){
+                                $startFind = "mtr";
+                            }
                             else{
                                 if($strategy == "Error" && $accuracy_open == false)
                                 {
@@ -851,12 +863,7 @@ class Mining{
                                     
                                     if($parameters["memory"]==1){
                                         
-                                        //if(strpos($buffer, "Confidence Interval =")>-1){
                                         if(strpos($buffer, "Confidence Interval =")>-1 || strpos($buffer, "Mean (CI) =")>-1){
-                                            //$amemory = $buffer;
-                                            
-                                            //$amemory = substr($amemory,strpos($amemory, "Memory (B/s):")+12);
-                                            //$amemory = substr($amemory,strpos($amemory, "Confidence Interval =")+22);
                                             
                                             $tmp = $buffer;
                                             
@@ -872,12 +879,7 @@ class Mining{
                                             
                                             $amemory = substr($amemory,0,strpos($amemory, "(")-1);
                                             $amemory = trim($amemory);
-                                            
-//                                             if($parameters["interval"]!=1){
-//                                                 $amemory = substr($amemory,0,strpos($amemory, "(")-1);
-//                                                 $amemory = trim($amemory);
-//                                             }
-                                            
+                                                                                        
                                             $amemory = $this->numeric_format_option($amemory, $decimalprecision, $decimalseparator);
                                             
                                             if($parameters["interval"]==1){
@@ -894,7 +896,154 @@ class Mining{
                                         }
                                     }
                                     
-                                    break;                                
+                                    break;    
+                                case 'mdr':
+                                
+									if($parameters["mdr"]==1){
+                                        
+                                        if(strpos($buffer, "Confidence Interval =")>-1 || strpos($buffer, "Mean (CI) =")>-1){
+                                            
+                                            $tmp = $buffer;
+                                            
+                                            if(strpos($buffer, "Confidence Interval =")!==false){
+                                                $tmp = substr($tmp,strpos($tmp, "Confidence Interval =")+strlen("Confidence Interval =")+1);
+                                            }elseif(strpos($buffer, "Mean (CI) =")!==false){
+                                                $tmp = substr($tmp,strpos($tmp, "Mean (CI) =")+strlen("Mean (CI) =")+1);
+                                            }
+                                            
+                                            $value = $tmp;                                            
+                                            $value = substr($value,0,strpos($value, ")")+1);
+                                            $value_aux = $value;
+                                            
+                                            $value = substr($value,0,strpos($value, "(")-1);
+                                            $value = trim($value);
+                                                                                        
+                                            $value = $this->numeric_format_option($value, $decimalprecision, $decimalseparator);
+                                            
+                                            if($parameters["interval"]==1){
+                                                $value_aux = substr($value_aux,strpos($value_aux, "(")-1);
+                                                $value_aux = trim($value_aux);
+                                                $value .= " " . $value_aux;
+                                            }
+                                            
+                                            array_push($json_return, array("MDR"=>$value));
+       
+                                            break 2;
+                                        }
+                                    }
+                                    
+                                    break; 
+                                    
+                                case 'mtd':
+                                
+									if($parameters["mtd"]==1){
+                                        
+                                        if(strpos($buffer, "Confidence Interval =")>-1 || strpos($buffer, "Mean (CI) =")>-1){
+                                            
+                                            $tmp = $buffer;
+                                            
+                                            if(strpos($buffer, "Confidence Interval =")!==false){
+                                                $tmp = substr($tmp,strpos($tmp, "Confidence Interval =")+strlen("Confidence Interval =")+1);
+                                            }elseif(strpos($buffer, "Mean (CI) =")!==false){
+                                                $tmp = substr($tmp,strpos($tmp, "Mean (CI) =")+strlen("Mean (CI) =")+1);
+                                            }
+                                            
+                                            $value = $tmp;                                            
+                                            $value = substr($value,0,strpos($value, ")")+1);
+                                            $value_aux = $value;
+                                            
+                                            $value = substr($value,0,strpos($value, "(")-1);
+                                            $value = trim($value);
+                                                                                        
+                                            $value = $this->numeric_format_option($value, $decimalprecision, $decimalseparator);
+                                            
+                                            if($parameters["interval"]==1){
+                                                $value_aux = substr($value_aux,strpos($value_aux, "(")-1);
+                                                $value_aux = trim($value_aux);
+                                                $value .= " " . $value_aux;
+                                            }
+                                            
+                                            array_push($json_return, array("MTD"=>$value));
+       
+                                            break 2;
+                                        }
+                                    }
+                                    
+                                    break; 
+                                    
+                                case 'mtfa':
+                                
+									if($parameters["mtfa"]==1){
+                                        
+                                        if(strpos($buffer, "Confidence Interval =")>-1 || strpos($buffer, "Mean (CI) =")>-1){
+                                            
+                                            $tmp = $buffer;
+                                            
+                                            if(strpos($buffer, "Confidence Interval =")!==false){
+                                                $tmp = substr($tmp,strpos($tmp, "Confidence Interval =")+strlen("Confidence Interval =")+1);
+                                            }elseif(strpos($buffer, "Mean (CI) =")!==false){
+                                                $tmp = substr($tmp,strpos($tmp, "Mean (CI) =")+strlen("Mean (CI) =")+1);
+                                            }
+                                            
+                                            $value = $tmp;                                            
+                                            $value = substr($value,0,strpos($value, ")")+1);
+                                            $value_aux = $value;
+                                            
+                                            $value = substr($value,0,strpos($value, "(")-1);
+                                            $value = trim($value);
+                                                                                        
+                                            $value = $this->numeric_format_option($value, $decimalprecision, $decimalseparator);
+                                            
+                                            if($parameters["interval"]==1){
+                                                $value_aux = substr($value_aux,strpos($value_aux, "(")-1);
+                                                $value_aux = trim($value_aux);
+                                                $value .= " " . $value_aux;
+                                            }
+                                            
+                                            array_push($json_return, array("MTFA"=>$value));
+       
+                                            break 2;
+                                        }
+                                    }
+                                    
+                                    break; 
+                                    
+                                case 'mtr':
+                                    
+                                    if($parameters["mtr"]==1){
+                                        
+                                        if(strpos($buffer, "Confidence Interval =")>-1 || strpos($buffer, "Mean (CI) =")>-1){
+                                            
+                                            $tmp = $buffer;
+                                            
+                                            if(strpos($buffer, "Confidence Interval =")!==false){
+                                                $tmp = substr($tmp,strpos($tmp, "Confidence Interval =")+strlen("Confidence Interval =")+1);
+                                            }elseif(strpos($buffer, "Mean (CI) =")!==false){
+                                                $tmp = substr($tmp,strpos($tmp, "Mean (CI) =")+strlen("Mean (CI) =")+1);
+                                            }
+                                            
+                                            $value = $tmp;                                            
+                                            $value = substr($value,0,strpos($value, ")")+1);
+                                            $value_aux = $value;
+                                            
+                                            $value = substr($value,0,strpos($value, "(")-1);
+                                            $value = trim($value);
+                                                                                        
+                                            $value = $this->numeric_format_option($value, $decimalprecision, $decimalseparator);
+                                            
+                                            if($parameters["interval"]==1){
+                                                $value_aux = substr($value_aux,strpos($value_aux, "(")-1);
+                                                $value_aux = trim($value_aux);
+                                                $value .= " " . $value_aux;
+                                            }                                            									
+											
+                                            array_push($json_return, array("MTR"=>$value));
+       
+                                            break 2;
+                                        }
+                                    }
+                                    
+                                    break;                                                                    
                                 case 'dissimilarity':
                                     
                                     if($parameters["dissimilarity"]==1){
@@ -955,10 +1104,11 @@ class Mining{
                                     || $parameters["mcc"] == 1
                                     || $parameters["f1"] == 1
                                     || $parameters["resume"] == 1
-                                    || $parameters["mdr"] == 1
-                                    || $parameters["mtfa"] == 1
-                                    || $parameters["mtd"] == 1
-                                    || $parameters["mtr"] == 1)
+                                    //|| $parameters["mdr"] == 1
+                                    //|| $parameters["mtfa"] == 1
+                                    //|| $parameters["mtd"] == 1
+                                   // || $parameters["mtr"] == 1
+                                    )
                                     {
                                         
                                         if(isset($start_filter)){
@@ -1019,10 +1169,11 @@ class Mining{
                                                     || $parameters["recall"] == 1
                                                     || $parameters["mcc"] == 1
                                                     || $parameters["f1"] == 1
-                                                    || $parameters["mdr"] == 1
-                                                    || $parameters["mtfa"] == 1
-                                                    || $parameters["mtd"] == 1
-                                                    || $parameters["mtr"] == 1)
+                                                    //|| $parameters["mdr"] == 1
+                                                    //|| $parameters["mtfa"] == 1
+                                                    //|| $parameters["mtd"] == 1
+                                                    //|| $parameters["mtr"] == 1
+                                                    )
                                                 {
                                                     
                                                     if(strpos($buffer, "\t") !== false)
@@ -1100,7 +1251,7 @@ class Mining{
                                                     array_push($json_return, array("f1"=>$value));
                                                 }
                                                 
-                                                if($parameters["mdr"] == 1)
+                                                /*if($parameters["mdr"] == 1)
                                                 {
                                                     if(isset($itens_list[9]))
                                                     {
@@ -1138,7 +1289,7 @@ class Mining{
                                                         $value = $this->numeric_format_option($value, $decimalprecision, $decimalseparator);
                                                         array_push($json_return, array("mtr"=>$value));
                                                     }
-                                                }
+                                                }*/
                                                 
                                                 if($parameters["resume"] == 1)
                                                 {

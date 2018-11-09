@@ -277,6 +277,8 @@ if($task == "open"){
                     $fname = substr($fname, strrpos($fname, "/")+1);
                 }
                 
+                
+                
                 //$fname = str_replace("/", "-", $fname);
                 
                 
@@ -591,13 +593,30 @@ if($task == "open"){
                 //*************************************************
                 //
                 //************************************************
-                $fname = $application->getParameter("foldername");
+                $fname = $folder;//$application->getParameter("folder");
                 
-                if(strpos($fname, "/") === false){
-                    
+                
+                
+                if(strpos($fname, "/") === FALSE){
+
                 }else{
-                    $fname = substr($fname, strrpos($fname, "/")+1);
+                                        
+                    if(substr($fname,0,1) === "/")
+                    {
+                        $fname = substr($fname, 1);
+                    }
+                    
+                    if(substr($fname,strlen($fname)-1) === "/")
+                    {
+                        $fname = substr($fname,0, strlen($fname)-1);
+                    }
+                    
+                    $fname = str_replace("/", "-", $fname);
+                    //$fname = substr($fname, strrpos($fname, "/")+1);
                 }
+                                                
+                
+                
                 
                 //$fname = str_replace("/", "-", $fname);
                 
@@ -620,39 +639,47 @@ if($task == "open"){
                     
                     $filename_source = str_replace(" ", "", $filename_source);
                 }
-                                                
+                 
+                
+                
+                
+//                 $dir = PATH_USER_WORKSPACE_STORAGE;
+//                 $dir = str_replace(DIRECTORY_SEPARATOR.DIRECTORY_SEPARATOR, DIRECTORY_SEPARATOR, $dir);
+                
                 
                 if($application->getParameter("dirstorage") == null){
                     
-                    $foldernew = $filename_source;//$application->getParameter("filename");
+                    $foldernew = $fname;//$filename_source;//$application->getParameter("filename");
                     
                 }else{
                     
-                    $foldernew = $application->getParameter("dirstorage")
-                    .DIRECTORY_SEPARATOR
+                    $foldernew = ""
+                    . $application->getParameter("dirstorage")
+                    . DIRECTORY_SEPARATOR
                     .$fname
                     .$filename_source;//$application->getParameter("filename");
                     //.DIRECTORY_SEPARATOR;
                 }
                 
                 
+                //var_dump($application->getParameter("dirstorage"));
+//                 var_dump($foldernew);
+//                 exit("---");
+                
+                
+                
+                
                 
                 $foldernew__ = $foldernew;
                 $y=0;
                 
-                while(is_dir(PATH_USER_WORKSPACE_STORAGE
-                    .$foldernew__)){
+                while(is_dir(PATH_USER_WORKSPACE_STORAGE . $foldernew__)){
                         $foldernew__ = $foldernew."-new-(".$utils->format_number($y,4).")";
                         $y++;
-                }
-                
+                }                
                 
                 $foldernew = $foldernew__;
-                
-                
-                
-                
-                
+                                
                 
                 $dirStorage = $utils->create_dir($foldernew,
                     PATH_USER_WORKSPACE_STORAGE
@@ -665,6 +692,7 @@ if($task == "open"){
                 
                 $aux_dir_workspace = $dirStorage;
                 
+
 
                 
                 //*************************************************
@@ -683,26 +711,43 @@ if($task == "open"){
 //                     }
 //                 }
                 
-                $dir = PATH_USER_WORKSPACE_STORAGE . $folder;
+                $dir = PATH_USER_WORKSPACE_STORAGE . DIRNAME_SCRIPT . $folder;
                 $dir = str_replace(DIRECTORY_SEPARATOR.DIRECTORY_SEPARATOR, DIRECTORY_SEPARATOR, $dir);
+                
+                
                 
                 if(empty($application->getParameter("dirstorage")))
                 {
                     $filename = $dir
-                    . DIRNAME_SCRIPT
-                    . DIRECTORY_SEPARATOR
                     . $application->getParameter("filename");
                 }
                 else
                 {
                     $filename = $dir
-                    . DIRNAME_SCRIPT
-                    . DIRECTORY_SEPARATOR
                     . $application->getParameter("filename");
                 }
                                 
+                                
+                
+//                 var_dump($filename);
+//                 exit("---");
+                
+                
                 
                 $data = $utils->getContentFile($filename);
+                
+                if(!$data)
+                {
+                    chmod($filename, 0777);    
+                    $data = $utils->getContentFile($filename);
+                    
+                    if(!$data)
+                    {
+                        echo "problems in file path: "+$filename;
+                    }                    
+                }
+                                
+                
                 
                 $list_scripts = explode("\n", $data);
                 $list_scripts2 = array();

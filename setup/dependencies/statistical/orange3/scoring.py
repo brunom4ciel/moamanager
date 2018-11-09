@@ -652,7 +652,7 @@ def graph_ranks(avranks, names, cd=None, cdmethod=None, lowv=None, highv=None,
 
     # calculate height needed height of an image
     minnotsignificant = max(2 * 0.2, linesblank)
-    height = cline + ((k + 1) / 2) * 0.2 + minnotsignificant
+    height = cline + ((k + 1) / 2) * 0.2 + (minnotsignificant*0.4)
 
     fig = plt.figure(figsize=(width, height))
     
@@ -711,7 +711,7 @@ def graph_ranks(avranks, names, cd=None, cdmethod=None, lowv=None, highv=None,
               (rankpos(ssums[i]), chei),
               (textspace - 0.1, chei)],color='b',
              linewidth=0.7)
-        text(textspace - 0.2, chei, nnames[i], ha="right", va="center", color2='b', fontsize2='x-small')
+        text(textspace - 0.2, chei, nnames[i], ha="right", va="center", color2='b', fontsize2='small') #fontsize2='x-small'
 
     for i in range(math.ceil(k / 2), k):
         chei = cline + minnotsignificant + (k - i - 1) * 0.15
@@ -720,7 +720,7 @@ def graph_ranks(avranks, names, cd=None, cdmethod=None, lowv=None, highv=None,
               (textspace + scalewidth + 0.1, chei)], color='b',
              linewidth=0.7)
         text(textspace + scalewidth + 0.2, chei, nnames[i],
-             ha="left", va="center", color2='b', fontsize2='x-small')
+             ha="left", va="center", color2='b', fontsize2='small')
 
     if cd and cdmethod is None:
         # upper scale
@@ -744,9 +744,13 @@ def graph_ranks(avranks, names, cd=None, cdmethod=None, lowv=None, highv=None,
         else:
             text((begin + end) / 2, distanceh - 0.05, "Critical Distance="+str(float("{0:.4f}".format(cd))),
              ha="center", va="bottom")
-             
-        text(((begin+end))+2.4, distanceh - 0.05, "Nemenyi post-hoc test with α="+str(alpha)+str(" "+nameref),
-             ha="center", va="bottom")     
+        
+                
+        if (nameref is None) or (str(nameref).strip()==""):	
+            text(((begin+end))+(width/4), distanceh - 0.05, "Nemenyi post-hoc test with α="+str(alpha),ha="center", va="bottom")  	
+        else:	
+            text(((begin+end))+2.4, distanceh - 0.05, "Nemenyi post-hoc test with α="+str(alpha)+str(" "+nameref),ha="center", va="bottom")     
+				
 				
         # no-significance lines
         def draw_lines(lines, side=0.05, height=0.1):

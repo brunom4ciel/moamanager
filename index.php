@@ -14,12 +14,15 @@ if (version_compare(PHP_VERSION, MOAM_MINIMUM_PHP, '<')) {
 }
 
 set_time_limit(-1);//9200000000000); //
-//error_reporting(E_ALL | E_STRICT);
-ini_set('display_errors', '0');
-error_reporting(0);
+error_reporting(E_ALL | E_STRICT);
+ini_set('display_errors', '1');
+error_reporting(1);
 //ini_set('memory_limit', '8G');
 ini_set("memory_limit",-1);
+ini_set("upload_max_filesize",'200000M');
+ini_set("post_max_size",'200000M');
 header("Content-type: text/html; charset=utf-8");
+
 
 /**
  * Constant that is checked in included files to prevent direct access.
