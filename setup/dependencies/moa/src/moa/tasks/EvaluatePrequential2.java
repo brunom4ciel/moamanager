@@ -263,7 +263,7 @@ public class EvaluatePrequential2 extends MainTask {
 		double[] fractional = {0.0,0.0};
 		
 		for ( int i = 1; i < (this.measuresTDD.length - 1); i++) {
-			if (this.measuresTDD[i] >= 0 ) {
+			if (this.measuresTDD[i] > 0 ) {
 				measure += this.measuresTDD[i];
 			}else {
 				measure += (this.conceptDriftFirstInstance[i + 1] - this.conceptDriftFirstInstance[i]);
@@ -969,13 +969,17 @@ public class EvaluatePrequential2 extends MainTask {
             double MDR = (measureAux[0] / measureAux[1]);
             
             measureAux = lazyMeasureMTD();            
-            double MTD = (measureAux[0] / measureAux[1]);
+            double MTD = ((measureAux[0]) / measureAux[1]);
             
         	measureAux = lazyMeasureMTFA();            
             double MTFA = (measureAux[0] / measureAux[1]);                        
             
-            double MTR = (1 - (MDR))*(MTFA)/(MTD);
-                        
+            double MTR = 0;
+            
+           // if(MTD != 0) {
+            	MTR = (1 - (MDR))*(MTFA)/(MTD);
+            //}
+            
             measureMDR.add(MDR);
             measureMTD.add(MTD);
             measureMTFA.add(MTFA);
@@ -998,6 +1002,8 @@ public class EvaluatePrequential2 extends MainTask {
             
             //Accuracy = TP/TP+FN = Precision
             meanTP.add(((double) tp/(tp+fp))*100);
+            
+          //System.out.println(this.measuresDriftDebug());
             
             //System.out.println("frequency="+w);
             //stream.getDriftPositions().size());//probabilidadeMediaFinal / stream.getDriftPositions().size());
@@ -1036,7 +1042,7 @@ public class EvaluatePrequential2 extends MainTask {
 ////        System.out.print("Measure of Dissimilarities Detection\t");
 ////        System.out.println(lineValues);
         
-//        System.out.println(this.measuresDriftDebug());
+
 
         return learningCurve;
     }

@@ -69,13 +69,8 @@ public class DDE extends AbstractChangeDetector {
         
     public DDE()
     {
-    	ensemble();
-    	
-        result = new int [changeDetectorPool.length];
-        minDriftWeight = this.driftLevelOption.getValue();
-        outlier =  this.maxValueOption.getValue();
-        
-        resetLearning();
+
+        initialize();
         
 //        System.out.println("" + 
 //    			this.getClass().getSimpleName()
@@ -86,6 +81,19 @@ public class DDE extends AbstractChangeDetector {
 //                );
         
     }
+    
+    public void initialize() {
+    	
+    	ensemble();
+    	
+        result = new int [changeDetectorPool.length];
+        minDriftWeight = this.driftLevelOption.getValue();
+        outlier =  this.maxValueOption.getValue();
+        
+        resetLearning();        
+        
+    }
+    
     
     @Override
     public void resetLearning() {
@@ -193,13 +201,16 @@ public class DDE extends AbstractChangeDetector {
             ObjectRepository repository) {
         // TODO Auto-generated method stub
         
-        ensemble();
-    		
-        result = new int [changeDetectorPool.length];
-        minDriftWeight = this.driftLevelOption.getValue();
-        outlier =  this.maxValueOption.getValue();
-        
-        resetLearning();
+    	initialize();
+    	
+    	
+//        ensemble();
+//    		
+//        result = new int [changeDetectorPool.length];
+//        minDriftWeight = this.driftLevelOption.getValue();
+//        outlier =  this.maxValueOption.getValue();
+//        
+//        resetLearning();
         
 //        System.out.println("" + 
 //    			this.getClass().getSimpleName()
