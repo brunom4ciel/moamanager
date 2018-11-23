@@ -649,7 +649,7 @@ if($task == "open"){
                 
                 if($application->getParameter("dirstorage") == null){
                     
-                    $foldernew = $fname;//$filename_source;//$application->getParameter("filename");
+                    $foldernew = $fname . $filename_source;//$application->getParameter("filename");
                     
                 }else{
                     
