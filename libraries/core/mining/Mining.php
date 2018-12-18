@@ -242,8 +242,113 @@ class Mining{
         
         $json_return = array();
         
+        
+        
+        if(empty($parameters["decimalformat"]))
+        {
+            $decimalseparator = ".";
+        }
+        else
+        {
+            $decimalseparator = $parameters["decimalformat"];
+        }
+        
+        if(!isset($parameters["decimalprecision"]))
+        {
+            $decimalprecision = 2;
+        }
+        else
+        {
+            if($parameters["decimalprecision"] == null)
+            {
+                $decimalprecision = 2;
+            }
+            else
+            {
+                $decimalprecision = $parameters["decimalprecision"];
+            }
+        }
+        
         if(!is_readable($file))
         {
+            
+            if($parameters["accuracy"]==1)
+            {
+                array_push($json_return, array("Accuracy"=>"*"));
+            }
+            if($parameters["timer"]==1)
+            {
+                array_push($json_return, array("Timer"=>"*"));
+            }
+            if($parameters["memory"]==1)
+            {
+                array_push($json_return, array("Memory"=>"*"));
+            }
+            if($parameters["dissimilarity"]==1)
+            {
+                array_push($json_return, array("Dissimilarity"=>"*"));
+            }
+            if($parameters["resume"]==1)
+            {
+                $str = implode("\t", array('*','*','*','*','*','*','*','*','*','*','*'));
+                array_push($json_return, array("resume"=>$str));
+            }
+            if($parameters["dist"]==1)
+            {
+                array_push($json_return, array("dist"=>"*"));
+            }
+            if($parameters["fn"]==1)
+            {
+                array_push($json_return, array("fn"=>"*"));
+            }
+            if($parameters["fp"]==1)
+            {
+                array_push($json_return, array("fp"=>"*"));
+            }
+            if($parameters["tn"]==1)
+            {
+                array_push($json_return, array("tn"=>"*"));
+            }
+            if($parameters["tp"]==1)
+            {
+                array_push($json_return, array("tp"=>"*"));
+            }
+            if($parameters["precision"]==1)
+            {
+                array_push($json_return, array("precision"=>"*"));
+            }
+            if($parameters["recall"]==1)
+            {
+                array_push($json_return, array("recall"=>"*"));
+            }
+            if($parameters["mcc"]==1)
+            {
+                array_push($json_return, array("mcc"=>"*"));
+            }
+            if($parameters["f1"]==1)
+            {
+                array_push($json_return, array("f1"=>"*"));
+            }
+            if($parameters["mdr"]==1)
+            {
+                array_push($json_return, array("mdr"=>"*"));
+            }
+            if($parameters["mtfa"]==1)
+            {
+                array_push($json_return, array("mtfa"=>"*"));
+            }
+            if($parameters["mtd"]==1)
+            {
+                array_push($json_return, array("mtd"=>"*"));
+            }
+            if($parameters["mtr"]==1)
+            {
+                array_push($json_return, array("mtr"=>"*"));
+            }
+            if($parameters["mcclist"]==1)
+            {
+                array_push($json_return, array("mcclist"=>"*"));
+            }
             return $json_return;
         }
         
@@ -272,12 +377,40 @@ class Mining{
                         
                         if(strpos($buffer, "Accuracy:")>-1){
                             $startFind = "accuracy";
-                        }else if(strpos($buffer, "Time:")>-1){
+                            $accuracy_open = true;
+                        }
+                        else if(strpos($buffer, "Time:")>-1){
                             $startFind = "time";
-                        }else if(strpos($buffer, "Memory (B/s):")>-1){
+                        }
+                        else if(strpos($buffer, "Memory (B/s):")>-1){
                             $startFind = "memory";
-                        }else{
-                            
+                        }
+                        else if(strpos($buffer, "Mean Distance")>-1){
+                            $startFind = "resume";
+                        }
+                        else if(strpos($buffer, "Dissimilarity")>-1){
+                            $startFind = "dissimilarity";
+                        }
+                        else if(strpos($buffer, "MDR:")>-1){
+                            $startFind = "mdr";
+                        }
+                        else if(strpos($buffer, "MTD:")>-1){
+                            $startFind = "mtd";
+                        }
+                        else if(strpos($buffer, "MTFA:")>-1){
+                            $startFind = "mtfa";
+                        }
+                        else if(strpos($buffer, "MTR:")>-1){
+                            $startFind = "mtr";
+                        }
+                        else if(strpos($buffer, "MCC:")>-1){
+                            $startFind = "mcc";
+                        }
+                        else{
+                            if($strategy == "Error" && $accuracy_open == false)
+                            {
+                                $startFind = "Error";
+                            }
                         }
                         
                         switch($startFind){
@@ -300,7 +433,9 @@ class Mining{
                                             $accuracy = trim($accuracy);
                                             
                                             if($accuracy != "")
+                                            {
                                                 array_push($json_return, array("Accuracy"=>$accuracy));
+                                            }
                                                 
                                     }
                                     
@@ -374,109 +509,178 @@ class Mining{
                                 }
                                 
                                 break;
+                                
+                            case 'mtr':
+                                {
+                                    if($parameters["mtr"]==1)
+                                    {
+                                        
+                                        if(strpos($buffer, "Confidence Interval =")>-1 || strpos($buffer, "Mean (CI) =")>-1)
+                                        {
+                                            $startFind = "";
+                                            break;
+                                        }
+                                        else
+                                        {
+                                            
+                                            if(strpos($buffer, "MTR")>-1)
+                                            {
+                                                break;
+                                            }
+                                            
+                                            $accuracy = $buffer;
+                                            $accuracy = trim($accuracy);
+                                            
+                                            if($accuracy != "")
+                                            {
+                                                array_push($json_return, array("MTR"=>$accuracy));
+                                                
+                                            }
+                                                    
+                                        }
+                                                                            
+                                    }                                
+                                    
+                                    break;                                    
+                                }
+                            case 'mcc':
+                                {
+                                    if($parameters["mcclist"]==1)
+                                    {
+                                        
+                                        if(strpos($buffer, "Confidence Interval =")>-1 || strpos($buffer, "Mean (CI) =")>-1)
+                                        {
+                                            $startFind = "";
+                                            break;
+                                        }
+                                        else
+                                        {
+                                            
+                                            if(strpos($buffer, "MCC")>-1)
+                                            {
+                                                break;
+                                            }
+                                            
+                                            $accuracy = $buffer;
+                                            $accuracy = trim($accuracy);
+                                            
+                                            if($accuracy != "")
+                                            {
+                                                array_push($json_return, array("MCC"=>$accuracy));
+                                                
+                                            }
+                                            
+                                        }
+                                        
+                                    }
+                                    
+                                    break;
+                                }
+                                
                         }
                         
-                }else if($strategy == "EvaluateInterleavedTestThenTrain3"){
-                    
-                    if(strpos($buffer, "Accuracy:")>-1){
-                        $startFind = "accuracy";
-                    }else if(strpos($buffer, "Time:")>-1){
-                        $startFind = "time";
-                    }else if(strpos($buffer, "Memory (B/s):")>-1){
-                        $startFind = "memory";
-                    }else{
-                        
-                    }
-                    
-                    
-                    switch($startFind){
-                        
-                        case 'accuracy':
-                            
-                            if($parameters["accuracy"]==1){
-                                
-                                if( !is_numeric(trim($buffer)) ){
-                                    //if(strpos($buffer, "Confidence Interval =")>-1){
-                                    //exit("iran");
-                                    //exit("bruno");
-                                    
-                                    break;
-                                }else{
-                                    
-                                    if(strpos($buffer, "Accuracy")>-1)
-                                        break;
-                                        
-                                        $accuracy = $buffer;
-                                        $accuracy = trim($accuracy);
-                                        
-                                        if($accuracy != "")
-                                            array_push($json_return, array("Accuracy"=>$accuracy));
-                                            
-                                }
-                                
-                                
-                                
-                            }
-                            
-                            break;
-                        case 'time':
-                            
-                            if($parameters["timer"]==1){
-                                
-                                
-                                if( !is_numeric(trim($buffer)) ){
-                                    //if(strpos($buffer, "Confidence Interval =")>-1){
-                                    //exit("iran");
-                                    //exit("bruno");
-                                    
-                                    break;
-                                }else{
-                                    
-                                    if(strpos($buffer, "Timer")>-1)
-                                        break;
-                                        
-                                        $accuracy = $buffer;
-                                        $accuracy = trim($accuracy);
-                                        
-                                        if($accuracy != "")
-                                            array_push($json_return, array("Timer"=>$accuracy));
-                                            
-                                }
-                                
-                                
-                            }
-                            
-                            break;
-                        case 'memory':
-                            
-                            if($parameters["memory"]==1){
-                                
-                                if( !is_numeric(trim($buffer)) ){
-                                    //if(strpos($buffer, "Confidence Interval =")>-1){
-                                    //exit("iran");
-                                    //exit("bruno");
-                                    
-                                    break;
-                                }else{
-                                    
-                                    if(strpos($buffer, "Memory")>-1)
-                                        break;
-                                        
-                                        $accuracy = $buffer;
-                                        $accuracy = trim($accuracy);
-                                        
-                                        if($accuracy != "")
-                                            array_push($json_return, array("Memory"=>$accuracy));
-                                            
-                                }
-                                
-                                
-                            }
-                            
-                            break;
-                    }
-                    
                 }
+//                 else if($strategy == "EvaluateInterleavedTestThenTrain3"){
+                    
+//                     if(strpos($buffer, "Accuracy:")>-1){
+//                         $startFind = "accuracy";
+//                     }else if(strpos($buffer, "Time:")>-1){
+//                         $startFind = "time";
+//                     }else if(strpos($buffer, "Memory (B/s):")>-1){
+//                         $startFind = "memory";
+//                     }else{
+                        
+//                     }
+                    
+                    
+//                     switch($startFind){
+                        
+//                         case 'accuracy':
+                            
+//                             if($parameters["accuracy"]==1){
+                                
+//                                 if( !is_numeric(trim($buffer)) ){
+//                                     //if(strpos($buffer, "Confidence Interval =")>-1){
+//                                     //exit("iran");
+//                                     //exit("bruno");
+                                    
+//                                     break;
+//                                 }else{
+                                    
+//                                     if(strpos($buffer, "Accuracy")>-1)
+//                                         break;
+                                        
+//                                         $accuracy = $buffer;
+//                                         $accuracy = trim($accuracy);
+                                        
+//                                         if($accuracy != "")
+//                                             array_push($json_return, array("Accuracy"=>$accuracy));
+                                            
+//                                 }
+                                
+                                
+                                
+//                             }
+                            
+//                             break;
+//                         case 'time':
+                            
+//                             if($parameters["timer"]==1){
+                                
+                                
+//                                 if( !is_numeric(trim($buffer)) ){
+//                                     //if(strpos($buffer, "Confidence Interval =")>-1){
+//                                     //exit("iran");
+//                                     //exit("bruno");
+                                    
+//                                     break;
+//                                 }else{
+                                    
+//                                     if(strpos($buffer, "Timer")>-1)
+//                                         break;
+                                        
+//                                         $accuracy = $buffer;
+//                                         $accuracy = trim($accuracy);
+                                        
+//                                         if($accuracy != "")
+//                                             array_push($json_return, array("Timer"=>$accuracy));
+                                            
+//                                 }
+                                
+                                
+//                             }
+                            
+//                             break;
+//                         case 'memory':
+                            
+//                             if($parameters["memory"]==1){
+                                
+//                                 if( !is_numeric(trim($buffer)) ){
+//                                     //if(strpos($buffer, "Confidence Interval =")>-1){
+//                                     //exit("iran");
+//                                     //exit("bruno");
+                                    
+//                                     break;
+//                                 }else{
+                                    
+//                                     if(strpos($buffer, "Memory")>-1)
+//                                         break;
+                                        
+//                                         $accuracy = $buffer;
+//                                         $accuracy = trim($accuracy);
+                                        
+//                                         if($accuracy != "")
+//                                             array_push($json_return, array("Memory"=>$accuracy));
+                                            
+//                                 }
+                                
+                                
+//                             }
+                            
+//                             break;
+//                     }
+                    
+//                 }
                 
                 
             }

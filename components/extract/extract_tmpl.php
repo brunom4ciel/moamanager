@@ -298,6 +298,8 @@ if($task == "folder"){
         $metrics["mtfa"] = null;
         $metrics["mtd"] = null;
         $metrics["mtr"] = null; 
+        $metrics["mcclist"] = null; 
+        
         
         if(!empty($metricstract))
         {
@@ -347,6 +349,7 @@ if($task == "folder"){
             "mtfa"=>($metrics["mtfa"]==null?0:1),
             "mtd"=>($metrics["mtd"]==null?0:1),
             "mtr"=>($metrics["mtr"]==null?0:1),
+            "mcclist"=>($metrics["mcclist"]==null?0:1),
             "decimalformat"=>($decimalformat==null?".":$decimalformat),
             "decimalprecision"=>($decimalprecision==null?".":$decimalprecision),
             "detector"=>($detector==null?0:1),
@@ -547,6 +550,7 @@ if($task == "folder"){
                     
                     if($type_extract==1){
                         
+                        
                         $miningResult = $mining->extract_averages_in_file($from_file, $parameters);
                         
                         //var_dump($miningResult);exit("ok");
@@ -556,6 +560,7 @@ if($task == "folder"){
                         
                         if($detector == 1 || $detectorsum == 1)
                         {
+                            
                             $miningResult = $mining->extract_averages_detector_in_file($from_file, $parameters);
                             
                         }
@@ -769,7 +774,7 @@ if($task == "folder"){
                             if($type_extract==1){
                                 
                                 $miningResult = $mining->extract_averages_in_file($from_dir.$file["name"], $parameters);
-                                
+                               
                             }else{
                                 
                                 
