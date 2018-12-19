@@ -908,6 +908,10 @@ class Mining{
             {
                 array_push($json_return, array("mtr"=>"*"));
             }
+            if($parameters["mcclist"]==1)
+            {
+                array_push($json_return, array("mcclist"=>"*"));
+            }
             return $json_return;
         }
         
@@ -968,6 +972,9 @@ class Mining{
                             }
                             else if(strpos($buffer, "MTR:")>-1){
                                 $startFind = "mtr";
+                            }
+                            else if(strpos($buffer, "MCC:")>-1){
+                                $startFind = "mcc";
                             }
                             else{
                                 if($strategy == "Error" && $accuracy_open == false)
@@ -1295,7 +1302,43 @@ class Mining{
                                         }
                                     }
                                     
-                                    break;    
+                                    break;  
+                                case 'mcc':
+                                    
+                                    if($parameters["mcclist"]==1){
+                                        
+                                        if(strpos($buffer, "Confidence Interval =")>-1 || strpos($buffer, "Mean (CI) =")>-1){
+                                            
+                                            $tmp = $buffer;
+                                            
+                                            if(strpos($buffer, "Confidence Interval =")!==false){
+                                                $tmp = substr($tmp,strpos($tmp, "Confidence Interval =")+strlen("Confidence Interval =")+1);
+                                            }elseif(strpos($buffer, "Mean (CI) =")!==false){
+                                                $tmp = substr($tmp,strpos($tmp, "Mean (CI) =")+strlen("Mean (CI) =")+1);
+                                            }
+                                            
+                                            $value = $tmp;
+                                            $value = substr($value,0,strpos($value, ")")+1);
+                                            $value_aux = $value;
+                                            
+                                            $value = substr($value,0,strpos($value, "(")-1);
+                                            $value = trim($value);
+                                            
+                                            $value = $this->numeric_format_option($value, $decimalprecision, $decimalseparator);
+                                            
+                                            if($parameters["interval"]==1){
+                                                $value_aux = substr($value_aux,strpos($value_aux, "(")-1);
+                                                $value_aux = trim($value_aux);
+                                                $value .= " " . $value_aux;
+                                            }
+                                            
+                                            array_push($json_return, array("MCC"=>$value));
+                                            
+                                            break 2;
+                                        }
+                                    }
+                                    
+                                    break;
                                 case 'resume':
                                     
                                     if($parameters["dist"] == 1
