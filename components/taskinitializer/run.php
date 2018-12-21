@@ -179,6 +179,10 @@ if($task == "open"){
             $application->setParameter("filename", base64_decode($application->getParameter("filename")));
             $application->setParameter("parallel_process", base64_decode($application->getParameter("parallel_process")));
             $application->setParameter("interfacename", base64_decode($application->getParameter("interfacename")));
+            $application->setParameter("javaparameters", base64_decode($application->getParameter("javaparameters")));
+            
+            
+            $javaparameters = $application->getParameter("javaparameters");
             
             $interfacename = $application->getParameter("interfacename");
             
@@ -453,6 +457,7 @@ if($task == "open"){
                                         {
                                             
                                             $cmd = Properties::getFileJavaExec()
+                                            . " " . $javaparameters
                                             ." -Xmx".$moa_menory_used." -jar \""
                                             .Properties::getBase_directory_moa()
                                             ."bin"
@@ -471,6 +476,7 @@ if($task == "open"){
                                         {
                                             
                                             $cmd = Properties::getFileJavaExec()
+                                            . " " . $javaparameters
                                             ." -Xmx".$moa_menory_used." -cp \""
                                             .Properties::getBase_directory_moa()
                                             ."bin"
@@ -784,6 +790,7 @@ if($task == "open"){
                     if($javap == "runnable"){
                         
                         $cmd = Properties::getFileJavaExec()
+                        . " " . $javaparameters
                         ." -Xmx".$moa_menory_used." -jar \""
                         .Properties::getBase_directory_moa()
                         ."bin"
@@ -800,6 +807,7 @@ if($task == "open"){
                     }else {
                         
                         $cmd = Properties::getFileJavaExec()
+                        . " " . $javaparameters
                         ." -Xmx".$moa_menory_used." -cp \""
                         .Properties::getBase_directory_moa()
                         ."bin"
@@ -1019,6 +1027,9 @@ if($task == "open"){
                 $application->setParameter("parallel_process", base64_decode($application->getParameter("parallel_process")));
                 
                 $application->setParameter("interfacename", base64_decode($application->getParameter("interfacename")));
+                $application->setParameter("javaparameters", base64_decode($application->getParameter("javaparameters")));
+                                
+                $javaparameters = $application->getParameter("javaparameters");
                 
                 $interfacename = $application->getParameter("interfacename");
                 
@@ -1151,6 +1162,7 @@ if($task == "open"){
                                 if($javap == "runnable"){
                                     
                                     $cmd = Properties::getFileJavaExec()
+                                    . " " . $javaparameters
                                     ." -Xmx".$moa_menory_used." -jar \""
                                     .Properties::getBase_directory_moa()
                                     ."bin"
@@ -1167,6 +1179,7 @@ if($task == "open"){
                                 }else{
                                     
                                     $cmd = Properties::getFileJavaExec()
+                                    . " " . $javaparameters
                                     ." -Xmx".$moa_menory_used." -cp \""
                                     .Properties::getBase_directory_moa()
                                     ."bin"
@@ -1513,6 +1526,12 @@ if($task == "open"){
 														</td>
 													</tr>
 													<tr>
+														<td>Java paramenter in command line
+														</td>
+														<td><input type="text"  id="javaparameters" name="javaparameters" onchange="setCookieElementValue(this);" value=""/>
+														</td>
+													</tr>
+													<tr>
 														<td>Instance of a class supplied to it as a command line
 														</td>
 														<td><input type="text"  id="interfacename" name="interfacename" onchange="setCookieElementValue(this);" value="moa.DoTask"/>
@@ -1821,6 +1840,7 @@ historicCookieElementSelectValue("parallel_process");
 historicCookieElementValue("memory_used", "1000M");
 historicCookieElementValue("email", "<?php echo $application->getUser()?>");
 historicCookieCheckbox("notification");
+historicCookieElementValue("javaparameters", "");
 historicCookieElementValue("interfacename", "moa.DoTask");
 historicCookieElementSelectValue("version_software");
 historicCookieElementSelectValue("java");
@@ -1954,6 +1974,8 @@ function sendMOAREST(strURL, content, method){
 	var folder = document.getElementById('folder').value;
 	var foldername = document.getElementById('foldername').value;
 	var interfacename = document.getElementById('interfacename').value;	
+	var javaparameters = document.getElementById('javaparameters').value;	
+	
 	var parallel_process = document.getElementById('parallel_process');
 		parallel_process = parallel_process.options[parallel_process.selectedIndex].value;
 		
@@ -1990,7 +2012,8 @@ function sendMOAREST(strURL, content, method){
 				+'&component='+encodeURIComponent(component)
 				+'&controller='+encodeURIComponent(controller)
 				+'&task='+encodeURIComponent(task)
-				+'&folder='+encodeURIComponent(folder)
+				+'&folder='+encodeURIComponent(folder)				
+				+'&javaparameters='+encodeURIComponent(Base64.encode(javaparameters))
 				+'&interfacename='+encodeURIComponent(Base64.encode(interfacename))
 				+'&foldername='+encodeURIComponent(foldername)
 				+'&notification='+encodeURIComponent(notification)
