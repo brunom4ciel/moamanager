@@ -120,8 +120,7 @@ function getDirContents($dir, &$results = array()){
     
 }
 
-
-
+$moadefaulttools = array(Properties::getBase_directory_moa_jar_default(), "moa2014optimized.jar");
 
 
 if($task == "open"){
@@ -226,10 +225,9 @@ if($task == "open"){
                         
             
             if(strpos($version_software, $application->getUser())===false
-                && strpos($version_software, 
-                    Properties::getBase_directory_moa_jar_default())===false)
-            {
-                    
+                && !in_array($version_software,$moadefaulttools))//strpos($version_software, 
+                    //Properties::getBase_directory_moa_jar_default())===false)
+            {                    
                     exit("error not version software permission");
                     
             }else
@@ -1066,8 +1064,9 @@ if($task == "open"){
                 
                 
                 if(strpos($version_software, $application->getUser())===false
-                    && strpos($version_software, Properties::getBase_directory_moa_jar_default())===false){
-                        
+                    && !in_array($version_software,$moadefaulttools))//
+                    //&& strpos($version_software, Properties::getBase_directory_moa_jar_default())===false){
+                {
                         exit("error not version software permission");
                         
                 }else{
@@ -1490,10 +1489,14 @@ if($task == "open"){
 													//}
 																			
 												}
-												$moaopt = "moa2014optimized.jar";
+												
+												foreach($moadefaulttools as $item){
+												    echo "<option value=\"".$item."\">".$item. " " . date("Y/m/d H:i:s", filemtime(Properties::getBase_directory_moa()."bin/".$item)) ."</option>";
+												    
+												}
     
-												echo "<option value=\"".Properties::getBase_directory_moa_jar_default()."\">".Properties::getBase_directory_moa_jar_default(). " " . date("Y/m/d H:i:s", filemtime(Properties::getBase_directory_moa()."bin/".Properties::getBase_directory_moa_jar_default())) ."</option>";
-												echo "<option value=\"".$moaopt."\">".$moaopt. " " . date("Y/m/d H:i:s", filemtime(Properties::getBase_directory_moa()."bin/".$moaopt)) ."</option>";
+												//echo "<option value=\"".Properties::getBase_directory_moa_jar_default()."\">".Properties::getBase_directory_moa_jar_default(). " " . date("Y/m/d H:i:s", filemtime(Properties::getBase_directory_moa()."bin/".Properties::getBase_directory_moa_jar_default())) ."</option>";
+												//echo "<option value=\"".$moaopt."\">".$moaopt. " " . date("Y/m/d H:i:s", filemtime(Properties::getBase_directory_moa()."bin/".$moaopt)) ."</option>";
 												
 												?>
 												</select>
