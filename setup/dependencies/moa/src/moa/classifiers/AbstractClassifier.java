@@ -65,6 +65,8 @@ public abstract class AbstractClassifier extends AbstractOptionHandler
     /** Random Generator used in randomizable learners  */
     public Random classifierRandom;
 
+    private int indexChangeDetectMethod = -1;
+    
     /**
      * Creates an classifier and setups the random seed option
      * if the classifier is randomizable.
@@ -173,6 +175,47 @@ public abstract class AbstractClassifier extends AbstractOptionHandler
         }
         return measurementList.toArray(new Measurement[measurementList.size()]);
     }
+    
+    @Override
+    public boolean isChangeDetectMethod() {
+    	
+    	boolean result = false;    	
+    	Measurement[] modelMeasurements = getModelMeasurementsImpl();
+        if (modelMeasurements != null) {
+        	for (int z = 0; z < modelMeasurements.length; z++) {
+                if (modelMeasurements[z].getName().equals("Change detected")) {
+                	this.indexChangeDetectMethod = z;
+                	result = true;
+                    break;
+                }
+            }        	
+        }        
+        
+        return result;
+    }
+    
+    @Override
+    public boolean isChangeDetectMethodPosition() {
+    	
+    	boolean result = false;
+    	
+    	if(this.indexChangeDetectMethod == -1) {
+    		if(!this.isChangeDetectMethod()) {
+    			return false;
+    		}
+    	}
+    	
+    	Measurement[] modelMeasurements = getModelMeasurementsImpl();
+        if (modelMeasurements != null) {
+           if(modelMeasurements[this.indexChangeDetectMethod].getValue() == 1.0) {
+        	   result = true;
+           }
+        }        
+        
+        return result;
+    }
+    
+    
 
     @Override
     public void getDescription(StringBuilder out, int indent) {

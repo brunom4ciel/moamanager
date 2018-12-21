@@ -124,6 +124,20 @@ public interface Classifier extends MOAObject, OptionHandler, AWTRenderable {
      * @return an array of measurements to be used in evaluation tasks
      */
     public Measurement[] getModelMeasurements();
+    
+    /**
+     * Is change detection method
+     *
+     * @return true if the drift detection method
+     */
+    public boolean isChangeDetectMethod();
+    
+    /**
+     * get alert drift from change detection method
+     *
+     * @return true if the drift detection method alert drift
+     */
+    public boolean isChangeDetectMethodPosition();
 
     /**
      * Gets the classifiers of this ensemble.
