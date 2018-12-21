@@ -1528,7 +1528,7 @@ if($task == "open"){
 													<tr>
 														<td>Java paramenter in command line
 														</td>
-														<td><input type="text"  id="javaparameters" name="javaparameters" onchange="setCookieElementValue(this);" value=""/>
+														<td><input type="text"  id="javaparameters" name="javaparameters" onchange="setCookieElementValue(this);" value="" style="width:100%"/>
 														</td>
 													</tr>
 													<tr>

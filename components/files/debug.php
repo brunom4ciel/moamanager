@@ -162,7 +162,7 @@ if ($filename != null) {
                     
                     if($utils->isMetadataFileScript($filename))
                     {
-                        $script = $utils->getMetadataValueScript($filename, "script");
+                        $script = $utils->getMetadataValueScript($filename, "script-data");
                         $output = $utils->getMetadataValueScript($filename, "command-output");
                         
                         $tags = array("software-version"=>"Software Version",
@@ -202,7 +202,10 @@ if ($filename != null) {
                         $output = @gzuncompress(base64_decode($output));
                         
                         
-                        
+                        if(strpos($data1["data"], "learning evaluation instances") === false){
+							$data1 = $utils->getContentFilePart($filename, 200000);//($bparted * 1024));
+						}
+					 
                         
                         if(strpos($data1["data"], "Accuracy:") ===  false)
                         {
