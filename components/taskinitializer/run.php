@@ -1492,6 +1492,7 @@ if($task == "open"){
 												}
 												
 												echo "<option value=\"".Properties::getBase_directory_moa_jar_default()."\">".Properties::getBase_directory_moa_jar_default(). " " . date("Y/m/d H:i:s", filemtime(Properties::getBase_directory_moa()."bin/".Properties::getBase_directory_moa_jar_default())) ."</option>";
+												echo "<option value=\"moa2014optimized.jar\">moa2014optimized.jar\</option>";
 												
 												?>
 												</select>
