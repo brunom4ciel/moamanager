@@ -298,7 +298,7 @@ if($task == "folder"){
         $metrics["mtfa"] = null;
         $metrics["mtd"] = null;
         $metrics["mtr"] = null; 
-        $metrics["mcclist"] = null; 
+//         $metrics["mcclist"] = null; 
         
         
         if(!empty($metricstract))
@@ -349,7 +349,7 @@ if($task == "folder"){
             "mtfa"=>($metrics["mtfa"]==null?0:1),
             "mtd"=>($metrics["mtd"]==null?0:1),
             "mtr"=>($metrics["mtr"]==null?0:1),
-            "mcclist"=>($metrics["mcclist"]==null?0:1),
+//             "mcclist"=>($metrics["mcclist"]==null?0:1),
             "decimalformat"=>($decimalformat==null?".":$decimalformat),
             "decimalprecision"=>($decimalprecision==null?".":$decimalprecision),
             "detector"=>($detector==null?0:1),

@@ -67,20 +67,20 @@ public class DDE extends AbstractChangeDetector {
     private double minDriftWeight = 0;           
     protected ChangeDetector[] changeDetectorPool;    
         
-    public DDE()
-    {
-
-        initialize();
-        
-//        System.out.println("" + 
-//    			this.getClass().getSimpleName()
-//    			+ " - Parameters: "        			
-//    			+ " Max Value -x " + outlier 
-//    			+ ", Drift detection method to use -d (" + DetectorsOption.getValue() +")"
-//                + ", Number of detectors needed to identify warning or drift -s " + minDriftWeight 
-//                );
-        
-    }
+//    public DDE()
+//    {
+//
+//        initialize();
+//        
+////        System.out.println("" + 
+////    			this.getClass().getSimpleName()
+////    			+ " - Parameters: "        			
+////    			+ " Max Value -x " + outlier 
+////    			+ ", Drift detection method to use -d (" + DetectorsOption.getValue() +")"
+////                + ", Number of detectors needed to identify warning or drift -s " + minDriftWeight 
+////                );
+//        
+//    }
     
     public void initialize() {
     	
@@ -112,6 +112,11 @@ public class DDE extends AbstractChangeDetector {
     @Override
     public void input(double prediction) {
 
+    	if (!this.isInitialized) {
+            initialize();
+            this.isInitialized = true;
+        }
+    	
     	instNumber++;        
         driftLevel = 0;
         warningLevel = 0;
@@ -149,7 +154,6 @@ public class DDE extends AbstractChangeDetector {
         }else{
     		if(driftLevel >= minDriftWeight){//drift   
     			resetLearning();
-    			this.isInitialized = true;
             	this.isChangeDetected = true;            	
 //            	System.out.println(instNumber+" DRIFT driftLevel="+driftLevel+", warningLevel="+warningLevel);
         	}else{ 
@@ -200,24 +204,5 @@ public class DDE extends AbstractChangeDetector {
     protected void prepareForUseImpl(TaskMonitor monitor,
             ObjectRepository repository) {
         // TODO Auto-generated method stub
-        
-    	initialize();
-    	
-    	
-//        ensemble();
-//    		
-//        result = new int [changeDetectorPool.length];
-//        minDriftWeight = this.driftLevelOption.getValue();
-//        outlier =  this.maxValueOption.getValue();
-//        
-//        resetLearning();
-        
-//        System.out.println("" + 
-//    			this.getClass().getSimpleName()
-//    			+ " - Parameters: "        			
-//    			+ " Max Value -x " + outlier 
-//    			+ ", Drift detection method to use -d (" + DetectorsOption.getValue() +")"
-//                + ", Number of detectors needed to identify warning or drift -s " + minDriftWeight 
-//                );  
     }
 }

@@ -94,7 +94,7 @@ function detectProblemsFiles($filename, $folder="")
                 {
                     //$size = filesize($item['filename']) /1024;
                     
-                    $detect = "learning evaluation instances";
+                    $detect = "Accuracy";
                     $size = $utils->getContentFileSizeDetectPart($item['filename'], $detect);
                     
                     if($size > 0)
