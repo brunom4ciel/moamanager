@@ -506,7 +506,7 @@ def compute_CD(avranks, n, alpha="0.05", test="nemenyi"):
 
 
 def graph_ranks(avranks, names, cd=None, cdmethod=None, lowv=None, highv=None,
-                width=6, textspace=1, reverse=False, filename=None, alpha=0.05, nameref='', **kwargs):
+                width=6, textspace=1, reverse=False, filename=None, alpha=0.05, nameref='', friedmanrank=0, n=None, **kwargs):
     """
     Draws a CD graph, which is used to display  the differences in methods'
     performance. See Janez Demsar, Statistical Comparisons of Classifiers over
@@ -541,7 +541,9 @@ def graph_ranks(avranks, names, cd=None, cdmethod=None, lowv=None, highv=None,
     except ImportError:
         raise ImportError("Function graph_ranks requires matplotlib.")
 
+    width = 4
     width = float(width)
+    #textspace = 0.00001
     textspace = float(textspace)
 
     def nth(l, n):
@@ -644,16 +646,27 @@ def graph_ranks(avranks, names, cd=None, cdmethod=None, lowv=None, highv=None,
             return longest
 
         lines = get_lines(ssums, cd)
-        linesblank = 0.2 + 0.2 + (len(lines) - 1) * 0.1
-
+        #linesblank = 0.2 + 0.2 + (len(lines) - 1) * 0.1
+        linesblank = 0.1 + (len(lines) - 1) * 0.05
         # add scale
-        distanceh = 0.25
+        #distanceh = 0.25
         cline += distanceh
 
     # calculate height needed height of an image
-    minnotsignificant = max(2 * 0.2, linesblank)
-    height = cline + ((k + 1) / 2) * 0.2 + (minnotsignificant*0.4)
-
+    #minnotsignificant = max(2 * 0.2, linesblank) # original 17/01/2019
+    minnotsignificant = max(0.05, linesblank)
+    
+    numeropar_vspace_ajust = 0
+    if(k%2==0):
+        numeropar_vspace_ajust = 0.18
+    else:
+        numeropar_vspace_ajust = 0.2
+  
+    if friedmanrank == 1:
+        height = cline + ((k + 1) / 2) * numeropar_vspace_ajust #+ (minnotsignificant*0.4) + (cline*0.4)
+    else:
+        height = cline + ((k + 1) / 2) * 0.15 #+ (minnotsignificant*0.4) + (cline*0.4)
+	
     fig = plt.figure(figsize=(width, height))
     
     #fig.suptitle("Nemenyi post-hoc test with α="+str(alpha), fontsize=10)		
@@ -682,10 +695,12 @@ def graph_ranks(avranks, names, cd=None, cdmethod=None, lowv=None, highv=None,
         """
         ax.plot(wfl(nth(l, 0)), hfl(nth(l, 1)), color=color, alpha=alpha2, **kwargs)
 
-    def text(x, y, s, fontsize2=10, color2='k', *args, **kwargs):
+    def text(x, y, s, fontsize2='small', color2='k', *args, **kwargs):
         ax.text(wf * x, hf * y, s, fontsize=fontsize2, color=color2, *args, **kwargs)
 
+    #line([(0, cline), (width - textspace, cline)], linewidth=1.7)
     line([(textspace, cline), (width - textspace, cline)], linewidth=1.7)
+
 
     bigtick = 0.1
     smalltick = 0.05
@@ -698,30 +713,87 @@ def graph_ranks(avranks, names, cd=None, cdmethod=None, lowv=None, highv=None,
         line([(rankpos(a), 0.6 - tick / 2),
               (rankpos(a), cline)],
              linewidth=0.7)
-
+	
     for a in range(lowv, highv + 1):
         text(rankpos(a), cline - tick / 2 - 0.05, str(a),
              ha="center", va="bottom")
 
     k = len(ssums)
+ 
+	#rankpos(a), 0.6 - tick / 2
+
+    """	
+    escreve o rank de friedman - inicio
+    """
+	 
+	#rankpos(math.ceil(k/2)-1) - textspace #
+	#(width - textspace) - textspace # 
+    #scalewidth2 = width - 2 * textspace
+    #textspace - rankpos(math.ceil(k/2)-1) #
+    
+    
+    #friedmanrank=1
+    if friedmanrank == 1:
+        tick2=cline*(len(avranks)) + (cline*0.5)
+        #line([(textspace, cline), (width - textspace, cline)], linewidth=3.7)
+        index=0
+        avranks2 = sorted(avranks)
+        textspaceh = (textspace/2) + rankpos(math.ceil(k/2)-1) # textspace #+ scalewidth2 / (highv - lowv)  #textspace - (textspace*0.53) #textspace - (scalewidth) #+ rankpos(ssums[1]) #- 0.05#rankpos(a)
+        #chei = cline + minnotsignificant + ((k - len(avranks) ))
+        #chei = cline + minnotsignificant + (math.ceil(k / 2)) * (1 / math.ceil(k / 2)) #(k*0.1)
+        chei = cline + minnotsignificant + math.ceil(k/2) * 0.135
+        #for i in range(math.ceil(k / 2), k):        
+            #chei = cline + minnotsignificant + ((k - 1) * 0.13) #+ (cline/2)
+        captionRank = ''    
+        for a in range(lowv, highv + 1):        
+            #text(textspaceh, chei, str('{0:.2f}'.format(avranks2[index])), ha="center", va="bottom", fontsize2='xx-small')
+            #text(textspaceh, tick2 * 0.51, str(nnames[index]), ha="center", va="bottom", fontsize2='xx-small')
+            captionRank = captionRank + str('{0:.2f}'.format(avranks2[index])) + "  "
+            #textspaceh=textspaceh+(0.27) #(1/len(avranks)))
+            index = index + 1
+        text(textspaceh, chei, captionRank, ha="center", va="bottom", fontsize2='xx-small')
+             
+    #line([(textspace, cline), (width - textspace, cline)], linewidth=3.7)
+    #index=0
+    #avranks2 = sorted(avranks)
+    #textspaceh=textspace - (textspace*0.5)
+    #for a in range(lowv, highv + 1):
+    #    text(rankpos(a), tick2 * 0.675, str(nnames[index]), ha="center", va="bottom", fontsize2='xx-small')
+    #    index = index + 1
+    
+    
+    """	
+    escreve o rank de friedman - fim
+    """	
+	
+	
+	            
+    """  
+    chei = cline + minnotsignificant + 1 * 0.13
+    text(textspace - 0.05, chei, nnames[1], ha="right", va="center", color2='k', fontsize2='small') 
+    """		
 
     for i in range(math.ceil(k / 2)):
-        chei = cline + minnotsignificant + i * 0.15
+        chei = cline + minnotsignificant + i * 0.13 # cline + minnotsignificant + i * 0.13
         line([(rankpos(ssums[i]), cline),
               (rankpos(ssums[i]), chei),
-              (textspace - 0.1, chei)],color='b',
+              (textspace - 0.0, chei)],color='k',
              linewidth=0.7)
-        text(textspace - 0.2, chei, nnames[i], ha="right", va="center", color2='b', fontsize2='small') #fontsize2='x-small'
-
-    for i in range(math.ceil(k / 2), k):
-        chei = cline + minnotsignificant + (k - i - 1) * 0.15
+        text(textspace - 0.05, chei, nnames[i], 
+			ha="right", va="center", color2='k', fontsize2='small') #fontsize2='x-small'
+    #"""	
+    tick2=0
+    for i in range(math.ceil(k / 2), k):        
+        chei = cline + minnotsignificant + ((k - i - 1) * 0.13) #cline + minnotsignificant + (k - i - 1) * 0.13
+        tick2 = tick2 + cline
         line([(rankpos(ssums[i]), cline),
               (rankpos(ssums[i]), chei),
-              (textspace + scalewidth + 0.1, chei)], color='b',
+              (textspace + scalewidth + 0.0, chei)], color='k',
              linewidth=0.7)
-        text(textspace + scalewidth + 0.2, chei, nnames[i],
-             ha="left", va="center", color2='b', fontsize2='small')
-
+        text(textspace + scalewidth + 0.05, chei, nnames[i],
+             ha="left", va="center", color2='k', fontsize2='small')
+    #"""	
+	                 
     if cd and cdmethod is None:
         # upper scale
         if not reverse:
@@ -729,40 +801,42 @@ def graph_ranks(avranks, names, cd=None, cdmethod=None, lowv=None, highv=None,
         else:
             begin, end = rankpos(highv), rankpos(highv - cd)
 
-        line([(begin, distanceh), (end, distanceh)], color='r', linewidth=2.7)
-        line([(begin, distanceh + bigtick / 2),
-              (begin, distanceh - bigtick / 2)],color='r',
-             linewidth=2.7)
-        line([(end, distanceh + bigtick / 2),
-              (end, distanceh - bigtick / 2)],color='r',
-             linewidth=2.7)
+        line([(begin, distanceh + 0.07), (end, distanceh + 0.07)], color='r', linewidth=1.0)
+        line([(begin, (distanceh + bigtick / 2) + 0.07),
+              (begin, (distanceh - bigtick / 2) + 0.07)],color='r',
+             linewidth=1.0)
+        line([(end, (distanceh + bigtick / 2) + 0.07),
+              (end, (distanceh - bigtick / 2) + 0.07)],color='r',
+             linewidth=1.0)
+             
        # scd = float("{0:.4f}".format(cd))
              
-        if cd>4:
-            text((begin + end) / 2, distanceh - 0.05, "CD="+str(float("{0:.4f}".format(cd))),
-             ha="center", va="bottom")
-        else:
-            text((begin + end) / 2, distanceh - 0.05, "Critical Distance="+str(float("{0:.4f}".format(cd))),
+        #if cd>4:
+        #    text((begin + end) / 2, distanceh, "CD="+str(float("{0:.4f}".format(cd))),
+        #     ha="center", va="bottom")
+        #else:
+        text( (textspace/2) + (begin + end) / 2 , distanceh, "CD="+str(float("{0:.4f}".format(cd))) + ", α="+str(alpha)+ ", n="+str(n)+ ", g="+str(k),
              ha="center", va="bottom")
         
                 
-        if (nameref is None) or (str(nameref).strip()==""):	
-            text(((begin+end))+(width/4), distanceh - 0.05, "Nemenyi post-hoc test with α="+str(alpha),ha="center", va="bottom")  	
-        else:	
-            text(((begin+end))+2.4, distanceh - 0.05, "Nemenyi post-hoc test with α="+str(alpha)+str(" "+nameref),ha="center", va="bottom")     
+        #if (nameref is None) or (str(nameref).strip()==""):	
+        #text(((begin+end) + (scalewidth)*0.2), distanceh, " Nemenyi, α="+str(alpha),ha="right", va="bottom")  	
+        #else:	
+            #text(((begin+end))+2.4, distanceh - 0.07, "Nemenyi, α="+str(alpha)+str(" "+nameref),ha="center", va="bottom")     
 				
-				
+        #cline2=0.3
         # no-significance lines
-        def draw_lines(lines, side=0.05, height=0.1):
-            start = cline + 0.2
+        def draw_lines(lines, side=0.05, height=0.03):
+            start = cline + 0.05
             for l, r in lines:
                 line([(rankpos(ssums[l]) - side, start),
                       (rankpos(ssums[r]) + side, start)],color='r',
-                     linewidth=4.5, alpha2=0.5)
+                     linewidth=1.0, alpha2=0.9)
                 start += height
 
         draw_lines(lines)
 
+        #text(textspace + scalewidth, 2.5, ' ', ha="right", va="center", color2='b', fontsize2='small')             
     elif cd:
         begin = rankpos(avranks[cdmethod] - cd)
         end = rankpos(avranks[cdmethod] + cd)
@@ -774,6 +848,6 @@ def graph_ranks(avranks, names, cd=None, cdmethod=None, lowv=None, highv=None,
         line([(end, cline + bigtick / 2),
               (end, cline - bigtick / 2)],
              linewidth=2.5)
-
+             
     if filename:
         print_figure(fig, filename, **kwargs)

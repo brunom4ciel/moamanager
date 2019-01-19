@@ -33,8 +33,8 @@ define('_EXEC', 1);
 /**
  * Constant of MOAManager version
  */
-define('MOAMANAGER_VERSION', '1.0.32');
-define('MOAMANAGER_RELEASES', '2018/11/01');
+define('MOAMANAGER_VERSION', '1.0.33');
+define('MOAMANAGER_RELEASES', '2019/01/19');
 
 /**
  * Constant of MOA version
@@ -45,8 +45,8 @@ define('MOA_RELEASES', '2018/11/01');
 /**
  * Constant of Statistical Tests version
  */
-define('STATISTICAL_TESTS_VERSION', '1.0.3');
-define('STATISTICAL_TESTS_RELEASES', '2018/10/02');
+define('STATISTICAL_TESTS_VERSION', '1.0.4');
+define('STATISTICAL_TESTS_RELEASES', '2019/01/19');
 
 
 /**

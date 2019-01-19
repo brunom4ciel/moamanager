@@ -51,7 +51,12 @@ if len(sys.argv) > 2:
 else:
 	filename_output=os.path.dirname(os.path.abspath(__file__))+'/example-tmp.'+format_destine
 
-
+if len(sys.argv) > 4:
+	showrank =1 #'yes' #sys.argv[4]
+else:
+	showrank=0
+	
+	
 try:
 	new_path = filename_output
 	new_days = open(new_path,'w')
@@ -93,9 +98,9 @@ try:
 				#else:	
 				#	list_parameters.append(item)
 			filename_output1 = list_parameters[0]		
-			number_of_datasets = int(list_parameters[1])		
+			number_of_datasets = int(list_parameters[1]) - 1		
 			cd = Orange.evaluation.compute_CD(list_values, number_of_datasets, alpha='0.05',test='nemenyi') #tested on 30 datasets
-			Orange.evaluation.graph_ranks(list_values, list_names, cd=cd, width=6, textspace=0.8, alpha=0.05, nameref=filename_output1)
+			Orange.evaluation.graph_ranks(list_values, list_names, cd=cd, width=6, textspace=0.8, alpha=0.05, nameref=filename_output1, friedmanrank=showrank, n=number_of_datasets)
 
 			#print(filename_output1)
 			#print(number_of_datasets)
@@ -122,7 +127,7 @@ try:
 				plt.close()
 			elif format_destine == 'pdf':
 				#plt.savefig(dir_path_outputs+filename_output+".pdf", format='pdf', dpi=300)
-				plt.savefig(filename_output, format='pdf', dpi=1200)
+				plt.savefig(filename_output, format='pdf', dpi=300)
 			elif format_destine == 'png':
 				#print(filename_output)
 				plt.savefig(filename_output, format='png', dpi=300, bbox_inches="tight")

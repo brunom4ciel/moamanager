@@ -68,6 +68,7 @@ $task = $application->getParameter("task");
 $filename_autoload = $application->getParameter("filename");
 $decimalprecision = $application->getParameter("decimalprecision");
 $order = $application->getParameter("order");
+$showrank = $application->getParameter("showrank");
 $caption = $application->getParameter("caption");
 $source = $application->getParameter("source");
 $folder = $application->getParameter("folder");
@@ -127,6 +128,26 @@ else
 	}
 }
 	
+
+if($showrank == null)
+{
+    $showrank = 0;
+}
+else
+{
+    $showrank = intval($showrank);
+    
+    if($showrank == 0)
+    {
+        $showrank = 0;
+    }
+    else
+    {
+        $showrank = 1;
+    }
+}
+
+
 if(!empty($filename_autoload))
 {
 	if(is_readable(PATH_USER_WORKSPACE_PROCESSING . $filename_autoload))
@@ -527,7 +548,7 @@ if (in_array($task, $statistical_test_array)) {
 			unlink($filename_img);
 		}
 		
-        $command = "python3 " . $nemenyi_bin . "  " . $filename . ".tmp  " . $filename_img . " png";        
+		$command = "python3 " . $nemenyi_bin . "  " . $filename . ".tmp  " . $filename_img . " png " . ($showrank ? "showrank":"");        
         $command = escapeshellcmd($command);
         
         $filename_img2 .= time() . "." . $downloadfile;
@@ -538,7 +559,7 @@ if (in_array($task, $statistical_test_array)) {
 			unlink($filename_img2);
 		}
 		
-        $command2 = "python3 " . $nemenyi_bin . "  " . $filename . ".tmp  " . $filename_img2 . " " . $downloadfile;        
+		$command2 = "python3 " . $nemenyi_bin . "  " . $filename . ".tmp  " . $filename_img2 . " " . $downloadfile . " " . ($showrank ? "showrank":"");
         $command2 = escapeshellcmd($command2);
         
 //         $output = $utils->runExternal($command);
@@ -1169,6 +1190,12 @@ if (in_array($task, $statistical_test_array)) {
 										<label><input type="radio" name="downloadfile" id="downloadfile" value="png"/>png</label>
 										<label><input type="radio" name="downloadfile" id="downloadfile" value="eps"/>eps</label>
 										<label><input type="radio" name="downloadfile" id="downloadfile" value="pdf"/>pdf</label>
+									
+									<label>Show Rank <select name="showrank" id="showrank">
+													<option value="0">No</option>
+													<option value="1">Yes</option>
+												</select>
+									</label>
 										
 										<input
 											type="submit" class="btn btn-success" value="Execute"> 
@@ -1231,5 +1258,5 @@ function SetSelectIndex(idElement, elementText)
 SetSelectIndex("order","<?php echo $order?>");
 SetSelectIndex("columns","<?php echo $columns?>");
 SetSelectIndexRadio("downloadfile", "<?php echo $downloadfile?>");
-
+SetSelectIndex("showrank","<?php echo $showrank?>");
 </script>
