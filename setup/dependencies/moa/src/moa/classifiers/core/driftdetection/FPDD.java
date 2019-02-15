@@ -11,18 +11,17 @@
  *             Roberto S. M. Barros (roberto@cin.ufpe.br) 
  *    @version $Version: 3 $
  *
- *    This program is free software; you can redistribute it and/or modify
- *    it under the terms of the GNU General Public License as published by
- *    the Free Software Foundation; either version 3 of the License, or
- *    (at your option) any later version.
+ *    Licensed under the Apache License, Version 2.0 (the "License");
+ *    you may not use this file except in compliance with the License.
+ *    You may obtain a copy of the License at
  *
- *    This program is distributed in the hope that it will be useful,
- *    but WITHOUT ANY WARRANTY; without even the implied warranty of
- *    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *    GNU General Public License for more details.
+ *      http://www.apache.org/licenses/LICENSE-2.0
  *
- *    You should have received a copy of the GNU General Public License
- *    along with this program. If not, see <http://www.gnu.org/licenses/>.
+ *    Unless required by applicable law or agreed to in writing, software
+ *    distributed under the License is distributed on an "AS IS" BASIS,
+ *    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *    See the License for the specific language governing permissions and
+ *    limitations under the License.
  */
 
 /**
@@ -32,11 +31,6 @@
  *     Concept drift detection based on Fisher's Exact test 
  *     Information Sciences 442-443C (2018) pp. 220-234.
  *     DOI: https://doi.org/10.1016/j.ins.2018.02.054
- *     
- * Inspired in STEPD method, published as: 
- * <p> Kyosuke Nishida and Koichiro Yamauchi: 
- *     Detecting Concept Drift Using Statistical Testing. 
- *     Discovery Science 2007, Springer, vol 4755 of LNCS, pp. 264-269. </p>
  */
 
 package moa.classifiers.core.driftdetection;
@@ -72,9 +66,9 @@ public class FPDD extends AbstractChangeDetector {
     private int wo, wr, rr, wp, rp;
     private int no, nr, np;
     private double[] factorial;
-    private int maximum, i;
+    private int m_n, maximum, i;
     private double f;
-    private double p0, p;
+    private double m_p, p0, p;
     private double Z;
 
     public void initialize() {
@@ -92,13 +86,15 @@ public class FPDD extends AbstractChangeDetector {
             factorial[i] = f;
         }
         p0 = Math.pow(factorial[windowSize], 2);
-//        System.out.println("FPDD - Parameters: Window Size = " + windowSize + " | Alpha Drift = " + alphaDrift + " | Alpha Warning = " + alphaWarning + ".");
+        //System.out.println("FPDD - Parameters: Window Size = " + windowSize + " | Alpha Drift = " + alphaDrift + " | Alpha Warning = " + alphaWarning + ".");
     }
 
     @Override
     public void resetLearning() {
         firstPosition = 0;
         lastPosition = -1;   // This means storedPredictions is empty.
+        m_p = 1.0;
+        m_n = 1;
         wo = wr = 0;
         no = nr = 0;
         this.isChangeDetected = false;
@@ -114,6 +110,13 @@ public class FPDD extends AbstractChangeDetector {
                 resetLearning();
             }
         }
+
+        m_p = m_p + (prediction - m_p) / (double) m_n;
+        m_n++;
+
+        this.estimation = m_p;
+        this.isWarningZone = false;
+        this.delay = 0;
 
         if (nr == windowSize) {   // Recent window is full.
             wo = wo + storedPredictions[firstPosition];  // Oldest prediction in recent window.
@@ -133,8 +136,6 @@ public class FPDD extends AbstractChangeDetector {
         }
         storedPredictions[lastPosition] = (byte) prediction;
         wr += (int) prediction;
-
-        this.isWarningZone = false;
 
         if (no >= windowSize) {   // The same as: (no + nr) >= 2 * windowSize.
 
@@ -178,3 +179,4 @@ public class FPDD extends AbstractChangeDetector {
         // TODO Auto-generated method stub
     }
 }
+

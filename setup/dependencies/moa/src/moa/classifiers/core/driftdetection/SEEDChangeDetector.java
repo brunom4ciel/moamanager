@@ -19,10 +19,11 @@
 
 package moa.classifiers.core.driftdetection;
 
-import moa.options.IntOption;
-import moa.options.FloatOption;
 import moa.core.ObjectRepository;
 import moa.tasks.TaskMonitor;
+import moa.options.FloatOption;
+import moa.options.IntOption;
+
 
 /**
  * 
@@ -39,12 +40,7 @@ import moa.tasks.TaskMonitor;
 
 public class SEEDChangeDetector extends AbstractChangeDetector
 {
-    /**
-	 * 
-	 */
-	private static final long serialVersionUID = 1L;
-
-	protected SEED seed;
+    protected SEED seed;
     
     public FloatOption deltaSEEDOption = new FloatOption("deltaSEED", 'd', "Delta value of SEED Detector", 0.05, 0.0, 1.0);
     public IntOption blockSizeSEEDOption = new IntOption("blockSizeSEED", 'b', "BlockSize value of SEED Detector", 32, 32, 256);

@@ -5,7 +5,7 @@ public class NamesMetrics {
 	public boolean ACCURACY = true;
 	public boolean TIME = true;
 	public boolean MEMORY = true;
-	public boolean DISSIMILARITY = true;
+	public boolean ENTROPY = true;
 	public boolean MDR = true;
 	public boolean MTD = true;
 	public boolean MTFA = true;
@@ -87,12 +87,12 @@ public class NamesMetrics {
 		MEMORY = mEMORY;
 	}
 
-	public boolean isDISSIMILARITY() {
-		return DISSIMILARITY;
+	public boolean isENTROPY() {
+		return ENTROPY;
 	}
 
-	public void setDISSIMILARITY(boolean dISSIMILARITY) {
-		DISSIMILARITY = dISSIMILARITY;
+	public void setENTROPY(boolean eNTROPY) {
+		ENTROPY = eNTROPY;
 	}
 
 	public boolean isMDR() {

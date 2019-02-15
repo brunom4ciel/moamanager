@@ -18,7 +18,7 @@ public class DriftDetectionEvaluationMetrics extends NamesMetrics{
 	public double meanAccuracy;
 	public double meanTime;
 	public double meanMemory;
-	public double meanDissimilarity;
+	public double meanEntropy;
 //    public double FP;
 //    public double FN;
 //    public double TP;
@@ -149,7 +149,7 @@ public class DriftDetectionEvaluationMetrics extends NamesMetrics{
 		if (isDrift()) {
             boolean toleranceArea = false;
             
-            if(this.isDISSIMILARITY()) {
+            if(this.isENTROPY()) {
             	cs += sp[ci++] = prediction;	 		
         		ci = (ci == getWindowSize() ? 0:ci); //	adjust the index position
         		cs -= sp[ci]; //	decrementer value the sum
@@ -253,7 +253,7 @@ public class DriftDetectionEvaluationMetrics extends NamesMetrics{
                 
                 
                 
-                if(this.isDISSIMILARITY()) {
+                if(this.isENTROPY()) {
                 	double err = 0;
             		
             		if(cs > 0)

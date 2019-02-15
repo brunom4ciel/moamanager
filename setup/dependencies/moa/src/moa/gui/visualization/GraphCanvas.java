@@ -26,7 +26,7 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JViewport;
 import moa.evaluation.MeasureCollection;
-import moa.streams.clustering.ClusterEvent;
+//import moa.streams.clustering.ClusterEvent;
 
 public class GraphCanvas extends JPanel {
 
@@ -36,7 +36,7 @@ public class GraphCanvas extends JPanel {
 
     int measureSelected = 0;
 
-    private ArrayList<ClusterEvent> clusterEvents;
+//    private ArrayList<ClusterEvent> clusterEvents;
 
     private ArrayList<JLabel> eventLabelList;
 
@@ -188,58 +188,58 @@ public class GraphCanvas extends JPanel {
         curvePanel.setSize(getWidth() - x_offset_left - x_offset_right, getHeight() - y_offset_bottom - y_offset_top);
         eventPanel.setSize(getWidth() - x_offset_left - x_offset_right, y_offset_top);
 
-        if (clusterEvents != null) {
-            //update Label positions
-            for (int i = 0; i < clusterEvents.size(); i++) {
-                int x = (int) (clusterEvents.get(i).getTimestamp() / processFrequency / x_resolution);
-                if (i < eventLabelList.size()) {
-                    eventLabelList.get(i).setLocation(x - 10, 0);
-                }
-            }
-        }
+//        if (clusterEvents != null) {
+//            //update Label positions
+//            for (int i = 0; i < clusterEvents.size(); i++) {
+//                int x = (int) (clusterEvents.get(i).getTimestamp() / processFrequency / x_resolution);
+//                if (i < eventLabelList.size()) {
+//                    eventLabelList.get(i).setLocation(x - 10, 0);
+//                }
+//            }
+//        }
     }
 
     //check if there are any new events in the event list and add them to the plot
     private void addEvents() {
-        if (clusterEvents != null && clusterEvents.size() > eventCounter) {
-            ClusterEvent ev = clusterEvents.get(eventCounter);
-            eventCounter++;
-            JLabel eventMarker = new JLabel(ev.getType().substring(0, 1));
-
-            eventMarker.setPreferredSize(new Dimension(20, y_offset_top));
-            eventMarker.setSize(new Dimension(20, y_offset_top));
-            eventMarker.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
-            int x = (int) (ev.getTimestamp() / processFrequency / x_resolution);
-
-            eventMarker.setLocation(x - 10, 0);
-            eventMarker.setToolTipText(ev.getType() + " at " + ev.getTimestamp() + ": " + ev.getMessage());
-            eventPanel.add(eventMarker);
-            eventLabelList.add(eventMarker);
-            eventPanel.repaint();
-        }
+//        if (clusterEvents != null && clusterEvents.size() > eventCounter) {
+//            ClusterEvent ev = clusterEvents.get(eventCounter);
+//            eventCounter++;
+//            JLabel eventMarker = new JLabel(ev.getType().substring(0, 1));
+//
+//            eventMarker.setPreferredSize(new Dimension(20, y_offset_top));
+//            eventMarker.setSize(new Dimension(20, y_offset_top));
+//            eventMarker.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+//            int x = (int) (ev.getTimestamp() / processFrequency / x_resolution);
+//
+//            eventMarker.setLocation(x - 10, 0);
+//            eventMarker.setToolTipText(ev.getType() + " at " + ev.getTimestamp() + ": " + ev.getMessage());
+//            eventPanel.add(eventMarker);
+//            eventLabelList.add(eventMarker);
+//            eventPanel.repaint();
+//        }
     }
 
     //check if there are any new events in the event list and add them to the plot
     public void forceAddEvents() {
-        if (clusterEvents != null) {
-            eventPanel.removeAll();
-            for (int i = 0; i < clusterEvents.size(); i++) {
-
-                ClusterEvent ev = clusterEvents.get(i);
-                JLabel eventMarker = new JLabel(ev.getType().substring(0, 1));
-
-                eventMarker.setPreferredSize(new Dimension(20, y_offset_top));
-                eventMarker.setSize(new Dimension(20, y_offset_top));
-                eventMarker.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
-                int x = (int) (ev.getTimestamp() / processFrequency / x_resolution);
-
-                eventMarker.setLocation(x - 10, 0);
-                eventMarker.setToolTipText(ev.getType() + " at " + ev.getTimestamp() + ": " + ev.getMessage());
-                eventPanel.add(eventMarker);
-                eventLabelList.add(eventMarker);
-                eventPanel.repaint();
-            }
-        }
+//        if (clusterEvents != null) {
+//            eventPanel.removeAll();
+//            for (int i = 0; i < clusterEvents.size(); i++) {
+//
+//                ClusterEvent ev = clusterEvents.get(i);
+//                JLabel eventMarker = new JLabel(ev.getType().substring(0, 1));
+//
+//                eventMarker.setPreferredSize(new Dimension(20, y_offset_top));
+//                eventMarker.setSize(new Dimension(20, y_offset_top));
+//                eventMarker.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+//                int x = (int) (ev.getTimestamp() / processFrequency / x_resolution);
+//
+//                eventMarker.setLocation(x - 10, 0);
+//                eventMarker.setToolTipText(ev.getType() + " at " + ev.getTimestamp() + ": " + ev.getMessage());
+//                eventPanel.add(eventMarker);
+//                eventLabelList.add(eventMarker);
+//                eventPanel.repaint();
+//            }
+//        }
     }
 
     @Override
@@ -278,10 +278,10 @@ public class GraphCanvas extends JPanel {
         setLayout(new java.awt.GridBagLayout());
     }// </editor-fold>//GEN-END:initComponents
 
-    public void setClusterEventsList(ArrayList<ClusterEvent> clusterEvents) {
-        this.clusterEvents = clusterEvents;
-        curvePanel.setClusterEventsList(clusterEvents);
-    }
+//    public void setClusterEventsList(ArrayList<ClusterEvent> clusterEvents) {
+//        this.clusterEvents = clusterEvents;
+//        curvePanel.setClusterEventsList(clusterEvents);
+//    }
 
     public void setViewport(JViewport viewport) {
         this.viewport = viewport;

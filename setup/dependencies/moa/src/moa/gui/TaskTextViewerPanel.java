@@ -45,8 +45,8 @@ import moa.evaluation.MeasureCollection;
 import moa.evaluation.RegressionAccuracy;
 import moa.gui.PreviewPanel.TypePanel;
 import moa.gui.conceptdrift.CDTaskManagerPanel;
-import moa.streams.clustering.ClusterEvent;
-import moa.tasks.ConceptDriftMainTask;
+//import moa.streams.clustering.ClusterEvent;
+//import moa.tasks.ConceptDriftMainTask;
 
 /**
  * This panel displays text. Used to output the results of tasks.
@@ -78,16 +78,16 @@ public class TaskTextViewerPanel extends JPanel implements ActionListener {
     public void initVisualEvalPanel() {
         acc1[0] = getNewMeasureCollection();
         acc2[0] = getNewMeasureCollection();
-        if (clusteringVisualEvalPanel1 != null) {
-            panelEvalOutput.remove(clusteringVisualEvalPanel1);
-        }
-        clusteringVisualEvalPanel1 = new moa.gui.clustertab.ClusteringVisualEvalPanel();
-        clusteringVisualEvalPanel1.setMeasures(acc1, acc2, this);
-        this.graphCanvas.setGraph(acc1[0], acc2[0], 0, 1000); 
-        this.graphCanvas.forceAddEvents();
-        clusteringVisualEvalPanel1.setMinimumSize(new java.awt.Dimension(280, 118));
-        clusteringVisualEvalPanel1.setPreferredSize(new java.awt.Dimension(290, 115));
-         panelEvalOutput.add(clusteringVisualEvalPanel1, gridBagConstraints);
+//        if (clusteringVisualEvalPanel1 != null) {
+//            panelEvalOutput.remove(clusteringVisualEvalPanel1);
+//        }
+//        clusteringVisualEvalPanel1 = new moa.gui.clustertab.ClusteringVisualEvalPanel();
+//        clusteringVisualEvalPanel1.setMeasures(acc1, acc2, this);
+//        this.graphCanvas.setGraph(acc1[0], acc2[0], 0, 1000); 
+//        this.graphCanvas.forceAddEvents();
+//        clusteringVisualEvalPanel1.setMinimumSize(new java.awt.Dimension(280, 118));
+//        clusteringVisualEvalPanel1.setPreferredSize(new java.awt.Dimension(290, 115));
+//         panelEvalOutput.add(clusteringVisualEvalPanel1, gridBagConstraints);
     }
         public TaskTextViewerPanel() {
            this(TypePanel.CLASSIFICATION, null);
@@ -412,14 +412,14 @@ public class TaskTextViewerPanel extends JPanel implements ActionListener {
 
 
         if (this.taskManagerPanel instanceof CDTaskManagerPanel) {
-            ConceptDriftMainTask cdTask = this.taskManagerPanel.getSelectedCurrenTask();
-            ArrayList<ClusterEvent> clusterEvents = cdTask.getEventsList();
-            this.graphCanvas.setClusterEventsList(clusterEvents);
+//            ConceptDriftMainTask cdTask = this.taskManagerPanel.getSelectedCurrenTask();
+//            ArrayList<ClusterEvent> clusterEvents = cdTask.getEventsList();
+//            this.graphCanvas.setClusterEventsList(clusterEvents);
         }
         this.graphCanvas.setGraph(acc1[0], acc2[0], this.graphCanvas.getMeasureSelected(), (int) processFrequency);
         this.graphCanvas.updateCanvas(true);
         this.graphCanvas.forceAddEvents();
-        this.clusteringVisualEvalPanel1.update();
+//        this.clusteringVisualEvalPanel1.update();
 
     }
 
@@ -432,7 +432,7 @@ public class TaskTextViewerPanel extends JPanel implements ActionListener {
     }
 
     private void scrollPane0MouseWheelMoved(java.awt.event.MouseWheelEvent evt) {//GEN-FIRST:event_scrollPane0MouseWheelMoved
-        streamPanel0.setZoom(evt.getX(), evt.getY(), (-1) * evt.getWheelRotation(), scrollPane0);
+//        streamPanel0.setZoom(evt.getX(), evt.getY(), (-1) * evt.getWheelRotation(), scrollPane0);
     }//GEN-LAST:event_scrollPane0MouseWheelMoved
 
     private void buttonZoomInXActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_buttonZoomInXActionPerformed
@@ -482,7 +482,7 @@ public class TaskTextViewerPanel extends JPanel implements ActionListener {
 
     private javax.swing.JCheckBox checkboxDrawPoints;
 
-    private moa.gui.clustertab.ClusteringVisualEvalPanel clusteringVisualEvalPanel1;
+//    private moa.gui.clustertab.ClusteringVisualEvalPanel clusteringVisualEvalPanel1;
 
     private javax.swing.JComboBox comboX;
 
@@ -528,9 +528,9 @@ public class TaskTextViewerPanel extends JPanel implements ActionListener {
 
     private javax.swing.JSplitPane splitVisual;
 
-    private moa.gui.visualization.StreamPanel streamPanel0;
+//    private moa.gui.visualization.StreamPanel streamPanel0;
 
-    private moa.gui.visualization.StreamPanel streamPanel1;
+//    private moa.gui.visualization.StreamPanel streamPanel1;
 
     @Override
     public void actionPerformed(ActionEvent e) {

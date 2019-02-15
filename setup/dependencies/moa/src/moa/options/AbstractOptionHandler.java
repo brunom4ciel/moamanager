@@ -26,7 +26,7 @@ import java.util.List;
 import java.util.Map;
 
 import moa.AbstractMOAObject;
-import moa.clusterers.AbstractClusterer;
+//import moa.clusterers.AbstractClusterer;
 import moa.core.ObjectRepository;
 import moa.tasks.NullMonitor;
 import moa.tasks.TaskMonitor;

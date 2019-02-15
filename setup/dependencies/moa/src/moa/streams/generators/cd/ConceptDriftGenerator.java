@@ -21,8 +21,8 @@ package moa.streams.generators.cd;
 
 import java.util.ArrayList;
 import moa.streams.InstanceStreamGenerators;
-import moa.streams.clustering.ClusterEvent;
+//import moa.streams.clustering.ClusterEvent;
 
 public interface ConceptDriftGenerator extends InstanceStreamGenerators {
-      public ArrayList<ClusterEvent> getEventsList();
+//      public ArrayList<ClusterEvent> getEventsList();
 }

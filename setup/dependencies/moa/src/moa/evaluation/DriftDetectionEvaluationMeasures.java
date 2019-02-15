@@ -1,10 +1,13 @@
 package moa.evaluation;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Locale;
 
 import org.apache.commons.math3.distribution.TDistribution;
+
+import org.apache.commons.math3.stat.descriptive.DescriptiveStatistics;
 
 import moa.core.StringUtils;
 
@@ -17,7 +20,7 @@ public class DriftDetectionEvaluationMeasures extends NamesMetrics{
 	public List<Double> measureMTD = new ArrayList<>();
 	public List<Double> measureMTFA = new ArrayList<>();
 	public List<Double> measureMTR = new ArrayList<>();
-    public List<Double> meanDissimilarity = new ArrayList<>();
+    public List<Double> meanEntropy = new ArrayList<>();
 	public List<Double> meanAccuracy = new ArrayList<>();
 	public List<Double> meanTime = new ArrayList<>();
 	public List<Double> meanMemory = new ArrayList<>();
@@ -53,18 +56,24 @@ public class DriftDetectionEvaluationMeasures extends NamesMetrics{
 	
     private long maxInstances;
     
-    public static final String classPackageTitle = "moa.tasks.EvaluatePrequentialUFPE";
+    private final int decimal = 2;
+    private final int smallDecimal = 4;
+    
+    public static final String classPackageTitle = "moa.evaluante.DriftDetectionEvaluationMeasures";
     
     public static final String workbenchTitle = "Drift Detection Evaluation Measures";
 
     public static final String versionString = "1.0 Dezember 2018";
     
-    public static final String authorString = "Silas Garrido Teixeira de Carvalho Santos <sgtcs@cin.ufpe.br>,\n\tBruno Iran Ferreira Maciel <bifm@cin.ufpe.br>,\n\tRoberto Souto Maior de Barros <roberto@cin.ufpe.br>";
+    public static final String authorString = "Silas Garrido Teixeira de Carvalho Santos <sgtcs@cin.ufpe.br>,"
+    		+ "\n\tBruno Iran Ferreira Maciel <bifm@cin.ufpe.br>,"
+    		+ "\n\tRohgi Toshio Meneses <rtmc2@cin.ufpe.br>,"
+    		+ "\n\tRoberto Souto Maior de Barros <roberto@cin.ufpe.br>";
 
     public static final String copyrightNotice = "(C) 2015-2018 CIn (Informatic Center) of UFPE (Federal University of Pernambuco), Pernambuco, Brazil";
 
     public static final String webAddress = "http://cin.ufpe.br,\n\thttps://sites.google.com/view/conceptdrift/,\n\thttps://sites.google.com/site/moamethods/";
-
+    
     public static String getWorkbenchInfoString() {
         StringBuilder result = new StringBuilder();
         
@@ -154,41 +163,41 @@ public class DriftDetectionEvaluationMeasures extends NamesMetrics{
 			}
 		}
 		
-		if( this.isACCURACY()
-        		|| this.isTIME()
-        		|| this.isMEMORY()
-        		|| this.isDISSIMILARITY()
-        		|| this.isMDR()
-        		|| this.isMTD()
-        		|| this.isMTFA()
-        		|| this.isMTR()        
-        		|| this.isPRECISION()
-        		|| this.isRECALL()
-        		|| this.isMCC()
-        		|| this.isF1()
-        		|| this.isDRIFT_POINT_DISTANCE()
-            	|| this.isDRIFT_MEANS()
-            	|| this.isDRIFT_GENERAL_MEAN()
-            	|| this.isFN_FP_TN_TP() 
-        		) {
+//		if( this.isACCURACY()
+//        		|| this.isTIME()
+//        		|| this.isMEMORY()
+//        		|| this.isDISSIMILARITY()
+//        		|| this.isMDR()
+//        		|| this.isMTD()
+//        		|| this.isMTFA()
+//        		|| this.isMTR()        
+//        		|| this.isPRECISION()
+//        		|| this.isRECALL()
+//        		|| this.isMCC()
+//        		|| this.isF1()
+//        		|| this.isDRIFT_POINT_DISTANCE()
+//            	|| this.isDRIFT_MEANS()
+//            	|| this.isDRIFT_GENERAL_MEAN()
+//            	|| this.isFN_FP_TN_TP() 
+//        		) {
 			
 			System.out.println(getWorkbenchInfoString());
 			System.out.println();
-		}
+//		}
 		
 		if(this.isACCURACY()) {
-			printReturnData(chooseFormatData, "Accuracy:", meanAccuracy, this.alpha, 2, 4);
-//			printStatistics(meanAccuracy,"Accuracy", getRepetition(), getAlpha());
+			printReturnData(chooseFormatData, "Accuracy:", meanAccuracy
+					, this.alpha, this.getDecimal(), this.getSmallDecimal());
 		}
 		
 		if(this.isTIME()) {
-			printReturnData(chooseFormatData, "Time:", meanTime, this.alpha, 2, 4);
-//			printStatistics(meanTime,"Time", getRepetition(), getAlpha());
+			printReturnData(chooseFormatData, "Time:", meanTime
+					, this.alpha, this.getDecimal(), this.getSmallDecimal());
 		}
 		
 		if(this.isMEMORY()) {
-			printReturnData(chooseFormatData, "Memory (B/s):", meanMemory, this.alpha, 2, 4);
-//			printStatistics(meanMemory,"Memory (B/s)", getRepetition(), getAlpha());
+			printReturnData(chooseFormatData, "Memory (B/s):", meanMemory
+					, this.alpha, this.getDecimal(), this.getSmallDecimal());
 		}
 		
 		
@@ -211,19 +220,7 @@ public class DriftDetectionEvaluationMeasures extends NamesMetrics{
 					this.TP.add(this.ddemetrics[i].tp);
 					this.TN.add(this.ddemetrics[i].tn);
 				}
-			
-//				if(this.isACCURACY()) {
-//					this.meanAccuracy.add(this.ddemetrics[i].meanAccuracy);
-//				}
-//				
-//				if(this.isTIME()) {
-//					this.meanTime.add(this.ddemetrics[i].meanTime);
-//				}
-//				
-//				if(this.isMEMORY()) {
-//					this.meanMemory.add(this.ddemetrics[i].meanMemory);
-//				}
-				
+							
 				
 				this.setMaxInstances(this.ddemetrics[i].getMaxInstances());
 				
@@ -322,8 +319,8 @@ public class DriftDetectionEvaluationMeasures extends NamesMetrics{
 	//				this.widths = (this.ddemetrics[i].widths);
 	//			}
 					
-				if(this.isDISSIMILARITY()) {
-					meanDissimilarity.add(this.ddemetrics[i].getEntropyValue());
+				if(this.isENTROPY()) {
+					meanEntropy.add(this.ddemetrics[i].getEntropyValue());
 				}				
 				
 			}
@@ -332,40 +329,49 @@ public class DriftDetectionEvaluationMeasures extends NamesMetrics{
 			
 	
 			
-			if(this.isDISSIMILARITY()) {
-				printReturnData(chooseFormatData, "Dissimilarity:", meanDissimilarity, this.alpha, 9, 11);
+			if(this.isENTROPY()) {
+				printReturnData(chooseFormatData, "Entropy:", meanEntropy
+						, this.alpha, 9, 11);
 			}
 			
 			if(this.isMDR()) {
-				printReturnData(chooseFormatData, "MDR:", measureMDR, this.alpha, 2, 4);
+				printReturnData(chooseFormatData, "MDR:", measureMDR
+					, this.alpha, this.getDecimal(), this.getSmallDecimal());
 			}
 			
 			if(this.isMTD()) {
-				printReturnData(chooseFormatData, "MTD:", measureMTD, this.alpha, 2, 4);
+				printReturnData(chooseFormatData, "MTD:", measureMTD
+					, this.alpha, this.getDecimal(), this.getSmallDecimal());
 			}
 			
 			if(this.isMTFA()) {
-				printReturnData(chooseFormatData, "MTFA:", measureMTFA, this.alpha, 2, 4);
+				printReturnData(chooseFormatData, "MTFA:", measureMTFA
+					, this.alpha, this.getDecimal(), this.getSmallDecimal());
 			}
 			
 			if(this.isMTR()) {
-				printReturnData(chooseFormatData, "MTR:", measureMTR, this.alpha, 2, 4);
+				printReturnData(chooseFormatData, "MTR:", measureMTR
+					, this.alpha, this.getDecimal(), this.getSmallDecimal());
 			}
 			
 			if(this.isPRECISION()) {
-				printReturnData(chooseFormatData, "Precision:", measurePrecision, this.alpha, 2, 4);
+				printReturnData(chooseFormatData, "Precision:", measurePrecision
+					, this.alpha, this.getDecimal(), this.getSmallDecimal());
 			}
 	        
 	        if(this.isRECALL()) {
-	        	printReturnData(chooseFormatData, "Recall:", measureRecall, this.alpha, 2, 4);
+	        	printReturnData(chooseFormatData, "Recall:", measureRecall
+        			, this.alpha, this.getDecimal(), this.getSmallDecimal());
 	        }
 	        
 	        if(this.isMCC()) {
-	        	printReturnData(chooseFormatData, "MCC:", measureMCC, this.alpha, 2, 4);
+	        	printReturnData(chooseFormatData, "MCC:", measureMCC
+        			, this.alpha, this.getDecimal(), this.getSmallDecimal());
 	        }
 	        
 	        if(this.isF1()) {
-	        	printReturnData(chooseFormatData, "F1:", measureF1, this.alpha, 2, 4);
+	        	printReturnData(chooseFormatData, "F1:", measureF1
+        			, this.alpha, this.getDecimal(), this.getSmallDecimal());
 	        }
 	        
 	        
@@ -389,13 +395,13 @@ public class DriftDetectionEvaluationMeasures extends NamesMetrics{
 	                
 	//        System.out.println("Mean Distance\t\tFN\tFP\tTN\t\tTP\tPrecision\tRecall\t\tMCC\t\tF1\t\tMDR\tMTFA\tMTD\tMTR");
 	        
-	        if(this.isDRIFT_POINT_DISTANCE()
-	            	|| this.isDRIFT_MEANS()
-	            	|| this.isFN_FP_TN_TP() ) {
+//	        if(this.isDRIFT_POINT_DISTANCE()
+//	            	|| this.isDRIFT_MEANS()
+//	            	|| this.isFN_FP_TN_TP() ) {
 	        	
 	//	        System.out.println("FN\tFP\tTN\t\tTP");
 	//	        System.out.println(lineValues);
-	        }
+//	        }
         
 		}
 		
@@ -405,6 +411,16 @@ public class DriftDetectionEvaluationMeasures extends NamesMetrics{
 	
 	
 	
+	private int getDecimal() {
+		return decimal;
+	}
+
+
+	private int getSmallDecimal() {
+		return smallDecimal;
+	}
+
+
 	public void printReturnData(int chooseFormatData, String title, List<Double> values, double alpha, int decimal, int smallDecimal) {
 		if(chooseFormatData == 1) {
 			printDataPlainText(title, values, alpha, decimal, smallDecimal);
@@ -416,14 +432,146 @@ public class DriftDetectionEvaluationMeasures extends NamesMetrics{
 	public void printDataPlainText(String title, List<Double> values, double alpha, int decimal, int smallDecimal) {
 		System.out.println(title);
 		System.out.println(printListValues(values, decimal, smallDecimal));
-		double mean = this.getAverageOfListValues(values);
-		System.out.print("Mean (CI) = "+this.getFormatDecimalValue(mean, decimal, smallDecimal));
+		double mean = this.getAverageOfListValues(values);		
+		System.out.print("Mean (CI) = "+this.getFormatDecimalValue(mean, decimal, smallDecimal));		
 		double ic = this.getICValue(values, alpha);
 		if(values.size()>1) {
-			System.out.println(" (+-"+this.getFormatDecimalValue(ic, decimal, smallDecimal)+")");
+			System.out.println(" (+-"+this.getFormatDecimalValue(ic, 2, 2)+")");
 		}else {
 			System.out.println(" (+-N/A)");
 		}
+		
+		double gm = this.getGeometricMean(values);
+		
+		System.out.println("Geometric Mean = "+this.getFormatDecimalValue(gm, decimal, smallDecimal));
+		
+		double q2 = this.getQuartile(values, 50);
+		System.out.println("Median = "+this.getFormatDecimalValue(q2, decimal, smallDecimal));
+		
+		double mode = this.getMode(this.getValues(values, decimal, smallDecimal));
+		System.out.println("Mode = "+(mode == 0.0? "NaN":this.getFormatDecimalValue(mode, decimal, smallDecimal)));
+		
+		double sum = this.getSum(values);
+		
+		System.out.println("Sum = "+this.getFormatDecimalValue(sum, decimal, smallDecimal));
+		
+		double var = this.getVariance(values);
+		System.out.println("Variance = "+this.getFormatDecimalValue(var, decimal, smallDecimal));
+		
+		double sd = this.getstandardDeviation(values);
+		System.out.println("Standard Deviation = "+this.getFormatDecimalValue(sd, decimal, smallDecimal));
+		
+		double dm = this.getMeanDeviation(values);
+		System.out.println("Mean Deviation = "+this.getFormatDecimalValue(dm, decimal, smallDecimal));
+		
+		
+		
+		double min = this.getMinValue(values);
+		double max = this.getMaxValue(values);
+		double amplitude = max - min;
+		
+		double kurtosis = this.getKurtosis(values);
+		double skewness = this.getSkewness(values);
+		
+		
+		
+		double q1 = this.getQuartile(values, 25);		
+		double q3 = this.getQuartile(values, 75);
+		double p10 = this.getQuartile(values, 10);
+		double p90 = this.getQuartile(values, 90);
+		double pcKurtosis = this.getPercentageCoefficienteKurtosis(values);
+				
+		
+		System.out.println("Minimum = "+this.getFormatDecimalValue(min, decimal, smallDecimal));
+		System.out.println("Maximum = "+this.getFormatDecimalValue(max, decimal, smallDecimal));
+		System.out.println("Amplitude = "+this.getFormatDecimalValue(amplitude, decimal, smallDecimal));
+		
+						
+		System.out.println("Lower Quartile 25% (Q1) = "+this.getFormatDecimalValue(q1, decimal, smallDecimal));		
+		System.out.println("Upper Quartile 75% (Q3) = "+this.getFormatDecimalValue(q3, decimal, smallDecimal));
+		double iqr = q3 - q1;
+		System.out.println("Interquartile Range (IQR) = "+this.getFormatDecimalValue(iqr, decimal, smallDecimal));
+		
+		System.out.println("Percentile 10 = "+this.getFormatDecimalValue(p10, decimal, smallDecimal));	
+		System.out.println("Percentile 90 = "+this.getFormatDecimalValue(p90, decimal, smallDecimal));	
+		
+		System.out.println("kurtosis = "+this.getFormatDecimalValue(kurtosis, decimal, smallDecimal));
+		
+		
+		System.out.println("Percentage Coefficiente Kurtosis = "+this.getFormatDecimalValue(pcKurtosis, decimal, smallDecimal));
+		
+//		C = 0,263 ==> curva mesocúrtica;
+//		C < 0,263  ==> curva leptocúrtica;
+//		C > 0,263  ==> curva platicúrtica;
+		
+		String c = "";
+		final double pck_c = 0.263;
+		
+		String s = this.getFormatDecimalValue(pcKurtosis, 3, 3);
+    	pcKurtosis = Double.parseDouble(s);
+		
+		if(Double.compare(pcKurtosis, pck_c) == 0) {
+			c = "Mesokurtic";
+		}else if(pcKurtosis < pck_c) {
+			c = "Leptokurtic";
+		}else {
+			c = "Platykurtic";
+		}
+		
+//		System.out.println("Kurtosis curve = "+this.getFormatDecimalValue(pcKurtosis, 3, 3) + " "+c);
+		System.out.println("Excess kurtosis = "+c);
+			
+		
+		System.out.println("Skewness = "+this.getFormatDecimalValue(skewness, decimal, smallDecimal));
+		
+		if(mode > 0) {
+						
+//	    	mean = Double.parseDouble(this.getFormatDecimalValue(mean, decimal, smallDecimal));
+//	    	mode = Double.parseDouble(this.getFormatDecimalValue(mode, decimal, smallDecimal));
+//			
+//	    	double kd = mean - mode;
+//	    	
+//	    	if(Double.compare(kd, 0) == 0) {
+//				c = "Symmetrical";
+//			}else if(kd < 0) {
+//				c = "Negative Skew";
+//			}else {
+//				c = "Positive Skew";
+//			}
+	    	
+			mean = Double.parseDouble(this.getFormatDecimalValue(mean, decimal, smallDecimal));
+	    	mode = Double.parseDouble(this.getFormatDecimalValue(mode, decimal, smallDecimal));
+	    	q1 = Double.parseDouble(this.getFormatDecimalValue(q1, decimal, smallDecimal));
+	    	q2 = Double.parseDouble(this.getFormatDecimalValue(q2, decimal, smallDecimal));
+	    	q3 = Double.parseDouble(this.getFormatDecimalValue(q3, decimal, smallDecimal));
+	    	sd = Double.parseDouble(this.getFormatDecimalValue(sd, decimal, smallDecimal));
+	    	
+	    	double kd = (3 * (mean - q2) ) / sd;
+	    	
+	    	if(q2-q1 < q3 - q2) {
+				c = "Positive Skew";
+			}else if(q2-q1 > q3 - q2) {
+				c = "Negative Skew";
+			}else {
+				if(kd > 0) {
+					c = "Positive Skew";
+				}else if(kd < 0){
+					c = "Negative Skew";
+				}else {
+					c = "Symmetrical";				
+				}
+			}
+	    	
+	    	System.out.println("Coefficiente Skewness = "+this.getFormatDecimalValue(kd, decimal, smallDecimal));
+	    	System.out.println("Skewed Distribution = "+c);
+		}else {
+			System.out.println("Coefficiente Skewness = NaN");
+	    	System.out.println("Skewed Distribution = ");
+		}
+				
+				
+		System.out.println("Sample Size = "+values.size());		
+		
 		System.out.print("\n");
 	}
 
@@ -458,6 +606,17 @@ public class DriftDetectionEvaluationMeasures extends NamesMetrics{
 		return result;
 	}
 	
+	public double[] getValues(List<Double> values, int decimal, int smallDecimal) {
+		double [] result = new double[values.size()];		
+		if(values.size() > 0) {			
+			for (int index = 0; index < values.size(); index++) {
+				String s = this.getFormatDecimalValue(values.get(index), decimal, smallDecimal);
+	        	result[index] = Double.parseDouble(s);
+	        }
+		}		
+		return result;
+	}
+	
 	public double getAverageOfListValues(List<Double> values) {
 		double result = 0.0;
 		
@@ -485,48 +644,198 @@ public class DriftDetectionEvaluationMeasures extends NamesMetrics{
 		return result;
 	}
 	
+	private double getVariance(List<Double> values) {
+        double result = 0.0;
+//        double u = this.getAverageOfListValues(values);
+        
+        if(values.size() > 0) { 
+        	DescriptiveStatistics da = new DescriptiveStatistics();
+        	for(Double j: values) {
+        		da.addValue(j);
+        	}        	
+        	result = da.getVariance();			
+			//result = result / ((double) (values.size() - 1));
+		}        
+        return result;
+    }
+	
+	public double getMeanDeviation(List<Double> values) {
+		double result = 0.0;		
+      
+		if(values.size() > 0) { 
+			
+			double u = this.getAverageOfListValues(values);
+			
+			for (Double value : values) {
+	        	result += Math.sqrt(Math.pow(u - value, 2));
+	        }
+			result = result / values.size();
+		}		
+		return result;
+	}
 	
 	private double getstandardDeviation(List<Double> values) {
         double result = 0.0;
-        double u = this.getAverageOfListValues(values);
-        
+
         if(values.size() > 0) { 
-			for (Double value : values) {
-				result += ((value - u) * (value - u));
-	        }
-			
-			result = Math.sqrt(result / ((double) (values.size() - 1)));
+        	DescriptiveStatistics da = new DescriptiveStatistics();
+        	for(Double j: values) {
+        		da.addValue(j);
+        	}        	
+        	result = da.getStandardDeviation();	
+//			result = Math.sqrt(getVariance(values));
+		}        
+        return result;
+    }
+	
+	private double getMode(double[] values) {
+        double result = 0.0;
+        
+        if(values.length > 0) {
+            int mfreq = 0;           
+            //To sort full array use sort(double[] d) method.
+            Arrays.sort(values);
+            
+    		for (Double i : values) {				
+    			int freq = 0;			
+                for(Double j : values ) {
+                    if( Double.compare(j, i) == 0 ) {
+                        freq++;
+                    }
+                }            
+                if(freq > 1) {
+                	if( freq > mfreq ) {
+                    	result = i;
+                        mfreq = freq;
+                    }
+                }                
+            }
 		}        
         return result;
     }
 	
 	
+	private double getQuartile(List<Double> values, int quartile) {
+        double result = 0.0;
+        
+        if(values.size() > 0) {    
+        	DescriptiveStatistics da = new DescriptiveStatistics();
+        	for(Double j: values) {
+        		da.addValue(j);
+        	}        	
+        	result = da.getPercentile(quartile);      			
+		}        
+        
+        return result;
+    }
+	
+
+	private double getMinValue(List<Double> values) {
+        double result = 0.0;
+        
+        if(values.size() > 0) {    
+        	DescriptiveStatistics da = new DescriptiveStatistics();
+        	for(Double j: values) {
+        		da.addValue(j);
+        	} 
+        	result = da.getMin();
+		}        
+        
+        return result;
+    }
+	
+	private double getMaxValue(List<Double> values) {
+        double result = 0.0;
+        
+        if(values.size() > 0) {    
+        	DescriptiveStatistics da = new DescriptiveStatistics();
+        	for(Double j: values) {
+        		da.addValue(j);
+        	} 
+        	result = da.getMax();
+		}         
+        
+        return result;
+    }
+	
+	
+	private double getKurtosis(List<Double> values) {
+        double result = 0.0;
+        
+        if(values.size() > 0) {    
+        	DescriptiveStatistics da = new DescriptiveStatistics();
+        	for(Double j: values) {
+        		da.addValue(j);
+        	} 
+        	result = da.getKurtosis();
+		}         
+        
+        return result;
+    }
+	
+	
+	private double getSkewness(List<Double> values) {
+        double result = 0.0;
+        
+        if(values.size() > 0) {    
+        	DescriptiveStatistics da = new DescriptiveStatistics();
+        	for(Double j: values) {
+        		da.addValue(j);
+        	} 
+        	result = da.getSkewness();
+		}         
+        
+        return result;
+    }
+	
+	
+	private double getSum(List<Double> values) {
+        double result = 0.0;
+        
+        if(values.size() > 0) {    
+        	DescriptiveStatistics da = new DescriptiveStatistics();
+        	for(Double j: values) {
+        		da.addValue(j);
+        	} 
+        	result = da.getSum();
+		}         
+        
+        return result;
+    }
 	
 	
 	
+	private double getGeometricMean(List<Double> values) {
+        double result = 0.0;
+        
+        if(values.size() > 0) {    
+        	DescriptiveStatistics da = new DescriptiveStatistics();
+        	for(Double j: values) {
+        		da.addValue(j);
+        	} 
+        	result = da.getGeometricMean();
+		}         
+        
+        return result;
+    }
 	
 	
 	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
+	private double getPercentageCoefficienteKurtosis(List<Double> values) {
+        double result = 0.0;
+        
+        if(values.size() > 0) {    
+        	   		
+    		double q1 = this.getQuartile(values, 25);		
+    		double q3 = this.getQuartile(values, 75);
+    		double p10 = this.getQuartile(values, 10);
+    		double p90 = this.getQuartile(values, 90);
+    		
+    		result = (q3-q1) / 2 * (p90 - p10);        	
+		}         
+        
+        return result;
+    }
 	
 	
 	

@@ -27,8 +27,8 @@ public class FHDDM extends AbstractChangeDetector {
 
     private int[] trend;
     private int n_one;
-    private double p_max;
-    private int cursor;
+    private double p_max, m_p;
+    private int cursor, m_n;
 
     public FHDDM() {
         resetLearning();
@@ -42,6 +42,8 @@ public class FHDDM extends AbstractChangeDetector {
         trend = new int[win_size];
         p_max = 0;
         cursor = 0;
+        m_p = 1.0;
+        m_n = 1;
     }
 
     @Override
@@ -51,6 +53,12 @@ public class FHDDM extends AbstractChangeDetector {
             resetLearning();
             this.isInitialized = true;
         }
+
+        m_p = m_p + (prediction - m_p) / (double) m_n;
+        m_n++;
+
+        this.estimation = m_p;
+        this.delay = 0;
     	
     	boolean drift_status = false;
     	boolean warning_status = false;

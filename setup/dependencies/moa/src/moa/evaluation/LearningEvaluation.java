@@ -25,7 +25,7 @@ import java.util.List;
 
 import moa.AbstractMOAObject;
 import moa.classifiers.Classifier;
-import moa.clusterers.Clusterer;
+//import moa.clusterers.Clusterer;
 import moa.core.Measurement;
 
 /**
@@ -61,14 +61,14 @@ public class LearningEvaluation extends AbstractMOAObject {
     }
 
     // Must change to Learner model
-    public LearningEvaluation(Measurement[] evaluationMeasurements,
-            LearningPerformanceEvaluator cpe, Clusterer model) {
-        List<Measurement> measurementList = new LinkedList<Measurement>();
-        measurementList.addAll(Arrays.asList(evaluationMeasurements));
-        measurementList.addAll(Arrays.asList(cpe.getPerformanceMeasurements()));
-        measurementList.addAll(Arrays.asList(model.getModelMeasurements()));
-        this.measurements = measurementList.toArray(new Measurement[measurementList.size()]);
-    }
+//    public LearningEvaluation(Measurement[] evaluationMeasurements,
+//            LearningPerformanceEvaluator cpe, Clusterer model) {
+//        List<Measurement> measurementList = new LinkedList<Measurement>();
+//        measurementList.addAll(Arrays.asList(evaluationMeasurements));
+//        measurementList.addAll(Arrays.asList(cpe.getPerformanceMeasurements()));
+//        measurementList.addAll(Arrays.asList(model.getModelMeasurements()));
+//        this.measurements = measurementList.toArray(new Measurement[measurementList.size()]);
+//    }
 
     public Measurement[] getMeasurements() {
         return this.measurements.clone();

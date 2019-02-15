@@ -73,8 +73,13 @@ public class TaskThread extends Thread {
         this.taskStartTime = TimingUtils.getNanoCPUTimeOfThread(getId());
         try {
             this.currentStatus = Status.RUNNING;
-            this.finalResult = this.runningTask.doTask(this.taskMonitor,
+            
+            this.finalResult = "";
+            this.runningTask.doTask(this.taskMonitor,
                     this.repository);
+            
+//            this.finalResult = this.runningTask.doTask(this.taskMonitor,
+//                    this.repository);
             this.currentStatus = this.taskMonitor.isCancelled() ? Status.CANCELLED
                     : Status.COMPLETED;
         } catch (Throwable ex) {
@@ -173,6 +178,10 @@ public class TaskThread extends Thread {
     }
 
     public Object getFinalResult() {
+    	if(!String.valueOf(this.finalResult).equals(""))
+    	{
+    		System.out.println(this.finalResult);
+    	}
         return this.finalResult;
     }
 

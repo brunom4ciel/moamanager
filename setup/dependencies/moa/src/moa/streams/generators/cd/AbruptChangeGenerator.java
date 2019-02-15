@@ -19,6 +19,8 @@
  */
 package moa.streams.generators.cd;
 
+import java.util.ArrayList;
+
 public class AbruptChangeGenerator extends AbstractConceptDriftGenerator {
 
     @Override
@@ -29,4 +31,10 @@ public class AbruptChangeGenerator extends AbstractConceptDriftGenerator {
         res = (t < this.period / 2) ? .2 : .8;
         return res;
     }
+
+//	@Override
+//	public ArrayList<ClusterEvent> getEventsList() {
+//		// TODO Auto-generated method stub
+//		return null;
+//	}
 }

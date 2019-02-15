@@ -471,33 +471,72 @@ function verificaChecks() {
 		<label><input type="radio" value="2" name="type_extract" id="type_extract" onclick="setCookieRadioBox(this);"/>Scripts</label>
 		</td>
 		<td valign="top">
-			<span style="width:100%;border-bottom:1px solid #cccccc">Data for extraction</span><br>
-			<label><input type="radio" name="metricstract" id="metricstract" value="accuracy" onclick="setCookieRadioBox(this);"/>Accuracy</label>		
-			<label><input type="radio" name="metricstract" id="metricstract" value="timer" onclick="setCookieRadioBox(this);"/>Timer</label>
-			<label><input type="radio" name="metricstract" id="metricstract" value="memory" onclick="setCookieRadioBox(this);"/>Memory</label>
-			
-			<label><input type="radio" name="metricstract" id="metricstract" value="mdr" onclick="setCookieRadioBox(this);"/>MDR</label>			
-			<label><input type="radio" name="metricstract" id="metricstract" value="mtd" onclick="setCookieRadioBox(this);"/>MTD</label>
-			<label><input type="radio" name="metricstract" id="metricstract" value="mtfa" onclick="setCookieRadioBox(this);"/>MTFA</label>
-			<label><input type="radio" name="metricstract" id="metricstract" value="mtr" onclick="setCookieRadioBox(this);"/>MTR</label>
-			<label><input type="radio" name="metricstract" id="metricstract" value="dissimilarity" onclick="setCookieRadioBox(this);"/>Dissimilarity</label>
-			<label><input type="checkbox" name="interval" id="interval" value="1" onclick="setCookieCheckbox(this);"/>Confidence Interval</label>
-			
-			
-			<br>
-			<label><input type="radio" name="metricstract" id="metricstract" value="dist" onclick="setCookieRadioBox(this);"/>dist</label>
-			<label><input type="radio" name="metricstract" id="metricstract" value="fn" onclick="setCookieRadioBox(this);"/>fn</label>
-			<label><input type="radio" name="metricstract" id="metricstract" value="fp" onclick="setCookieRadioBox(this);"/>fp</label>
-			<label><input type="radio" name="metricstract" id="metricstract" value="tn" onclick="setCookieRadioBox(this);"/>tn</label>
-			<label><input type="radio" name="metricstract" id="metricstract" value="tp" onclick="setCookieRadioBox(this);"/>tp</label>
-			<label><input type="radio" name="metricstract" id="metricstract" value="precision" onclick="setCookieRadioBox(this);"/>precision</label>
-			<label><input type="radio" name="metricstract" id="metricstract" value="recall" onclick="setCookieRadioBox(this);"/>recall</label>
-			
-			<label><input type="radio" name="metricstract" id="metricstract" value="mcc" onclick="setCookieRadioBox(this);"/>MCC</label>
-			<label><input type="radio" name="metricstract" id="metricstract" value="f1" onclick="setCookieRadioBox(this);"/>F1</label>
-			
-			<label><input type="radio" name="metricstract" id="metricstract" value="resume" onclick="setCookieRadioBox(this);"/>TP+FN+Others</label>		
+		
+			<table border="0">
+				<tr>
+					<td>
+						<span style="width:100%;border-bottom:1px solid #cccccc">Data for extraction</span><br>
 						
+            			<select name="metricstracts" class="btn btn-default" id="metricstracts" onchange="setCookieElementSelectValue(this);">												
+                			<option value="accuracy">Accuracy</option>
+                			<option value="timer">Timer</option>
+                			<option value="memory">Memory (B/s)</option>
+                			<option value="mdr">MDR</option>
+                			<option value="mtd">MTD</option>
+                			<option value="mtfa">MTFA</option>
+                			<option value="mtr">MTR</option>
+                			<option value="dist">Dist</option>
+                			<option value="fn">FN</option>
+                			<option value="fp">FP</option>
+                			<option value="tn">TN</option>
+                			<option value="tp">TP</option>
+                			<option value="precision">Precision</option>
+                			<option value="recall">Recall</option>
+                			<option value="mcc">MCC</option>
+                			<option value="f1">F1</option>
+                			<option value="entropy">Entropy</option>
+            			</select>
+					</td>
+					<td style="padding-left:10px;">
+						<span style="width:100%;border-bottom:1px solid #cccccc">Descriptive statistics</span><br>
+            			<select name="descriptivestatistics" class="btn btn-default" id="descriptivestatistics" onchange="setCookieElementSelectValue(this);">												
+                			<option value="mean">Mean</option>
+                			<option value="gmean">Geometric Mean</option>
+                			<option value="median">Median</option>
+                			<option value="mode">Mode</option>
+                			<option value="sum">Sum</option>
+                			<option value="variance">Variance</option>
+                			<option value="sd">Standard Deviation</option>
+                			<option value="md">Mean Deviation</option>
+                			<option value="minimum">Minimum</option>
+                			<option value="maximum">Maximum</option>
+                			<option value="amplitude">Amplitude</option>
+                			<option value="q1">Lower Quartile 25% (Q1)</option>
+                			<option value="q3">Upper Quartile 75% (Q3)</option>
+                			<option value="iqr">Interquartile Range (IQR)</option>
+                			<option value="p10">Percentile 10%</option>
+                			<option value="p90">Percentile 90%</option>
+                			<option value="pckurtosis">Percentage Coefficiente Kurtosis</option>
+                			<option value="ek">Excess kurtosis</option>
+                			<option value="skewness">Skewness</option>
+                			<option value="cskewness">Coefficiente Skewness</option>
+                			<option value="sdistribution">Skewed Distribution</option>    			
+            			</select>
+            		</td>            		
+				</tr>
+				<tr>
+					<td>	
+            			
+					</td>
+					<td style="padding-left:10px;">
+					
+            			<label><input type="checkbox" name="interval" id="interval" value="1" onclick="setCookieCheckbox(this);"/>Confidence Interval</label>
+            			
+					</td>
+				</tr>
+			</table>
+			
+					
 		</td>
 		<td valign="top">
 				<span style="width:100%;border-bottom:1px solid #cccccc">Organize the data</span><br>
@@ -746,11 +785,13 @@ overflow-y: scroll;max-height: 400px;" >
 <script>
 
 
+historicCookieElementSelectValue("metricstracts");
+historicCookieElementSelectValue("descriptivestatistics");
 
 
-historicCookieRadiobox('metricstract');
+// historicCookieRadiobox('metricstract');
 
-historicCookieRadiobox('type_extract');
+// historicCookieRadiobox('type_extract');
 
 //historicCookieElementSelectValue("parallel_process");
 historicCookieElementValue("breakline", "2");

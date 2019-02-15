@@ -27,12 +27,12 @@
  * Boosting-like Online Learning Ensemble (BOLE), 
  * published as:
  * <p> Roberto Souto Maior de Barros, Silas Garrido T. de Carvalho Santos 
- *     and Paulo Mauricio Gonalves Jr.: 
+ *     and Paulo Mauricio Goncalves Jr.: 
  *     A Boosting-like Online Learning Ensemble. 
- *     ... detalhes da publicao... </p>
+ *     ... detalhes da publicacao... </p>
  *
  * Inspired in (and generalized from) ADOB method, published as: 
- *     Silas Garrido Teixeira de Carvalho Santos, Paulo Mauricio Gonalves Jnior,
+ *     Silas Garrido Teixeira de Carvalho Santos, Paulo Mauricio Goncalves Junior,
  *     Geyson Daniel dos Santos Silva, and Roberto Souto Maior de Barros: 
  *     Speeding Up Recovery From Concept Drifts. 
  *     In book: Machine Learning and Knowledge Discovery in Databases, 

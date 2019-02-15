@@ -49,7 +49,7 @@ import moa.evaluation.DriftDetectionEvaluationMetrics;
  * @author Albert Bifet (abifet at cs dot waikato dot ac dot nz)
  * @version $Revision: 7 $
  */
-public class EvaluatePrequentialUFPE extends MainTask {
+public class EvaluatePrequentialUFPEforDetectors extends MainTask {
 
     @Override
     public String getPurposeString() {
@@ -131,49 +131,49 @@ public class EvaluatePrequentialUFPE extends MainTask {
 			"isMDR?", new String[]{
 			"False", "True"}, new String[]{
 			"false", "true"},
-			0); 
+			1); 
     
     public MultiChoiceOption isMTDOption = new MultiChoiceOption(
 			"isMTD", 'p',
 			"isMTD?", new String[]{
 			"False", "True"}, new String[]{
 			"false", "true"},
-			0);
+			1);
     
     public MultiChoiceOption isMTFAOption = new MultiChoiceOption(
 			"isMTFA", 'u',
 			"isMTFA?", new String[]{
 			"False", "True"}, new String[]{
 			"false", "true"},
-			0);
+			1);
     
     public MultiChoiceOption isMTROption = new MultiChoiceOption(
 			"isMTR", 'v',
 			"isMTR?", new String[]{
 			"False", "True"}, new String[]{
 			"false", "true"},
-			0);
+			1);
     
     public MultiChoiceOption isPrecisionOption = new MultiChoiceOption(
 			"isPrecision", 'x',
 			"isPrecision?", new String[]{
 			"False", "True"}, new String[]{
 			"false", "true"},
-			0);
+			1);
     
     public MultiChoiceOption isRecallOption = new MultiChoiceOption(
 			"isRecall", 'w',
 			"isRecall?", new String[]{
 			"False", "True"}, new String[]{
 			"false", "true"},
-			0);
+			1);
     
     public MultiChoiceOption isMCCOption = new MultiChoiceOption(
 			"isMCC", 'k',
 			"isMCC?", new String[]{
 			"False", "True"}, new String[]{
 			"false", "true"},
-			0);
+			1);
     
     
     public MultiChoiceOption isF1Option = new MultiChoiceOption(
@@ -181,21 +181,21 @@ public class EvaluatePrequentialUFPE extends MainTask {
 			"isF1?", new String[]{
 			"False", "True"}, new String[]{
 			"false", "true"},
-			0); 
+			1); 
     
     public MultiChoiceOption isDRIFT_POINT_DISTANCEOption = new MultiChoiceOption(
 			"isDRIFT_POINT_DISTANCE", 'h',
 			"isDRIFT_POINT_DISTANCE?", new String[]{
 			"False", "True"}, new String[]{
 			"false", "true"},
-			0); 
+			1); 
     
     public MultiChoiceOption isFN_FP_TN_TPOption = new MultiChoiceOption(
 			"isFN_FP_TN_TP", 'j',
 			"isFN_FP_TN_TP?", new String[]{
 			"False", "True"}, new String[]{
 			"false", "true"},
-			0); 
+			1); 
     
     
 //    public FlagOption isAccuracyOption = new FlagOption("isAccuracy", 'y',

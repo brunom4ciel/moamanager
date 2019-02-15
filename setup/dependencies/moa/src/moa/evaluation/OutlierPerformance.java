@@ -22,7 +22,7 @@ package moa.evaluation;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import moa.cluster.Clustering;
+//import moa.cluster.Clustering;
 import moa.gui.visualization.DataPoint;
 
 
@@ -39,10 +39,10 @@ public class OutlierPerformance extends MeasureCollection{
         return defaults;
     }
 
-    @Override
-    public void evaluateClustering(Clustering clustering, Clustering trueClustering, ArrayList<DataPoint> points) throws Exception {
-        // nothing to do
-    }
+//    @Override
+//    public void evaluateClustering(Clustering clustering, Clustering trueClustering, ArrayList<DataPoint> points) throws Exception {
+//        // nothing to do
+//    }
     
     public void addTimePerObject(double time) {
         addValue("time per object", time);

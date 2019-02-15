@@ -3,7 +3,7 @@
  *    Copyright (C) 2015 Santos, Barros
  *    @authors Silas Garrido T. de Carvalho Santos (sgtcs@cin.ufpe.br)
  *             Roberto S. M. Barros (roberto@cin.ufpe.br) 
- *    @version $Version: 3 $
+ *    @version $Version: 2 $
  *
  *    This program is free software; you can redistribute it and/or modify
  *    it under the terms of the GNU General Public License as published by
@@ -42,35 +42,36 @@ public class STEPD extends AbstractChangeDetector {
             'r', "Recent Window Size.",
             30, 0, 1000);
         
-    public FloatOption alphaDriftOption = new FloatOption("alphaDrift",
-            'o', "Drift Significance Level.", 0.003, 0.0, 1.0);
-
-    public FloatOption alphaWarningOption = new FloatOption("alphaWarning",
-            'w', "Warning Significance Level.", 0.05, 0.0, 1.0);
+    public FloatOption alphaDOption = new FloatOption("AlphaD",
+            'o', "Drift Significance Level.", 0.003, 0.001, 0.05);
+    
+    public FloatOption alphaWOption = new FloatOption("AlphaW",
+            'w', "Warning Significance Level.", 0.05, 0.01, 0.2);
 
     private int windowSize;
-    private double alphaDrift, alphaWarning;
+    private double alphaDrift, alphaWarn;
     
     private byte [] storedPredictions;
     private int firstPos, lastPos;
     
     private double ro, rr;
-    private int no, nr;
-    private double p, Z, sizeInvertedSum;
+    private int m_n, no, nr;
+    private double m_p, p, Z, pValue, sizesInvSum;
 
     public void initialize() {
     	windowSize = this.windowSizeOption.getValue();
-    	alphaDrift = this.alphaDriftOption.getValue();
-    	alphaWarning = this.alphaWarningOption.getValue();
+    	alphaDrift = this.alphaDOption.getValue();
+    	alphaWarn = this.alphaWOption.getValue();
         storedPredictions = new byte[windowSize];
         resetLearning();
-//        System.out.println("STEPD - Parameters: Window Size = " + windowSize + " | Alpha Drift = " + alphaDrift + " | Alpha Warning = " + alphaWarning + ".");
     }
 
     @Override
     public void resetLearning() {
     	firstPos = 0;
     	lastPos = -1;   // This means storedPredictions is empty.
+        m_p = 1.0;
+        m_n = 1;
         ro = rr = 0.0;
         no = nr = 0;
         this.isChangeDetected = false;
@@ -87,6 +88,13 @@ public class STEPD extends AbstractChangeDetector {
             }
         }
 
+        m_p = m_p + (prediction - m_p) / (double) m_n;
+        m_n++;
+
+        this.estimation = m_p;
+        this.isWarningZone = false;
+        this.delay = 0;
+  
         if (nr == windowSize) {   // Recent window is full.
         	ro = ro + storedPredictions[firstPos];  // Oldest prediction in recent window 
             no++;                                   // is moved to old window,
@@ -96,32 +104,30 @@ public class STEPD extends AbstractChangeDetector {
             	firstPos = 0;
             }
         } else {   // Recent window grows.
-        	nr++;
+            nr++;
         }
         
         lastPos++;   // Adds prediction at the end of recent window.
         if (lastPos == windowSize) {
         	lastPos = 0;
-        };
+        }
         storedPredictions[lastPos] = (byte) prediction;
         rr += prediction;
-
-        this.isWarningZone = false;
         
         if (no >= windowSize) {   // The same as: (no + nr) >= 2 * windowSize.
-            sizeInvertedSum = 1.0 / no + 1.0 / nr;
+            sizesInvSum = 1.0/no + 1.0/nr;
             p = (ro + rr) / (no + nr);
-            Z = Math.abs(ro / no - rr / nr);
-            Z = Z - sizeInvertedSum / 2.0;
-            Z = Z / Math.sqrt(p * (1.0 - p) * sizeInvertedSum);
+            Z = Math.abs(ro/no - rr/nr);
+            Z = Z - sizesInvSum / 2;
+            Z = Z / Math.sqrt(p * (1.0-p) * sizesInvSum);
             
             Z = Statistics.normalProbability(Math.abs(Z));
-            Z = 2 * (1 - Z);
+            pValue = 2 * (1 - Z);
             
-            if (Z < alphaDrift) {
+            if (pValue < alphaDrift) {
                 this.isChangeDetected = true;
             } else { 
-            	if (Z < alphaWarning) {
+            	if (pValue < alphaWarn) {
                     this.isWarningZone = true;
             	}
             }

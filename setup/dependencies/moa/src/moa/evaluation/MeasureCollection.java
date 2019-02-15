@@ -23,7 +23,7 @@ package moa.evaluation;
 import java.util.ArrayList;
 import java.util.HashMap;
 import moa.AbstractMOAObject;
-import moa.cluster.Clustering;
+//import moa.cluster.Clustering;
 import moa.gui.visualization.DataPoint;
 
 public abstract class MeasureCollection extends AbstractMOAObject{
@@ -39,7 +39,7 @@ public abstract class MeasureCollection extends AbstractMOAObject{
     private boolean[] corrupted;
     private double time;
     private boolean debug = true;
-    private MembershipMatrix mm = null;
+//    private MembershipMatrix mm = null;
 
     private HashMap<String, Integer> map;
 
@@ -225,21 +225,21 @@ public abstract class MeasureCollection extends AbstractMOAObject{
          return defaults;
      }
 
-     protected abstract void evaluateClustering(Clustering clustering, Clustering trueClustering, ArrayList<DataPoint> points) throws Exception;
-
-     /*
-      * Evaluate Clustering
-      *
-      * return Time in milliseconds
-      */
-     public double evaluateClusteringPerformance(Clustering clustering, Clustering trueClustering, ArrayList<DataPoint> points) throws Exception{
-        long start = System.nanoTime();
-        evaluateClustering(clustering, trueClustering, points);
-        long duration = System.nanoTime()-start;
-        time+=duration;
-        duration/=10e5;
-        return duration;
-     }
+//     protected abstract void evaluateClustering(Clustering clustering, Clustering trueClustering, ArrayList<DataPoint> points) throws Exception;
+//
+//     /*
+//      * Evaluate Clustering
+//      *
+//      * return Time in milliseconds
+//      */
+//     public double evaluateClusteringPerformance(Clustering clustering, Clustering trueClustering, ArrayList<DataPoint> points) throws Exception{
+//        long start = System.nanoTime();
+//        evaluateClustering(clustering, trueClustering, points);
+//        long duration = System.nanoTime()-start;
+//        time+=duration;
+//        duration/=10e5;
+//        return duration;
+//     }
 
      public void getDescription(StringBuilder sb, int indent) {
 

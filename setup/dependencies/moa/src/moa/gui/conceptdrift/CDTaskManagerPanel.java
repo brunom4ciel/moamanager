@@ -62,8 +62,8 @@ import javax.swing.table.TableCellRenderer;
 import moa.core.StringUtils;
 import moa.options.ClassOption;
 import moa.options.OptionHandler;
-import moa.tasks.ConceptDriftMainTask;
-import moa.tasks.EvaluateConceptDrift;
+//import moa.tasks.ConceptDriftMainTask;
+//import moa.tasks.EvaluateConceptDrift;
 import moa.tasks.Task;
 import moa.tasks.TaskThread;
 
@@ -168,7 +168,7 @@ public class CDTaskManagerPanel extends JPanel {
             TaskThread thread = CDTaskManagerPanel.this.taskList.get(row);
             switch (col) {
                 case 0:
-                    return ((OptionHandler) thread.getTask()).getCLICreationString(ConceptDriftMainTask.class);
+//                    return ((OptionHandler) thread.getTask()).getCLICreationString(ConceptDriftMainTask.class);
                 case 1:
                     return thread.getCurrentStatusString();
                 case 2:
@@ -187,7 +187,7 @@ public class CDTaskManagerPanel extends JPanel {
         }
     }
 
-    protected ConceptDriftMainTask currentTask = new EvaluateConceptDrift();//LearnModel();
+//    protected ConceptDriftMainTask currentTask = new EvaluateConceptDrift();//LearnModel();
 
     protected List<TaskThread> taskList = new ArrayList<TaskThread>();
 
@@ -215,159 +215,159 @@ public class CDTaskManagerPanel extends JPanel {
     
     private final String PREF_NAME = "currentTask";
     
-    public CDTaskManagerPanel() {
-        // Read current task preference
-        prefs = Preferences.userRoot().node(this.getClass().getName());
-        currentTask = new EvaluateConceptDrift();
-        String taskText = this.currentTask.getCLICreationString(ConceptDriftMainTask.class);
-        String propertyValue = prefs.get(PREF_NAME, taskText);
-        //this.taskDescField.setText(propertyValue);
-        setTaskString(propertyValue, false); //Not store preference
-        this.taskDescField.setEditable(false);
-        
-        final Component comp = this.taskDescField;
-        this.taskDescField.addMouseListener(new MouseAdapter() {
-
-            @Override
-            public void mouseClicked(MouseEvent evt) {
-                if (evt.getClickCount() == 1) {
-                    if ((evt.getButton() == MouseEvent.BUTTON3)
-                            || ((evt.getButton() == MouseEvent.BUTTON1) && evt.isAltDown() && evt.isShiftDown())) {
-                        JPopupMenu menu = new JPopupMenu();
-                        JMenuItem item;
-
-                        item = new JMenuItem("Copy configuration to clipboard");
-                        item.addActionListener(new ActionListener() {
-
-                            @Override
-                            public void actionPerformed(ActionEvent e) {
-                                copyClipBoardConfiguration();
-                            }
-                        });
-                        menu.add(item);
-
-
-
-                        item = new JMenuItem("Save selected tasks to file");
-                        item.addActionListener(new ActionListener() {
-
-                            @Override
-                            public void actionPerformed(ActionEvent arg0) {
-                                saveLogSelectedTasks();
-                            }
-                        });
-                        menu.add(item);
-
-
-                        item = new JMenuItem("Enter configuration...");
-                        item.addActionListener(new ActionListener() {
-
-                            @Override
-                            public void actionPerformed(ActionEvent arg0) {
-                                String newTaskString = JOptionPane.showInputDialog("Insert command line");
-                                if (newTaskString != null) {
-                                    setTaskString(newTaskString);
-                                }
-                            }
-                        });
-                        menu.add(item);
-
-                        menu.show(comp, evt.getX(), evt.getY());
-                    }
-                }
-            }
-        });
-
-        JPanel configPanel = new JPanel();
-        configPanel.setLayout(new BorderLayout());
-        configPanel.add(this.configureTaskButton, BorderLayout.WEST);
-        configPanel.add(this.taskDescField, BorderLayout.CENTER);
-        configPanel.add(this.runTaskButton, BorderLayout.EAST);
-        this.taskTableModel = new TaskTableModel();
-        this.taskTable = new JTable(this.taskTableModel);
-        DefaultTableCellRenderer centerRenderer = new DefaultTableCellRenderer();
-        centerRenderer.setHorizontalAlignment(SwingConstants.CENTER);
-        this.taskTable.getColumnModel().getColumn(1).setCellRenderer(
-                centerRenderer);
-        this.taskTable.getColumnModel().getColumn(2).setCellRenderer(
-                centerRenderer);
-        this.taskTable.getColumnModel().getColumn(4).setCellRenderer(
-                new ProgressCellRenderer());
-        JPanel controlPanel = new JPanel();
-        controlPanel.add(this.pauseTaskButton);
-        controlPanel.add(this.resumeTaskButton);
-        controlPanel.add(this.cancelTaskButton);
-        controlPanel.add(this.deleteTaskButton);
-        setLayout(new BorderLayout());
-        add(configPanel, BorderLayout.NORTH);
-        add(new JScrollPane(this.taskTable), BorderLayout.CENTER);
-        add(controlPanel, BorderLayout.SOUTH);
-        this.taskTable.getSelectionModel().addListSelectionListener(
-                new ListSelectionListener() {
-
-                    @Override
-                    public void valueChanged(ListSelectionEvent arg0) {
-                        taskSelectionChanged();
-                    }
-                });
-        this.configureTaskButton.addActionListener(new ActionListener() {
-
-            @Override
-            public void actionPerformed(ActionEvent arg0) {
-                String newTaskString = ClassOptionSelectionPanel.showSelectClassDialog(CDTaskManagerPanel.this,
-                        "Configure task", ConceptDriftMainTask.class,
-                        CDTaskManagerPanel.this.currentTask.getCLICreationString(ConceptDriftMainTask.class),
-                        null);
-                setTaskString(newTaskString);
-            }
-        });
-        this.runTaskButton.addActionListener(new ActionListener() {
-
-            @Override
-            public void actionPerformed(ActionEvent arg0) {
-                runTask((Task) CDTaskManagerPanel.this.currentTask.copy());
-            }
-        });
-        this.pauseTaskButton.addActionListener(new ActionListener() {
-
-            @Override
-            public void actionPerformed(ActionEvent arg0) {
-                pauseSelectedTasks();
-            }
-        });
-        this.resumeTaskButton.addActionListener(new ActionListener() {
-
-            @Override
-            public void actionPerformed(ActionEvent arg0) {
-                resumeSelectedTasks();
-            }
-        });
-        this.cancelTaskButton.addActionListener(new ActionListener() {
-
-            @Override
-            public void actionPerformed(ActionEvent arg0) {
-                cancelSelectedTasks();
-            }
-        });
-        this.deleteTaskButton.addActionListener(new ActionListener() {
-
-            @Override
-            public void actionPerformed(ActionEvent arg0) {
-                deleteSelectedTasks();
-            }
-        });
-
-        javax.swing.Timer updateListTimer = new javax.swing.Timer(
-                MILLISECS_BETWEEN_REFRESH, new ActionListener() {
-
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                CDTaskManagerPanel.this.taskTable.repaint();
-            }
-        });
-        updateListTimer.start();
-        setPreferredSize(new Dimension(0, 200));
-    }
+//    public CDTaskManagerPanel() {
+//        // Read current task preference
+//        prefs = Preferences.userRoot().node(this.getClass().getName());
+//        currentTask = new EvaluateConceptDrift();
+//        String taskText = this.currentTask.getCLICreationString(ConceptDriftMainTask.class);
+//        String propertyValue = prefs.get(PREF_NAME, taskText);
+//        //this.taskDescField.setText(propertyValue);
+//        setTaskString(propertyValue, false); //Not store preference
+//        this.taskDescField.setEditable(false);
+//        
+//        final Component comp = this.taskDescField;
+//        this.taskDescField.addMouseListener(new MouseAdapter() {
+//
+//            @Override
+//            public void mouseClicked(MouseEvent evt) {
+//                if (evt.getClickCount() == 1) {
+//                    if ((evt.getButton() == MouseEvent.BUTTON3)
+//                            || ((evt.getButton() == MouseEvent.BUTTON1) && evt.isAltDown() && evt.isShiftDown())) {
+//                        JPopupMenu menu = new JPopupMenu();
+//                        JMenuItem item;
+//
+//                        item = new JMenuItem("Copy configuration to clipboard");
+//                        item.addActionListener(new ActionListener() {
+//
+//                            @Override
+//                            public void actionPerformed(ActionEvent e) {
+//                                copyClipBoardConfiguration();
+//                            }
+//                        });
+//                        menu.add(item);
+//
+//
+//
+//                        item = new JMenuItem("Save selected tasks to file");
+//                        item.addActionListener(new ActionListener() {
+//
+//                            @Override
+//                            public void actionPerformed(ActionEvent arg0) {
+//                                saveLogSelectedTasks();
+//                            }
+//                        });
+//                        menu.add(item);
+//
+//
+//                        item = new JMenuItem("Enter configuration...");
+//                        item.addActionListener(new ActionListener() {
+//
+//                            @Override
+//                            public void actionPerformed(ActionEvent arg0) {
+//                                String newTaskString = JOptionPane.showInputDialog("Insert command line");
+//                                if (newTaskString != null) {
+//                                    setTaskString(newTaskString);
+//                                }
+//                            }
+//                        });
+//                        menu.add(item);
+//
+//                        menu.show(comp, evt.getX(), evt.getY());
+//                    }
+//                }
+//            }
+//        });
+//
+//        JPanel configPanel = new JPanel();
+//        configPanel.setLayout(new BorderLayout());
+//        configPanel.add(this.configureTaskButton, BorderLayout.WEST);
+//        configPanel.add(this.taskDescField, BorderLayout.CENTER);
+//        configPanel.add(this.runTaskButton, BorderLayout.EAST);
+//        this.taskTableModel = new TaskTableModel();
+//        this.taskTable = new JTable(this.taskTableModel);
+//        DefaultTableCellRenderer centerRenderer = new DefaultTableCellRenderer();
+//        centerRenderer.setHorizontalAlignment(SwingConstants.CENTER);
+//        this.taskTable.getColumnModel().getColumn(1).setCellRenderer(
+//                centerRenderer);
+//        this.taskTable.getColumnModel().getColumn(2).setCellRenderer(
+//                centerRenderer);
+//        this.taskTable.getColumnModel().getColumn(4).setCellRenderer(
+//                new ProgressCellRenderer());
+//        JPanel controlPanel = new JPanel();
+//        controlPanel.add(this.pauseTaskButton);
+//        controlPanel.add(this.resumeTaskButton);
+//        controlPanel.add(this.cancelTaskButton);
+//        controlPanel.add(this.deleteTaskButton);
+//        setLayout(new BorderLayout());
+//        add(configPanel, BorderLayout.NORTH);
+//        add(new JScrollPane(this.taskTable), BorderLayout.CENTER);
+//        add(controlPanel, BorderLayout.SOUTH);
+//        this.taskTable.getSelectionModel().addListSelectionListener(
+//                new ListSelectionListener() {
+//
+//                    @Override
+//                    public void valueChanged(ListSelectionEvent arg0) {
+//                        taskSelectionChanged();
+//                    }
+//                });
+//        this.configureTaskButton.addActionListener(new ActionListener() {
+//
+//            @Override
+//            public void actionPerformed(ActionEvent arg0) {
+//                String newTaskString = ClassOptionSelectionPanel.showSelectClassDialog(CDTaskManagerPanel.this,
+//                        "Configure task", ConceptDriftMainTask.class,
+//                        CDTaskManagerPanel.this.currentTask.getCLICreationString(ConceptDriftMainTask.class),
+//                        null);
+//                setTaskString(newTaskString);
+//            }
+//        });
+//        this.runTaskButton.addActionListener(new ActionListener() {
+//
+//            @Override
+//            public void actionPerformed(ActionEvent arg0) {
+//                runTask((Task) CDTaskManagerPanel.this.currentTask.copy());
+//            }
+//        });
+//        this.pauseTaskButton.addActionListener(new ActionListener() {
+//
+//            @Override
+//            public void actionPerformed(ActionEvent arg0) {
+//                pauseSelectedTasks();
+//            }
+//        });
+//        this.resumeTaskButton.addActionListener(new ActionListener() {
+//
+//            @Override
+//            public void actionPerformed(ActionEvent arg0) {
+//                resumeSelectedTasks();
+//            }
+//        });
+//        this.cancelTaskButton.addActionListener(new ActionListener() {
+//
+//            @Override
+//            public void actionPerformed(ActionEvent arg0) {
+//                cancelSelectedTasks();
+//            }
+//        });
+//        this.deleteTaskButton.addActionListener(new ActionListener() {
+//
+//            @Override
+//            public void actionPerformed(ActionEvent arg0) {
+//                deleteSelectedTasks();
+//            }
+//        });
+//
+//        javax.swing.Timer updateListTimer = new javax.swing.Timer(
+//                MILLISECS_BETWEEN_REFRESH, new ActionListener() {
+//
+//            @Override
+//            public void actionPerformed(ActionEvent e) {
+//                CDTaskManagerPanel.this.taskTable.repaint();
+//            }
+//        });
+//        updateListTimer.start();
+//        setPreferredSize(new Dimension(0, 200));
+//    }
 
     public void setPreviewPanel(PreviewPanel previewPanel) {
         this.previewPanel = previewPanel;
@@ -378,18 +378,18 @@ public class CDTaskManagerPanel extends JPanel {
     }
     
     public void setTaskString(String cliString, boolean storePreference) {    
-        try {
-            this.currentTask = (ConceptDriftMainTask) ClassOption.cliStringToObject(
-                    cliString, ConceptDriftMainTask.class, null);
-            String taskText = this.currentTask.getCLICreationString(ConceptDriftMainTask.class);
-            this.taskDescField.setText(taskText);
-            if (storePreference == true){
-            //Save task text as a preference
-            prefs.put(PREF_NAME, taskText);
-            }
-        } catch (Exception ex) {
-            GUIUtils.showExceptionDialog(this, "Problem with task", ex);
-        }
+//        try {
+//            this.currentTask = (ConceptDriftMainTask) ClassOption.cliStringToObject(
+//                    cliString, ConceptDriftMainTask.class, null);
+//            String taskText = this.currentTask.getCLICreationString(ConceptDriftMainTask.class);
+//            this.taskDescField.setText(taskText);
+//            if (storePreference == true){
+//            //Save task text as a preference
+//            prefs.put(PREF_NAME, taskText);
+//            }
+//        } catch (Exception ex) {
+//            GUIUtils.showExceptionDialog(this, "Problem with task", ex);
+//        }
     }
 
     public void runTask(Task task) {
@@ -403,10 +403,10 @@ public class CDTaskManagerPanel extends JPanel {
     public void taskSelectionChanged() {
         TaskThread[] selectedTasks = getSelectedTasks();
         if (selectedTasks.length == 1) {
-            setTaskString(((OptionHandler) selectedTasks[0].getTask()).getCLICreationString(ConceptDriftMainTask.class));
-            if (this.previewPanel != null) {
-                this.previewPanel.setTaskThreadToPreview(selectedTasks[0]);
-            }
+//            setTaskString(((OptionHandler) selectedTasks[0].getTask()).getCLICreationString(ConceptDriftMainTask.class));
+//            if (this.previewPanel != null) {
+//                this.previewPanel.setTaskThreadToPreview(selectedTasks[0]);
+//            }
         } else {
             this.previewPanel.setTaskThreadToPreview(null);
         }
@@ -462,9 +462,9 @@ public class CDTaskManagerPanel extends JPanel {
     public void saveLogSelectedTasks() {
         String tasksLog = "";
         TaskThread[] selectedTasks = getSelectedTasks();
-        for (TaskThread thread : selectedTasks) {
-            tasksLog += ((OptionHandler) thread.getTask()).getCLICreationString(ConceptDriftMainTask.class) + "\n";
-        }
+//        for (TaskThread thread : selectedTasks) {
+//            tasksLog += ((OptionHandler) thread.getTask()).getCLICreationString(ConceptDriftMainTask.class) + "\n";
+//        }
 
         JFileChooser fileChooser = new JFileChooser();
         fileChooser.setAcceptAllFileFilterUsed(true);
@@ -523,17 +523,17 @@ public class CDTaskManagerPanel extends JPanel {
     }
     
     //Added for stream events
-    public ConceptDriftMainTask getCurrenTask() {
-        return  (ConceptDriftMainTask) this.currentTask; //this.getSelectedTasks()[0].getTask();//this.currentTask;
-    }
+//    public ConceptDriftMainTask getCurrenTask() {
+//        return  (ConceptDriftMainTask) this.currentTask; //this.getSelectedTasks()[0].getTask();//this.currentTask;
+//    }
     
         //Added for stream events
-    public ConceptDriftMainTask getSelectedCurrenTask() {
-        if (this.getSelectedTasks().length > 0) {
-            return  (ConceptDriftMainTask) this.getSelectedTasks()[0].getTask();//this.currentTask;
-        }
-        else {
-            return getCurrenTask();
-        }
-    }
+//    public ConceptDriftMainTask getSelectedCurrenTask() {
+//        if (this.getSelectedTasks().length > 0) {
+//            return  (ConceptDriftMainTask) this.getSelectedTasks()[0].getTask();//this.currentTask;
+//        }
+//        else {
+//            return getCurrenTask();
+//        }
+//    }
 }

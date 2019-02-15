@@ -117,7 +117,7 @@ public class DoTask {
                         "statusUpdateFrequency",
                         'F',
                         "How many milliseconds to wait between status updates.",
-                        1000, 0, Integer.MAX_VALUE);
+                        100000, 0, Integer.MAX_VALUE);
                 Option[] extraOptions = new Option[]{
                     suppressStatusOutputOption, suppressResultOutputOption,
                     statusUpdateFrequencyOption};
@@ -139,42 +139,44 @@ public class DoTask {
                     // start the task thread
                     TaskThread taskThread = new TaskThread(task);
                     taskThread.start();
-                    int progressAnimIndex = 0;
+//                    int progressAnimIndex = 0;
                     // inform user of progress
-                    while (!taskThread.isComplete()) {
-                        StringBuilder progressLine = new StringBuilder();
-                        progressLine.append(progressAnimSequence[progressAnimIndex]);
-                        progressLine.append(' ');
-                        progressLine.append(StringUtils.secondsToDHMSString(taskThread.getCPUSecondsElapsed()));
-                        progressLine.append(" [");
-                        progressLine.append(taskThread.getCurrentStatusString());
-                        progressLine.append("] ");
-                        double fracComplete = taskThread.getCurrentActivityFracComplete();
-                        if (fracComplete >= 0.0) {
-                            progressLine.append(StringUtils.doubleToString(
-                                    fracComplete * 100.0, 2, 2));
-                            progressLine.append("% ");
-                        }
-                        progressLine.append(taskThread.getCurrentActivityString());
-                        while (progressLine.length() < MAX_STATUS_STRING_LENGTH) {
-                            progressLine.append(" ");
-                        }
-                        if (progressLine.length() > MAX_STATUS_STRING_LENGTH) {
-                            progressLine.setLength(MAX_STATUS_STRING_LENGTH);
-                            progressLine.setCharAt(
-                                    MAX_STATUS_STRING_LENGTH - 1, '~');
-                        }
-                        System.err.print(progressLine.toString());
-                        System.err.print('\r');
-                        if (++progressAnimIndex >= progressAnimSequence.length) {
-                            progressAnimIndex = 0;
-                        }
-                        try {
-                            Thread.sleep(statusUpdateFrequencyOption.getValue());
-                        } catch (InterruptedException ignored) {
-                            // wake up
-                        }
-                    }
+//                    while (!taskThread.isComplete()) {
+//                        StringBuilder progressLine = new StringBuilder();
+//                        progressLine.append(progressAnimSequence[progressAnimIndex]);
+//                        progressLine.append(' ');
+//                        progressLine.append(StringUtils.secondsToDHMSString(taskThread.getCPUSecondsElapsed()));
+//                        progressLine.append(" [");
+//                        progressLine.append(taskThread.getCurrentStatusString());
+//                        progressLine.append("] ");
+//                        double fracComplete = taskThread.getCurrentActivityFracComplete();
+//                        if (fracComplete >= 0.0) {
+//                            progressLine.append(StringUtils.doubleToString(
+//                                    fracComplete * 100.0, 2, 2));
+//                            progressLine.append("% ");
+//                        }
+//                        progressLine.append(taskThread.getCurrentActivityString());
+//                        while (progressLine.length() < MAX_STATUS_STRING_LENGTH) {
+//                            progressLine.append(" ");
+//                        }
+//                        if (progressLine.length() > MAX_STATUS_STRING_LENGTH) {
+//                            progressLine.setLength(MAX_STATUS_STRING_LENGTH);
+//                            progressLine.setCharAt(
+//                                    MAX_STATUS_STRING_LENGTH - 1, '~');
+//                        }
+//                        System.err.print(progressLine.toString());
+//                        System.err.print('\r');
+//                        if (++progressAnimIndex >= progressAnimSequence.length) {
+//                            progressAnimIndex = 0;
+//                        }
+//                        try {
+//                            Thread.sleep(statusUpdateFrequencyOption.getValue());
+//                        } catch (InterruptedException ignored) {
+//                            // wake up
+//                        }
+//                    }
+                    
+                    
                     StringBuilder cleanupString = new StringBuilder();
                     for (int i = 0; i < MAX_STATUS_STRING_LENGTH; i++) {
                         cleanupString.append(' ');
@@ -197,12 +199,12 @@ public class DoTask {
                 } else {
                     if (!suppressResultOutputOption.isSet()) {
                         if (result instanceof Measurement[]) {
-                            StringBuilder sb = new StringBuilder();
-                            Measurement.getMeasurementsDescription(
-                                    (Measurement[]) result, sb, 0);
-                            System.out.println(sb.toString());
+//                            StringBuilder sb = new StringBuilder();
+//                            Measurement.getMeasurementsDescription(
+//                                    (Measurement[]) result, sb, 0);
+//                            System.out.println(sb.toString());
                         } else {
-                            System.out.println(result);
+//                            System.out.println(result);
                         }
                         System.out.flush();
                     }

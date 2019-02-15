@@ -27,7 +27,14 @@ import moa.core.DoubleVector;
 import moa.core.Measurement;
 import moa.core.MiscUtils;
 import moa.options.ClassOption;
+import moa.options.FloatOption;
 import moa.options.IntOption;
+import weka.core.Utils;
+
+/**
+ * This is an adapted version of the original to run in 
+ * conjunction with the DiversityForDealingWithDrifts.java.
+ */
 
 /**
  * Incremental on-line bagging of Oza and Russell.
@@ -63,9 +70,25 @@ public class OzaBag extends AbstractClassifier {
 
     public IntOption ensembleSizeOption = new IntOption("ensembleSize", 's',
             "The number of models in the bag.", 10, 1, Integer.MAX_VALUE);
+    
+    protected int totalInstances, totalCorrectInstances;
+    protected double sumXSquare, sumX;
 
+    protected double diversity;
     protected Classifier[] ensemble;
-
+    
+    public void changeDiversity ( double value ) {
+        this.diversity = value;
+    }
+    
+    public double getAccuracy() {
+        return (this.totalInstances == 0) ? 0.0 : (double)this.totalCorrectInstances/(double)this.totalInstances;
+    }
+    
+    public double getStandardDeviation() {
+        return (this.totalInstances < 2) ? 0.0 : Math.sqrt(((this.totalInstances*this.sumXSquare) - Math.pow(this.sumX, 2.0)) / ( this.totalInstances*(this.totalInstances-1) ));
+    }
+   
     @Override
     public void resetLearningImpl() {
         this.ensemble = new Classifier[this.ensembleSizeOption.getValue()];
@@ -74,12 +97,16 @@ public class OzaBag extends AbstractClassifier {
         for (int i = 0; i < this.ensemble.length; i++) {
             this.ensemble[i] = baseLearner.copy();
         }
+        
+        this.diversity = 1.0;
+        this.totalInstances = this.totalCorrectInstances = 0;
+        this.sumXSquare = this.sumX = 0.0;
     }
 
     @Override
     public void trainOnInstanceImpl(Instance inst) {
         for (int i = 0; i < this.ensemble.length; i++) {
-            int k = MiscUtils.poisson(1.0, this.classifierRandom);
+            int k = MiscUtils.poisson(this.diversity, this.classifierRandom);
             if (k > 0) {
                 Instance weightedInst = (Instance) inst.copy();
                 weightedInst.setWeight(inst.weight() * k);
@@ -98,6 +125,15 @@ public class OzaBag extends AbstractClassifier {
                 combinedVote.addValues(vote);
             }
         }
+        
+        int trueClass = (int)inst.classValue();
+        if (Utils.maxIndex(combinedVote.getArrayRef()) == trueClass) { 
+            this.totalCorrectInstances++;
+        }
+        this.totalInstances++;
+        this.sumX += getAccuracy();
+        this.sumXSquare += Math.pow(getAccuracy(), 2.0);
+        
         return combinedVote.getArrayRef();
     }
 

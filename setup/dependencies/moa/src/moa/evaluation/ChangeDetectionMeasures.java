@@ -21,7 +21,7 @@
 package moa.evaluation;
 
 import java.util.ArrayList;
-import moa.cluster.Clustering;
+//import moa.cluster.Clustering;
 import moa.gui.visualization.DataPoint;
 
 public class ChangeDetectionMeasures extends MeasureCollection implements ClassificationMeasureCollection{
@@ -43,9 +43,9 @@ public class ChangeDetectionMeasures extends MeasureCollection implements Classi
       return defaults;
   }
     
-    public void evaluateClustering(Clustering clustering, Clustering trueClsutering, ArrayList<DataPoint> points) {
-
-    }
+//    public void evaluateClustering(Clustering clustering, Clustering trueClsutering, ArrayList<DataPoint> points) {
+//
+//    }
 
 
 

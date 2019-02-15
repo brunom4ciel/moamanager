@@ -134,6 +134,7 @@ public class PreviewPanel extends JPanel implements ResultPreviewListener {
             } else {
                 this.previewedThread.getPreview(PreviewPanel.this);
             }
+            disableRefresh();
         }
     }
 
@@ -146,6 +147,7 @@ public class PreviewPanel extends JPanel implements ResultPreviewListener {
         } else if (!thread.isComplete()) {
             enableRefresh();
         }
+        disableRefresh();
     }
 
     public void setLatestPreview(Object preview) {

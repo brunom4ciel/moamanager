@@ -24,7 +24,7 @@ import java.awt.Dimension;
 import java.awt.Graphics;
 import java.util.ArrayList;
 import moa.evaluation.MeasureCollection;
-import moa.streams.clustering.ClusterEvent;
+//import moa.streams.clustering.ClusterEvent;
 
 public class GraphCurve extends javax.swing.JPanel {
     private double min_value = 0;
@@ -36,7 +36,7 @@ public class GraphCurve extends javax.swing.JPanel {
     private double x_resolution;
     private int processFrequency;
 
-    private ArrayList<ClusterEvent> clusterEvents;
+//    private ArrayList<ClusterEvent> clusterEvents;
     
     
     /** Creates new form GraphCurve */
@@ -123,14 +123,14 @@ public class GraphCurve extends javax.swing.JPanel {
     }
 
     private void paintEvents(Graphics g){
-       if(clusterEvents!=null){
-            g.setColor(Color.DARK_GRAY);
-            for (int i = 0; i < clusterEvents.size(); i++) {
-                int x = (int)(clusterEvents.get(i).getTimestamp()/processFrequency/x_resolution);
-
-                g.drawLine(x, 0, x, getHeight());
-            }
-        }
+//       if(clusterEvents!=null){
+//            g.setColor(Color.DARK_GRAY);
+//            for (int i = 0; i < clusterEvents.size(); i++) {
+//                int x = (int)(clusterEvents.get(i).getTimestamp()/processFrequency/x_resolution);
+//
+//                g.drawLine(x, 0, x, getHeight());
+//            }
+//        }
     }
 
     public void setYMinMaxValues(double min, double max){
@@ -138,9 +138,9 @@ public class GraphCurve extends javax.swing.JPanel {
         max_value = max;
     }
 
-    void setClusterEventsList(ArrayList<ClusterEvent> clusterEvents) {
-        this.clusterEvents = clusterEvents;
-    }
+//    void setClusterEventsList(ArrayList<ClusterEvent> clusterEvents) {
+//        this.clusterEvents = clusterEvents;
+//    }
 
     @Override
     public Dimension getPreferredSize() {

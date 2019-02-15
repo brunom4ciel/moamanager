@@ -28,7 +28,7 @@ import moa.options.AbstractOptionHandler;
 import moa.options.FlagOption;
 import moa.options.IntOption;
 import moa.streams.InstanceStream;
-import moa.streams.clustering.ClusterEvent;
+//import moa.streams.clustering.ClusterEvent;
 import moa.tasks.TaskMonitor;
 import weka.core.Attribute;
 import weka.core.DenseInstance;
@@ -43,11 +43,11 @@ public abstract class AbstractConceptDriftGenerator extends AbstractOptionHandle
     public String getPurposeString() {
         return "Generates a stream problem of predicting concept drift.";
     }
-    protected ArrayList<ClusterEvent> clusterEvents;
-
-    public ArrayList<ClusterEvent> getEventsList() {
-        return this.clusterEvents;
-    }
+//    protected ArrayList<ClusterEvent> clusterEvents;
+//
+//    public ArrayList<ClusterEvent> getEventsList() {
+//        return this.clusterEvents;
+//    }
     private static final long serialVersionUID = 1L;
 
     public IntOption instanceRandomSeedOption = new IntOption(
@@ -100,7 +100,7 @@ public abstract class AbstractConceptDriftGenerator extends AbstractOptionHandle
                 getCLICreationString(InstanceStream.class), attributes, 0));
         this.streamHeader.setClassIndex(this.streamHeader.numAttributes() - 1);
 
-        this.clusterEvents = new ArrayList<ClusterEvent>();
+//        this.clusterEvents = new ArrayList<ClusterEvent>();
 
         //this.clusterEvents.add(new ClusterEvent(this,100,"Change", "Drift"));
         //this.clusterEvents.add(new ClusterEvent(this,200,"Change2", "Drift2"));

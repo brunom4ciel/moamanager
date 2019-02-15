@@ -70,7 +70,6 @@ public class DDM extends AbstractChangeDetector {
         m_psmin = Double.MAX_VALUE;
         m_pmin = Double.MAX_VALUE;
         m_smin = Double.MAX_VALUE;
-        
     }
 
     @Override
@@ -85,7 +84,7 @@ public class DDM extends AbstractChangeDetector {
         m_s = Math.sqrt(m_p * (1 - m_p) / (double) m_n);
 
         m_n++;
-      
+
         // System.out.print(prediction + " " + m_n + " " + (m_p+m_s) + " ");
         this.estimation = m_p;
         this.isChangeDetected = false;
@@ -103,11 +102,11 @@ public class DDM extends AbstractChangeDetector {
         }
 
         if (m_n > this.minNumInstancesOption.getValue() && m_p + m_s > m_pmin + this.outcontrolLevelOption.getValue() * m_smin) {
-//            System.out.println(m_p + "\tD");
+            //System.out.println(m_p + ",D");
             this.isChangeDetected = true;
             //resetLearning();
         } else if (m_p + m_s > m_pmin + this.warningLevelOption.getValue() * m_smin) {
-//            System.out.println(m_p + "\tW");
+            //System.out.println(m_p + ",W");
             this.isWarningZone = true;
         } else {
             this.isWarningZone = false;

@@ -270,6 +270,9 @@ if($task == "folder"){
         
         $metricstract = $application->getParameter("metricstract");
         
+        $metricstracts = $application->getParameter("metricstracts");
+        $descriptivestatistics = $application->getParameter("descriptivestatistics");
+                
         
         //$fp = $application->getParameter("fp");
         //	$fn = $application->getParameter("fn");
@@ -279,32 +282,32 @@ if($task == "folder"){
         $detector = $application->getParameter("detector");
         $detectorsum = $application->getParameter("detectorsum");
         
-        $metrics = array();
-        $metrics["accuracy"] = null;
-        $metrics["timer"] = null;
-        $metrics["memory"] = null;
-        $metrics["dissimilarity"] = null;
-        $metrics["dist"] = null;
-        $metrics["fn"] = null;
-        $metrics["fp"] = null;
-        $metrics["tn"] = null;
-        $metrics["tp"] = null;
-        $metrics["precision"] = null;
-        $metrics["recall"] = null;
-        $metrics["mcc"] = null;
-        $metrics["f1"] = null; 
-        $metrics["resume"] = null; 
-        $metrics["mdr"] = null;
-        $metrics["mtfa"] = null;
-        $metrics["mtd"] = null;
-        $metrics["mtr"] = null; 
-//         $metrics["mcclist"] = null; 
+//         $metrics = array();
+//         $metrics["accuracy"] = null;
+//         $metrics["timer"] = null;
+//         $metrics["memory"] = null;
+//         $metrics["dissimilarity"] = null;
+//         $metrics["dist"] = null;
+//         $metrics["fn"] = null;
+//         $metrics["fp"] = null;
+//         $metrics["tn"] = null;
+//         $metrics["tp"] = null;
+//         $metrics["precision"] = null;
+//         $metrics["recall"] = null;
+//         $metrics["mcc"] = null;
+//         $metrics["f1"] = null; 
+//         $metrics["resume"] = null; 
+//         $metrics["mdr"] = null;
+//         $metrics["mtfa"] = null;
+//         $metrics["mtd"] = null;
+//         $metrics["mtr"] = null; 
+// //         $metrics["mcclist"] = null; 
         
         
-        if(!empty($metricstract))
-        {
-            $metrics[$metricstract] = 1;     
-        }
+//         if(!empty($metricstract))
+//         {
+//             $metrics[$metricstract] = 1;     
+//         }
         
         
         
@@ -325,38 +328,57 @@ if($task == "folder"){
             $decimalformat = ".";
         }
 
+        $parameters = array();
+        $parameters_metrics = array("accuracy","timer","memory","entropy",
+            "mdr", "mtfa", "mtd", "mtr", "dist", "precision", "recall", "mcc", "f1",
+            "fn", "fp", "tn", "tp"
+            );
         
-        $parameters = array("accuracy"=>($metrics["accuracy"]==null?0:1),
-            "type_extract"=>($type_extract==null?0:1),
-            "timer"=>($metrics["timer"]==null?0:1),
-            "memory"=>($metrics["memory"]==null?0:1),
-            "dissimilarity"=>($metrics["dissimilarity"]==null?0:1),
-            //"fp"=>($fp==null?0:1),
-            //"fn"=>($fn==null?0:1),
-            "column"=>($column==null?0:1),
-            "interval"=>($interval==null?0:1),
-            "dist"=>($metrics["dist"]==null?0:1),
-            "fn"=>($metrics["fn"]==null?0:1),
-            "fp"=>($metrics["fp"]==null?0:1),
-            "tn"=>($metrics["tn"]==null?0:1),
-            "tp"=>($metrics["tp"]==null?0:1),
-            "precision"=>($metrics["precision"]==null?0:1),
-            "recall"=>($metrics["recall"]==null?0:1),
-            "mcc"=>($metrics["mcc"]==null?0:1),
-            "f1"=>($metrics["f1"]==null?0:1),
-            "resume"=>($metrics["resume"]==null?0:1),
-            "mdr"=>($metrics["mdr"]==null?0:1),
-            "mtfa"=>($metrics["mtfa"]==null?0:1),
-            "mtd"=>($metrics["mtd"]==null?0:1),
-            "mtr"=>($metrics["mtr"]==null?0:1),
-//             "mcclist"=>($metrics["mcclist"]==null?0:1),
-            "decimalformat"=>($decimalformat==null?".":$decimalformat),
-            "decimalprecision"=>($decimalprecision==null?".":$decimalprecision),
-            "detector"=>($detector==null?0:1),
-            //  "mcc"=>($mcc==null?0:1),
-        // "f1"=>($f1==null?0:1),
-        "detectorsum"=>($detectorsum==null?0:1)
-        );
+        foreach($parameters_metrics as $item){
+            $parameters[$item] = ($metricstracts==$item?1:0);
+        }
+        
+        $parameters["descriptivestatistics"] = $descriptivestatistics;
+        
+        $parameters["type_extract"] = ($type_extract==null?0:1);
+        $parameters["column"] = ($column==null?0:1);
+        $parameters["interval"] = ($interval==null?0:1);
+        $parameters["decimalformat"] = ($decimalformat==null?".":$decimalformat);
+        $parameters["decimalprecision"] = ($decimalprecision==null?".":$decimalprecision);
+        
+        
+        
+//         $parameters = array("accuracy"=>($metricstracts=="accuracy"?0:1),
+//             "type_extract"=>($type_extract==null?0:1),
+//             "timer"=>($metrics["timer"]==null?0:1),
+//             "memory"=>($metrics["memory"]==null?0:1),
+//             "dissimilarity"=>($metrics["dissimilarity"]==null?0:1),
+//             //"fp"=>($fp==null?0:1),
+//             //"fn"=>($fn==null?0:1),
+//             "column"=>($column==null?0:1),
+//             "interval"=>($interval==null?0:1),
+//             "dist"=>($metrics["dist"]==null?0:1),
+//             "fn"=>($metrics["fn"]==null?0:1),
+//             "fp"=>($metrics["fp"]==null?0:1),
+//             "tn"=>($metrics["tn"]==null?0:1),
+//             "tp"=>($metrics["tp"]==null?0:1),
+//             "precision"=>($metrics["precision"]==null?0:1),
+//             "recall"=>($metrics["recall"]==null?0:1),
+//             "mcc"=>($metrics["mcc"]==null?0:1),
+//             "f1"=>($metrics["f1"]==null?0:1),
+//             "resume"=>($metrics["resume"]==null?0:1),
+//             "mdr"=>($metrics["mdr"]==null?0:1),
+//             "mtfa"=>($metrics["mtfa"]==null?0:1),
+//             "mtd"=>($metrics["mtd"]==null?0:1),
+//             "mtr"=>($metrics["mtr"]==null?0:1),
+// //             "mcclist"=>($metrics["mcclist"]==null?0:1),
+//             "decimalformat"=>($decimalformat==null?".":$decimalformat),
+//             "decimalprecision"=>($decimalprecision==null?".":$decimalprecision),
+//             "detector"=>($detector==null?0:1),
+//             //  "mcc"=>($mcc==null?0:1),
+//         // "f1"=>($f1==null?0:1),
+//         "detectorsum"=>($detectorsum==null?0:1)
+//         );
         
         
         $dir = Properties::getBase_directory_destine($application)
@@ -570,7 +592,6 @@ if($task == "folder"){
                         }
                         
                     }
-                    
                     
                     array_push($mining_store, $miningResult);
                     
