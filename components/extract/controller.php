@@ -477,7 +477,7 @@ function verificaChecks() {
 					<td>
 						<span style="width:100%;border-bottom:1px solid #cccccc">Data for extraction</span><br>
 						
-            			<select name="metricstracts" class="btn btn-default" id="metricstracts" onchange="setCookieElementSelectValue(this);">												
+            			<select name="metricstracts" class="btn btn-default" id="metricstracts" onchange="setCookieElementSelectValue(this);">									
                 			<option value="accuracy">Accuracy</option>
                 			<option value="timer">Timer</option>
                 			<option value="memory">Memory (B/s)</option>
@@ -500,27 +500,37 @@ function verificaChecks() {
 					<td style="padding-left:10px;">
 						<span style="width:100%;border-bottom:1px solid #cccccc">Descriptive statistics</span><br>
             			<select name="descriptivestatistics" class="btn btn-default" id="descriptivestatistics" onchange="setCookieElementSelectValue(this);">												
-                			<option value="mean">Mean</option>
-                			<option value="gmean">Geometric Mean</option>
-                			<option value="median">Median</option>
-                			<option value="mode">Mode</option>
-                			<option value="sum">Sum</option>
-                			<option value="variance">Variance</option>
-                			<option value="sd">Standard Deviation</option>
-                			<option value="md">Mean Deviation</option>
-                			<option value="minimum">Minimum</option>
-                			<option value="maximum">Maximum</option>
-                			<option value="amplitude">Amplitude</option>
-                			<option value="q1">Lower Quartile 25% (Q1)</option>
-                			<option value="q3">Upper Quartile 75% (Q3)</option>
-                			<option value="iqr">Interquartile Range (IQR)</option>
-                			<option value="p10">Percentile 10%</option>
-                			<option value="p90">Percentile 90%</option>
-                			<option value="pckurtosis">Percentage Coefficiente Kurtosis</option>
-                			<option value="ek">Excess kurtosis</option>
-                			<option value="skewness">Skewness</option>
-                			<option value="cskewness">Coefficiente Skewness</option>
-                			<option value="sdistribution">Skewed Distribution</option>    			
+                			<optgroup label="Measure of Central Tendency">
+                                <option value="mean">Mean</option>
+                                <option value="meanci">Mean (CI)</option>
+                    			<option value="gmean">Geometric Mean</option>
+                    			<option value="median">Median</option>
+                    			<option value="mode">Mode</option>
+                    			<option value="sum">Sum</option>                    			
+                            </optgroup>
+                            <optgroup label="Measures of Variability">
+                                <option value="minimum">Minimum</option>
+                    			<option value="maximum">Maximum</option>  
+                           		<option value="variance">Variance</option>
+                    			<option value="sd">Standard Deviation (SD)</option>
+                    			<option value="md">Mean Deviation</option>
+                            	<option value="amplitude">Amplitude</option>
+                            	<option value="ci">Confidence Interval (CI)</option>
+                                <option value="q1">Lower Quartile 25% (Q1)</option>
+                    			<option value="q3">Upper Quartile 75% (Q3)</option>
+                    			<option value="iqr">Interquartile Range (IQR)</option>
+                    			<option value="p10">Percentile 10%</option>
+                    			<option value="p90">Percentile 90%</option>
+                            </optgroup>
+                            <optgroup label="Kurtosis">
+                                <option value="pckurtosis">Percentage Coefficiente Kurtosis</option>
+                				<option value="ek">Excess kurtosis</option>
+                            </optgroup>
+                            <optgroup label="Symmetry of a Distribution">
+                                <option value="skewness">Skewness</option>
+                    			<option value="cskewness">Coefficiente Skewness</option>
+                    			<option value="sdistribution">Skewed Distribution</option> 
+                            </optgroup>              			   						
             			</select>
             		</td>            		
 				</tr>

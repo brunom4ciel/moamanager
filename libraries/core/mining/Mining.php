@@ -30,11 +30,12 @@ class Mining{
         "fn"=>"FN	FP	TN	TP", 
         "fp"=>"FN	FP	TN	TP",
         "tn"=>"FN	FP	TN	TP", 
-        "tp"=>"FN	FP	TN	TP"
+        "tp"=>"FN	FP	TN	TP"        
     );
     
     private $descriptive_statistics = array(
-        "mean"=>"Mean (CI)",
+        "meanci"=>"Mean (CI)",
+        "mean"=>"Mean",
         "gmean"=>"Geometric Mean"
         ,"median"=>"Median"
         ,"mode"=>"Mode"
@@ -55,6 +56,7 @@ class Mining{
         ,"skewness"=>"Skewness"
         ,"cskewness"=>"Coefficiente Skewness"
         ,"sdistribution"=>"Skewed Distribution"       
+        ,"ci"=>"Confidence Interval"
     );
     
     function convertCSV($arrayElements, $parameters, $breakline=1)
@@ -911,22 +913,30 @@ class Mining{
                                             $tmp = substr($tmp,strpos($tmp, $statistical)+strlen($statistical)+1);
                                             $value_ = $tmp;
                                             
-                                            if($parameters["descriptivestatistics"] == "mean"){
-                                                $value_ = substr($value_,0,strpos($value_, ")")+1);
-                                                $value_aux = $value_;
-                                                
-                                                $value_ = substr($value_,0,strpos($value_, "(")-1);
-                                                $value_ = trim($value_);
-                                            }
                                             
-                                            $value_ = $this->numeric_format_option($value_, $decimalprecision, $decimalseparator);
                                             
-                                            if($parameters["interval"] == 1){
+//                                             if($parameters["descriptivestatistics"] == "mean"){
+//                                                 $value_ = substr($value_,0,strpos($value_, ")")+1);
+//                                                 $value_aux = $value_;
                                                 
-                                                $value_aux = substr($value_aux,strpos($value_aux, "(")-1);
-                                                $value_aux = trim($value_aux);
-                                                $value_ .= " " . $value_aux;
+//                                                 $value_ = substr($value_,0,strpos($value_, "(")-1);
+//                                                 $value_ = trim($value_);
+//                                             }
+                                            
+                                            $value_ = trim($value_);
+                                            
+                                            if(is_numeric($value_)){
+                                                $value_ = $this->numeric_format_option($value_, $decimalprecision, $decimalseparator);
                                             }                                            
+                                            
+                                            
+//                                             if($parameters["interval"] == 1){
+                                                
+//                                                 $value_aux = substr($value_aux,strpos($value_aux, "(")-1);
+//                                                 $value_aux = trim($value_aux);
+//                                                 $value_ .= " " . $value_aux;
+//                                             }                                            
+                                            
                                             
                                             array_push($json_return, array(
                                                 $this->descriptive_statistics[$parameters["descriptivestatistics"]]=>$value_));

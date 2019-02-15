@@ -433,17 +433,25 @@ public class DriftDetectionEvaluationMeasures extends NamesMetrics{
 		System.out.println(title);
 		System.out.println(printListValues(values, decimal, smallDecimal));
 		double mean = this.getAverageOfListValues(values);		
-		System.out.print("Mean (CI) = "+this.getFormatDecimalValue(mean, decimal, smallDecimal));		
-		double ic = this.getICValue(values, alpha);
+						
 		if(values.size()>1) {
-			System.out.println(" (+-"+this.getFormatDecimalValue(ic, 2, 2)+")");
+			
+			double ci = this.getCIValue(values, alpha);	
+			System.out.print("Mean (CI) = "+this.getFormatDecimalValue(mean, decimal, smallDecimal));	
+			System.out.println(" (+-"+this.getFormatDecimalValue(ci, 2, 2)+")");			
+			System.out.println("Mean = "+this.getFormatDecimalValue(mean, decimal, smallDecimal));
+			System.out.println("Confidence Interval = "+this.getFormatDecimalValue(ci, decimal, smallDecimal));
+			
 		}else {
+			
+			System.out.print("Mean (CI) = "+this.getFormatDecimalValue(mean, decimal, smallDecimal));	
 			System.out.println(" (+-N/A)");
+			System.out.println("Confidence Interval = (+-N/A)");
 		}
-		
+				
 		double gm = this.getGeometricMean(values);
 		
-		System.out.println("Geometric Mean = "+this.getFormatDecimalValue(gm, decimal, smallDecimal));
+		System.out.println("Geometric Mean = "+this.getFormatDecimalValue(gm, decimal, smallDecimal));		
 		
 		double q2 = this.getQuartile(values, 50);
 		System.out.println("Median = "+this.getFormatDecimalValue(q2, decimal, smallDecimal));
@@ -472,8 +480,7 @@ public class DriftDetectionEvaluationMeasures extends NamesMetrics{
 		
 		double kurtosis = this.getKurtosis(values);
 		double skewness = this.getSkewness(values);
-		
-		
+				
 		
 		double q1 = this.getQuartile(values, 25);		
 		double q3 = this.getQuartile(values, 75);
@@ -566,7 +573,7 @@ public class DriftDetectionEvaluationMeasures extends NamesMetrics{
 	    	System.out.println("Skewed Distribution = "+c);
 		}else {
 			System.out.println("Coefficiente Skewness = NaN");
-	    	System.out.println("Skewed Distribution = ");
+	    	System.out.println("Skewed Distribution = NaN");
 		}
 				
 				
@@ -631,7 +638,7 @@ public class DriftDetectionEvaluationMeasures extends NamesMetrics{
 		return result;
 	}
 	
-	public double getICValue(List<Double> values, double alpha) {
+	public double getCIValue(List<Double> values, double alpha) {
 		double result = 0.0;
 		int size = values.size();
 		
