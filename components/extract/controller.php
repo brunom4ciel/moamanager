@@ -534,16 +534,7 @@ function verificaChecks() {
             			</select>
             		</td>            		
 				</tr>
-				<tr>
-					<td>	
-            			
-					</td>
-					<td style="padding-left:10px;">
-					
-            			<label><input type="checkbox" name="interval" id="interval" value="1" onclick="setCookieCheckbox(this);"/>Confidence Interval</label>
-            			
-					</td>
-				</tr>
+
 			</table>
 			
 					
