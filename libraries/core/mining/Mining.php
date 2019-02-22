@@ -49,9 +49,22 @@ class EvaluateExtract{
         return $this->evaluate_metrics;
     }
     
+    public function setEvaluateMetrics($key, $value){
+        if(isset($this->evaluate_metrics[$key])){
+            $this->evaluate_metrics[$key] = $value;
+        }        
+    }
+    
     public function getDescritiveStatistics(){
         return $this->descriptive_statistics;
     }
+    
+    public function setDescritiveStatistics($key, $value){
+        if(isset($this->descriptive_statistics[$key])){
+            $this->descriptive_statistics[$key] = $value;
+        }        
+    }
+    
         
 //     public function getText($key=""){
 //         $result = "";
@@ -88,7 +101,7 @@ class EvaluateExtract{
         if($strategy == self::EVALUATE_PREQUENTIAL_UFPE
             || $strategy == self::EVALUATE_PREQUENTIAL_UFPE_FOR_DETECTORS)
         {
-                        
+
             if($version == 1){
                                
                 $evaluate_metrics[self::ACCURACY] = "Accuracy:";                
@@ -108,6 +121,7 @@ class EvaluateExtract{
                 $evaluate_metrics[self::RECALL] = "Recall:";
                 $evaluate_metrics[self::MCC] = "MCC:";
                 $evaluate_metrics[self::F1] = "F1:";
+                
                 
                 $evaluate_metrics[self::FN] = "FN:";
                 $evaluate_metrics[self::FP] = "FP:";
@@ -906,9 +920,70 @@ class Mining extends EvaluateExtract{
             $strategy = $this->detectStrategy($file);
             
             $this->mappingMetrics($strategy);
+                        
+            
+            
+            $fn_fp_tn_tp = "";
+            
+            if($parameters[self::FN]==1
+                || $parameters[self::FP]==1
+                || $parameters[self::TN]==1
+                ||$parameters[self::TP]==1)
+            {                
+                
+                $metrics = $this->detect_FN_FP_TN_TP($file);
+                
+                if($metrics == "FN:"){
+                    
+                }else{
+                    
+                    if($parameters["descriptivestatistics"]== 'mean'
+                        || $parameters["descriptivestatistics"]== 'meanci')
+                    {
+                        
+                    }else if($parameters["descriptivestatistics"]== 'sum')
+                    {
+                        $metrics = "FN	FP	TN		TP";
+                    } 
+                    
+                    if($parameters[self::FN]==1)
+                    {
+                        $fn_fp_tn_tp = self::FN;
+                        $this->setEvaluateMetrics(self::FN, $metrics);
+                    }
+                    
+                    if($parameters[self::FP]==1)
+                    {
+                        $fn_fp_tn_tp = self::FP;
+                        $this->setEvaluateMetrics(self::FP, $metrics);
+                    }
+                    
+                    if($parameters[self::TN]==1)
+                    {
+                        $fn_fp_tn_tp = self::TN;
+                        $this->setEvaluateMetrics(self::TN, $metrics);
+                    }
+                    
+                    if($parameters[self::TP]==1)
+                    {
+                        $fn_fp_tn_tp = self::TP;
+                        $this->setEvaluateMetrics(self::TP, $metrics);
+                    }
+                                         
+                }
+                                  
+            }
             
             $evaluate_metrics = $this->getEvaluateMetrics();
             $descriptive_statistics = $this->getDescritiveStatistics();
+            
+//             var_dump($evaluate_metrics);
+//             var_dump($descriptive_statistics);
+//             exit("===");
+            
+//             if($parameters['descriptivestatistics'])
+            
+            
             
             try{
                 
@@ -923,13 +998,14 @@ class Mining extends EvaluateExtract{
                     
                     
                     if(//$strategy == "EvaluateInterleavedTestThenTrain2" 
-                        $strategy == "EvaluatePrequential2"
-                        || $strategy == "EvaluatePrequentialUFPE"
-                        || $strategy == "EvaluatePrequentialUFPEforDetectors"
+                        $strategy == self::EVALUATE_PREQUENTIAL2
+                        || $strategy == self::EVALUATE_PREQUENTIAL_UFPE
+                        || $strategy == self::EVALUATE_PREQUENTIAL_UFPE_FOR_DETECTORS
                         || $strategy == "Error")
                     {
                             
-                            
+                        
+//                         var_dump($parameters["descriptivestatistics"]);exit("===");
                             
                         if($strategy == "Error")
                         {
@@ -1082,6 +1158,7 @@ class Mining extends EvaluateExtract{
                                                 $statistical = $descriptive_statistics["meanci"] . " =";
                                                 $str_label = substr($buffer, 0, strlen($statistical));
                                                 
+                                               
                                                 
                                                 if($str_label == $statistical){//strpos($buffer, $statistical) !== FALSE){
                                                     
@@ -1117,24 +1194,159 @@ class Mining extends EvaluateExtract{
                                             || $strategy == self::EVALUATE_PREQUENTIAL_UFPE_FOR_DETECTORS)
                                         {
                                             
-                                            $statistical = $descriptive_statistics[$parameters["descriptivestatistics"]] . " =";                                            
-                                            $str_label = substr($buffer, 0, strlen($statistical));
-                                            
-                                            if($str_label == $statistical){//strpos($buffer, $statistical) !== FALSE){
+                                            if(!empty($fn_fp_tn_tp)){
+                                                                                                
+                                                if($parameters["descriptivestatistics"]== 'mean'
+                                                    || $parameters["descriptivestatistics"]== 'meanci')
+                                                {
+                                                    $statistical = $descriptive_statistics["meanci"] . " =";
+                                                    
+                                                    $str_label = substr($buffer, 0, strlen($statistical));
+                                                    
+                                                    $signal_ci = "+-";
+                                                    
+                                                    if($str_label == $statistical){
+                                                        
+                                                        $buffer = substr($buffer, strlen($statistical));
+                                                        $buffer = trim($buffer);
+                                                        
+                                                        $str_list = explode(")", $buffer);
+                                                        
+                                                        $fn = $str_list[0] . ")";
+                                                        $fp = $str_list[1] . ")";
+                                                        $tn = $str_list[2] . ")";
+                                                        $tp = $str_list[3] . ")";
+                                                        
+                                                        $str_list = explode(" ", $fn);
+                                                        $fn = trim($str_list[0]);
+                                                        $fn_ci = substr($str_list[1],3,strlen($str_list[1])-4);
+                                                        
+                                                        $str_list = explode(" ", $fp);
+                                                        $fp = trim($str_list[0]);
+                                                        $fp_ci = substr($str_list[1],3,strlen($str_list[1])-4);
+                                                        
+                                                        $str_list = explode(" ", $tn);
+                                                        $tn = trim($str_list[0]);
+                                                        $tn_ci = substr($str_list[1],3,strlen($str_list[1])-4);
+                                                        
+                                                        $str_list = explode(" ", $tp);
+                                                        $tp = trim($str_list[0]);
+                                                        $tp_ci = substr($str_list[1],3,strlen($str_list[1])-4);
+                                                        
+                                                        if(is_numeric($fn)){
+                                                            $value_ = $this->numeric_format_option($fn, $decimalprecision, $decimalseparator);
+                                                        }
+                                                        if(is_numeric($fn_ci)){
+                                                            $value_ci = $this->numeric_format_option($fn_ci, $decimalprecision, $decimalseparator);
+                                                        }
+                                                        
+                                                        if(is_numeric($fp)){
+                                                            $value_ = $this->numeric_format_option($fp, $decimalprecision, $decimalseparator);
+                                                        }
+                                                        if(is_numeric($fp_ci)){
+                                                            $value_2 = $this->numeric_format_option($fp_ci, $decimalprecision, $decimalseparator);
+                                                        }
+                                                        
+                                                        if(is_numeric($tn)){
+                                                            $value_ = $this->numeric_format_option($tn, $decimalprecision, $decimalseparator);
+                                                        }
+                                                        if(is_numeric($tn_ci)){
+                                                            $value_2 = $this->numeric_format_option($tn_ci, $decimalprecision, $decimalseparator);
+                                                        }
+                                                        
+                                                        if(is_numeric($tp)){
+                                                            $value_ = $this->numeric_format_option($tp, $decimalprecision, $decimalseparator);
+                                                        }
+                                                        if(is_numeric($tp_ci)){
+                                                            $value_2 = $this->numeric_format_option($tp_ci, $decimalprecision, $decimalseparator);
+                                                        }
+                                                        
+                                                        if($parameters["descriptivestatistics"] == "mean"){
+                                                            
+                                                        }else if($parameters["descriptivestatistics"] == "meanci"){
+                                                            
+                                                            if($fn_fp_tn_tp == "fn"){
+                                                                $value_ = $value_ . " (" . $signal_ci . $value_2 . ")";
+                                                                
+                                                            }else if($fn_fp_tn_tp == "fp"){
+                                                                $value_ = $value_ . " (" . $signal_ci . $value_2 . ")";
+                                                                
+                                                            }else if($fn_fp_tn_tp == "tn"){
+                                                                $value_ = $value_ . " (" . $signal_ci . $value_2 . ")";
+                                                                
+                                                            }else if($fn_fp_tn_tp == "tp"){
+                                                                $value_ = $value_ . " (" . $signal_ci . $value_2 . ")";
+                                                            }
+                                                            
+                                                        }
+                                                        
+                                                        array_push($json_return, array(
+                                                            $descriptive_statistics[$parameters["descriptivestatistics"]]=>$value_));
+                                                        
+                                                        $startFind = "";
+                                                        
+                                                    }
+                                                    
+                                                    
+                                                }else//($parameters["descriptivestatistics"]== 'sum')
+                                                {
+                                                    if(strpos($buffer, $metrics) !== FALSE){
+                                                        
+                                                        break;
+                                                    }
+                                                    
+                                                    $buffer = trim($buffer);
+                                                    $buffer = str_replace("\t\t", "\t", $buffer);
+                                                    $str_list = explode("\t", $buffer);
+                                                    
+                                                    if($fn_fp_tn_tp == "fn"){
+                                                        $value_ = $str_list[0];
+                                                        
+                                                    }else if($fn_fp_tn_tp == "fp"){
+                                                        $value_ = $str_list[1];
+                                                        
+                                                    }else if($fn_fp_tn_tp == "tn"){
+                                                        $value_ = $str_list[2];
+                                                        
+                                                    }else if($fn_fp_tn_tp == "tp"){
+                                                        $value_ = $str_list[3];
+                                                    }
+                                                    
+                                                    array_push($json_return, array(
+                                                        $descriptive_statistics[$parameters["descriptivestatistics"]]=>$value_));
+                                                    
+                                                    $startFind = "";
+                                                    break;
+                                                    
+                                                } 
                                                 
-                                                $tmp = $buffer;
-                                                $tmp = substr($tmp,strpos($tmp, $statistical)+strlen($statistical)+1);
-                                                $value_ = trim($tmp);
                                                 
-                                                if(is_numeric($value_)){
-                                                    $value_ = $this->numeric_format_option($value_, $decimalprecision, $decimalseparator);
+//                                                 $statistical = $descriptive_statistics[$parameters["descriptivestatistics"]] . " =";
+                                                
+                                                
+                                            }else{
+                                                
+                                                $statistical = $descriptive_statistics[$parameters["descriptivestatistics"]] . " =";
+                                                $str_label = substr($buffer, 0, strlen($statistical));
+                                                
+                                                if($str_label == $statistical){//strpos($buffer, $statistical) !== FALSE){
+                                                    
+                                                    $tmp = $buffer;
+                                                    $tmp = substr($tmp,strpos($tmp, $statistical)+strlen($statistical)+1);
+                                                    $value_ = trim($tmp);
+                                                    
+                                                    if(is_numeric($value_)){
+                                                        $value_ = $this->numeric_format_option($value_, $decimalprecision, $decimalseparator);
+                                                    }
+                                                    
+                                                    array_push($json_return, array(
+                                                        $descriptive_statistics[$parameters["descriptivestatistics"]]=>$value_));
+                                                    
+                                                    $startFind = "";
                                                 }
                                                 
-                                                array_push($json_return, array(
-                                                    $descriptive_statistics[$parameters["descriptivestatistics"]]=>$value_));
-                                                
-                                                $startFind = "";
                                             }
+                                            
                                             
                                         }
                                         
@@ -1256,6 +1468,44 @@ function detectStrategy($file){
 
 
 
+function detect_FN_FP_TN_TP($file){
+    
+    $result = "";    
+    try{
+        
+        if(!is_readable($file))
+        {
+            return $result;
+        }
+        
+        $handle = fopen($file, "r");
+        
+        if ($handle) {
+            
+            while (($buffer = fgets($handle, 4096)) !== false) {                
+                if(strpos($buffer, "learning evaluation instances,evaluation time") !== false)
+                {
+                    break;
+                }                
+                if(strpos($buffer, "FN	FP	TN	TP") !== FALSE){
+                    $result = "FN	FP	TN	TP";
+                    break;
+                }else if(strpos($buffer, "FN:") !== FALSE){
+                    $result = "FN:";
+                    break;
+                }else{
+                    $result = "Error";
+                }                
+            }            
+            fclose($handle);            
+        }
+        
+    }catch(Exception $e){
+        exit("error: ".$e->getMessage());
+    }    
+    
+    return $result;
+}
 
 
 
