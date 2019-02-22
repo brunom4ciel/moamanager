@@ -11,53 +11,168 @@ use Exception;
 
 defined('_EXEC') or die;
 
-class Mining{
-        
-    private $evaluate_metrics = array(
-        "accuracy"=>"Accuracy:",
-        "timer"=>"Timer:",
-        "memory"=>"Memory (B/s):",
-        "entropy"=>"Entropy:",
-        "mdr"=>"MDR:",
-        "mtfa"=>"MTFA:",
-        "mtd"=>"MTD:",
-        "mtr"=>"MTR:",
-        "dist"=>"General Mean", 
-        "precision"=>"Precision:", 
-        "recall"=>"Recall:",
-        "mcc"=>"MCC:",
-        "f1"=>"F1:",
-        "fn"=>"FN	FP	TN	TP", 
-        "fp"=>"FN	FP	TN	TP",
-        "tn"=>"FN	FP	TN	TP", 
-        "tp"=>"FN	FP	TN	TP"        
-    );
+
+class EvaluateExtract{
     
-    private $descriptive_statistics = array(
-        "meanci"=>"Mean (CI)",
-        "mean"=>"Mean",
-        "gmean"=>"Geometric Mean"
-        ,"median"=>"Median"
-        ,"mode"=>"Mode"
-        ,"sum"=>"Sum"
-        ,"variance"=>"Variance"
-        ,"sd"=>"Standard Deviation"
-        ,"md"=>"Mean Deviation"
-        ,"minimum"=>"Minimum"
-        ,"maximum"=>"Maximum"
-        ,"amplitude"=>"Amplitude"
-        ,"q1"=>"Lower Quartile 25% (Q1)"
-        ,"q3"=>"Upper Quartile 75% (Q3)"
-        ,"iqr"=>"Interquartile Range (IQR)"
-        ,"p10"=>"Percentile 10%"
-        ,"p90"=>"Percentile 90%"
-        ,"pckurtosis"=>"Percentage Coefficiente Kurtosis"
-        ,"ek"=>"Excess kurtosis"
-        ,"skewness"=>"Skewness"
-        ,"cskewness"=>"Coefficiente Skewness"
-        ,"sdistribution"=>"Skewed Distribution"       
-        ,"ci"=>"Confidence Interval"
-    );
+    private $strategy = "";
+    public const EVALUATE_PREQUENTIAL_UFPE = 'EvaluatePrequentialUFPE';
+    public const EVALUATE_PREQUENTIAL_UFPE_FOR_DETECTORS = 'EvaluatePrequentialUFPEforDetectors';
+    public const EVALUATE_PREQUENTIAL2 = 'EvaluatePrequential2';
+    
+    public const ACCURACY = "accuracy";
+    public const TIMER = "timer";
+    public const MEMORY = "memory";
+    
+    public const ENTROPY = "entropy";
+    
+    public const MDR = "mdr";
+    public const MTFA = "mtfa";
+    public const MTD = "mtd";
+    public const MTR = "mtr";
+    
+    public const DIST = "dist";
+    
+    public const PRECISION = "precision";
+    public const RECALL = "recall";
+    public const MCC = "mcc";
+    public const F1 = "f1";
+    
+    public const FN = "fn";
+    public const FP = "fp";
+    public const TN = "tn";
+    public const TP = "tp";
+        
+    private $evaluate_metrics = array();  
+    private $descriptive_statistics = array();
+    
+    public function getEvaluateMetrics(){
+        return $this->evaluate_metrics;
+    }
+    
+    public function getDescritiveStatistics(){
+        return $this->descriptive_statistics;
+    }
+        
+//     public function getText($key=""){
+//         $result = "";
+        
+//         $labels = array(self::ACCURACY=>"Accuracy:",
+//                         self::TIMER=>"Timer:",
+//                         self::MEMORY=>"Memory (B/s):",
+//                         self::ENTROPY=>"Entropy:",
+//                         self::MDR=>"MDR:",
+//                         self::MTFA=>"MTFA:",
+//                         self::MTD=>"MTD:",
+//                         self::MTR=>"MTR:",
+//                         self::DIST=>"General Mean =",
+//                         self::PRECISION=>"Precision:",
+//                         self::RECALL=>"Recall:",
+//                         self::MCC=>"MCC:",
+//                         self::F1=>"F1:",
+//                         self::FN=>"FN:",
+//                         self::FP=>"FP:",
+//                         self::TN=>"TN:",
+//                         self::TP=>"TP:");
+        
+//         if(isset($labels[$key])){
+//             $result = $labels[$key];
+//         }
+//         return $result;
+//     }
+    
+    public function mappingMetrics($strategy = "EvaluatePrequentialUFPE", $version = 1){
+        
+        $evaluate_metrics = array();
+        $descriptive_statistics = array();
+        
+        if($strategy == self::EVALUATE_PREQUENTIAL_UFPE
+            || $strategy == self::EVALUATE_PREQUENTIAL_UFPE_FOR_DETECTORS)
+        {
+                        
+            if($version == 1){
+                               
+                $evaluate_metrics[self::ACCURACY] = "Accuracy:";                
+                $evaluate_metrics[self::TIMER] = "Timer:";
+                $evaluate_metrics[self::MEMORY] = "Memory (B/s):";
+            
+                $evaluate_metrics[self::ENTROPY] = "Entropy:";
+                
+                $evaluate_metrics[self::MDR] = "MDR:";
+                $evaluate_metrics[self::MTFA] = "MTFA:";
+                $evaluate_metrics[self::MTD] = "MTD:";
+                $evaluate_metrics[self::MTR] = "MTR:";
+                
+                $evaluate_metrics[self::DIST] = "General Mean =";
+                
+                $evaluate_metrics[self::PRECISION] = "Precision:";
+                $evaluate_metrics[self::RECALL] = "Recall:";
+                $evaluate_metrics[self::MCC] = "MCC:";
+                $evaluate_metrics[self::F1] = "F1:";
+                
+                $evaluate_metrics[self::FN] = "FN:";
+                $evaluate_metrics[self::FP] = "FP:";
+                $evaluate_metrics[self::TN] = "TN:";
+                $evaluate_metrics[self::TP] = "TP:";
+                
+                
+                $descriptive_statistics["meanci"]="Mean (CI)";
+                $descriptive_statistics["mean"]="Mean";
+                $descriptive_statistics["gmean"]="Geometric Mean";
+                $descriptive_statistics["median"] = "Median";
+                $descriptive_statistics["mode"] = "Mode";
+                $descriptive_statistics["sum"] = "Sum";
+                $descriptive_statistics["variance"] = "Variance";
+                $descriptive_statistics["sd"] = "Standard Deviation";
+                $descriptive_statistics["md"] = "Mean Deviation";
+                $descriptive_statistics["minimum"] = "Minimum";
+                $descriptive_statistics["maximum"] = "Maximum";
+                $descriptive_statistics["amplitude"] = "Amplitude";
+                $descriptive_statistics["q1"] = "Lower Quartile 25% (Q1)";
+                $descriptive_statistics["q3"] = "Upper Quartile 75% (Q3)";
+                $descriptive_statistics["iqr"] = "Interquartile Range (IQR)";
+                $descriptive_statistics["p10"] = "Percentile 10%";
+                $descriptive_statistics["p90"] = "Percentile 90%";
+                $descriptive_statistics["pckurtosis"] = "Percentage Coefficiente Kurtosis";
+                $descriptive_statistics["ek"] = "Excess kurtosis";
+                $descriptive_statistics["skewness"] = "Skewness";
+                $descriptive_statistics["cskewness"] = "Coefficiente Skewness";
+                $descriptive_statistics["sdistribution"] = "Skewed Distribution";
+                $descriptive_statistics["ci"] = "Confidence Interval";            
+            }        
+            
+            $this->evaluate_metrics = $evaluate_metrics;
+            $this->descriptive_statistics = $descriptive_statistics;
+            
+        }else if($strategy == self::EVALUATE_PREQUENTIAL2){
+            
+            $evaluate_metrics[self::ACCURACY] = "Accuracy:";
+            $evaluate_metrics[self::TIMER] = "Timer:";
+            $evaluate_metrics[self::MEMORY] = "Memory (B/s):";
+                        
+            $evaluate_metrics[self::DIST] = "General Mean =";
+            
+            $evaluate_metrics[self::PRECISION] = "Mean Distance		FN	FP	TN		TP	Precision	Recall		MCC		F1";
+            $evaluate_metrics[self::RECALL] = $evaluate_metrics[self::PRECISION];
+            $evaluate_metrics[self::MCC] = $evaluate_metrics[self::PRECISION];
+            $evaluate_metrics[self::F1] = $evaluate_metrics[self::PRECISION];
+            
+            $evaluate_metrics[self::FN] = $evaluate_metrics[self::PRECISION];
+            $evaluate_metrics[self::FP] = $evaluate_metrics[self::PRECISION];
+            $evaluate_metrics[self::TN] = $evaluate_metrics[self::PRECISION];
+            $evaluate_metrics[self::TP] = $evaluate_metrics[self::PRECISION];            
+            
+            $descriptive_statistics["meanci"]="Mean (CI)";
+            
+            $this->evaluate_metrics = $evaluate_metrics;
+            $this->descriptive_statistics = $descriptive_statistics;
+        }
+       
+    }
+
+}
+
+class Mining extends EvaluateExtract{
+        
     
     function convertCSV($arrayElements, $parameters, $breakline=1)
     {
@@ -767,94 +882,20 @@ class Mining{
             }
         }
         
-        if(!is_readable($file))
-        {
+//         if(!is_readable($file))
+//         {
 
-            foreach($this->evaluate_metrics as $key=>$item){
+//             foreach($this->evaluate_metrics as $key=>$item){
                 
-                if(strpos($buffer, $item) !== FALSE){
-                    if($parameters[$key] == 1){
-                        array_push($json_return, array($item=>"*"));
-                    }
-                }
-            }
+//                 if(strpos($buffer, $item) !== FALSE){
+//                     if($parameters[$key] == 1){
+//                         array_push($json_return, array($item=>"*"));
+//                     }
+//                 }
+//             }
             
-//             if($parameters["accuracy"]==1)
-//             {
-//                 array_push($json_return, array("Accuracy"=>"*"));
-//             }            
-//             if($parameters["timer"]==1)
-//             {
-//                 array_push($json_return, array("Timer"=>"*"));
-//             }
-//             if($parameters["memory"]==1)
-//             {
-//                 array_push($json_return, array("Memory"=>"*"));
-//             }
-//             if($parameters["entropy"]==1)
-//             {
-//                 array_push($json_return, array("Entropy"=>"*"));
-//             }            
-//             if($parameters["resume"]==1)
-//             {
-//                 $str = implode("\t", array('*','*','*','*','*','*','*','*','*','*','*'));
-//                 array_push($json_return, array("resume"=>$str));
-//             }
-//             if($parameters["dist"]==1)
-//             {
-//                 array_push($json_return, array("dist"=>"*"));
-//             }
-//             if($parameters["fn"]==1)
-//             {
-//                 array_push($json_return, array("fn"=>"*"));
-//             }
-//             if($parameters["fp"]==1)
-//             {
-//                 array_push($json_return, array("fp"=>"*"));
-//             }
-//             if($parameters["tn"]==1)
-//             {
-//                 array_push($json_return, array("tn"=>"*"));
-//             }
-//             if($parameters["tp"]==1)
-//             {
-//                 array_push($json_return, array("tp"=>"*"));
-//             }
-//             if($parameters["precision"]==1)
-//             {
-//                 array_push($json_return, array("precision"=>"*"));
-//             }
-//             if($parameters["recall"]==1)
-//             {
-//                 array_push($json_return, array("recall"=>"*"));
-//             }
-//             if($parameters["mcc"]==1)
-//             {
-//                 array_push($json_return, array("mcc"=>"*"));
-//             }
-//             if($parameters["f1"]==1)
-//             {
-//                 array_push($json_return, array("f1"=>"*"));
-//             }
-//             if($parameters["mdr"]==1)
-//             {
-//                 array_push($json_return, array("mdr"=>"*"));
-//             }
-//             if($parameters["mtfa"]==1)
-//             {
-//                 array_push($json_return, array("mtfa"=>"*"));
-//             }
-//             if($parameters["mtd"]==1)
-//             {
-//                 array_push($json_return, array("mtd"=>"*"));
-//             }
-//             if($parameters["mtr"]==1)
-//             {
-//                 array_push($json_return, array("mtr"=>"*"));
-//             }
-
-            return $json_return;
-        }
+//             return $json_return;
+//         }
         
         $handle = fopen($file, "r");
         
@@ -863,6 +904,11 @@ class Mining{
             $startFind = "";            
             $accuracy_open = false;            
             $strategy = $this->detectStrategy($file);
+            
+            $this->mappingMetrics($strategy);
+            
+            $evaluate_metrics = $this->getEvaluateMetrics();
+            $descriptive_statistics = $this->getDescritiveStatistics();
             
             try{
                 
@@ -876,1000 +922,239 @@ class Mining{
                     }
                     
                     
-                    if($strategy == "EvaluateInterleavedTestThenTrain2" ||
+                    if(//$strategy == "EvaluateInterleavedTestThenTrain2" 
                         $strategy == "EvaluatePrequential2"
                         || $strategy == "EvaluatePrequentialUFPE"
                         || $strategy == "EvaluatePrequentialUFPEforDetectors"
-                        || $strategy == "Error"){
+                        || $strategy == "Error")
+                    {
                             
                             
-                            if($strategy == "Error")
-                            {
-                                $startFind = "Error";
+                            
+                        if($strategy == "Error")
+                        {
+                            $startFind = "Error";
+                            
+                        }else{
+                            foreach($evaluate_metrics as $key=>$item){
                                 
-                            }else{
-                                foreach($this->evaluate_metrics as $key=>$item){
-                                    
-                                    if(strpos($buffer, $item) !== FALSE){
-                                        if($parameters[$key] == 1){
-                                            $startFind = $key;
-                                            break;
-                                        }                                        
-                                    }
+                                if(strpos($buffer, $item) !== FALSE){
+                                    if($parameters[$key] == 1){
+                                        $startFind = $key;
+                                        break;
+                                    }                                        
                                 }
                             }
+                        }
                             
-                            foreach($this->evaluate_metrics as $key=>$item){
-                                                      
-                                if($startFind == $key){
-                                    if($parameters[$key] == 1){                                        
+                        foreach($evaluate_metrics as $key=>$item)
+                        {                          
+                            
+                            if($startFind == $key){                                
+                                
+                                
+                                if($key ==  self::DIST){
+                                    
+                                    
+                                    if($parameters[$key] == 1){
                                         
-                                        $statistical = $this->descriptive_statistics[$parameters["descriptivestatistics"]] . " =";
-                                                                                
-//                                         if(strpos($buffer, "Confidence Interval =")>-1 || strpos($buffer, "Mean (CI) =")>-1){
-                                        if(strpos($buffer, $statistical) !== FALSE){
+//                                         $statistical = $descriptive_statistics[$parameters["descriptivestatistics"]] . " =";
+                                        
+//                                         $str_label = substr($buffer, 0, strlen($statistical));
+                                        
+                                        
+//                                         if($str_label == $statistical){//strpos($buffer, $statistical) !== FALSE){
                                             
                                             $tmp = $buffer;
-                                            $tmp = substr($tmp,strpos($tmp, $statistical)+strlen($statistical)+1);
-                                            $value_ = $tmp;
-                                            
-                                            
-                                            
-//                                             if($parameters["descriptivestatistics"] == "mean"){
-//                                                 $value_ = substr($value_,0,strpos($value_, ")")+1);
-//                                                 $value_aux = $value_;
-                                                
-//                                                 $value_ = substr($value_,0,strpos($value_, "(")-1);
-//                                                 $value_ = trim($value_);
-//                                             }
-                                            
-                                            $value_ = trim($value_);
+                                            $tmp = substr($tmp,strpos($tmp, "=")+1);
+                                            $value_ = trim($tmp);
                                             
                                             if(is_numeric($value_)){
                                                 $value_ = $this->numeric_format_option($value_, $decimalprecision, $decimalseparator);
-                                            }                                            
-                                            
-                                            
-//                                             if($parameters["interval"] == 1){
-                                                
-//                                                 $value_aux = substr($value_aux,strpos($value_aux, "(")-1);
-//                                                 $value_aux = trim($value_aux);
-//                                                 $value_ .= " " . $value_aux;
-//                                             }                                            
-                                            
+                                            }
                                             
                                             array_push($json_return, array(
-                                                $this->descriptive_statistics[$parameters["descriptivestatistics"]]=>$value_));
+                                                $descriptive_statistics[$parameters["descriptivestatistics"]]=>$value_));
                                             
                                             $startFind = "";
-
-                                        }
+//                                         }
                                         
                                     }
-                                }
-                            }
-                            
-                            
-                            
-                            
-                            
-                            
-                           /* if(strpos($buffer, "Accuracy:")>-1){
-                                $startFind = "accuracy";
-                                $accuracy_open = true;
-                            }
-                            else if(strpos($buffer, "Time:")>-1){
-                                $startFind = "time";
-                            }
-                            else if(strpos($buffer, "Memory (B/s):")>-1){
-                                $startFind = "memory";
-                            }
-                            else if(strpos($buffer, "General Mean = ")>-1){
-                                $startFind = "dist";
-                            }
-                            else if(strpos($buffer, "Mean Distance")>-1){
-                                $startFind = "resume";
-                            }
-                            else if(strpos($buffer, "Entropy")>-1){
-                                $startFind = "entropy";
-                            }
-                            else if(strpos($buffer, "MDR:")>-1){
-                                $startFind = "mdr";
-                            }
-                            else if(strpos($buffer, "MTD:")>-1){
-                                $startFind = "mtd";
-                            }
-                            else if(strpos($buffer, "MTFA:")>-1){
-                                $startFind = "mtfa";
-                            }
-                            else if(strpos($buffer, "MTR:")>-1){
-                                $startFind = "mtr";
-                            }
-                            else if(strpos($buffer, "Precision:")>-1){
-                                $startFind = "precision";
-                            }
-                            else if(strpos($buffer, "Recall:")>-1){
-                                $startFind = "recall";
-                            }
-                            else if(strpos($buffer, "MCC:")>-1){
-                                $startFind = "mcc";
-                            }
-                            else if(strpos($buffer, "F1:")>-1){
-                                $startFind = "f1";
-                            }
-                            else if(strpos($buffer, "Dist:")>-1){
-                                $startFind = "dist";
-                            }  
-                            else if(strpos($buffer, "FN	FP	TN	TP")>-1){
-                                $startFind = "matrix";
-                            } 
-                            else{
-                                if($strategy == "Error" && $accuracy_open == false)
-                                {
-                                    $startFind = "Error";
-                                }
-                            }*/
-                            
-                            
-                            
-                            switch($startFind){
-                                
-//                                 case 'accuracy':
                                     
-//                                     if($parameters["accuracy"]==1){
-                                        
-// //                                         if($parameters["descriptivestatistics"])
-                                        
-//                                         if(strpos($buffer, "Confidence Interval =")>-1 || strpos($buffer, "Mean (CI) =")>-1){
-                                            
-                                                                                        
-//                                             //$accuracy = substr($accuracy,strpos($accuracy, "Confidence Interval =")+22);
-                                            
-//                                             $tmp = $buffer;
-                                            
-//                                             if(strpos($buffer, "Confidence Interval =")!==false){
-//                                                 $tmp = substr($tmp,strpos($tmp, "Confidence Interval =")+strlen("Confidence Interval =")+1);
-//                                             }elseif(strpos($buffer, "Mean (CI) =")!==false){
-//                                                 $tmp = substr($tmp,strpos($tmp, "Mean (CI) =")+strlen("Mean (CI) =")+1);
-//                                             }
-                                            
-//                                             $accuracy = $tmp;                                                                                        
-//                                             $accuracy = substr($accuracy,0,strpos($accuracy, ")")+1);                                            
-//                                             $accuracy_aux = $accuracy;
-                                            
-//                                             $accuracy = substr($accuracy,0,strpos($accuracy, "(")-1);
-//                                             $accuracy = trim($accuracy);
-                                            
-                                            
-//                                             $accuracy = $this->numeric_format_option($accuracy, $decimalprecision, $decimalseparator);
-                                            
-//                                             if($parameters["interval"] == 1){
-//                                                 $accuracy_aux = substr($accuracy_aux,strpos($accuracy_aux, "(")-1);
-//                                                 $accuracy_aux = trim($accuracy_aux);
-//                                                 $accuracy .= " " . $accuracy_aux;
-//                                             }
-                                                         
-//                                             array_push($json_return, array("Accuracy"=>$accuracy));
-                                            
-//                                             $startFind = "";
-//                                         }
+                                }else{
+                                    
+                                    if($parameters[$key] == 1){
                                         
                                         
                                         
-//                                     }
-                                    
-//                                     break;
-//                                 case 'time':
-                                    
-//                                     if($parameters["timer"]==1){
-                                        
-//                                         //if(strpos($buffer, "Confidence Interval =")>-1){
-//                                         if(strpos($buffer, "Confidence Interval =")>-1 || strpos($buffer, "Mean (CI) =")>-1){
-//                                             //$atime = $buffer;
+                                        if($strategy == self::EVALUATE_PREQUENTIAL2){
                                             
-//                                             //$atime = substr($atime,strpos($atime, "Time:")+5);
-//                                             //$atime = substr($atime,strpos($atime, "Confidence Interval =")+22);
+                                            $buffer = trim($buffer);
                                             
-//                                             $tmp = $buffer;
-                                            
-//                                             if(strpos($buffer, "Confidence Interval =")!==false){
-//                                                 $tmp = substr($tmp,strpos($tmp, "Confidence Interval =")+strlen("Confidence Interval =")+1);
-//                                             }elseif(strpos($buffer, "Mean (CI) =")!==false){
-//                                                 $tmp = substr($tmp,strpos($tmp, "Mean (CI) =")+strlen("Mean (CI) =")+1);
-//                                             }
-                                            
-//                                             $atime = $tmp;
-//                                             $atime = substr($atime,0,strpos($atime, ")")+1);
-//                                             $atime_aux = $atime;
-                                            
-//                                             $atime = substr($atime,0,strpos($atime, "(")-1);
-//                                             $atime = trim($atime);
-                                            
-//                                             $atime = $this->numeric_format_option($atime, $decimalprecision, $decimalseparator);
-                                            
-//                                             if($parameters["interval"]==1){
-//                                                 $atime_aux = substr($atime_aux,strpos($atime_aux, "(")-1);
-//                                                 $atime_aux = trim($atime_aux);
-//                                                 $atime .= " " . $atime_aux;
-//                                             }
-                                            
-                                            
-//                                             array_push($json_return, array("Timer"=>$atime));
-                                            
-//                                         }
-//                                     }
-                                    
-//                                     break;
-//                                 case 'memory':
-                                    
-//                                     if($parameters["memory"]==1){
-                                        
-//                                         if(strpos($buffer, "Confidence Interval =")>-1 || strpos($buffer, "Mean (CI) =")>-1){
-                                            
-//                                             $tmp = $buffer;
-                                            
-//                                             if(strpos($buffer, "Confidence Interval =")!==false){
-//                                                 $tmp = substr($tmp,strpos($tmp, "Confidence Interval =")+strlen("Confidence Interval =")+1);
-//                                             }elseif(strpos($buffer, "Mean (CI) =")!==false){
-//                                                 $tmp = substr($tmp,strpos($tmp, "Mean (CI) =")+strlen("Mean (CI) =")+1);
-//                                             }
-                                            
-//                                             $amemory = $tmp;                                            
-//                                             $amemory = substr($amemory,0,strpos($amemory, ")")+1);
-//                                             $amemory_aux = $amemory;
-                                            
-//                                             $amemory = substr($amemory,0,strpos($amemory, "(")-1);
-//                                             $amemory = trim($amemory);
-                                                                                        
-//                                             $amemory = $this->numeric_format_option($amemory, $decimalprecision, $decimalseparator);
-                                            
-//                                             if($parameters["interval"]==1){
-//                                                 $amemory_aux = substr($amemory_aux,strpos($amemory_aux, "(")-1);
-//                                                 $amemory_aux = trim($amemory_aux);
-//                                                 $amemory .= " " . $amemory_aux;
-//                                             }
-                                            
-//                                             array_push($json_return, array("Memory"=>$amemory));
-                                            
-//                                             //fim
-                                            
-//                                             break 2;
-//                                         }
-//                                     }
-                                    
-//                                     break;    
-//                                 case 'mdr':
-                                
-// 									if($parameters["mdr"]==1){
-                                        
-//                                         if(strpos($buffer, "Confidence Interval =")>-1 || strpos($buffer, "Mean (CI) =")>-1){
-                                            
-//                                             $tmp = $buffer;
-                                            
-//                                             if(strpos($buffer, "Confidence Interval =")!==false){
-//                                                 $tmp = substr($tmp,strpos($tmp, "Confidence Interval =")+strlen("Confidence Interval =")+1);
-//                                             }elseif(strpos($buffer, "Mean (CI) =")!==false){
-//                                                 $tmp = substr($tmp,strpos($tmp, "Mean (CI) =")+strlen("Mean (CI) =")+1);
-//                                             }
-                                            
-//                                             $value = $tmp;                                            
-//                                             $value = substr($value,0,strpos($value, ")")+1);
-//                                             $value_aux = $value;
-                                            
-//                                             $value = substr($value,0,strpos($value, "(")-1);
-//                                             $value = trim($value);
-                                                                                        
-//                                             $value = $this->numeric_format_option($value, $decimalprecision, $decimalseparator);
-                                            
-//                                             if($parameters["interval"]==1){
-//                                                 $value_aux = substr($value_aux,strpos($value_aux, "(")-1);
-//                                                 $value_aux = trim($value_aux);
-//                                                 $value .= " " . $value_aux;
-//                                             }
-                                            
-//                                             array_push($json_return, array("MDR"=>$value));
-       
-//                                             break 2;
-//                                         }
-//                                     }
-                                    
-//                                     break; 
-                                    
-//                                 case 'mtd':
-                                
-// 									if($parameters["mtd"]==1){
-                                        
-//                                         if(strpos($buffer, "Confidence Interval =")>-1 || strpos($buffer, "Mean (CI) =")>-1){
-                                            
-//                                             $tmp = $buffer;
-                                            
-//                                             if(strpos($buffer, "Confidence Interval =")!==false){
-//                                                 $tmp = substr($tmp,strpos($tmp, "Confidence Interval =")+strlen("Confidence Interval =")+1);
-//                                             }elseif(strpos($buffer, "Mean (CI) =")!==false){
-//                                                 $tmp = substr($tmp,strpos($tmp, "Mean (CI) =")+strlen("Mean (CI) =")+1);
-//                                             }
-                                            
-//                                             $value = $tmp;                                            
-//                                             $value = substr($value,0,strpos($value, ")")+1);
-//                                             $value_aux = $value;
-                                            
-//                                             $value = substr($value,0,strpos($value, "(")-1);
-//                                             $value = trim($value);
-                                                                                        
-//                                             $value = $this->numeric_format_option($value, $decimalprecision, $decimalseparator);
-                                            
-//                                             if($parameters["interval"]==1){
-//                                                 $value_aux = substr($value_aux,strpos($value_aux, "(")-1);
-//                                                 $value_aux = trim($value_aux);
-//                                                 $value .= " " . $value_aux;
-//                                             }
-                                            
-//                                             array_push($json_return, array("MTD"=>$value));
-       
-//                                             break 2;
-//                                         }
-//                                     }
-                                    
-//                                     break; 
-                                    
-//                                 case 'mtfa':
-                                
-// 									if($parameters["mtfa"]==1){
-                                        
-//                                         if(strpos($buffer, "Confidence Interval =")>-1 || strpos($buffer, "Mean (CI) =")>-1){
-                                            
-//                                             $tmp = $buffer;
-                                            
-//                                             if(strpos($buffer, "Confidence Interval =")!==false){
-//                                                 $tmp = substr($tmp,strpos($tmp, "Confidence Interval =")+strlen("Confidence Interval =")+1);
-//                                             }elseif(strpos($buffer, "Mean (CI) =")!==false){
-//                                                 $tmp = substr($tmp,strpos($tmp, "Mean (CI) =")+strlen("Mean (CI) =")+1);
-//                                             }
-                                            
-//                                             $value = $tmp;                                            
-//                                             $value = substr($value,0,strpos($value, ")")+1);
-//                                             $value_aux = $value;
-                                            
-//                                             $value = substr($value,0,strpos($value, "(")-1);
-//                                             $value = trim($value);
-                                                                                        
-//                                             $value = $this->numeric_format_option($value, $decimalprecision, $decimalseparator);
-                                            
-//                                             if($parameters["interval"]==1){
-//                                                 $value_aux = substr($value_aux,strpos($value_aux, "(")-1);
-//                                                 $value_aux = trim($value_aux);
-//                                                 $value .= " " . $value_aux;
-//                                             }
-                                            
-//                                             array_push($json_return, array("MTFA"=>$value));
-       
-//                                             break 2;
-//                                         }
-//                                     }
-                                    
-//                                     break; 
-                                    
-//                                 case 'mtr':
-                                    
-//                                     if($parameters["mtr"]==1){
-                                        
-//                                         if(strpos($buffer, "Confidence Interval =")>-1 || strpos($buffer, "Mean (CI) =")>-1){
-                                            
-//                                             $tmp = $buffer;
-                                            
-//                                             if(strpos($buffer, "Confidence Interval =")!==false){
-//                                                 $tmp = substr($tmp,strpos($tmp, "Confidence Interval =")+strlen("Confidence Interval =")+1);
-//                                             }elseif(strpos($buffer, "Mean (CI) =")!==false){
-//                                                 $tmp = substr($tmp,strpos($tmp, "Mean (CI) =")+strlen("Mean (CI) =")+1);
-//                                             }
-                                            
-//                                             $value = $tmp;                                            
-//                                             $value = substr($value,0,strpos($value, ")")+1);
-//                                             $value_aux = $value;
-                                            
-//                                             $value = substr($value,0,strpos($value, "(")-1);
-//                                             $value = trim($value);
-                                                                                        
-//                                             $value = $this->numeric_format_option($value, $decimalprecision, $decimalseparator);
-                                            
-//                                             if($parameters["interval"]==1){
-//                                                 $value_aux = substr($value_aux,strpos($value_aux, "(")-1);
-//                                                 $value_aux = trim($value_aux);
-//                                                 $value .= " " . $value_aux;
-//                                             }                                            									
-											
-//                                             array_push($json_return, array("MTR"=>$value));
-       
-//                                             break 2;
-//                                         }
-//                                     }
-                                    
-//                                     break;                                                                    
-//                                 case 'entropy':
-                                    
-//                                     if($parameters["entropy"]==1){
-                                        
-//                                         //if(strpos($buffer, "Confidence Interval =")>-1){
-//                                         if(strpos($buffer, "Confidence Interval =")>-1 || strpos($buffer, "Mean (CI) =")>-1){
-//                                             //$amemory = $buffer;
-                                            
-//                                             //$amemory = substr($amemory,strpos($amemory, "Memory (B/s):")+12);
-//                                             //$amemory = substr($amemory,strpos($amemory, "Confidence Interval =")+22);
-                                            
-//                                             $tmp = $buffer;
-                                            
-//                                             if(strpos($buffer, "Confidence Interval =")!==false){
-//                                                 $tmp = substr($tmp,strpos($tmp, "Confidence Interval =")+strlen("Confidence Interval =")+1);
-//                                             }elseif(strpos($buffer, "Mean (CI) =")!==false){
-//                                                 $tmp = substr($tmp,strpos($tmp, "Mean (CI) =")+strlen("Mean (CI) =")+1);
-//                                             }
-                                            
-//                                             $amemory = $tmp;                                            
-//                                             $amemory = substr($amemory,0,strpos($amemory, ")")+1);
-//                                             $amemory_aux = $amemory;
-                                            
-//                                             $amemory = substr($amemory,0,strpos($amemory, "(")-1);
-//                                             $amemory = trim($amemory);
-                                            
-// //                                             if($parameters["interval"]!=1){
-// //                                                 $amemory = substr($amemory,0,strpos($amemory, "(")-1);
-// //                                                 $amemory = trim($amemory);
-// //                                             }
-                                            
-//                                             $amemory = $this->numeric_format_option($amemory, $decimalprecision, $decimalseparator);
-                                            
-//                                             if($parameters["interval"]==1){
-//                                                 $amemory_aux = substr($amemory_aux,strpos($amemory_aux, "(")-1);
-//                                                 $amemory_aux = trim($amemory_aux);
-//                                                 $amemory .= " " . $amemory_aux;
-//                                             }
-                                            
-//                                             array_push($json_return, array("Entropy"=>$amemory));
-                                            
-//                                             //fim
-                                            
-//                                             break 2;
-//                                         }
-//                                     }
-                                    
-//                                     break;  
-                                
-                            }
-                            
-                            
-                            if($strategy == "EvaluatePrequentialUFPE")
-                            {
-                                switch($startFind)
-                                {
-//                                     case 'matrix':
-                                        
-//                                         if($parameters["fn"]==1 || $parameters["fp"]==1
-//                                         || $parameters["tn"]==1 || $parameters["tp"]==1){
-                                            
-//                                             if(strpos($buffer, "Mean (CI) =")>-1){
+                                            if($parameters["dist"]==1 
+                                                || $parameters["fn"]==1 
+                                                || $parameters["fp"]==1
+                                                || $parameters["tn"]==1
+                                                ||$parameters["tp"]==1
+                                                || $parameters["precision"]==1
+                                                || $parameters["recall"]==1
+                                                || $parameters["mcc"]==1
+                                                || $parameters["f1"]==1){
                                                 
-//                                                 $tmp = $buffer;
+                                                if(trim($buffer) == $evaluate_metrics[self::FN]){
+                                                    break;
+                                                }
                                                 
-//                                                 if(strpos($buffer, "Mean (CI) =")!==false){
-//                                                     $tmp = substr($tmp,strpos($tmp, "Mean (CI) =")+strlen("Mean (CI) =")+1);
-//                                                 }
+                                                $detector_space = false;
+                                                $newValues = "";
                                                 
-//                                                 $matrix = explode(")", $tmp);
-//                                                 foreach($matrix as $key=>$item){
-//                                                     $matrix[$key] = $item . ")";
-//                                                 }
-                                                
-// //                                                 $fn = $matrix[0];
-// //                                                 $fp = $matrix[1];
-// //                                                 $tn = $matrix[2];
-// //                                                 $tp = $matrix[3];                   
-                                                
-//                                                 foreach($matrix as $key=>$item)
-//                                                 {
+                                                for($w = 0; $w < strlen($buffer); $w++){
                                                     
-//                                                     $item = substr($item,0,strpos($item, ")")+1);
-//                                                     $item_aux = $item;
-                                                    
-//                                                     $item = substr($item,0,strpos($item, "(")-1);
-//                                                     $item = trim($item);
-                                                    
-//                                                     $item = $this->numeric_format_option($item, $decimalprecision, $decimalseparator);
-                                                    
-//                                                     if($parameters["interval"]==1){
-//                                                         $item_aux = substr($item_aux,strpos($item_aux, "(")-1);
-//                                                         $item_aux = trim($item_aux);
-//                                                         $item .= " " . $item_aux;
-//                                                     }
-                                                                                  
-//                                                     if($key == 0){
-//                                                         if($parameters["fn"]==1){
-//                                                             array_push($json_return, array("fn"=>$item));
-//                                                         }
-//                                                     }else if($key == 1){
-//                                                         if($parameters["fp"]==1){
-//                                                             array_push($json_return, array("fp"=>$item));
-//                                                         }
-//                                                     }else if($key == 2){
-//                                                         if($parameters["tn"]==1){
-//                                                             array_push($json_return, array("tn"=>$item));
-//                                                         }
-//                                                     }else if($key == 3){
-//                                                         if($parameters["tp"]==1){
-//                                                             array_push($json_return, array("tp"=>$item));
-//                                                         }
-//                                                     }
-                                                    
-                                                    
-//                                                 }
-
-                                                
-//                                                 break 2;
-//                                             }
-//                                         }
-                                        
-//                                         break;
-                                        
-//                                     case 'precision':
-                                        
-//                                         if($parameters["precision"]==1){
-                                            
-//                                             if(strpos($buffer, "Confidence Interval =")>-1 || strpos($buffer, "Mean (CI) =")>-1){
-                                                
-//                                                 $tmp = $buffer;
-                                                
-//                                                 if(strpos($buffer, "Confidence Interval =")!==false){
-//                                                     $tmp = substr($tmp,strpos($tmp, "Confidence Interval =")+strlen("Confidence Interval =")+1);
-//                                                 }elseif(strpos($buffer, "Mean (CI) =")!==false){
-//                                                     $tmp = substr($tmp,strpos($tmp, "Mean (CI) =")+strlen("Mean (CI) =")+1);
-//                                                 }
-                                                
-//                                                 $value = $tmp;
-//                                                 $value = substr($value,0,strpos($value, ")")+1);
-//                                                 $value_aux = $value;
-                                                
-//                                                 $value = substr($value,0,strpos($value, "(")-1);
-//                                                 $value = trim($value);
-                                                
-//                                                 $value = $this->numeric_format_option($value, $decimalprecision, $decimalseparator);
-                                                
-//                                                 if($parameters["interval"]==1){
-//                                                     $value_aux = substr($value_aux,strpos($value_aux, "(")-1);
-//                                                     $value_aux = trim($value_aux);
-//                                                     $value .= " " . $value_aux;
-//                                                 }
-                                                
-//                                                 array_push($json_return, array("Precision"=>$value));
-                                                
-//                                                 break 2;
-//                                             }
-//                                         }
-                                        
-//                                         break;
-                                    
-//                                     case 'recall':
-                                        
-//                                         if($parameters["recall"]==1){
-                                            
-//                                             if(strpos($buffer, "Confidence Interval =")>-1 || strpos($buffer, "Mean (CI) =")>-1){
-                                                
-//                                                 $tmp = $buffer;
-                                                
-//                                                 if(strpos($buffer, "Confidence Interval =")!==false){
-//                                                     $tmp = substr($tmp,strpos($tmp, "Confidence Interval =")+strlen("Confidence Interval =")+1);
-//                                                 }elseif(strpos($buffer, "Mean (CI) =")!==false){
-//                                                     $tmp = substr($tmp,strpos($tmp, "Mean (CI) =")+strlen("Mean (CI) =")+1);
-//                                                 }
-                                                
-//                                                 $value = $tmp;
-//                                                 $value = substr($value,0,strpos($value, ")")+1);
-//                                                 $value_aux = $value;
-                                                
-//                                                 $value = substr($value,0,strpos($value, "(")-1);
-//                                                 $value = trim($value);
-                                                
-//                                                 $value = $this->numeric_format_option($value, $decimalprecision, $decimalseparator);
-                                                
-//                                                 if($parameters["interval"]==1){
-//                                                     $value_aux = substr($value_aux,strpos($value_aux, "(")-1);
-//                                                     $value_aux = trim($value_aux);
-//                                                     $value .= " " . $value_aux;
-//                                                 }
-                                                
-//                                                 array_push($json_return, array("Recall"=>$value));
-                                                
-//                                                 break 2;
-//                                             }
-//                                         }
-                                        
-//                                         break;
-                                        
-                                        
-//                                     case 'mcc':
-                                        
-//                                         if($parameters["mcc"]==1){
-                                            
-//                                             if(strpos($buffer, "Confidence Interval =")>-1 || strpos($buffer, "Mean (CI) =")>-1){
-                                                
-//                                                 $tmp = $buffer;
-                                                
-//                                                 if(strpos($buffer, "Confidence Interval =")!==false){
-//                                                     $tmp = substr($tmp,strpos($tmp, "Confidence Interval =")+strlen("Confidence Interval =")+1);
-//                                                 }elseif(strpos($buffer, "Mean (CI) =")!==false){
-//                                                     $tmp = substr($tmp,strpos($tmp, "Mean (CI) =")+strlen("Mean (CI) =")+1);
-//                                                 }
-                                                
-//                                                 $value = $tmp;
-//                                                 $value = substr($value,0,strpos($value, ")")+1);
-//                                                 $value_aux = $value;
-                                                
-//                                                 $value = substr($value,0,strpos($value, "(")-1);
-//                                                 $value = trim($value);
-                                                
-//                                                 $value = $this->numeric_format_option($value, $decimalprecision, $decimalseparator);
-                                                
-//                                                 if($parameters["interval"]==1){
-//                                                     $value_aux = substr($value_aux,strpos($value_aux, "(")-1);
-//                                                     $value_aux = trim($value_aux);
-//                                                     $value .= " " . $value_aux;
-//                                                 }
-                                                
-//                                                 array_push($json_return, array("MCC"=>$value));
-                                                
-//                                                 break 2;
-//                                             }
-//                                         }
-                                        
-//                                         break;
-                                        
-//                                     case 'f1':
-                                        
-//                                         if($parameters["f1"]==1){
-                                            
-//                                             if(strpos($buffer, "Confidence Interval =")>-1 || strpos($buffer, "Mean (CI) =")>-1){
-                                                
-//                                                 $tmp = $buffer;
-                                                
-//                                                 if(strpos($buffer, "Confidence Interval =")!==false){
-//                                                     $tmp = substr($tmp,strpos($tmp, "Confidence Interval =")+strlen("Confidence Interval =")+1);
-//                                                 }elseif(strpos($buffer, "Mean (CI) =")!==false){
-//                                                     $tmp = substr($tmp,strpos($tmp, "Mean (CI) =")+strlen("Mean (CI) =")+1);
-//                                                 }
-                                                
-//                                                 $value = $tmp;
-//                                                 $value = substr($value,0,strpos($value, ")")+1);
-//                                                 $value_aux = $value;
-                                                
-//                                                 $value = substr($value,0,strpos($value, "(")-1);
-//                                                 $value = trim($value);
-                                                
-//                                                 $value = $this->numeric_format_option($value, $decimalprecision, $decimalseparator);
-                                                
-//                                                 if($parameters["interval"]==1){
-//                                                     $value_aux = substr($value_aux,strpos($value_aux, "(")-1);
-//                                                     $value_aux = trim($value_aux);
-//                                                     $value .= " " . $value_aux;
-//                                                 }
-                                                
-//                                                 array_push($json_return, array("F1"=>$value));
-                                                
-//                                                 break 2;
-//                                             }
-//                                         }
-                                        
-//                                         break;
-                                        
-//                                     case 'dist':
-                                        
-//                                         if($parameters["dist"]==1){
-
-//                                             $tmp = $buffer;
-                                            
-//                                             if(strpos($buffer, "=")!==false){
-//                                                 $tmp = substr($tmp,strpos($tmp, "=")+2);
-//                                             }
-//                                             $value = trim($tmp);
-//                                             array_push($json_return, array("Dist"=>$value));
-                                            
-//                                             break 2;
-
-//                                         }
-                                        
-//                                         break;
-                                }
-                                // 
-                            }elseif($strategy == "EvaluatePrequential2"){
-                                
-                                switch($startFind)
-                                {
-                                    case 'resume':
-                                        
-                                        if($parameters["dist"] == 1
-                                        || $parameters["fn"] == 1
-                                        || $parameters["fp"] == 1
-                                        || $parameters["tn"] == 1
-                                        || $parameters["tp"] == 1
-                                        || $parameters["precision"] == 1
-                                        || $parameters["recall"] == 1
-                                        || $parameters["mcc"] == 1
-                                        || $parameters["f1"] == 1
-                                        || $parameters["resume"] == 1
-                                        )
-                                        {
-                                            
-                                            if(isset($start_filter)){
-                                                
-                                                if($start_filter == true){
-                                                    
-                                                    if(strpos($buffer, "(")>-1){
+                                                    if($buffer[$w] == " " || $buffer[$w] == "\t"){
                                                         
-                                                        if($parameters["interval"]!=1){
-                                                            $data1 = substr($buffer, 0, strpos($buffer, "("));
-                                                            $data2 = trim(substr($buffer, strpos($buffer, ")")+1));
+                                                        if($detector_space == false){
                                                             
-                                                            $buffer = $data1.$data2;
-                                                        }
-                                                    }
-                                                    
-                                                    $detector_space = false;
-                                                    $newValues = "";
-                                                    
-                                                    for($w = 0; $w < strlen($buffer); $w++){
-                                                        
-                                                        if($buffer[$w] == " " || $buffer[$w] == "\t"){
-                                                            
-                                                            if($detector_space == false){
-                                                                
-                                                                $newValues .= "\t";
-                                                                
-                                                            }else{
-                                                                
-                                                            }
-                                                            
-                                                            $detector_space = true;
+                                                            $newValues .= "\t";
                                                             
                                                         }else{
                                                             
-                                                            $newValues .= $buffer[$w];
-                                                            $detector_space = false;
                                                         }
-                                                    }
-                                                    
-                                                    $buffer = $newValues;
-                                                    //var_dump($buffer);
-                                                    
-                                                    //exit("-fim-");
-                                                    
-                                                    $buffer = str_replace("\n","", $buffer);
-                                                    $buffer = str_replace(" ","", $buffer);
-                                                    $buffer = str_replace("\r\n","", $buffer);
-                                                    
-                                                    $itens_list = array();
-                                                    
-                                                    if($parameters["dist"] == 1
-                                                        || $parameters["fn"] == 1
-                                                        || $parameters["fp"] == 1
-                                                        || $parameters["tn"] == 1
-                                                        || $parameters["tp"] == 1
-                                                        || $parameters["precision"] == 1
-                                                        || $parameters["recall"] == 1
-                                                        || $parameters["mcc"] == 1
-                                                        || $parameters["f1"] == 1
-                                                        //|| $parameters["mdr"] == 1
-                                                        //|| $parameters["mtfa"] == 1
-                                                        //|| $parameters["mtd"] == 1
-                                                        //|| $parameters["mtr"] == 1
-                                                        )
-                                                    {
                                                         
-                                                        if(strpos($buffer, "\t") !== false)
-                                                        {
-                                                            $itens_list = explode("\t", $buffer);
-                                                            
-                                                            //0 = dist
-                                                            //7 = mcc
-                                                            //8 = f1
-                                                            
-                                                        }
+                                                        $detector_space = true;
+                                                        
+                                                    }else{
+                                                        
+                                                        $newValues .= $buffer[$w];
+                                                        $detector_space = false;
                                                     }
-                                                    
-                                                    
-                                                    if($parameters["dist"] == 1)
-                                                    {
-                                                        $value = $itens_list[0];
-                                                        $value = $this->numeric_format_option($value, $decimalprecision, $decimalseparator);
-                                                        array_push($json_return, array("dist"=>$value));
-                                                    }
-                                                    
-                                                    if($parameters["fn"] == 1)
-                                                    {
-                                                        $value = $itens_list[1];
-                                                        $value = $this->numeric_format_option($value, $decimalprecision, $decimalseparator);
-                                                        array_push($json_return, array("fn"=>$value));
-                                                    }
-                                                    
-                                                    if($parameters["fp"] == 1)
-                                                    {
-                                                        $value = $itens_list[2];
-                                                        $value = $this->numeric_format_option($value, $decimalprecision, $decimalseparator);
-                                                        array_push($json_return, array("tp"=>$value));
-                                                    }
-                                                    
-                                                    if($parameters["tn"] == 1)
-                                                    {
-                                                        $value = $itens_list[3];
-                                                        $value = $this->numeric_format_option($value, $decimalprecision, $decimalseparator);
-                                                        array_push($json_return, array("tn"=>$value));
-                                                    }
-                                                    
-                                                    if($parameters["tp"] == 1)
-                                                    {
-                                                        $value = $itens_list[4];
-                                                        $value = $this->numeric_format_option($value, $decimalprecision, $decimalseparator);
-                                                        array_push($json_return, array("tp"=>$value));
-                                                    }
-                                                    
-                                                    if($parameters["precision"] == 1)
-                                                    {
-                                                        $value = $itens_list[5];
-                                                        $value = $this->numeric_format_option($value, $decimalprecision, $decimalseparator);
-                                                        array_push($json_return, array("precision"=>$value));
-                                                    }
-                                                    
-                                                    if($parameters["recall"] == 1)
-                                                    {
-                                                        $value = $itens_list[6];
-                                                        $value = $this->numeric_format_option($value, $decimalprecision, $decimalseparator);
-                                                        array_push($json_return, array("recall"=>$value));
-                                                    }
-                                                    
-                                                    if($parameters["mcc"] == 1)
-                                                    {
-                                                        $value = $itens_list[7];//var_dump($value);
-                                                        $value = $this->numeric_format_option($value, $decimalprecision, $decimalseparator);
-                                                        array_push($json_return, array("mcc"=>$value));//exit();
-                                                    }
-                                                    
-                                                    if($parameters["f1"] == 1)
-                                                    {
-                                                        $value = $itens_list[8];
-                                                        $value = $this->numeric_format_option($value, $decimalprecision, $decimalseparator);
-                                                        array_push($json_return, array("f1"=>$value));
-                                                    }
-                                                    
-                                                    if($parameters["resume"] == 1)
-                                                    {
-                                                        array_push($json_return, array("resume"=>$buffer));
-                                                    }
-                                                    
-                                                    $start_filter = false;
                                                 }
+                                                
+                                                
+                                                $buffer = $newValues;
+                                                
+                                                $buffer = str_replace("\n","", $buffer);
+                                                $buffer = str_replace(" ","", $buffer);
+                                                $buffer = str_replace("\r\n","", $buffer);
+                                                
+                                                $itens_list = array();
+                                                if(strpos($buffer, "\t") !== false)
+                                                {
+                                                    $itens_list = explode("\t", $buffer);
+                                                }
+                                                
+                                                
+                                                $tmp = "";
+                                                
+                                                if($parameters["dist"]==1){
+                                                    $tmp = $itens_list[0];
+                                                }else if($parameters["fn"]==1){
+                                                    $tmp = $itens_list[1];
+                                                }else if($parameters["fp"]==1){
+                                                    $tmp = $itens_list[2];
+                                                }else if($parameters["tn"]==1){
+                                                    $tmp = $itens_list[3];
+                                                }else if($parameters["tp"]==1){
+                                                    $tmp = $itens_list[4];
+                                                }else if($parameters["precision"]==1){
+                                                    $tmp = $itens_list[5];
+                                                }else if($parameters["recall"]==1){
+                                                    $tmp = $itens_list[6];
+                                                }else if($parameters["mcc"]==1){
+                                                    $tmp = $itens_list[7];
+                                                }else if($parameters["f1"]==1){
+                                                    $tmp = $itens_list[8];
+                                                }
+                                                
+                                                
+                                                $value_ = trim($tmp);
+                                                
+                                                if(is_numeric($value_)){
+                                                    $value_ = $this->numeric_format_option($value_, $decimalprecision, $decimalseparator);
+                                                }
+                                                
+                                                array_push($json_return, array(
+                                                    $descriptive_statistics[$parameters["descriptivestatistics"]]=>$value_));
+                                                
+                                                $startFind = "";
                                                 
                                             }else{
                                                 
-                                                $start_filter = true;
+                                                $statistical = $descriptive_statistics["meanci"] . " =";
+                                                $str_label = substr($buffer, 0, strlen($statistical));
+                                                
+                                                
+                                                if($str_label == $statistical){//strpos($buffer, $statistical) !== FALSE){
+                                                    
+                                                    $tmp = $buffer;
+                                                    $tmp = substr($tmp,strpos($tmp, $statistical)+strlen($statistical)+1);
+                                                    $value_ = trim($tmp);
+                                                    
+                                                    if($parameters["descriptivestatistics"] == "mean"){
+                                                        $value_ = substr($value_, 0, strpos($value_, "("));
+                                                        $value_ = trim($value_);
+                                                    }
+                                                    
+                                                    if(is_numeric($value_)){
+                                                        $value_ = $this->numeric_format_option($value_, $decimalprecision, $decimalseparator);
+                                                    }
+                                                    
+                                                    array_push($json_return, array(
+                                                        $descriptive_statistics[$parameters["descriptivestatistics"]]=>$value_));
+                                                    
+                                                    $startFind = "";
+                                                }
+                                                
+                                            }
+                                                                                        
+                                            
+                                            
+//                                             if($parameters["descriptivestatistics"] == self::F1){
+                                                
+//                                             }
+//                                             Mean Distance		FN	FP	TN		TP	Precision	Recall		MCC		F1
+                                            
+                                        }else if($strategy == self::EVALUATE_PREQUENTIAL_UFPE
+                                            || $strategy == self::EVALUATE_PREQUENTIAL_UFPE_FOR_DETECTORS)
+                                        {
+                                            
+                                            $statistical = $descriptive_statistics[$parameters["descriptivestatistics"]] . " =";                                            
+                                            $str_label = substr($buffer, 0, strlen($statistical));
+                                            
+                                            if($str_label == $statistical){//strpos($buffer, $statistical) !== FALSE){
+                                                
+                                                $tmp = $buffer;
+                                                $tmp = substr($tmp,strpos($tmp, $statistical)+strlen($statistical)+1);
+                                                $value_ = trim($tmp);
+                                                
+                                                if(is_numeric($value_)){
+                                                    $value_ = $this->numeric_format_option($value_, $decimalprecision, $decimalseparator);
+                                                }
+                                                
+                                                array_push($json_return, array(
+                                                    $descriptive_statistics[$parameters["descriptivestatistics"]]=>$value_));
+                                                
+                                                $startFind = "";
                                             }
                                             
                                         }
                                         
-                                        break;
                                     }
+                                }                                
                                 
                             }
-                            
-                            
-                    
-                    
-                }
-                else if($strategy == "GeneticAlgorithm"){
-                    
-                    
-                    if($parameters["final_generation"]==1){
-                        
-                        //var_dump($parameters);exit("dd");
-                        try{
-                            $fp = $handle;
-                            $num=23;
-                            //navega no arquivo p/ o final
-                            $line_count = 0; $line = ''; $pos = -1; $lines = array(); $c = '';
-                            
-                            while($line_count < $num) {
-                                $line = $c . $line;
-                                fseek($fp, $pos--, SEEK_END);
-                                $c = fgetc($fp);
-                                if($c == "\n") { $line_count++; $lines[] = $line; $line = ''; $c = ''; }
-                            }
-                            // / return $lines;
-                            
-                        }catch(Exception $e){
-                            print $e->getMessage();
                         }
-                        //var_dump($lines);
+                                                        
+//                     }else if($strategy == "EvaluatePrequential2"){
+                                        
+                    
+                    
+                    }else{
+                        //error
                         
-                        for($i=0; $i<count($lines);$i++){
-                            
-                            //if(trim($lines[$i])=="")
-                            //  break;
-                            
-                            print $lines[count($lines)-$i-1]."<br>";
-                        }
-                        
-                        exit();
-                        
+                        array_push($json_return, array("Accuracy"=>"x"));
+                        break;
                     }
-                    
-                    if($parameters["accuracy"]==1){
-                        
-                        if(strpos($buffer, "[Parameter1:")>-1){
-                            
-                            try{
-                                $fp = $handle;
-                                $num=2;
-                                //navega no arquivo p/ o final
-                                $line_count = 0; $line = ''; $pos = -1; $lines = array(); $c = '';
-                                
-                                while($line_count < $num) {
-                                    $line = $c . $line;
-                                    fseek($fp, $pos--, SEEK_END);
-                                    $c = fgetc($fp);
-                                    if($c == "\n") { $line_count++; $lines[] = $line; $line = ''; $c = ''; }
-                                }
-                                // / return $lines;
-                                
-                            }catch(Exception $e){
-                                print $e->getMessage();
-                            }
-                            
-                            for($i=0; $i<count($lines);$i++){
-                                
-                                if(trim($lines[$i])=="")
-                                    break;
-                                    
-                                    $buffer = $lines[$i];
-                            }
-                            
-                            
-                            //$buffer = $t;
-                            //var_dump($lines);
-                            //exit("==");
-                            //$buffer = "[Parameter1: 9, Parameter2: 1.1304253664938206, Parameter3: 2.135766846200818, Accuracy: 71.61]";
-                            
-                            $accuracy = explode(",", $buffer);
-                            
-                            for($i=0; $i <count($accuracy); $i++){
-                                
-                                $accuracy[$i] = trim($accuracy[$i]);
-                                $accuracy[$i] = substr($accuracy[$i], strpos($accuracy[$i], " ")+1);
-                                
-                                if(strpos($accuracy[$i], "]")>-1){
-                                    $accuracy[$i] = substr($accuracy[$i], 0,strpos($accuracy[$i], "]"));
-                                }
-                                
-                            }
-                            
-                            array_push($json_return,
-                                array("Parameter1"=>$accuracy[0],
-                                    "Parameter2"=>$accuracy[1],
-                                    "Parameter3"=>$accuracy[2],
-                                    "Accuracy"=>$accuracy[3]));
-                                
-                                break;//sair do arquivo
-                        }
-                        
-                        
-                        
-                    }
-                    
-                }else{
-                    //error
-                    
-                    array_push($json_return, array("Accuracy"=>"x"));
-                    break;
-                }
-                
-                
-                
-                
-                // $output .= $buffer;
+   
             }
             
             fclose($handle);
@@ -1917,37 +1202,37 @@ function detectStrategy($file){
                         
             while (($buffer = fgets($handle, 4096)) !== false) {
                 
-                if(strpos($buffer, "EvaluateInterleavedTestThenTrain2")>-1){
+                if(strpos($buffer, "EvaluateInterleavedTestThenTrain2 ")>-1){
                     
                     $result = "EvaluateInterleavedTestThenTrain2";
                     break;
                     
-                }else if(strpos($buffer, "EvaluateInterleavedTestThenTrain3")>-1){
+//                 }else if(strpos($buffer, "EvaluateInterleavedTestThenTrain3 ")>-1){
                     
-                    $result = "EvaluateInterleavedTestThenTrain3";
+//                     $result = "EvaluateInterleavedTestThenTrain3";
+//                     break;
+                    
+//                 }else if(strpos($buffer, "Generation 1")>-1){
+                    
+//                     $result = "GeneticAlgorithm";
+//                     break;
+                }else if(strpos($buffer, "EvaluatePrequential2 ")>-1){
+                    
+                    $result = self::EVALUATE_PREQUENTIAL2; // "EvaluatePrequential2";
                     break;
+//                 }else if(strpos($buffer, "EvaluatePrequential3 ")>-1){
                     
-                }else if(strpos($buffer, "Generation 1")>-1){
+//                     $result = "EvaluatePrequential3";
+//                     break;
+                }else if(strpos($buffer, "EvaluatePrequentialUFPE ")>-1){
                     
-                    $result = "GeneticAlgorithm";
+                    $result = self::EVALUATE_PREQUENTIAL_UFPE;//"EvaluatePrequentialUFPE";
                     break;
-                }else if(strpos($buffer, "EvaluatePrequential2")>-1){
+                }else if(strpos($buffer, "EvaluatePrequentialUFPEforDetectors ")>-1){
                     
-                    $result = "EvaluatePrequential2";
+                    $result = self::EVALUATE_PREQUENTIAL_UFPE_FOR_DETECTORS;//"EvaluatePrequentialUFPEforDetectors";
                     break;
-                }else if(strpos($buffer, "EvaluatePrequential3")>-1){
-                    
-                    $result = "EvaluatePrequential3";
-                    break;
-                }else if(strpos($buffer, "EvaluatePrequentialUFPE")>-1){
-                    
-                    $result = "EvaluatePrequentialUFPE";
-                    break;
-                }else if(strpos($buffer, "EvaluatePrequentialUFPEforDetectors")>-1){
-                    
-                    $result = "EvaluatePrequentialUFPEforDetectors";
-                    break;
-                }else if(strpos($buffer, "EvaluatePrequential")>-1){
+                }else if(strpos($buffer, "EvaluatePrequential ")>-1){
                     
                     $result = "EvaluatePrequential";
                     break;

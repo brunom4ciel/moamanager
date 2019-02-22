@@ -267,7 +267,13 @@ public class EvaluatePrequentialUFPE extends MainTask {
         flagValue = (isFN_FP_TN_TPOption.getChosenIndex() == 1 ? true:false);
         ddemeasures.setFN_FP_TN_TP(flagValue);
     	
-    	
+        if(flagValue) {
+        	ddemeasures.setFN(flagValue);
+        	ddemeasures.setFP(flagValue);
+        	ddemeasures.setTN(flagValue);
+        	ddemeasures.setTP(flagValue);
+        }
+        
         ddemeasures.setRepetition(this.repetitionOption.getValue());
         ddemeasures.setAlpha(this.alphaOption.getValue());
         
@@ -328,6 +334,11 @@ public class EvaluatePrequentialUFPE extends MainTask {
                 ddemetrics[indexMetrics].setDRIFT_MEANS(ddemeasures.isDRIFT_MEANS()); 
                 ddemetrics[indexMetrics].setDRIFT_GENERAL_MEAN(ddemeasures.isDRIFT_GENERAL_MEAN());
                 ddemetrics[indexMetrics].setFN_FP_TN_TP(ddemeasures.isFN_FP_TN_TP());
+                
+                ddemetrics[indexMetrics].setFN(ddemeasures.isFN_FP_TN_TP());
+                ddemetrics[indexMetrics].setFP(ddemeasures.isFN_FP_TN_TP());
+                ddemetrics[indexMetrics].setTN(ddemeasures.isFN_FP_TN_TP());
+                ddemetrics[indexMetrics].setTP(ddemeasures.isFN_FP_TN_TP());
                 
             }
 //            else {

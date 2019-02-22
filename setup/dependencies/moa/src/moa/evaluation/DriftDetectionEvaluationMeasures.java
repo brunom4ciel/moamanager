@@ -374,8 +374,28 @@ public class DriftDetectionEvaluationMeasures extends NamesMetrics{
         			, this.alpha, this.getDecimal(), this.getSmallDecimal());
 	        }
 	        
+	        if(this.isFN()) {
+	        	printReturnData(chooseFormatData, "FN:", FN
+        			, this.alpha, this.getDecimal(), this.getSmallDecimal());
+	        }
 	        
+	        if(this.isFP()) {
+	        	printReturnData(chooseFormatData, "FP:", FP
+        			, this.alpha, this.getDecimal(), this.getSmallDecimal());
+	        }
+	        
+	        if(this.isTN()) {
+	        	printReturnData(chooseFormatData, "TN:", TN
+        			, this.alpha, this.getDecimal(), this.getSmallDecimal());
+	        }
 
+	        if(this.isTP()) {
+	        	printReturnData(chooseFormatData, "TP:", TP
+        			, this.alpha, this.getDecimal(), this.getSmallDecimal());
+	        }
+	        
+	        
+	        
 	  
 	        lineValues = "";
 	        
@@ -384,9 +404,9 @@ public class DriftDetectionEvaluationMeasures extends NamesMetrics{
 	        	lineValues += printDistanceDriftTable(CD, positions, getRepetition(), getAlpha());
 	        }
 	        
-	        if(this.isFN_FP_TN_TP() ) {
-	        	lineValues += printMetrics1(FN,FP,TN,TP, getRepetition(), getAlpha());
-	        }
+//	        if(this.isFN_FP_TN_TP() ) {
+//	        	lineValues += printMetrics1(FN,FP,TN,TP, getRepetition(), getAlpha());
+//	        }
 	        
 			
 	//        
@@ -446,6 +466,7 @@ public class DriftDetectionEvaluationMeasures extends NamesMetrics{
 			
 			System.out.print("Mean (CI) = "+this.getFormatDecimalValue(mean, decimal, smallDecimal));	
 			System.out.println(" (+-N/A)");
+			System.out.println("Mean = "+this.getFormatDecimalValue(mean, decimal, smallDecimal));
 			System.out.println("Confidence Interval = (+-N/A)");
 		}
 				
@@ -1086,12 +1107,16 @@ public class DriftDetectionEvaluationMeasures extends NamesMetrics{
 	
 		
 	
-	public String printDistanceDriftTable ( List<Double> cd, List<Integer> positions, int repetition, double alpha) {
+	public String printDistanceDriftTable2 (List<Double> cd, List<Integer> positions, int repetition, double alpha) {
         System.out.println("Drift point distance:");
         
-        double u, s; String results="";
-        int sz = positions.size(), pos = 0;
-        double sum[] = new double[sz], freq[] = new double[sz];
+        double u, s; 
+        String results="";
+        int sz = positions.size();
+        int pos = 0;        
+        double sum[] = new double[sz];
+        double freq[] = new double[sz];
+        
         for ( int i=0; i<cd.size(); i++ ) {
             if ( cd.get(i) != -1.0 ) {
                 System.out.printf("%.2f\t", cd.get(i)-positions.get(pos));
@@ -1110,11 +1135,13 @@ public class DriftDetectionEvaluationMeasures extends NamesMetrics{
         List<Double> tempValues = new ArrayList<>();
         List<Double> tempAllValues = new ArrayList<>();
         double sumAll = 0.0;
+        
         if ( sz > 0 ) {
-            System.out.printf("Drifts Means = ");
+            System.out.printf("Mean (CI) = ");
         } else {
-            System.out.printf("Drifts Means = N/A (+-N/A)\t");
-        }
+            System.out.printf("Mean (CI) = N/A (+-N/A)\t");
+        }      
+        
         for ( int i=0; i<sz; i++ ) {
             tempValues.clear();
             u = sum[i] / freq[i];
@@ -1136,7 +1163,32 @@ public class DriftDetectionEvaluationMeasures extends NamesMetrics{
                     System.out.printf("%.2f (+-N/A)\t", u);
                 }
             }
-        } System.out.printf("\n");
+        } 
+        
+        System.out.printf("\n");
+        
+        
+        tempValues = new ArrayList<>();
+        tempAllValues = new ArrayList<>();
+        u = 0;
+        
+        if ( sz > 0 ) {
+            System.out.printf("Mean = ");
+        } else {
+            System.out.printf("Mean = N/A\t");
+        }      
+        
+        for ( int i=0; i<sz; i++ ) {
+            u = sum[i] / freq[i];
+        } 
+        
+        System.out.printf("%.2f\t", u);
+        System.out.printf("\n");
+        
+        
+        
+        
+        
         u = sumAll / tempAllValues.size();
         if ( Double.isNaN(u) ) {
             System.out.printf("General Mean = N/A\n\n");
@@ -1145,6 +1197,193 @@ public class DriftDetectionEvaluationMeasures extends NamesMetrics{
             System.out.printf("General Mean = %.2f\n\n", u);
 //            results += String.format("%.2f\t\t", u);
         }
+        
+        return results;
+    }
+	
+	
+	
+	public String printDistanceDriftTable (List<Double> cd, List<Integer> positions, int repetition, double alpha) {
+        System.out.println("Drift point distance:");
+        
+        double u, s; 
+        String results="";
+        int sz = positions.size();
+        int pos = 0;        
+        double sum[] = new double[sz];
+        double freq[] = new double[sz];
+        
+        for ( int i=0; i<cd.size(); i++ ) {
+            if ( cd.get(i) != -1.0 ) {
+                System.out.printf("%.2f\t", cd.get(i)-positions.get(pos));
+                sum[pos] += cd.get(i)-positions.get(pos);
+                freq[pos] += 1.0;
+            } else {
+                System.out.printf("FN\t");
+            }
+            
+            pos = (pos+1)%sz;
+            if ( (i+1)%sz == 0 ) {
+                System.out.printf("\n");
+            }
+        }
+        
+        List<Double> tempValues = new ArrayList<>();
+        List<Double> tempAllValues = new ArrayList<>();
+        double sumAll = 0.0;
+        double sumAll2 = 0;
+        
+        if ( sz > 0 ) {
+            System.out.printf("Drifts Means = ");
+        } else {
+            System.out.printf("Drifts Means = N/A (+-N/A)\t");
+        }
+        
+//        double v = Double.parseDouble(this.getFormatDecimalValue((cd.get(j)-positions.get(i)), 2, 2)); 
+//        sumAll +=v;        
+//        System.out.printf("==%.2f\t\t", v);
+        
+        for ( int i=0; i<sz; i++ ) {
+            tempValues.clear();
+            u = sum[i] / freq[i];
+            for ( int j=i; j<cd.size(); j+=sz ) {
+                if ( cd.get(j) != -1 ) {
+                    tempValues.add(cd.get(j)-positions.get(i));
+                    tempAllValues.add(cd.get(j)-positions.get(i));
+                    sumAll += (cd.get(j)-positions.get(i));                   
+                }
+            }
+            
+            u = Double.parseDouble(this.getFormatDecimalValue(u, 2, 2)); 
+            sumAll2 += u; 
+            
+            s = calcStandardDeviation(u, tempValues);
+            if ( Double.isNaN(u) ) {
+                System.out.printf("N/A (+-N/A)\t");
+            } else {
+                if ( repetition > 1 ) {
+                    TDistribution t = new TDistribution(repetition-1);
+                    System.out.printf("%.2f (+-%.2f)\t", u, t.inverseCumulativeProbability(1-((1-alpha)/2.0)) * (s / Math.sqrt(freq[i])));
+                } else {
+                    System.out.printf("%.2f (+-N/A)\t", u);
+                }
+            }
+        } 
+        
+        System.out.printf("\n");
+        u = sumAll / tempAllValues.size();
+//        u = sumAll2 / sz;
+        
+        if ( Double.isNaN(u) ) {
+            System.out.printf("General Mean = N/A\n");
+//            results += "N/A\t\t";
+        } else {
+            System.out.printf("General Mean = %.2f\n", u);
+//            results += String.format("%.2f\t\t", u);
+        }
+        
+        
+        
+        
+        
+        
+        
+        
+        tempValues = new ArrayList<>();
+        tempAllValues = new ArrayList<>();
+        u = 0;
+        
+        if ( sz > 0 ) {
+            System.out.printf("Mean (CI) = ");
+        } else {
+            System.out.printf("Mean (CI) = N/A (+-N/A)\t");
+        }      
+        
+        for ( int i=0; i<sz; i++ ) {
+            tempValues.clear();
+            u = sum[i] / freq[i];
+            for ( int j=i; j<cd.size(); j+=sz ) {
+                if ( cd.get(j) != -1 ) {
+                    tempValues.add(cd.get(j)-positions.get(i));
+                    tempAllValues.add(cd.get(j)-positions.get(i));
+                    sumAll += (cd.get(j)-positions.get(i));
+                }
+            }
+            s = calcStandardDeviation(u, tempValues);
+            if ( Double.isNaN(u) ) {
+                System.out.printf("N/A (+-N/A)\t");
+            } else {
+                if ( repetition > 1 ) {
+                    TDistribution t = new TDistribution(repetition-1);
+                    System.out.printf("%.2f (+-%.2f)\t", u, t.inverseCumulativeProbability(1-((1-alpha)/2.0)) * (s / Math.sqrt(freq[i])));
+                } else {
+                    System.out.printf("%.2f (+-N/A)\t", u);
+                }
+            }
+        } 
+        
+        System.out.printf("\n");
+        
+        
+        
+        tempValues = new ArrayList<>();
+        tempAllValues = new ArrayList<>();
+        u = 0;
+        
+        if ( sz > 0 ) {
+            System.out.printf("Mean = ");
+        } else {
+            System.out.printf("Mean = N/A (+-N/A)\t");
+        }      
+        
+        for ( int i=0; i<sz; i++ ) {
+            tempValues.clear();
+            u = sum[i] / freq[i];
+            for ( int j=i; j<cd.size(); j+=sz ) {
+                if ( cd.get(j) != -1 ) {
+                    tempValues.add(cd.get(j)-positions.get(i));
+                    tempAllValues.add(cd.get(j)-positions.get(i));
+                    sumAll += (cd.get(j)-positions.get(i));
+                }
+            }
+            System.out.printf("%.2f\t", u);
+        } 
+        
+        System.out.printf("\n");
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+//        System.out.println("");
+//        System.out.println("General drift point distance:");
+//        
+//        
+//        tempValues = new ArrayList<>();
+//        tempAllValues = new ArrayList<>();
+//        u = 0;
+//        
+//        if ( sz > 0 ) {
+//            System.out.printf("Mean = ");
+//        } else {
+//            System.out.printf("Mean = N/A\t");
+//        }      
+//        
+//        for ( int i=0; i<sz; i++ ) {
+//            u = sum[i] / freq[i];
+//        } 
+//        
+//        System.out.printf("%.2f\t", u);
+//        System.out.printf("\n");
+        
+        
         
         return results;
     }

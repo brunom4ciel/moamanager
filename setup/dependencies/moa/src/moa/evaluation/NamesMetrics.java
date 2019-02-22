@@ -23,6 +23,45 @@ public class NamesMetrics {
 	public boolean F1 = true;
 	
 	
+	public boolean FN = true;
+	public boolean FP = true;
+	public boolean TN = true;
+	public boolean TP = true;
+	
+	
+	
+	public boolean isFN() {
+		return FN;
+	}
+
+	public void setFN(boolean fN) {
+		FN = fN;
+	}
+
+	public boolean isFP() {
+		return FP;
+	}
+
+	public void setFP(boolean fP) {
+		FP = fP;
+	}
+
+	public boolean isTN() {
+		return TN;
+	}
+
+	public void setTN(boolean tN) {
+		TN = tN;
+	}
+
+	public boolean isTP() {
+		return TP;
+	}
+
+	public void setTP(boolean tP) {
+		TP = tP;
+	}
+
 	public boolean isDRIFT_POINT_DISTANCE() {
 		return DRIFT_POINT_DISTANCE;
 	}

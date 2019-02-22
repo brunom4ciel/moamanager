@@ -266,6 +266,13 @@ public class EvaluatePrequentialUFPEforDetectors extends MainTask {
         
         flagValue = (isFN_FP_TN_TPOption.getChosenIndex() == 1 ? true:false);
         ddemeasures.setFN_FP_TN_TP(flagValue);
+        
+        if(flagValue) {
+        	ddemeasures.setFN(flagValue);
+        	ddemeasures.setFP(flagValue);
+        	ddemeasures.setTN(flagValue);
+        	ddemeasures.setTP(flagValue);
+        }
     	
     	
         ddemeasures.setRepetition(this.repetitionOption.getValue());
@@ -328,6 +335,11 @@ public class EvaluatePrequentialUFPEforDetectors extends MainTask {
                 ddemetrics[indexMetrics].setDRIFT_MEANS(ddemeasures.isDRIFT_MEANS()); 
                 ddemetrics[indexMetrics].setDRIFT_GENERAL_MEAN(ddemeasures.isDRIFT_GENERAL_MEAN());
                 ddemetrics[indexMetrics].setFN_FP_TN_TP(ddemeasures.isFN_FP_TN_TP());
+                
+                ddemetrics[indexMetrics].setFN(ddemeasures.isFN_FP_TN_TP());
+                ddemetrics[indexMetrics].setFP(ddemeasures.isFN_FP_TN_TP());
+                ddemetrics[indexMetrics].setTN(ddemeasures.isFN_FP_TN_TP());
+                ddemetrics[indexMetrics].setTP(ddemeasures.isFN_FP_TN_TP());
                 
             }
 //            else {
@@ -509,6 +521,10 @@ public class EvaluatePrequentialUFPEforDetectors extends MainTask {
         		|| ddemeasures.isRECALL()
         		|| ddemeasures.isMCC()
         		|| ddemeasures.isF1()
+        		|| ddemeasures.isFN()
+        		|| ddemeasures.isFP()
+        		|| ddemeasures.isTN()
+        		|| ddemeasures.isTP()
         		) {
         	
         	if(ddemetrics != null) {
