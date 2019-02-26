@@ -1217,6 +1217,8 @@ class Mining extends EvaluateExtract{
                                                         $tn = $str_list[2] . ")";
                                                         $tp = $str_list[3] . ")";
                                                         
+                                                        
+                                                        
                                                         $str_list = explode(" ", $fn);
                                                         $fn = trim($str_list[0]);
                                                         $fn_ci = substr($str_list[1],3,strlen($str_list[1])-4);
@@ -1233,32 +1235,34 @@ class Mining extends EvaluateExtract{
                                                         $tp = trim($str_list[0]);
                                                         $tp_ci = substr($str_list[1],3,strlen($str_list[1])-4);
                                                         
-                                                        if(is_numeric($fn)){
-                                                            $value_ = $this->numeric_format_option($fn, $decimalprecision, $decimalseparator);
-                                                        }
-                                                        if(is_numeric($fn_ci)){
-                                                            $value_ci = $this->numeric_format_option($fn_ci, $decimalprecision, $decimalseparator);
-                                                        }
-                                                        
-                                                        if(is_numeric($fp)){
-                                                            $value_ = $this->numeric_format_option($fp, $decimalprecision, $decimalseparator);
-                                                        }
-                                                        if(is_numeric($fp_ci)){
-                                                            $value_2 = $this->numeric_format_option($fp_ci, $decimalprecision, $decimalseparator);
-                                                        }
-                                                        
-                                                        if(is_numeric($tn)){
-                                                            $value_ = $this->numeric_format_option($tn, $decimalprecision, $decimalseparator);
-                                                        }
-                                                        if(is_numeric($tn_ci)){
-                                                            $value_2 = $this->numeric_format_option($tn_ci, $decimalprecision, $decimalseparator);
-                                                        }
-                                                        
-                                                        if(is_numeric($tp)){
-                                                            $value_ = $this->numeric_format_option($tp, $decimalprecision, $decimalseparator);
-                                                        }
-                                                        if(is_numeric($tp_ci)){
-                                                            $value_2 = $this->numeric_format_option($tp_ci, $decimalprecision, $decimalseparator);
+                                                        if($fn_fp_tn_tp == "fn"){
+                                                            if(is_numeric($fn)){
+                                                                $value_ = $this->numeric_format_option($fn, $decimalprecision, $decimalseparator);
+                                                            }
+                                                            if(is_numeric($fn_ci)){
+                                                                $value_2 = $this->numeric_format_option($fn_ci, $decimalprecision, $decimalseparator);
+                                                            }
+                                                        }else if($fn_fp_tn_tp == "fp"){                                                        
+                                                            if(is_numeric($fp)){
+                                                                $value_ = $this->numeric_format_option($fp, $decimalprecision, $decimalseparator);
+                                                            }
+                                                            if(is_numeric($fp_ci)){
+                                                                $value_2 = $this->numeric_format_option($fp_ci, $decimalprecision, $decimalseparator);
+                                                            }
+                                                        }else if($fn_fp_tn_tp == "tn"){
+                                                            if(is_numeric($tn)){
+                                                                $value_ = $this->numeric_format_option($tn, $decimalprecision, $decimalseparator);
+                                                            }
+                                                            if(is_numeric($tn_ci)){
+                                                                $value_2 = $this->numeric_format_option($tn_ci, $decimalprecision, $decimalseparator);
+                                                            }
+                                                        }else if($fn_fp_tn_tp == "tp"){
+                                                            if(is_numeric($tp)){
+                                                                $value_ = $this->numeric_format_option($tp, $decimalprecision, $decimalseparator);
+                                                            }
+                                                            if(is_numeric($tp_ci)){
+                                                                $value_2 = $this->numeric_format_option($tp_ci, $decimalprecision, $decimalseparator);
+                                                            }
                                                         }
                                                         
                                                         if($parameters["descriptivestatistics"] == "mean"){
