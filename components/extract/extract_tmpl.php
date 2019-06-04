@@ -1544,6 +1544,10 @@ if($task == "folder"){
                         {
                             $redirect['controller'] = "graphnemenyi";
                         }
+                        else if($statisticaltest == 'BonferroriDunnGraph')
+                        {
+                            $redirect['controller'] = "graphbonferronidunn";
+                        }
                         else 
                         {
                             $redirect['controller'] = "texteditor";

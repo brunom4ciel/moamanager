@@ -567,9 +567,12 @@ class Mining extends EvaluateExtract{
             while (($buffer = fgets($handle, 512)) !== false) {
                 
                 
-                if($strategy == "EvaluateInterleavedTestThenTrain2" ||
-                    $strategy == "EvaluatePrequential2"
-                    || $strategy == "EvaluatePrequentialUFPE"){
+                if(//$strategy == "EvaluateInterleavedTestThenTrain2"
+                    $strategy == self::EVALUATE_PREQUENTIAL2
+                    || $strategy == self::EVALUATE_PREQUENTIAL_UFPE
+                    || $strategy == self::EVALUATE_PREQUENTIAL_UFPE_FOR_DETECTORS
+                    || $strategy == "Error")
+                {
                         
                         if(strpos($buffer, "Accuracy:")>-1){
                             $startFind = "accuracy";

@@ -570,7 +570,7 @@ function verificaChecks() {
 			<label><input type="radio" name="statisticaltest" id="statisticaltest" value="Bergmann-Hommel" onclick="setCookieRadioBox(this);"/>Bergmann-Hommel</label>
 		
 			 <label><input type="radio" name="statisticaltest" id="statisticaltest" value="NemenyiGraph" onclick="setCookieRadioBox(this);"/>Nemenyi Graph</label>
-			
+			 <label><input type="radio" name="statisticaltest" id="statisticaltest" value="BonferroriDunnGraph" onclick="setCookieRadioBox(this);"/>Bonferroni-Dunn Graph</label>
 			 
 		</td>
 		
@@ -792,7 +792,7 @@ historicCookieElementSelectValue("descriptivestatistics");
 
 // historicCookieRadiobox('metricstract');
 
-// historicCookieRadiobox('type_extract');
+historicCookieRadiobox('type_extract');
 
 //historicCookieElementSelectValue("parallel_process");
 historicCookieElementValue("breakline", "2");
@@ -801,7 +801,7 @@ historicCookieElementValue("breakline", "2");
 // historicCookieCheckbox("accuracy");
 // historicCookieCheckbox("timer");
 // historicCookieCheckbox("memory");
-historicCookieCheckbox("interval");
+// historicCookieCheckbox("interval");
 //historicCookieCheckbox("detector");
 //historicCookieCheckbox("detectorsum");
 

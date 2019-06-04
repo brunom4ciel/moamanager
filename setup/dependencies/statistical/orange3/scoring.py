@@ -546,6 +546,12 @@ def graph_ranks(avranks, names, cd=None, cdmethod=None, lowv=None, highv=None,
     #textspace = 0.00001
     textspace = float(textspace)
 
+    
+    #if cdmethod is None:
+    #    methodName = None
+    #else:
+    #    methodName = names[cdmethod]
+
     def nth(l, n):
         """
         Returns only nth elemnt in a list.
@@ -705,12 +711,17 @@ def graph_ranks(avranks, names, cd=None, cdmethod=None, lowv=None, highv=None,
     bigtick = 0.1
     smalltick = 0.05
 
+    if cdmethod is None:
+        barline = 0.6
+    else:
+        barline = 0.35
+
     tick = None
     for a in list(np.arange(lowv, highv, 0.5)) + [highv]:
         tick = smalltick
         if a == int(a):
             tick = bigtick
-        line([(rankpos(a), 0.6 - tick / 2),
+        line([(rankpos(a), barline - tick / 2),
               (rankpos(a), cline)],
              linewidth=0.7)
 	
@@ -779,8 +790,14 @@ def graph_ranks(avranks, names, cd=None, cdmethod=None, lowv=None, highv=None,
               (rankpos(ssums[i]), chei),
               (textspace - 0.0, chei)],color='k',
              linewidth=0.7)
+        color3='k'
+        if cdmethod is None:
+            color3='k'
+        else:
+            if cdmethod == i:
+                color3='r'     
         text(textspace - 0.05, chei, nnames[i], 
-			ha="right", va="center", color2='k', fontsize2='small') #fontsize2='x-small'
+			ha="right", va="center", color2=color3, fontsize2='small') #fontsize2='x-small'
     #"""	
     tick2=0
     for i in range(math.ceil(k / 2), k):        
@@ -790,8 +807,15 @@ def graph_ranks(avranks, names, cd=None, cdmethod=None, lowv=None, highv=None,
               (rankpos(ssums[i]), chei),
               (textspace + scalewidth + 0.0, chei)], color='k',
              linewidth=0.7)
-        text(textspace + scalewidth + 0.05, chei, nnames[i],
-             ha="left", va="center", color2='k', fontsize2='small')
+        color3='k'
+        if cdmethod is None:
+            color3='k'
+        else:
+            if cdmethod == i:
+                color3='r'
+        text(textspace + scalewidth + 0.05, chei, nnames[i],# +" "+str(cdmethod)+"="+str(i),
+             ha="left", va="center", color2=color3, fontsize2='small')
+
     #"""	
 	                 
     if cd and cdmethod is None:
@@ -840,14 +864,20 @@ def graph_ranks(avranks, names, cd=None, cdmethod=None, lowv=None, highv=None,
     elif cd:
         begin = rankpos(avranks[cdmethod] - cd)
         end = rankpos(avranks[cdmethod] + cd)
-        line([(begin, cline), (end, cline)],
+
+        text( (begin + end) / 2 , distanceh-0.1, "CD="+str(float("{0:.4f}".format(cd))) + ", α="+str(alpha)+ ", n="+str(n)+ ", g="+str(k),
+             ha="center", va="bottom")
+
+        line([(begin, cline), (end, cline)],color='r',
              linewidth=2.5)
         line([(begin, cline + bigtick / 2),
-              (begin, cline - bigtick / 2)],
+              (begin, cline - bigtick / 2)],color='r',
              linewidth=2.5)
         line([(end, cline + bigtick / 2),
-              (end, cline - bigtick / 2)],
+              (end, cline - bigtick / 2)],color='r',
              linewidth=2.5)
+
+        
              
     if filename:
         print_figure(fig, filename, **kwargs)
