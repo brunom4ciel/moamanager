@@ -5,7 +5,7 @@
 
 echo "Install and configuration Apache\n"
 
-#sudo apt-get install apache2 -y
+sudo apt-get install apache2 -y
 
 sudo service apache2 stop
 sudo systemctl stop apache2.service

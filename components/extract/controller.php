@@ -479,7 +479,7 @@ function verificaChecks() {
 						
             			<select name="metricstracts" class="btn btn-default" id="metricstracts" onchange="setCookieElementSelectValue(this);">									
                 			<option value="accuracy">Accuracy</option>
-                			<option value="timer">Timer</option>
+                			<option value="time">Time</option>
                 			<option value="memory">Memory (B/s)</option>
                 			<option value="mdr">MDR</option>
                 			<option value="mtd">MTD</option>

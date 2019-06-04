@@ -329,7 +329,7 @@ if($task == "folder"){
         }
 
         $parameters = array();
-        $parameters_metrics = array("accuracy","timer","memory","entropy",
+        $parameters_metrics = array("accuracy","time","memory","entropy",
             "mdr", "mtfa", "mtd", "mtr", "dist", "precision", "recall", "mcc", "f1",
             "fn", "fp", "tn", "tp"
             );

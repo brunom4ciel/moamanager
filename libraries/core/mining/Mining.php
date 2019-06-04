@@ -20,7 +20,7 @@ class EvaluateExtract{
     public const EVALUATE_PREQUENTIAL2 = 'EvaluatePrequential2';
     
     public const ACCURACY = "accuracy";
-    public const TIMER = "timer";
+    public const TIME = "time";
     public const MEMORY = "memory";
     
     public const ENTROPY = "entropy";
@@ -105,7 +105,7 @@ class EvaluateExtract{
             if($version == 1){
                                
                 $evaluate_metrics[self::ACCURACY] = "Accuracy:";                
-                $evaluate_metrics[self::TIMER] = "Timer:";
+                $evaluate_metrics[self::TIME] = "Time:";
                 $evaluate_metrics[self::MEMORY] = "Memory (B/s):";
             
                 $evaluate_metrics[self::ENTROPY] = "Entropy:";
@@ -160,7 +160,7 @@ class EvaluateExtract{
         }else if($strategy == self::EVALUATE_PREQUENTIAL2){
             
             $evaluate_metrics[self::ACCURACY] = "Accuracy:";
-            $evaluate_metrics[self::TIMER] = "Timer:";
+            $evaluate_metrics[self::TIME] = "Time:";
             $evaluate_metrics[self::MEMORY] = "Memory (B/s):";
                         
             $evaluate_metrics[self::DIST] = "General Mean =";
@@ -480,9 +480,9 @@ class Mining extends EvaluateExtract{
             {
                 array_push($json_return, array("Accuracy"=>"*"));
             }
-            if($parameters["timer"]==1)
+            if($parameters["time"]==1)
             {
-                array_push($json_return, array("Timer"=>"*"));
+                array_push($json_return, array("Time"=>"*"));
             }
             if($parameters["memory"]==1)
             {
@@ -639,7 +639,7 @@ class Mining extends EvaluateExtract{
                                 break;
                             case 'time':
                                 
-                                if($parameters["timer"]==1){
+                                if($parameters["time"]==1){
                                     
                                     $strParamName = "Time";
                                     $strValue = $this->getValueFromList($buffer, $strParamName
@@ -667,10 +667,24 @@ class Mining extends EvaluateExtract{
                                 }
                                 
                                 break;
+                            case 'mtd':
+                                                               
+                                if($parameters["mtd"]==1){
+                                    $strParamName = "MTD";
+                                    $strValue = $this->getValueFromList($buffer, $strParamName
+                                        , ($parameters["interval"] == 1?true:false)
+                                        , $decimalprecision, $decimalseparator);
+                                    
+                                    if($strValue != ""){
+                                        array_push($json_return, array($strParamName=>$strValue));
+                                    }
+                                }
+                                
+                                break;  
                                 
                             case 'mtr':
                                 
-                                if($parameters["mtrlist"]==1){
+                                if($parameters["mtr"]==1){
                                     
                                     $strParamName = "MTR";
                                     $strValue = $this->getValueFromList($buffer, $strParamName
@@ -1238,34 +1252,32 @@ class Mining extends EvaluateExtract{
                                                         $tp = trim($str_list[0]);
                                                         $tp_ci = substr($str_list[1],3,strlen($str_list[1])-4);
                                                         
-                                                        if($fn_fp_tn_tp == "fn"){
-                                                            if(is_numeric($fn)){
-                                                                $value_ = $this->numeric_format_option($fn, $decimalprecision, $decimalseparator);
-                                                            }
-                                                            if(is_numeric($fn_ci)){
-                                                                $value_2 = $this->numeric_format_option($fn_ci, $decimalprecision, $decimalseparator);
-                                                            }
-                                                        }else if($fn_fp_tn_tp == "fp"){                                                        
-                                                            if(is_numeric($fp)){
-                                                                $value_ = $this->numeric_format_option($fp, $decimalprecision, $decimalseparator);
-                                                            }
-                                                            if(is_numeric($fp_ci)){
-                                                                $value_2 = $this->numeric_format_option($fp_ci, $decimalprecision, $decimalseparator);
-                                                            }
-                                                        }else if($fn_fp_tn_tp == "tn"){
-                                                            if(is_numeric($tn)){
-                                                                $value_ = $this->numeric_format_option($tn, $decimalprecision, $decimalseparator);
-                                                            }
-                                                            if(is_numeric($tn_ci)){
-                                                                $value_2 = $this->numeric_format_option($tn_ci, $decimalprecision, $decimalseparator);
-                                                            }
-                                                        }else if($fn_fp_tn_tp == "tp"){
-                                                            if(is_numeric($tp)){
-                                                                $value_ = $this->numeric_format_option($tp, $decimalprecision, $decimalseparator);
-                                                            }
-                                                            if(is_numeric($tp_ci)){
-                                                                $value_2 = $this->numeric_format_option($tp_ci, $decimalprecision, $decimalseparator);
-                                                            }
+                                                        if(is_numeric($fn)){
+                                                            $value_ = $this->numeric_format_option($fn, $decimalprecision, $decimalseparator);
+                                                        }
+                                                        if(is_numeric($fn_ci)){
+                                                            $value_ci = $this->numeric_format_option($fn_ci, $decimalprecision, $decimalseparator);
+                                                        }
+                                                        
+                                                        if(is_numeric($fp)){
+                                                            $value_ = $this->numeric_format_option($fp, $decimalprecision, $decimalseparator);
+                                                        }
+                                                        if(is_numeric($fp_ci)){
+                                                            $value_2 = $this->numeric_format_option($fp_ci, $decimalprecision, $decimalseparator);
+                                                        }
+                                                        
+                                                        if(is_numeric($tn)){
+                                                            $value_ = $this->numeric_format_option($tn, $decimalprecision, $decimalseparator);
+                                                        }
+                                                        if(is_numeric($tn_ci)){
+                                                            $value_2 = $this->numeric_format_option($tn_ci, $decimalprecision, $decimalseparator);
+                                                        }
+                                                        
+                                                        if(is_numeric($tp)){
+                                                            $value_ = $this->numeric_format_option($tp, $decimalprecision, $decimalseparator);
+                                                        }
+                                                        if(is_numeric($tp_ci)){
+                                                            $value_2 = $this->numeric_format_option($tp_ci, $decimalprecision, $decimalseparator);
                                                         }
                                                         
                                                         if($parameters["descriptivestatistics"] == "mean"){
