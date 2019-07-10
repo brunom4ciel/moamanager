@@ -180,11 +180,14 @@ if($task == "open"){
             $application->setParameter("parallel_process", base64_decode($application->getParameter("parallel_process")));
             $application->setParameter("interfacename", base64_decode($application->getParameter("interfacename")));
             $application->setParameter("javaparameters", base64_decode($application->getParameter("javaparameters")));
+            $application->setParameter("javaagent", base64_decode($application->getParameter("javaagent")));
             
             
             $javaparameters = $application->getParameter("javaparameters");
             
             $interfacename = $application->getParameter("interfacename");
+            
+            $javaagent = $application->getParameter("javaagent");
             
             if(empty($interfacename))
             {
@@ -441,6 +444,16 @@ if($task == "open"){
 //                                         unlink($filename);
 //                                     }
                                     
+                                    $javaagent_cmd = "";
+                                    if($javaagent != "no"){
+                                        $javaagent_cmd = "-javaagent:"
+                                            .Properties::getBase_directory_moa()
+                                            ."lib"
+                                                .DIRECTORY_SEPARATOR
+                                                .$javaagent . " ";// "sizeofag-1.0.0.jar ";
+                                    }
+                                    
+                                    
                                     foreach($script_list as $script_item)
                                     {
                                         
@@ -486,12 +499,14 @@ if($task == "open"){
                                             .Properties::getBase_directory_moa()
                                             ."lib"
                                             .DIRECTORY_SEPARATOR
-                                            ."*\""
-                                            ." -javaagent:"
-                                            .Properties::getBase_directory_moa()
-                                            ."lib"
-                                            .DIRECTORY_SEPARATOR
-                                            ."sizeofag-1.0.0.jar " . $interfacename . " \ \"".$script_item."\" > "
+                                            ."*\" "
+                                            .$javaagent_cmd 
+//                                             ." -javaagent:"
+//                                             .Properties::getBase_directory_moa()
+//                                             ."lib"
+//                                             .DIRECTORY_SEPARATOR
+//                                             ."sizeofag-1.0.0.jar " 
+                                            . $interfacename . " \ \"".$script_item."\" > "
                                             .$dirProcess.$filename_script;
                                                                             
                                         }
@@ -776,6 +791,15 @@ if($task == "open"){
                 $dataJson = array();
                 $idSeq = 1;
                 
+                $javaagent_cmd = "";
+                if($javaagent != "no"){
+                    $javaagent_cmd = "-javaagent:"
+                        .Properties::getBase_directory_moa()
+                        ."lib"
+                            .DIRECTORY_SEPARATOR
+                            .$javaagent . " ";// "sizeofag-1.0.0.jar ";
+                }
+                
                 foreach($list_scripts2 as $key=>$script_item){
                     
                     //usleep(5000);
@@ -817,12 +841,14 @@ if($task == "open"){
                         .Properties::getBase_directory_moa()
                         ."lib"
                         .DIRECTORY_SEPARATOR
-                        ."*\""
-                        ." -javaagent:"
-                        .Properties::getBase_directory_moa()
-                        ."lib"
-                        .DIRECTORY_SEPARATOR
-                        ."sizeofag-1.0.0.jar " . $interfacename . " \ \"".$script_item."\" > "
+                        ."*\" "
+                        .$javaagent_cmd
+//                         ." -javaagent:"
+//                         .Properties::getBase_directory_moa()
+//                         ."lib"
+//                         .DIRECTORY_SEPARATOR
+//                         ."sizeofag-1.0.0.jar " 
+                        .$interfacename . " \ \"".$script_item."\" > "
                         .$dirProcess.$filename_script;
 
                                                         
@@ -1028,10 +1054,13 @@ if($task == "open"){
                 
                 $application->setParameter("interfacename", base64_decode($application->getParameter("interfacename")));
                 $application->setParameter("javaparameters", base64_decode($application->getParameter("javaparameters")));
-                                
+                $application->setParameter("javaagent", base64_decode($application->getParameter("javaagent")));
+                
                 $javaparameters = $application->getParameter("javaparameters");
                 
                 $interfacename = $application->getParameter("interfacename");
+                
+                $javaagent = $application->getParameter("javaagent");
                 
                 if(empty($interfacename)){
                     $interfacename = "moa.DoTask";
@@ -1537,6 +1566,17 @@ if($task == "open"){
 														<td><input type="text"  id="interfacename" name="interfacename" onchange="setCookieElementValue(this);" value="moa.DoTask"/>
 														</td>
 													</tr>
+													
+													<tr>
+														<td>Java -javaagent
+														</td>
+														<td><select name="javaagent" class="btn btn-default" id="javaagent"
+											onchange="setCookieElementSelectValue(this);">
+											<option value="no">Do not use</option>
+											<option value="sizeofag-1.0.0.jar">sizeofag-1.0.0.jar</option>
+										</select>
+														</td>
+													</tr>
 													<tr>
 														<td>Save result in folder 
 														</td>
@@ -1842,7 +1882,9 @@ historicCookieElementValue("email", "<?php echo $application->getUser()?>");
 historicCookieCheckbox("notification");
 historicCookieElementValue("javaparameters", "");
 historicCookieElementValue("interfacename", "moa.DoTask");
+
 historicCookieElementSelectValue("version_software");
+historicCookieElementSelectValue("javaagent");
 historicCookieElementSelectValue("java");
 
 
@@ -2001,6 +2043,10 @@ function sendMOAREST(strURL, content, method){
 		
 	var javap = document.getElementById('java');
 	javap = javap.options[javap.selectedIndex].value;	
+
+	var javaagent = document.getElementById('javaagent');
+	javaagent = javaagent.options[javaagent.selectedIndex].value;	
+	
 	
 	//if( document.getElementById('message_check').checked ==true )
 	HttpReq.send("data="+encodeURIComponent(Base64.encode(data))
@@ -2020,6 +2066,7 @@ function sendMOAREST(strURL, content, method){
 				+'&filename='+encodeURIComponent(Base64.encode(filename))
 				+'&version_software='+encodeURIComponent(Base64.encode(version_software))
 				+'&java='+encodeURIComponent(Base64.encode(javap))
+				+'&javaagent='+encodeURIComponent(Base64.encode(javaagent))
 				+'&tmpl=tmpl');
 	//else
 	//	HttpReq.send("");
