@@ -12,12 +12,14 @@ dir_opt_moamanager_statistical="$dir_opt_moamanager/statistical"
 
 cd $currentpath;
 
-cp -rv $currentpath/statistical/wilcoxon.cpp $dir_opt_moamanager_statistical_wilcoxon/wilcoxon.cpp
+cp -rv $currentpath/statistical/wilcoxon.cpp $dir_opt_moamanager_statistical/wilcoxon.cpp
 
 chmod 777 -R $dir_opt
 
 cd $dir_opt_moamanager_statistical
 
+echo "Automatic build (or loosely compilation) process.\n"
+echo "Source wilconxon.cpp -> Build wilcoxon_run\n"
 g++ $dir_opt_moamanager_statistical/wilcoxon.cpp -std=c++11 -o3 -o $dir_opt_moamanager_statistical/wilcoxon_run
 
 chmod 777 $dir_opt_moamanager_statistical/wilcoxon_run
