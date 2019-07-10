@@ -15,6 +15,6 @@ echo "Update Statistical Tests\n"
 
 sh update-statistical-tests.sh
 
-echo "Update Orange3\n"
+#echo "Update Orange3\n"
 
-sh update-orange3.sh
+#sh update-orange3.sh

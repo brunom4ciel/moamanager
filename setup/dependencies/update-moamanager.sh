@@ -26,4 +26,4 @@ rm -fr $dirmoam_web/setup
 
 cd $currentpath;
 
-sh checking-installed.sh
+#sh checking-installed.sh

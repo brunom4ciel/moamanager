@@ -22,6 +22,7 @@ sh moa-install.sh
 sh gcc-install.sh
 sh libboost-install.sh
 sh friedman-install.sh
+sh wilcoxon-install.sh
 
 sh moamanager-install.sh
 

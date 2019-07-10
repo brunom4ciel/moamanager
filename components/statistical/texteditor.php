@@ -40,6 +40,7 @@ $data_diff_statistical = "";
 $statistical_test_array = array(
     "Bonferroni-Dunn",
     "Nemenyi",
+    "Wilcoxon",
     "Holm",
     "Shaffer",
     "Bergmann-Hommel",
@@ -294,7 +295,16 @@ if (in_array($task, $statistical_test_array)) {
     else 
     {
         
-        $friedman_bin = Properties::getbase_directory_statistical() . "friedman-test/bin/friedman_run";
+        if($task == "Wilcoxon")
+        { 
+            $friedman_bin = Properties::getbase_directory_statistical() . "wilcoxon_run";
+            
+        }else{
+            $friedman_bin = Properties::getbase_directory_statistical() . "friedman-test/bin/friedman_run";
+        }
+        
+        
+//         $friedman_bin = Properties::getbase_directory_statistical() . "friedman-test/bin/friedman_run";
         
         $data_source2 = $data_source;
         $data_source2 = str_replace(",", ".", $data_source);
@@ -350,8 +360,17 @@ if (in_array($task, $statistical_test_array)) {
         
         $cols_names = trim($cols_names);
         
-        $data_destine = $countRows . "\t" . $countCols . "\n" . $cols_names . "\n" . $task . "\n" . // .ucfirst($task)."\n"
-            "0.95" . "\n" . $data_source2;
+        if($task == "Wilcoxon")
+        { 
+            $data_destine = $countRows . "\t" . $countCols . "\n" . $cols_names . "\n" .  "\n" . // .ucfirst($task)."\n"
+                 $data_source2;
+        }else{
+            
+            $data_destine = $countRows . "\t" . $countCols . "\n" . $cols_names . "\n" . $task . "\n" . // .ucfirst($task)."\n"
+                "0.95" . "\n" . $data_source2;
+        }
+        
+
         
         $filename = PATH_USER_WORKSPACE_PROCESSING . "tmp" . str_replace(" ", "-", microtime()) . "";
         
@@ -367,61 +386,70 @@ if (in_array($task, $statistical_test_array)) {
         if (is_file($filename . "-output.tmp")) {
             $data_result = $utils->getContentFile($filename . "-output.tmp");
             
-            $s = explode("\n\n", $data_result);
-            
-            $data_postos = trim($s[4]);
-            
-            $data_postos = str_replace(".", ",", $data_postos);
-            
-            $data_diff_statistical  = trim($s[6])."\n\n";
-            $data_diff_statistical  .= trim($s[7])."\n\n";
-            $data_diff_statistical  .= trim($s[8]);
-            
-            $data_rank = trim($s[5]);
-            
-            $data_rank = explode("\n", $data_rank);
-            
-            $data_rank = $data_rank[1];
-            
-            $data_order = explode("\t", $data_rank);
-            $data_order2 = $data_order;
-            
-            sort($data_order);
-            
-            $test = array();
-            $index = 1;
-            
-            foreach ($data_order as $item) {
-                foreach ($data_order2 as $key2 => $item2) {
-                    if ($item == $item2) {
-                        $data_order2[$key2] = array(
-                            "order" => $index,
-                            "value" => $item2
-                        );
-                        
-                        // array_push($test, array("order"=>$index, "value"=>$item2));
+            if($task == "Wilcoxon")
+            { 
+                $data_rank = $data_result;
+                
+            }else{
+                $s = explode("\n\n", $data_result);
+                
+                $data_postos = trim($s[4]);
+                
+                $data_postos = str_replace(".", ",", $data_postos);
+                
+                $data_diff_statistical  = trim($s[6])."\n\n";
+                $data_diff_statistical  .= trim($s[7])."\n\n";
+                $data_diff_statistical  .= trim($s[8]);
+                
+                $data_rank = trim($s[5]);
+                
+                $data_rank = explode("\n", $data_rank);
+                
+                $data_rank = $data_rank[1];
+                
+                $data_order = explode("\t", $data_rank);
+                $data_order2 = $data_order;
+                
+                sort($data_order);
+                
+                $test = array();
+                $index = 1;
+                
+                foreach ($data_order as $item) {
+                    foreach ($data_order2 as $key2 => $item2) {
+                        if ($item == $item2) {
+                            $data_order2[$key2] = array(
+                                "order" => $index,
+                                "value" => $item2
+                            );
+                            
+                            // array_push($test, array("order"=>$index, "value"=>$item2));
+                        }
+                    }
+                    
+                    $index ++;
+                }
+                
+                $data_rank = "";
+                $data_rank2 = "";
+                
+                foreach ($data_order2 as $row) {
+                    $row["value"] = str_replace(".", ",", $row["value"]);
+                    
+                    if (empty($data_rank)) {
+                        $data_rank = $row["value"];
+                        $data_rank2 = $row["order"];
+                    } else {
+                        $data_rank .= "\t" . $row["value"];
+                        $data_rank2 .= "\t" . $row["order"];
                     }
                 }
                 
-                $index ++;
+                $data_rank = $data_rank . "\n" . $data_rank2;
             }
             
-            $data_rank = "";
-            $data_rank2 = "";
             
-            foreach ($data_order2 as $row) {
-                $row["value"] = str_replace(".", ",", $row["value"]);
-                
-                if (empty($data_rank)) {
-                    $data_rank = $row["value"];
-                    $data_rank2 = $row["order"];
-                } else {
-                    $data_rank .= "\t" . $row["value"];
-                    $data_rank2 .= "\t" . $row["order"];
-                }
-            }
             
-            $data_rank = $data_rank . "\n" . $data_rank2;
             
             // var_dump($data_order2);
             // echo $data_rank;
@@ -552,6 +580,8 @@ function minkowski($x, $y)
 									<div style="float: left; padding-left: 10px">
 										View decimal separator <input type="text" name="decimalformat"
 											id="decimalformat" value="," style="width: 40px;" /> <input
+											type="submit" class="btn btn-default" value="Wilcoxon"
+											onclick="document.forms[0].task.value=this.value"> <input
 											type="submit" class="btn btn-default" value="Shaffer"
 											onclick="document.forms[0].task.value=this.value"> <input
 											type="submit" class="btn btn-default" value="Nemenyi"
