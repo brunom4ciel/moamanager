@@ -28,7 +28,33 @@ public class NamesMetrics {
 	public boolean TN = true;
 	public boolean TP = true;
 	
+	public boolean ACCURACY_DETECTION = true;
+//	public boolean KAPPA_DETECTION = true;
+//	public boolean YOUDEN_DETECTION = true;
 	
+	public boolean isACCURACY_DETECTION() {
+		return ACCURACY_DETECTION;
+	}
+
+	public void setACCURACY_DETECTION(boolean aCCURACY_DETECTION) {
+		ACCURACY_DETECTION = aCCURACY_DETECTION;
+	}
+
+//	public boolean isKAPPA_DETECTION() {
+//		return KAPPA_DETECTION;
+//	}
+//
+//	public void setKAPPA_DETECTION(boolean kAPPA_DETECTION) {
+//		KAPPA_DETECTION = kAPPA_DETECTION;
+//	}
+//
+//	public boolean isYOUDEN_DETECTION() {
+//		return YOUDEN_DETECTION;
+//	}
+//
+//	public void setYOUDEN_DETECTION(boolean yOUDEN_DETECTION) {
+//		YOUDEN_DETECTION = yOUDEN_DETECTION;
+//	}
 	
 	public boolean isFN() {
 		return FN;

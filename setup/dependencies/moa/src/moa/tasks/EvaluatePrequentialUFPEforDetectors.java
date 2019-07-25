@@ -119,83 +119,90 @@ public class EvaluatePrequentialUFPEforDetectors extends MainTask {
 			"xml", "plaintext"},
 			1); 
     
-    public MultiChoiceOption isEntropyOption = new MultiChoiceOption(
-			"isEntropy", 'm',
-			"isEntropy?", new String[]{
+    public MultiChoiceOption isMetricsOption = new MultiChoiceOption(
+			"isMetrics", 'm',
+			"isMetrics?", new String[]{
 			"False", "True"}, new String[]{
 			"false", "true"},
 			0); 
     
-    public MultiChoiceOption isMDROption = new MultiChoiceOption(
-			"isMDR", 'n',
-			"isMDR?", new String[]{
-			"False", "True"}, new String[]{
-			"false", "true"},
-			1); 
-    
-    public MultiChoiceOption isMTDOption = new MultiChoiceOption(
-			"isMTD", 'p',
-			"isMTD?", new String[]{
-			"False", "True"}, new String[]{
-			"false", "true"},
-			1);
-    
-    public MultiChoiceOption isMTFAOption = new MultiChoiceOption(
-			"isMTFA", 'u',
-			"isMTFA?", new String[]{
-			"False", "True"}, new String[]{
-			"false", "true"},
-			1);
-    
-    public MultiChoiceOption isMTROption = new MultiChoiceOption(
-			"isMTR", 'v',
-			"isMTR?", new String[]{
-			"False", "True"}, new String[]{
-			"false", "true"},
-			1);
-    
-    public MultiChoiceOption isPrecisionOption = new MultiChoiceOption(
-			"isPrecision", 'x',
-			"isPrecision?", new String[]{
-			"False", "True"}, new String[]{
-			"false", "true"},
-			1);
-    
-    public MultiChoiceOption isRecallOption = new MultiChoiceOption(
-			"isRecall", 'w',
-			"isRecall?", new String[]{
-			"False", "True"}, new String[]{
-			"false", "true"},
-			1);
-    
-    public MultiChoiceOption isMCCOption = new MultiChoiceOption(
-			"isMCC", 'k',
-			"isMCC?", new String[]{
-			"False", "True"}, new String[]{
-			"false", "true"},
-			1);
-    
-    
-    public MultiChoiceOption isF1Option = new MultiChoiceOption(
-			"isF1", 'g',
-			"isF1?", new String[]{
-			"False", "True"}, new String[]{
-			"false", "true"},
-			1); 
-    
-    public MultiChoiceOption isDRIFT_POINT_DISTANCEOption = new MultiChoiceOption(
-			"isDRIFT_POINT_DISTANCE", 'h',
-			"isDRIFT_POINT_DISTANCE?", new String[]{
-			"False", "True"}, new String[]{
-			"false", "true"},
-			1); 
-    
-    public MultiChoiceOption isFN_FP_TN_TPOption = new MultiChoiceOption(
-			"isFN_FP_TN_TP", 'j',
-			"isFN_FP_TN_TP?", new String[]{
-			"False", "True"}, new String[]{
-			"false", "true"},
-			1); 
+//    public MultiChoiceOption isEntropyOption = new MultiChoiceOption(
+//			"isEntropy", 'm',
+//			"isEntropy?", new String[]{
+//			"False", "True"}, new String[]{
+//			"false", "true"},
+//			0); 
+//    
+//    public MultiChoiceOption isMDROption = new MultiChoiceOption(
+//			"isMDR", 'n',
+//			"isMDR?", new String[]{
+//			"False", "True"}, new String[]{
+//			"false", "true"},
+//			1); 
+//    
+//    public MultiChoiceOption isMTDOption = new MultiChoiceOption(
+//			"isMTD", 'p',
+//			"isMTD?", new String[]{
+//			"False", "True"}, new String[]{
+//			"false", "true"},
+//			1);
+//    
+//    public MultiChoiceOption isMTFAOption = new MultiChoiceOption(
+//			"isMTFA", 'u',
+//			"isMTFA?", new String[]{
+//			"False", "True"}, new String[]{
+//			"false", "true"},
+//			1);
+//    
+//    public MultiChoiceOption isMTROption = new MultiChoiceOption(
+//			"isMTR", 'v',
+//			"isMTR?", new String[]{
+//			"False", "True"}, new String[]{
+//			"false", "true"},
+//			1);
+//    
+//    public MultiChoiceOption isPrecisionOption = new MultiChoiceOption(
+//			"isPrecision", 'x',
+//			"isPrecision?", new String[]{
+//			"False", "True"}, new String[]{
+//			"false", "true"},
+//			1);
+//    
+//    public MultiChoiceOption isRecallOption = new MultiChoiceOption(
+//			"isRecall", 'w',
+//			"isRecall?", new String[]{
+//			"False", "True"}, new String[]{
+//			"false", "true"},
+//			1);
+//    
+//    public MultiChoiceOption isMCCOption = new MultiChoiceOption(
+//			"isMCC", 'k',
+//			"isMCC?", new String[]{
+//			"False", "True"}, new String[]{
+//			"false", "true"},
+//			1);
+//    
+//    
+//    public MultiChoiceOption isF1Option = new MultiChoiceOption(
+//			"isF1", 'g',
+//			"isF1?", new String[]{
+//			"False", "True"}, new String[]{
+//			"false", "true"},
+//			1); 
+//    
+//    public MultiChoiceOption isDRIFT_POINT_DISTANCEOption = new MultiChoiceOption(
+//			"isDRIFT_POINT_DISTANCE", 'h',
+//			"isDRIFT_POINT_DISTANCE?", new String[]{
+//			"False", "True"}, new String[]{
+//			"false", "true"},
+//			1); 
+//    
+//    public MultiChoiceOption isFN_FP_TN_TPOption = new MultiChoiceOption(
+//			"isFN_FP_TN_TP", 'j',
+//			"isFN_FP_TN_TP?", new String[]{
+//			"False", "True"}, new String[]{
+//			"false", "true"},
+//			1); 
     
     
 //    public FlagOption isAccuracyOption = new FlagOption("isAccuracy", 'y',
@@ -231,41 +238,60 @@ public class EvaluatePrequentialUFPEforDetectors extends MainTask {
         
         boolean flagValue = false;
         
-        flagValue = (isEntropyOption.getChosenIndex() == 1 ? true:false);
-        ddemeasures.setENTROPY(flagValue);
+        flagValue = (isMetricsOption.getChosenIndex() == 1 ? true:false);
         
-        flagValue = (isMDROption.getChosenIndex() == 1 ? true:false);
-        ddemeasures.setMDR(flagValue);
-   
-        flagValue = (isMTDOption.getChosenIndex() == 1 ? true:false);
-        ddemeasures.setMTD(flagValue);
+    	ddemeasures.setENTROPY(flagValue);
+    	ddemeasures.setMDR(flagValue);
+    	ddemeasures.setMTD(flagValue);
+    	ddemeasures.setMTFA(flagValue);
+    	ddemeasures.setMTR(flagValue);
+    	ddemeasures.setPRECISION(flagValue);
+    	ddemeasures.setRECALL(flagValue);
+    	ddemeasures.setMCC(flagValue);
+    	ddemeasures.setF1(flagValue);
+    	ddemeasures.setACCURACY_DETECTION(flagValue);
+//    	ddemeasures.setKAPPA_DETECTION(flagValue);
+//    	ddemeasures.setYOUDEN_DETECTION(flagValue);         
+    	ddemeasures.setDRIFT_POINT_DISTANCE(flagValue);
+    	ddemeasures.setDRIFT_GENERAL_MEAN(false);
+    	ddemeasures.setFN_FP_TN_TP(flagValue);
+    	
+    	
+//        flagValue = (isEntropyOption.getChosenIndex() == 1 ? true:false);
+//        ddemeasures.setENTROPY(flagValue);
+//        
+//        flagValue = (isMDROption.getChosenIndex() == 1 ? true:false);
+//        ddemeasures.setMDR(flagValue);
+//   
+//        flagValue = (isMTDOption.getChosenIndex() == 1 ? true:false);
+//        ddemeasures.setMTD(flagValue);
+//        
+//        flagValue = (isMTFAOption.getChosenIndex() == 1 ? true:false);
+//        ddemeasures.setMTFA(flagValue);
+//        
+//        flagValue = (isMTROption.getChosenIndex() == 1 ? true:false);
+//        ddemeasures.setMTR(flagValue);
+//        
+//        flagValue = (isPrecisionOption.getChosenIndex() == 1 ? true:false);
+//        ddemeasures.setPRECISION(flagValue);
+//        
+//        flagValue = (isRecallOption.getChosenIndex() == 1 ? true:false);
+//        ddemeasures.setRECALL(flagValue);
+//        
+//        flagValue = (isMCCOption.getChosenIndex() == 1 ? true:false);
+//        ddemeasures.setMCC(flagValue);
+//        
+//        flagValue = (isF1Option.getChosenIndex() == 1 ? true:false);
+//        ddemeasures.setF1(flagValue);
         
-        flagValue = (isMTFAOption.getChosenIndex() == 1 ? true:false);
-        ddemeasures.setMTFA(flagValue);
-        
-        flagValue = (isMTROption.getChosenIndex() == 1 ? true:false);
-        ddemeasures.setMTR(flagValue);
-        
-        flagValue = (isPrecisionOption.getChosenIndex() == 1 ? true:false);
-        ddemeasures.setPRECISION(flagValue);
-        
-        flagValue = (isRecallOption.getChosenIndex() == 1 ? true:false);
-        ddemeasures.setRECALL(flagValue);
-        
-        flagValue = (isMCCOption.getChosenIndex() == 1 ? true:false);
-        ddemeasures.setMCC(flagValue);
-        
-        flagValue = (isF1Option.getChosenIndex() == 1 ? true:false);
-        ddemeasures.setF1(flagValue);
-        
-        flagValue = (isDRIFT_POINT_DISTANCEOption.getChosenIndex() == 1 ? true:false);
-        ddemeasures.setDRIFT_POINT_DISTANCE(flagValue);
-        
-        ddemeasures.setDRIFT_MEANS(false); 
-        ddemeasures.setDRIFT_GENERAL_MEAN(false);
-        
-        flagValue = (isFN_FP_TN_TPOption.getChosenIndex() == 1 ? true:false);
-        ddemeasures.setFN_FP_TN_TP(flagValue);
+//        flagValue = (isDRIFT_POINT_DISTANCEOption.getChosenIndex() == 1 ? true:false);
+//        ddemeasures.setDRIFT_POINT_DISTANCE(flagValue);
+//        
+//        ddemeasures.setDRIFT_MEANS(false); 
+//        ddemeasures.setDRIFT_GENERAL_MEAN(false);
+//        
+//        flagValue = (isFN_FP_TN_TPOption.getChosenIndex() == 1 ? true:false);
+//        ddemeasures.setFN_FP_TN_TP(flagValue);
         
         if(flagValue) {
         	ddemeasures.setFN(flagValue);
@@ -330,6 +356,10 @@ public class EvaluatePrequentialUFPEforDetectors extends MainTask {
                 ddemetrics[indexMetrics].setRECALL(ddemeasures.isRECALL());
                 ddemetrics[indexMetrics].setMCC(ddemeasures.isMCC());
                 ddemetrics[indexMetrics].setF1(ddemeasures.isF1());
+                
+                ddemetrics[indexMetrics].setACCURACY_DETECTION(ddemeasures.isACCURACY_DETECTION());
+//                ddemetrics[indexMetrics].setKAPPA_DETECTION(ddemeasures.isKAPPA_DETECTION());
+//                ddemetrics[indexMetrics].setYOUDEN_DETECTION(ddemeasures.isYOUDEN_DETECTION());
                 
                 ddemetrics[indexMetrics].setDRIFT_POINT_DISTANCE(ddemeasures.isDRIFT_POINT_DISTANCE());
                 ddemetrics[indexMetrics].setDRIFT_MEANS(ddemeasures.isDRIFT_MEANS()); 
@@ -525,6 +555,9 @@ public class EvaluatePrequentialUFPEforDetectors extends MainTask {
         		|| ddemeasures.isFP()
         		|| ddemeasures.isTN()
         		|| ddemeasures.isTP()
+        		|| ddemeasures.isACCURACY_DETECTION()
+//        		|| ddemeasures.isKAPPA_DETECTION()
+//        		|| ddemeasures.isYOUDEN_DETECTION()
         		) {
         	
         	if(ddemetrics != null) {

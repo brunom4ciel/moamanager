@@ -626,7 +626,7 @@ def graph_ranks(avranks, names, cd=None, cdmethod=None, lowv=None, highv=None,
             a = highv - rank
         return textspace + scalewidth / (highv - lowv) * a
 
-    distanceh = 0.25
+    distanceh = 0#0.25
 
     if cd and cdmethod is None:
         # get pairs of non significant methods
@@ -658,6 +658,8 @@ def graph_ranks(avranks, names, cd=None, cdmethod=None, lowv=None, highv=None,
         #distanceh = 0.25
         cline += distanceh
 
+
+    cline = 0.4
     # calculate height needed height of an image
     #minnotsignificant = max(2 * 0.2, linesblank) # original 17/01/2019
     minnotsignificant = max(0.08, linesblank) # old max(0.05, linesblank)
@@ -710,14 +712,16 @@ def graph_ranks(avranks, names, cd=None, cdmethod=None, lowv=None, highv=None,
     #line([(0, cline), (width - textspace, cline)], linewidth=1.7)
     line([(textspace, cline), (width - textspace, cline)], linewidth=1.7)
 
-
+    
     bigtick = 0.1
     smalltick = 0.05
 
     if cdmethod is None:
-        barline = 0.6
+        barline = 0.35
+        testee=textspace+cline+(textspace)
     else:
         barline = 0.35
+        testee=textspace+cline+(textspace)
 
     tick = None
     for a in list(np.arange(lowv, highv, 0.5)) + [highv]:
@@ -745,15 +749,17 @@ def graph_ranks(avranks, names, cd=None, cdmethod=None, lowv=None, highv=None,
     #scalewidth2 = width - 2 * textspace
     #textspace - rankpos(math.ceil(k/2)-1) #
     
-    
+    minnotsignificant = 0.14
+
     #friedmanrank=1
     if friedmanrank == 1:
         tick2=cline*(len(avranks)) + (cline*0.5)
         #line([(textspace, cline), (width - textspace, cline)], linewidth=3.7)
         index=0
         avranks2 = sorted(avranks)
-        textspaceh = (textspace/2) + rankpos(math.ceil(k/2)-1) # textspace #+ scalewidth2 / (highv - lowv)  #textspace - (textspace*0.53) #textspace - (scalewidth) #+ rankpos(ssums[1]) #- 0.05#rankpos(a)
-        #chei = cline + minnotsignificant + ((k - len(avranks) ))
+        #textspaceh = (textspace/2) + rankpos(math.ceil(k/2)-1) # textspace #+ scalewidth2 / (highv - lowv)  #textspace - (textspace*0.53) #textspace - (scalewidth) #+ rankpos(ssums[1]) #- 0.05#rankpos(a)
+        textspaceh = testee#textspace+cline
+	#chei = cline + minnotsignificant + ((k - len(avranks) ))
         #chei = cline + minnotsignificant + (math.ceil(k / 2)) * (1 / math.ceil(k / 2)) #(k*0.1)
         chei = cline + minnotsignificant + math.ceil(k/2) * 0.135
         #for i in range(math.ceil(k / 2), k):        
@@ -786,7 +792,7 @@ def graph_ranks(avranks, names, cd=None, cdmethod=None, lowv=None, highv=None,
     chei = cline + minnotsignificant + 1 * 0.13
     text(textspace - 0.05, chei, nnames[1], ha="right", va="center", color2='k', fontsize2='small') 
     """		
-
+    
     for i in range(math.ceil(k / 2)):
         chei = cline + minnotsignificant + i * 0.13 # cline + minnotsignificant + i * 0.13
         line([(rankpos(ssums[i]), cline),
@@ -846,13 +852,14 @@ def graph_ranks(avranks, names, cd=None, cdmethod=None, lowv=None, highv=None,
         else:
             begin, end = rankpos(highv), rankpos(highv - cd)
 
-        line([(begin, distanceh + 0.07), (end, distanceh + 0.07)], color='r', linewidth=1.0)
-        line([(begin, (distanceh + bigtick / 2) + 0.07),
-              (begin, (distanceh - bigtick / 2) + 0.07)],color='r',
-             linewidth=1.0)
-        line([(end, (distanceh + bigtick / 2) + 0.07),
-              (end, (distanceh - bigtick / 2) + 0.07)],color='r',
-             linewidth=1.0)
+	#linha do CD que aparece no grafico
+        #line([(begin, distanceh + 0.07), (end, distanceh + 0.07)], color='r', linewidth=1.0)
+        #line([(begin, (distanceh + bigtick / 2) + 0.07),
+        #      (begin, (distanceh - bigtick / 2) + 0.07)],color='r',
+        #     linewidth=1.0)
+        #line([(end, (distanceh + bigtick / 2) + 0.07),
+        #      (end, (distanceh - bigtick / 2) + 0.07)],color='r',
+        #     linewidth=1.0)
              
        # scd = float("{0:.4f}".format(cd))
              
@@ -860,7 +867,8 @@ def graph_ranks(avranks, names, cd=None, cdmethod=None, lowv=None, highv=None,
         #    text((begin + end) / 2, distanceh, "CD="+str(float("{0:.4f}".format(cd))),
         #     ha="center", va="bottom")
         #else:
-        text( (textspace/2) + (begin + end) / 2 , distanceh, "CD="+str(float("{0:.4f}".format(cd))) + ", α="+str(alpha)+ ", n="+str(n)+ ", g="+str(k),
+        #text( (textspace/2) + (begin + end) / 2 , distanceh, "CD="+str(float("{0:.4f}".format(cd))) + ", α="+str(alpha)+ ", n="+str(n)+ ", g="+str(k), ha="center", va="bottom")
+        text( testee , distanceh+0.15, "CD="+str(float("{0:.4f}".format(cd))) + ", α="+str(alpha)+ ", N="+str(n)+ ", k="+str(k),
              ha="center", va="bottom")
         
                 
@@ -883,12 +891,13 @@ def graph_ranks(avranks, names, cd=None, cdmethod=None, lowv=None, highv=None,
 
         #text(textspace + scalewidth, 2.5, ' ', ha="right", va="center", color2='b', fontsize2='small')             
     elif cd:
-        begin = rankpos(avranks[cdmethod] - cd)
-        end = rankpos(avranks[cdmethod] + cd)
+        begin = rankpos(avranks[cdmethod] )
+        end = rankpos(avranks[cdmethod])  + cd
 
 #[(textspace, cline), (width - textspace, cline)]
 
-        text( (textspace + cline)+(textspace*0.55) , distanceh-0.1, "CD="+str(float("{0:.4f}".format(cd))) + ", α="+str(alpha)+ ", n="+str(n)+ ", g="+str(k), ha="center", va="bottom")
+        text( testee , distanceh+0.15, "CD="+str(float("{0:.4f}".format(cd))) + ", α="+str(alpha)+ ", N="+str(n)+ ", k="+str(k), ha="center", va="bottom")
+        #text( (textspace + cline)+(textspace*0.55) , distanceh-0.1, "CD="+str(float("{0:.4f}".format(cd))) + ", α="+str(alpha)+ ", n="+str(n)+ ", g="+str(k), ha="center", va="bottom")
 
         line([(begin, cline), (end, cline)],color='r',
              linewidth=2.5)

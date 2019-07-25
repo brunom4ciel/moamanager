@@ -28,6 +28,9 @@ public class DriftDetectionEvaluationMeasures extends NamesMetrics{
 	public List<Double> measurePrecision = new ArrayList<>();
 	public List<Double> measureRecall = new ArrayList<>();	
 	public List<Double> measureF1 = new ArrayList<>();
+//	public List<Double> measureKappa = new ArrayList<>();
+//	public List<Double> measureYouden = new ArrayList<>();
+	public List<Double> measureDetectionAccuracy = new ArrayList<>();
 	
     public List<Double> FP = new ArrayList<>();
     public List<Double> FN = new ArrayList<>();
@@ -56,21 +59,21 @@ public class DriftDetectionEvaluationMeasures extends NamesMetrics{
 	
     private long maxInstances;
     
-    private final int decimal = 2;
-    private final int smallDecimal = 4;
+    private final int decimal = 8;//2;
+    private final int smallDecimal = 8;//4;
     
     public static final String classPackageTitle = "moa.evaluante.DriftDetectionEvaluationMeasures";
     
     public static final String workbenchTitle = "Drift Detection Evaluation Measures";
 
-    public static final String versionString = "1.0 Dezember 2018";
+    public static final String versionString = "1.1 July 2019, 1.0 Dezember 2018";
     
     public static final String authorString = "Silas Garrido Teixeira de Carvalho Santos <sgtcs@cin.ufpe.br>,"
     		+ "\n\tBruno Iran Ferreira Maciel <bifm@cin.ufpe.br>,"
     		+ "\n\tRohgi Toshio Meneses <rtmc2@cin.ufpe.br>,"
     		+ "\n\tRoberto Souto Maior de Barros <roberto@cin.ufpe.br>";
 
-    public static final String copyrightNotice = "(C) 2015-2018 CIn (Informatic Center) of UFPE (Federal University of Pernambuco), Pernambuco, Brazil";
+    public static final String copyrightNotice = "(C) 2015-2019 CIn (Informatic Center) of UFPE (Federal University of Pernambuco), Pernambuco, Brazil";
 
     public static final String webAddress = "http://cin.ufpe.br,\n\thttps://sites.google.com/view/conceptdrift/,\n\thttps://sites.google.com/site/moamethods/";
     
@@ -301,7 +304,28 @@ public class DriftDetectionEvaluationMeasures extends NamesMetrics{
 							this.ddemetrics[i].tn));
 				}
 				
-					          		
+				
+				if(this.isACCURACY_DETECTION() ) {
+					measureDetectionAccuracy.add(this.DetectionAccuracy(this.ddemetrics[i].fp, 
+							this.ddemetrics[i].fn,
+							this.ddemetrics[i].tp, 
+							this.ddemetrics[i].tn));
+				}	
+				
+//				if(this.isKAPPA_DETECTION() ) {
+//					measureKappa.add(this.Kappa(this.ddemetrics[i].fp, 
+//							this.ddemetrics[i].fn,
+//							this.ddemetrics[i].tp, 
+//							this.ddemetrics[i].tn));
+//				}
+//				
+//				if(this.isYOUDEN_DETECTION() ) {
+//					measureYouden.add(this.Youden(this.ddemetrics[i].fp, 
+//							this.ddemetrics[i].fn,
+//							this.ddemetrics[i].tp, 
+//							this.ddemetrics[i].tn));
+//				}
+				
 				if(this.isDRIFT_POINT_DISTANCE()
 	                	||  this.isDRIFT_MEANS()
 	                	||	this.isDRIFT_GENERAL_MEAN()
@@ -326,7 +350,10 @@ public class DriftDetectionEvaluationMeasures extends NamesMetrics{
 			}
 			
 			
-			
+			if(this.isACCURACY_DETECTION()) {
+	        	printReturnData(chooseFormatData, "Detection Accuracy:", measureDetectionAccuracy
+        			, this.alpha, this.getDecimal(), this.getSmallDecimal());
+	        }
 	
 			
 			if(this.isENTROPY()) {
@@ -373,6 +400,20 @@ public class DriftDetectionEvaluationMeasures extends NamesMetrics{
 	        	printReturnData(chooseFormatData, "F1:", measureF1
         			, this.alpha, this.getDecimal(), this.getSmallDecimal());
 	        }
+	        
+	        
+	        
+	        
+//	        
+//	        if(this.isKAPPA_DETECTION()) {
+//	        	printReturnData(chooseFormatData, "Kappa:", measureKappa
+//        			, this.alpha, this.getDecimal(), this.getSmallDecimal());
+//	        }
+//	        
+//	        if(this.isYOUDEN_DETECTION()) {
+//	        	printReturnData(chooseFormatData, "Youden:", measureYouden
+//        			, this.alpha, this.getDecimal(), this.getSmallDecimal());
+//	        }
 	        
 	        if(this.isFN()) {
 	        	printReturnData(chooseFormatData, "FN:", FN
@@ -1231,7 +1272,7 @@ public class DriftDetectionEvaluationMeasures extends NamesMetrics{
         List<Double> tempValues = new ArrayList<>();
         List<Double> tempAllValues = new ArrayList<>();
         double sumAll = 0.0;
-        double sumAll2 = 0;
+        double sumAll2 = 0.0;
         
         if ( sz > 0 ) {
             System.out.printf("Drifts Means = ");
@@ -1475,5 +1516,90 @@ public class DriftDetectionEvaluationMeasures extends NamesMetrics{
     	
     	return result;
     }    
+	
+	/**
+	 * Returns an double with Detection Accuracy calculation. 
+	 * 
+	 * @author Bruno I. F. Maciel <bifm@cin.ufpe.br>
+	 * @param  fp an absolute of sum all false positives.
+	 * @param  fn an absolute of sum all false negatives.
+	 * @param  tp an absolute of sum all true positives.
+	 * @param  tn an absolute of sum all true negatives.
+	 * @return      the Detection Accuracy value
+	 */
+    public double DetectionAccuracy(double fp, double fn, double tp, double tn)
+    {
+    	double result = 1;
+    	
+    	if ( fp+tp != 0.0 ) {
+    				
+            result = ((tp+tn)) / ((tp+fn+tn+fp));
+        }
+        
+    	return result;
+    }
+    
+    
+//	/**
+//	 * Returns an double with KAPPA calculation. 
+//	 * 
+//	 * @author Bruno I. F. Maciel <bifm@cin.ufpe.br>
+//	 * @param  fp an absolute of sum all false positives.
+//	 * @param  fn an absolute of sum all false negatives.
+//	 * @param  tp an absolute of sum all true positives.
+//	 * @param  tn an absolute of sum all true negatives.
+//	 * @return      the Kappa value
+//	 */
+//    public double Kappa(double fp, double fn, double tp, double tn)
+//    {//Kappa = (totalAccuracy - randomAccuracy) / (1 - randomAccuracy)
+//    	
+//    	double result = 1;
+//    	
+//    	if ( fp+tp != 0.0 ) {
+//    		//totalAccuracy = (TP + TN) / (TP + TN + FP + FN)
+//    		double totalAccuracy = DetectionAccuracy(fp,fn,tp,tn);
+//    		
+//    		//randomAccuracy = (ActualFalse * PredictedFalse + ActualTrue * PredictedTrue) / Total*Total
+//    		//randomAccuracy = (TN + FP) * (TN + FN) + (FN + TP) * (FP + TP) / Total*Total
+//    		double randomAccuracy = ((tn+fp)*(tn+fn) + (fn+tp)*(fp+tp))/ (Math.pow((fp+fn+tp+tn),2));
+//    		    		
+////    		double p2 = (((tp+fn)*(tn+fp)) + ((tp+fp)*(tn+fn)))/ ((tp+fn)+(tn+fp));
+////    				
+////            result = ((tp+tn)-p2) / ((tp+fn+tn+fp)-p2);
+//            
+//            result = (totalAccuracy - randomAccuracy) / (1 - randomAccuracy);
+//        }
+//        
+//    	return result;
+//    }
+    
+//    /**
+//	 * Returns an double with Youden calculation. 
+//	 * 
+//	 * @author Bruno I. F. Maciel <bifm@cin.ufpe.br>
+//	 * @param  fp an absolute of sum all false positives.
+//	 * @param  fn an absolute of sum all false negatives.
+//	 * @param  tp an absolute of sum all true positives.
+//	 * @param  tn an absolute of sum all true negatives.
+//	 * @return      the Youden value
+//	 */
+//    public double Youden(double fp, double fn, double tp, double tn)
+//    {
+//    	double result = 0;
+//    	double recall,specificity;
+//    	
+//    	recall=specificity=0.0;
+//    	
+//        if ( tp != 0.0 ) {
+//        	recall = Recall(fn, tp);
+//        	specificity = (tn/(tn+fp));
+//        }
+//    	
+//        if ( recall != 0.0 ) {
+//        	result = recall - (1 - specificity);
+//        }
+//        
+//    	return result;
+//    }
     
 }
