@@ -892,7 +892,7 @@ def graph_ranks(avranks, names, cd=None, cdmethod=None, lowv=None, highv=None,
         #text(textspace + scalewidth, 2.5, ' ', ha="right", va="center", color2='b', fontsize2='small')             
     elif cd:
         begin = rankpos(avranks[cdmethod] )
-        end = rankpos(avranks[cdmethod])  + cd
+        end = rankpos(avranks[cdmethod])  + (cd/2)
 
 #[(textspace, cline), (width - textspace, cline)]
 
