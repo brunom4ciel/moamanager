@@ -329,7 +329,7 @@ if($task == "folder"){
         }
 
         $parameters = array();
-        $parameters_metrics = array("accuracy","time","memory","entropy",
+        $parameters_metrics = array("accuracy","time","memory","detectionaccuracy","entropy",
             "mdr", "mtfa", "mtd", "mtr", "dist", "precision", "recall", "mcc", "f1",
             "fn", "fp", "tn", "tp"
             );
@@ -572,7 +572,7 @@ if($task == "folder"){
                     
                     if($type_extract==1){
                         
-                        
+                        exit("fim");
                         $miningResult = $mining->extract_averages_in_file($from_file, $parameters);
                         
                         //var_dump($miningResult);exit("ok");
@@ -793,7 +793,7 @@ if($task == "folder"){
                             
                         }else{
                             if($type_extract==1){
-                                
+                                exit("error");
                                 $miningResult = $mining->extract_averages_in_file($from_dir.$file["name"], $parameters);
                                
                             }else{

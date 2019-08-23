@@ -481,6 +481,7 @@ function verificaChecks() {
                 			<option value="accuracy">Accuracy</option>
                 			<option value="time">Time</option>
                 			<option value="memory">Memory (B/s)</option>
+                			<option value="detectionaccuracy">Detection Accuracy</option>
                 			<option value="mdr">MDR</option>
                 			<option value="mtd">MTD</option>
                 			<option value="mtfa">MTFA</option>

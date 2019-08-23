@@ -23,6 +23,8 @@ class EvaluateExtract{
     public const TIME = "time";
     public const MEMORY = "memory";
     
+    public const DETECTION_ACCURACY = "detectionaccuracy";
+    
     public const ENTROPY = "entropy";
     
     public const MDR = "mdr";
@@ -108,6 +110,8 @@ class EvaluateExtract{
                 $evaluate_metrics[self::TIME] = "Time:";
                 $evaluate_metrics[self::MEMORY] = "Memory (B/s):";
             
+                $evaluate_metrics[self::DETECTION_ACCURACY] = "Detection Accuracy:";
+                
                 $evaluate_metrics[self::ENTROPY] = "Entropy:";
                 
                 $evaluate_metrics[self::MDR] = "MDR:";
@@ -281,119 +285,119 @@ class Mining extends EvaluateExtract{
     
     
     
-    function extract_averages_detector_in_file($file, $parameters){
+//     function extract_averages_detector_in_file($file, $parameters){
         
-        $output = array();
+//         $output = array();
         
-        if(!is_readable($file))
-        {
-            return $output;
-        }
+//         if(!is_readable($file))
+//         {
+//             return $output;
+//         }
         
         
-        $handle = fopen($file, "r");
+//         $handle = fopen($file, "r");
         
-        if ($handle)
-        {
+//         if ($handle)
+//         {
             
-            $start_measuret = false;
-            $measuret = array();
-            $start_metrics = false;
+//             $start_measuret = false;
+//             $measuret = array();
+//             $start_metrics = false;
             
-            while (($buffer = fgets($handle, 512)) !== false) {
+//             while (($buffer = fgets($handle, 512)) !== false) {
                 
-                if(strpos($buffer, "learning evaluation instances,evaluation time") !== false){
-                    break;
-                }
-                
-                
-                if(strpos($buffer, "MetricsDetector") === false)
-                {
-                    
-                    
-                }else
-                {
-                    //echo $buffer."=".(strpos($buffer, "MetricsDetector")===false?0:1)."<br>";
-                    
-                    if($start_measuret == true)
-                    {
-                        $output[]  = $measuret;
-                        
-                        $start_measuret = false;
-                        //var_dump($output);
-                        //exit("-------");
-                    }
-                    
-                    //$start_measuret = false;
-                    $start_metrics = true;
-                    
-                }
-                
-                if($start_metrics == true)
-                {
-                    //
-                    if(strpos($buffer, "MeasureDetect:")>-1)
-                    {
-                        
-                        $start_measuret = true;
-                        
-                        //if($parameters["detector"]==1)
-                        //{
-                        $data = explode("\t", trim($buffer));
-                        
-                        $measuret = array("sumOfWarningFalse"=>$data[1],
-                            "sumOfWarningTrue"=>$data[2],
-                            "sumOfDrift"=>$data[3],
-                            "warningCountFalse"=>$data[4],
-                            "warningCountTrue"=>$data[5],
-                            "driftCount"=>$data[6],
-                            "accuracy"=>$data[7]
-                        );
-                        
-                        //}
-                        
-                        
-                    }else
-                    {
-                        if($start_measuret == true)
-                        {
-                            //$start_metrics = false;
-                            $start_measuret = false;
-                            //$measuret = array();
-                        }
-                        
-                    }
-                    
-                }
+//                 if(strpos($buffer, "learning evaluation instances,evaluation time") !== false){
+//                     break;
+//                 }
                 
                 
-            }
+//                 if(strpos($buffer, "MetricsDetector") === false)
+//                 {
+                    
+                    
+//                 }else
+//                 {
+//                     //echo $buffer."=".(strpos($buffer, "MetricsDetector")===false?0:1)."<br>";
+                    
+//                     if($start_measuret == true)
+//                     {
+//                         $output[]  = $measuret;
+                        
+//                         $start_measuret = false;
+//                         //var_dump($output);
+//                         //exit("-------");
+//                     }
+                    
+//                     //$start_measuret = false;
+//                     $start_metrics = true;
+                    
+//                 }
+                
+//                 if($start_metrics == true)
+//                 {
+//                     //
+//                     if(strpos($buffer, "MeasureDetect:")>-1)
+//                     {
+                        
+//                         $start_measuret = true;
+                        
+//                         //if($parameters["detector"]==1)
+//                         //{
+//                         $data = explode("\t", trim($buffer));
+                        
+//                         $measuret = array("sumOfWarningFalse"=>$data[1],
+//                             "sumOfWarningTrue"=>$data[2],
+//                             "sumOfDrift"=>$data[3],
+//                             "warningCountFalse"=>$data[4],
+//                             "warningCountTrue"=>$data[5],
+//                             "driftCount"=>$data[6],
+//                             "accuracy"=>$data[7]
+//                         );
+                        
+//                         //}
+                        
+                        
+//                     }else
+//                     {
+//                         if($start_measuret == true)
+//                         {
+//                             //$start_metrics = false;
+//                             $start_measuret = false;
+//                             //$measuret = array();
+//                         }
+                        
+//                     }
+                    
+//                 }
+                
+                
+//             }
             
-            if(isset($measuret["accuracy"]))
-            {
-                $output[]  = $measuret;
-            }
+//             if(isset($measuret["accuracy"]))
+//             {
+//                 $output[]  = $measuret;
+//             }
             
             
-        }
+//         }
         
-        fclose($handle);
+//         fclose($handle);
         
         
-        if(count($output) == 0)
-        {
-            $output[] = array("sumOfWarningFalse"=>"0",
-                "sumOfWarningTrue"=>"0",
-                "sumOfDrift"=>"0",
-                "warningCountFalse"=>"0",
-                "warningCountTrue"=>"0",
-                "driftCount"=>"0",
-                "accuracy"=>"0"
-            );
-        }
+//         if(count($output) == 0)
+//         {
+//             $output[] = array("sumOfWarningFalse"=>"0",
+//                 "sumOfWarningTrue"=>"0",
+//                 "sumOfDrift"=>"0",
+//                 "warningCountFalse"=>"0",
+//                 "warningCountTrue"=>"0",
+//                 "driftCount"=>"0",
+//                 "accuracy"=>"0"
+//             );
+//         }
         
-        return $output;
-    }
+//         return $output;
+//     }
     
     
     
@@ -1030,12 +1034,13 @@ class Mining extends EvaluateExtract{
                             
                         }else{
                             foreach($evaluate_metrics as $key=>$item){
-                                
                                 if(strpos($buffer, $item) !== FALSE){
-                                    if($parameters[$key] == 1){
-                                        $startFind = $key;
-                                        break;
-                                    }                                        
+                                    if(strpos($buffer, $item)==0){
+                                        if($parameters[$key] == 1){
+                                            $startFind = $key;
+                                            break;
+                                        } 
+                                    }                                                                           
                                 }
                             }
                         }
