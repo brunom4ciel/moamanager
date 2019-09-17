@@ -52,7 +52,7 @@ if(!empty($filename_autoload))
 {
 	$data_source = $utils->getContentFile(PATH_USER_WORKSPACE_PROCESSING . $filename_autoload);
 	unlink(PATH_USER_WORKSPACE_PROCESSING . $filename_autoload);
-	$task = "Shaffer";
+	//$task = "Shaffer";
 }
 
 if (in_array($task, $statistical_test_array)) {
@@ -375,7 +375,7 @@ if (in_array($task, $statistical_test_array)) {
         $filename = PATH_USER_WORKSPACE_PROCESSING . "tmp" . str_replace(" ", "-", microtime()) . "";
         
         $utils->setContentFile($filename . ".tmp", $data_destine);
-        
+
         if (is_file($filename . ".tmp")) {
             $command = $friedman_bin . " < " . $filename . ".tmp > " . $filename . "-output.tmp";
             // echo $command;

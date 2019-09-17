@@ -51,7 +51,7 @@ public class DDE extends AbstractChangeDetector {
             "maxValue",
             'x',
             "Max Value",
-            100, 0, Integer.MAX_VALUE);
+            300, 0, Integer.MAX_VALUE);
     
     public StringOption DetectorsOption = new StringOption("detectors", 'd',
             "detectors - comma separated values", "HDDM_A_Test,HDDM_W_Test,DDM");    
@@ -66,6 +66,7 @@ public class DDE extends AbstractChangeDetector {
     protected int instNumber, index;    
     private double minDriftWeight = 0;           
     protected ChangeDetector[] changeDetectorPool;    
+    protected String []ddmstring;// = new String[];
         
 //    public DDE()
 //    {
@@ -98,9 +99,10 @@ public class DDE extends AbstractChangeDetector {
     @Override
     public void resetLearning() {
     	
-    	for(ChangeDetector changeDetector : changeDetectorPool){ 
-        	changeDetector.resetLearning();
-        } 
+//    	for(ChangeDetector changeDetector : changeDetectorPool){ 
+//        	changeDetector.resetLearning();
+//        } 
+    	ensemble();
     	
     	Arrays.fill(result, 0);
     	
@@ -122,10 +124,10 @@ public class DDE extends AbstractChangeDetector {
         warningLevel = 0;
         index = 0;
         
-        for(ChangeDetector changeDetector : changeDetectorPool)  {        	
-        	changeDetector.input(prediction);        	
-        	if(result[index] < 1){//not in drift
-        		          	            		
+        for(ChangeDetector changeDetector : changeDetectorPool)  {         	   	
+        	if(result[index] < 1){//not in drift        		
+        		changeDetector.input(prediction);     
+        		
             	if (changeDetector.getChange()){//drift
             		result[index] = instNumber;
             		driftLevel += 1; 
@@ -152,13 +154,21 @@ public class DDE extends AbstractChangeDetector {
         if(warningLevel+driftLevel < minDriftWeight){//stable        	
     		this.isWarningZone = false;	
         }else{
-    		if(driftLevel >= minDriftWeight){//drift   
-    			resetLearning();
-            	this.isChangeDetected = true;            	
-//            	System.out.println(instNumber+" DRIFT driftLevel="+driftLevel+", warningLevel="+warningLevel);
-        	}else{ 
-            	this.isWarningZone = true; 
-//            	System.out.println(instNumber+" WARNING driftLevel="+driftLevel+", warningLevel="+warningLevel);
+    		if(driftLevel < minDriftWeight){//drift       
+    			this.isWarningZone = true; 
+//            	System.out.println(instNumber+" WARNING driftLevel="+driftLevel+", warningLevel="+warningLevel);    			 
+        	}else{             	
+//            	String s = "";
+//    			for(index = 0; index < ddmstring.length; index++) {
+//    				if(result[index] > 1) {
+//    					if(!s.equals(""))
+//    						s += ";";
+//    					s += ddmstring[index];
+//    				}
+//    			}    			
+//            	System.out.println(instNumber+" DRIFT driftLevel="+driftLevel+", warningLevel="+warningLevel+", ensemble detectors="+s);
+            	resetLearning();
+            	this.isChangeDetected = true;
         	}
         }        
     }
@@ -167,18 +177,26 @@ public class DDE extends AbstractChangeDetector {
     {
         
         String valueList = DetectorsOption.getValue();
-    	
+        
     	if(!valueList.equals("")){
 	    	String[] split = valueList.split(",");    	
 	    	if(split.length > 0){
 	    		changeDetectorPool = new ChangeDetector[split.length];
-		    	
+	    		ddmstring = new String[split.length];
+	    		
 		    	for (int i = 0; i < split.length; i++) {
+
+		    		if(split[i].indexOf("(")>-1) {
+		    			split[i] = split[i].substring(split[i].indexOf("(")+1);
+		    			split[i] = split[i].substring(0,split[i].indexOf(")"));	    			
+		    		}
 		    		
 		    		changeDetectorPool[i] = ((ChangeDetector) 
         					((ClassOption) new ClassOption("driftDetectionMethod", 'd',
 				            "Drift detection method", ChangeDetector.class, split[i]))
         					.materializeObject(null, null)).copy();
+		    		
+		    		ddmstring[i] = changeDetectorPool[i].getClass().getSimpleName();
 		    	}
         	}else{
         		changeDetectorPool = new ChangeDetector[1];
@@ -188,6 +206,7 @@ public class DDE extends AbstractChangeDetector {
 			            "Drift detection method", ChangeDetector.class, valueList))
     					.materializeObject(null, null)).copy();
         		
+        		ddmstring[0] = changeDetectorPool[0].getClass().getSimpleName();
         	}
     	}
     	

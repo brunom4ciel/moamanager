@@ -489,7 +489,7 @@ def compute_CD(avranks, n, alpha="0.05", test="nemenyi"):
                               2.977768, 3.029694, 3.076733, 3.119693, 3.159199,
                               3.195743, 3.229723, 3.261461, 3.291224, 3.319233],
          ("bonferroni-dunn", "0.05"): [0, 0, 1.960, 2.241, 2.394, 2.498, 2.576,
-                                       2.638, 2.690, 2.724, 2.773],
+                                       2.638, 2.690, 2.724, 2.773, 2.807, 2.838, 2.865, 2.891, 2.914, 2.935, 2.955, 2.974, 2.991, 3.008, 3.023, 3.038, 3.052, 3.065, 3.078, 3.090, 3.102, 3.113, 3.124, 3.134, 3.144],
          ("bonferroni-dunn", "0.1"): [0, 0, 1.645, 1.960, 2.128, 2.241, 2.326,
                                       2.394, 2.450, 2.498, 2.539]}
     
@@ -892,8 +892,8 @@ def graph_ranks(avranks, names, cd=None, cdmethod=None, lowv=None, highv=None,
         #text(textspace + scalewidth, 2.5, ' ', ha="right", va="center", color2='b', fontsize2='small')             
     elif cd:
         begin = rankpos(avranks[cdmethod] )
-        end = rankpos(avranks[cdmethod])  + (cd/2)
-
+        #end = rankpos(avranks[cdmethod])  + (cd/2)
+        end = rankpos(avranks[cdmethod] + cd) #textspace + scalewidth / (highv - lowv) * (avranks[cdmethod] - lowv) + cd
 #[(textspace, cline), (width - textspace, cline)]
 
         text( testee , distanceh+0.15, "CD="+str(float("{0:.4f}".format(cd))) + ", α="+str(alpha)+ ", N="+str(n)+ ", k="+str(k), ha="center", va="bottom")

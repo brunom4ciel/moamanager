@@ -298,7 +298,7 @@ function historicCookieCheckbox(elementId){
 function setCookieRadioBox(element){
 
 	var value = getRadioValue(element.id);
-
+	
 	setCookie(element.id,value,365);
 }
 
@@ -325,7 +325,7 @@ function historicCookieRadiobox(elementId){
 		var elementCookieChecked=0;
 	}else
 		var elementCookieChecked=elementCookieHistoric;
-	
+
 	//alert(elementId+"="+elementCookieChecked);
 	//alert(elementId+"="+checkedbox+", elementCookieChecked=");//+elementCookieChecked);
 	

@@ -572,10 +572,10 @@ if($task == "folder"){
                     
                     if($type_extract==1){
                         
-                        exit("fim");
+//                         exit("fim");
                         $miningResult = $mining->extract_averages_in_file($from_file, $parameters);
                         
-                        //var_dump($miningResult);exit("ok");
+//                         var_dump($miningResult);exit("ok");
                         
                     }else{
                         //all
@@ -793,7 +793,7 @@ if($task == "folder"){
                             
                         }else{
                             if($type_extract==1){
-                                exit("error");
+//                                 exit("error");
                                 $miningResult = $mining->extract_averages_in_file($from_dir.$file["name"], $parameters);
                                
                             }else{

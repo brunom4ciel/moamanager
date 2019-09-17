@@ -567,8 +567,18 @@ class Mining extends EvaluateExtract{
 
             $startFind = "";        
             $strategy = $this->detectStrategy($file);            
+            $this->mappingMetrics($strategy);
+            
+            $evaluate_metrics = $this->getEvaluateMetrics();
+            $descriptive_statistics = $this->getDescritiveStatistics();
+            
             
             while (($buffer = fgets($handle, 512)) !== false) {
+                
+                if(strpos($buffer, "learning evaluation instances,evaluation time") !== false)
+                {
+                    break;
+                }
                 
                 
                 if(//$strategy == "EvaluateInterleavedTestThenTrain2"
@@ -577,195 +587,305 @@ class Mining extends EvaluateExtract{
                     || $strategy == self::EVALUATE_PREQUENTIAL_UFPE_FOR_DETECTORS
                     || $strategy == "Error")
                 {
+                    
+                    
+                    //                         var_dump($parameters["descriptivestatistics"]);exit("===");
+                    
+                    if($strategy == "Error")
+                    {
+                        $startFind = "Error";
                         
-                        if(strpos($buffer, "Accuracy:")>-1){
-                            $startFind = "accuracy";
-                            $accuracy_open = true;
-                        }
-                        else if(strpos($buffer, "Time:")>-1){
-                            $startFind = "time";
-                        }
-                        else if(strpos($buffer, "Memory (B/s):")>-1){
-                            $startFind = "memory";
-                        }
-                        else if(strpos($buffer, "Mean Distance")>-1){
-                            $startFind = "resume";
-                        }
-                        else if(strpos($buffer, "Entropy")>-1){
-                            $startFind = "entropy";
-                        }
-                        else if(strpos($buffer, "MDR:")>-1){
-                            $startFind = "mdr";
-                        }
-                        else if(strpos($buffer, "MTD:")>-1){
-                            $startFind = "mtd";
-                        }
-                        else if(strpos($buffer, "MTFA:")>-1){
-                            $startFind = "mtfa";
-                        }
-                        else if(strpos($buffer, "MTR:")>-1){
-                            $startFind = "mtr";
-                        }
-                        else if(strpos($buffer, "Precision:")>-1){
-                            $startFind = "precision";
-                        }
-                        else if(strpos($buffer, "Recall:")>-1){
-                            $startFind = "recall";
-                        }
-                        else if(strpos($buffer, "MCC:")>-1){
-                            $startFind = "mcc";
-                        }
-                        else if(strpos($buffer, "F1:")>-1){
-                            $startFind = "f1";
-                        }
-                        else{
-                            if($strategy == "Error" && $accuracy_open == false)
-                            {
-                                $startFind = "Error";
+                    }else{
+//                         var_dump($buffer);
+// //                         var_dump($parameters);
+// //                         var_dump($evaluate_metrics);
+                        
+                        foreach($evaluate_metrics as $key=>$item){
+                            if(strpos($buffer, $item) !== FALSE){
+                                if(strpos($buffer, $item)==0){
+                                    if($parameters[$key] == 1){
+                                        $startFind = $key;
+                                        break;
+                                    }
+                                }
                             }
                         }
-                        
-                        switch($startFind){
-                            
-                            case 'accuracy':
-                                
-                                if($parameters["accuracy"]==1){
-                                    $strParamName = "Accuracy";
-                                    $strValue = $this->getValueFromList($buffer, $strParamName
-                                        , ($parameters["interval"] == 1?true:false)
-                                        , $decimalprecision, $decimalseparator);
-                                    
-                                    if($strValue != ""){
-                                        array_push($json_return, array($strParamName=>$strValue));
-                                    }                                                                     
-                                }
-                                
-                                break;
-                            case 'time':
-                                
-                                if($parameters["time"]==1){
-                                    
-                                    $strParamName = "Time";
-                                    $strValue = $this->getValueFromList($buffer, $strParamName
-                                        , ($parameters["interval"] == 1?true:false)
-                                        , $decimalprecision, $decimalseparator);
-                                    
-                                    if($strValue != ""){
-                                        array_push($json_return, array($strParamName=>$strValue));
-                                    }
-                                }
-                                
-                                break;
-                            case 'memory':
-                                
-                                if($parameters["memory"]==1){
-                                    
-                                    $strParamName = "Memory";
-                                    $strValue = $this->getValueFromList($buffer, $strParamName
-                                        , ($parameters["interval"] == 1?true:false)
-                                        , $decimalprecision, $decimalseparator);
-                                    
-                                    if($strValue != ""){
-                                        array_push($json_return, array($strParamName=>$strValue));
-                                    }
-                                }
-                                
-                                break;
-                            case 'mtd':
-                                                               
-                                if($parameters["mtd"]==1){
-                                    $strParamName = "MTD";
-                                    $strValue = $this->getValueFromList($buffer, $strParamName
-                                        , ($parameters["interval"] == 1?true:false)
-                                        , $decimalprecision, $decimalseparator);
-                                    
-                                    if($strValue != ""){
-                                        array_push($json_return, array($strParamName=>$strValue));
-                                    }
-                                }
-                                
-                                break;  
-                                
-                            case 'mtr':
-                                
-                                if($parameters["mtr"]==1){
-                                    
-                                    $strParamName = "MTR";
-                                    $strValue = $this->getValueFromList($buffer, $strParamName
-                                        , ($parameters["interval"] == 1?true:false)
-                                        , $decimalprecision, $decimalseparator);
-                                    
-                                    if($strValue != ""){
-                                        array_push($json_return, array($strParamName=>$strValue));
-                                    }
-                                }
-                                    
-                                break;                                    
+//                         exit("fim");
+                    }
                     
-                            case 'mcc':
-                                
-                                if($parameters["mcc"]==1)
-                                {
-                                    $strParamName = "MCC";
-                                    $strValue = $this->getValueFromList($buffer, $strParamName
-                                        , ($parameters["interval"] == 1?true:false)
-                                        , $decimalprecision, $decimalseparator);
-                                    
-                                    if($strValue != ""){
-                                        array_push($json_return, array($strParamName=>$strValue));
-                                    }
-                                }
-                                
+                    foreach($evaluate_metrics as $key=>$item)
+                    {
+                        
+                        if($startFind == $key){   
+                            
+                            $statistical = $descriptive_statistics[$parameters["descriptivestatistics"]];/// . " =";
+                            $str_label = substr($buffer, 0, strlen($statistical));
+                            
+                            
+                            if($statistical == $str_label){
+                                $startFind = "";
+//                                 var_dump($statistical);
+//                                 var_dump($str_label);
+//                                 exit("---");
                                 break;
+                            }else{
                                 
-                            case 'precision':
+//                                 var_dump($buffer);
+                            }
+//                             var_dump($statistical);
+//                             var_dump($str_label);
+//                             exit();
+                            
+//                             $statistical = $descriptive_statistics[$parameters["descriptivestatistics"]] . " =";
+//                             $str_label = substr($buffer, 0, strlen($statistical));
+                            
+//                             var_dump($evaluate_metrics[$startFind]);exit();
+                            
+                            $strParamName = $evaluate_metrics[$startFind];//"Accuracy";
+                            $strValue = $this->getValueFromList($buffer, $strParamName, false
+                                , $decimalprecision, $decimalseparator);
+                            
+                            if($strValue != ""){               
                                 
-                                if($parameters["precision"]==1)
-                                {
-                                    $strParamName = "Precision";
-                                    $strValue = $this->getValueFromList($buffer, $strParamName
-                                        , ($parameters["interval"] == 1?true:false)
-                                        , $decimalprecision, $decimalseparator);
+                                array_push($json_return, array(
+                                    $descriptive_statistics[$parameters["descriptivestatistics"]]=>$strValue));
+                                
+//                                 array_push($json_return, array($strParamName=>$strValue));
+//                                 var_dump($json_return);exit();
+                            }   else{
+                                
+//                                 var_dump($json_return);
+//                                 exit("fim");
+                            }
+                            
+//                             $startFind = "";
+                            
+//                             var_dump($json_return);exit();
+                        }
+                        
+                    }
+//                 if(//$strategy == "EvaluateInterleavedTestThenTrain2"
+//                     $strategy == self::EVALUATE_PREQUENTIAL2
+//                     || $strategy == self::EVALUATE_PREQUENTIAL_UFPE
+//                     || $strategy == self::EVALUATE_PREQUENTIAL_UFPE_FOR_DETECTORS
+//                     || $strategy == "Error")
+//                 {
+                    
+//                     foreach($evaluate_metrics as $key=>$item){
+//                         if(strpos($buffer, $item) !== FALSE){
+//                             if(strpos($buffer, $item)==0){
+//                                 if($parameters[$key] == 1){
+//                                     $startFind = $key;
+//                                     break;
+//                                 }
+//                             }
+//                         }
+//                     }
+                    
+//                     var_dump($buffer);
+//                     var_dump($parameters);
+//                     var_dump($evaluate_metrics);
+//                     exit();
+                    
+//                     if($startFind !=""){
+// //                     $statistical = $descriptive_statistics[$parameters["descriptivestatistics"]] . " =";
+// //                     $str_label = substr($buffer, 0, strlen($statistical));
+                    
+                    
+//                     var_dump($startFind);
+//                     exit("--");
+//                     }
+                    
+                    
+                    
+//                         if(strpos($buffer, "Accuracy:")>-1){
+//                             $startFind = "accuracy";
+//                             $accuracy_open = true;
+//                         }
+//                         else if(strpos($buffer, "Time:")>-1){
+//                             $startFind = "time";
+//                         }
+//                         else if(strpos($buffer, "Memory (B/s):")>-1){
+//                             $startFind = "memory";
+//                         }
+//                         else if(strpos($buffer, "Mean Distance")>-1){
+//                             $startFind = "resume";
+//                         }
+//                         else if(strpos($buffer, "Entropy")>-1){
+//                             $startFind = "entropy";
+//                         }
+//                         else if(strpos($buffer, "MDR:")>-1){
+//                             $startFind = "mdr";
+//                         }
+//                         else if(strpos($buffer, "MTD:")>-1){
+//                             $startFind = "mtd";
+//                         }
+//                         else if(strpos($buffer, "MTFA:")>-1){
+//                             $startFind = "mtfa";
+//                         }
+//                         else if(strpos($buffer, "MTR:")>-1){
+//                             $startFind = "mtr";
+//                         }
+//                         else if(strpos($buffer, "Precision:")>-1){
+//                             $startFind = "precision";
+//                         }
+//                         else if(strpos($buffer, "Recall:")>-1){
+//                             $startFind = "recall";
+//                         }
+//                         else if(strpos($buffer, "MCC:")>-1){
+//                             $startFind = "mcc";
+//                         }
+//                         else if(strpos($buffer, "F1:")>-1){
+//                             $startFind = "f1";
+//                         }
+//                         else{
+//                             if($strategy == "Error" && $accuracy_open == false)
+//                             {
+//                                 $startFind = "Error";
+//                             }
+//                         }
+                        
+//                         switch($startFind){
+                            
+//                             case 'accuracy':
+                                
+//                                 if($parameters["accuracy"]==1){
+//                                     $strParamName = "Accuracy";
+//                                     $strValue = $this->getValueFromList($buffer, $strParamName
+//                                         , ($parameters["interval"] == 1?true:false)
+//                                         , $decimalprecision, $decimalseparator);
                                     
-                                    if($strValue != ""){
-                                        array_push($json_return, array($strParamName=>$strValue));
-                                    }
-                                }
+//                                     if($strValue != ""){
+//                                         array_push($json_return, array($strParamName=>$strValue));
+//                                     }                                                                     
+//                                 }
                                 
-                                break;
+//                                 break;
+//                             case 'time':
                                 
-                            case 'recall':
-                                
-                                if($parameters["recall"]==1)
-                                {
-                                    $strParamName = "Recall";
-                                    $strValue = $this->getValueFromList($buffer, $strParamName
-                                        , ($parameters["interval"] == 1?true:false)
-                                        , $decimalprecision, $decimalseparator);
+//                                 if($parameters["time"]==1){
                                     
-                                    if($strValue != ""){
-                                        array_push($json_return, array($strParamName=>$strValue));
-                                    }
-                                }
-                                
-                                break;
-                                
-                            case 'f1':
-                                if($parameters["f1"]==1)
-                                {
-                                    $strParamName = "F1";
-                                    $strValue = $this->getValueFromList($buffer, $strParamName
-                                        , ($parameters["interval"] == 1?true:false)
-                                        , $decimalprecision, $decimalseparator);
+//                                     $strParamName = "Time";
+//                                     $strValue = $this->getValueFromList($buffer, $strParamName
+//                                         , ($parameters["interval"] == 1?true:false)
+//                                         , $decimalprecision, $decimalseparator);
                                     
-                                    if($strValue != ""){
-                                        array_push($json_return, array($strParamName=>$strValue));
-                                    }
-                                }
+//                                     if($strValue != ""){
+//                                         array_push($json_return, array($strParamName=>$strValue));
+//                                     }
+//                                 }
                                 
-                                break;
+//                                 break;
+//                             case 'memory':
                                 
-                        }                        
+//                                 if($parameters["memory"]==1){
+                                    
+//                                     $strParamName = "Memory";
+//                                     $strValue = $this->getValueFromList($buffer, $strParamName
+//                                         , ($parameters["interval"] == 1?true:false)
+//                                         , $decimalprecision, $decimalseparator);
+                                    
+//                                     if($strValue != ""){
+//                                         array_push($json_return, array($strParamName=>$strValue));
+//                                     }
+//                                 }
+                                
+//                                 break;
+//                             case 'mtd':
+                                                               
+//                                 if($parameters["mtd"]==1){
+//                                     $strParamName = "MTD";
+//                                     $strValue = $this->getValueFromList($buffer, $strParamName
+//                                         , ($parameters["interval"] == 1?true:false)
+//                                         , $decimalprecision, $decimalseparator);
+                                    
+//                                     if($strValue != ""){
+//                                         array_push($json_return, array($strParamName=>$strValue));
+//                                     }
+//                                 }
+                                
+//                                 break;  
+                                
+//                             case 'mtr':
+                                
+//                                 if($parameters["mtr"]==1){
+                                    
+//                                     $strParamName = "MTR";
+//                                     $strValue = $this->getValueFromList($buffer, $strParamName
+//                                         , ($parameters["interval"] == 1?true:false)
+//                                         , $decimalprecision, $decimalseparator);
+                                    
+//                                     if($strValue != ""){
+//                                         array_push($json_return, array($strParamName=>$strValue));
+//                                     }
+//                                 }
+                                    
+//                                 break;                                    
+                    
+//                             case 'mcc':
+                                
+//                                 if($parameters["mcc"]==1)
+//                                 {
+//                                     $strParamName = "MCC";
+//                                     $strValue = $this->getValueFromList($buffer, $strParamName
+//                                         , ($parameters["interval"] == 1?true:false)
+//                                         , $decimalprecision, $decimalseparator);
+                                    
+//                                     if($strValue != ""){
+//                                         array_push($json_return, array($strParamName=>$strValue));
+//                                     }
+//                                 }
+                                
+//                                 break;
+                                
+//                             case 'precision':
+                                
+//                                 if($parameters["precision"]==1)
+//                                 {
+//                                     $strParamName = "Precision";
+//                                     $strValue = $this->getValueFromList($buffer, $strParamName
+//                                         , ($parameters["interval"] == 1?true:false)
+//                                         , $decimalprecision, $decimalseparator);
+                                    
+//                                     if($strValue != ""){
+//                                         array_push($json_return, array($strParamName=>$strValue));
+//                                     }
+//                                 }
+                                
+//                                 break;
+                                
+//                             case 'recall':
+                                
+//                                 if($parameters["recall"]==1)
+//                                 {
+//                                     $strParamName = "Recall";
+//                                     $strValue = $this->getValueFromList($buffer, $strParamName
+//                                         , ($parameters["interval"] == 1?true:false)
+//                                         , $decimalprecision, $decimalseparator);
+                                    
+//                                     if($strValue != ""){
+//                                         array_push($json_return, array($strParamName=>$strValue));
+//                                     }
+//                                 }
+                                
+//                                 break;
+                                
+//                             case 'f1':
+//                                 if($parameters["f1"]==1)
+//                                 {
+//                                     $strParamName = "F1";
+//                                     $strValue = $this->getValueFromList($buffer, $strParamName
+//                                         , ($parameters["interval"] == 1?true:false)
+//                                         , $decimalprecision, $decimalseparator);
+                                    
+//                                     if($strValue != ""){
+//                                         array_push($json_return, array($strParamName=>$strValue));
+//                                     }
+//                                 }
+                                
+//                                 break;
+                                
+//                         }                        
                 }
                 
             }
