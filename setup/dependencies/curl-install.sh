@@ -2,7 +2,7 @@
 
 echo "Install CURL"
 
-sudo apt-get install curl -y
+apt-get install curl -y
 
 
 

@@ -11,8 +11,8 @@ mkdir $dir_opt_moamanager_statistical_orange3
 
 chmod 777 -R $dir_opt_moamanager_statistical_orange3
 
-sudo apt-get install python-pip -y
-sudo apt-get install python3-dev python3-numpy python3-scipy linuxbrew-wrapper python3-pip -y
+apt-get install python-pip -y
+apt-get install python3-dev python3-numpy python3-scipy linuxbrew-wrapper python3-pip -y
 
 pip3 install pyqt5
 
@@ -27,7 +27,7 @@ pip3 install -r requirements.txt
 
 python3 setup.py develop
 
-sudo chmod 777 -R /opt/moamanager/orange3
+chmod 777 -R /opt/moamanager/orange3
  
 cp -rv $currentpath/statistical/orange3/* $dir_opt_moamanager_statistical_orange3
 
@@ -38,10 +38,10 @@ cp -rv /opt/moamanager/statistical/orange3/scoring.py /opt/moamanager/orange3/Or
 
 python_dist="${python3 -c 'import site; print(site.getsitepackages()[0])'"
 
-sudo pip3 install --target="${python_dist}" bottleneck
-sudo pip3 install --target="${python_dist}" pyparsing
-sudo pip3 install --target="${python_dist}" pyqt5
-sudo pip3 install --target="${python_dist}" sklearn
+pip3 install --target="${python_dist}" bottleneck
+pip3 install --target="${python_dist}" pyparsing
+pip3 install --target="${python_dist}" pyqt5
+pip3 install --target="${python_dist}" sklearn
 
 #sudo -H -u www-data pip3 install bottleneck
 

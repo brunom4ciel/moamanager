@@ -10,6 +10,9 @@ cd $dirinstall
 
 sh apt-get-update.sh
 
+apt-get install software-properties-common
+
+
 sh apache2-install.sh
 sh curl-install.sh
 sh mysql-install.sh

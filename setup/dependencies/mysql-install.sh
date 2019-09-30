@@ -4,6 +4,6 @@ echo "Install MySQL"
 
 #sudo apt-get remove --purge *mysql\*
 
-sudo apt-get install mysql-server -y
+apt-get install mysql-server -y
 
 

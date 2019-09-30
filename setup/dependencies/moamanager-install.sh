@@ -37,7 +37,7 @@ mkdir -p $dirmoam_workspace/brunom4ciel@gmail.com/scripts
 mkdir -p $dirmoam_workspace/brunom4ciel@gmail.com/trash
 mkdir -p $dirmoam_workspace/brunom4ciel@gmail.com/backup
 
-sudo chmod 777 -R $dirmoam_data
+chmod 777 -R $dirmoam_data
 
 cd $dirmoam_files;
 
@@ -57,17 +57,17 @@ systemctl enable mysql
 
 echo "Press [ENTER] only to leave the root user password as 123"
 
-sudo mysql -u$mysqluser -p -e "UPDATE mysql.user SET authentication_string=PASSWORD('123'), plugin='mysql_native_password' WHERE User='root';FLUSH PRIVILEGES;"
+mysql -u$mysqluser -p -e "UPDATE mysql.user SET authentication_string=PASSWORD('123'), plugin='mysql_native_password' WHERE User='root';FLUSH PRIVILEGES;"
 
 #sudo mysql -u$mysqluser -p -e "UPDATE mysql.user SET Password = PASSWORD('$mysqlpass') WHERE User = '$mysqluser';"
 #sudo mysql -u$mysqluser -p -e "UPDATE mysql.user SET authentication_string = PASSWORD('$mysqlpass') WHERE User = '$mysqluser';"
 #sudo mysql -u$mysqluser -p$mysqlpass -e "FLUSH PRIVILEGES;"
 
-sudo mysql -u$mysqluser -p$mysqlpass -e "DROP DATABASE IF EXISTS $mysqldb;"
+mysql -u$mysqluser -p$mysqlpass -e "DROP DATABASE IF EXISTS $mysqldb;"
 
-sudo mysql -u$mysqluser -p$mysqlpass -e "CREATE DATABASE $mysqldb;"
+mysql -u$mysqluser -p$mysqlpass -e "CREATE DATABASE $mysqldb;"
 
-sudo mysql -u$mysqluser -p$mysqlpass $mysqldb < $currentpath/dump-database.sql
+mysql -u$mysqluser -p$mysqlpass $mysqldb < $currentpath/dump-database.sql
 
 rm -fr $dirmoam_web/setup
 
