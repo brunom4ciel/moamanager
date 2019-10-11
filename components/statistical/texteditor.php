@@ -36,6 +36,7 @@ $task = $application->getParameter("task");
 $filename_autoload = $application->getParameter("filename");
 $data_result = "";
 $data_diff_statistical = "";
+$data_rank_hypothesis_html = "";
 
 $statistical_test_array = array(
     "Bonferroni-Dunn",
@@ -47,6 +48,348 @@ $statistical_test_array = array(
     "Kullback-Leibler",
     "Minkowski"
 );
+
+function rank_avg($value, $array, $order = 0) {
+    // sort
+    if ($order) sort ($array); else rsort($array);
+    // add item for counting from 1 but 0
+    array_unshift($array, $value+1);
+    // select all indexes vith the value
+    $keys = array_keys($array, $value);
+    if (count($keys) == 0) return NULL;
+    // calculate the rank
+    return array_sum($keys) / count($keys);
+}
+
+
+function silas_rank_hypothesis_prepar($result_value){
+    
+    $hypothesis_h0 = "H0";
+    $hypothesis_h1 = "H1";
+    $hypothesis_h2 = "H2";
+    
+    $result = array();
+    $result[$hypothesis_h0] = array();
+    $result[$hypothesis_h1] = array();
+    $result[$hypothesis_h2] = array();
+    $result["diff"] = array();
+    $result["rank"] = array();
+    
+    foreach($result_value as $key=>$item){
+        if(count($item)>0 && $key != "method"){
+            $h0 = $h1 = $h2 = 0;
+            foreach($item as $index=>$value){                
+                if($value == $hypothesis_h0){
+                    $h0++;
+                }else if($value == $hypothesis_h1){
+                    $h1++;
+                }else if($value == $hypothesis_h2){
+                    $h2++;
+                }                
+            }
+            $result[$hypothesis_h0][$key] = $h0;
+            $result[$hypothesis_h1][$key] = $h1;
+            $result[$hypothesis_h2][$key] = $h2;
+            
+//             var_dump($result);
+        }
+    }
+    
+    foreach($result as $key=>$item){
+        foreach($item as $index=>$value){
+            $result["diff"][$index] = $result[$hypothesis_h1][$index] - $result[$hypothesis_h2][$index];
+        }        
+    }
+    
+    $diff = array();
+    
+    foreach($result as $key=>$item){
+        if($key == "diff"){
+            foreach($item as $index=>$value){
+                $diff[] = $result["diff"][$index];
+            }
+            break;
+        }
+    }
+    
+    foreach($result as $key=>$item){
+        if($key == "diff"){
+            foreach($item as $index=>$value){
+                $r = rank_avg($result["diff"][$index], $diff, false);
+                $result["rank"][$index] = $r;
+            }
+            break;
+        }
+    }
+    
+//     var_dump($diff);exit();
+    
+    return $result;
+}
+
+
+function silas_rank_tabular_prepar($result_value, $rank){
+
+    
+    
+    $destine2 = "<table border=1 style='float:left;width:auto;'>";
+    
+    
+    foreach($result_value as $key=>$item){
+        
+        $destine2 .= "<tr><td>". $key . "</td>";
+        $destine2 .= "</tr>";
+        
+    }
+    
+    foreach($rank as $key=>$item){
+        
+        if($key == "diff"){
+            $key = "&Sigma;H<sub>1</sub> - H<sub>2</sub>";
+        }else{
+            $key = str_replace("H0", "&Sigma;H<sub>0</sub>", $key);
+            $key = str_replace("H1", "&Sigma;H<sub>1</sub>", $key);
+            $key = str_replace("H2", "&Sigma;H<sub>2</sub>", $key);
+            //$key = "".$key;
+        }        
+        
+        $destine2 .= "<tr><td>". $key . "</td>";
+        $destine2 .= "</tr>";
+        
+    }
+    
+    $destine2 .= "</table>";
+    
+    
+    $destine2 .= "<table border=1 style='float:left;width:auto;'>";
+    
+    
+    foreach($result_value as $key=>$item){
+        
+        $destine2 .= "<tr>";//<td>". $key . "</td>";
+        
+        foreach($item as $value){
+            
+            if($value == "H0"){
+                $color = "#F2F5A9";
+                $value = str_replace("H0", "H<sub>0</sub>", $value);
+            }else if($value == "H1"){
+                $color = "#81F781";
+                $value = str_replace("H1", "H<sub>1</sub>", $value);
+            }else if($value == "H2"){
+                $color = "#F78181";
+                $value = str_replace("H2", "H<sub>2</sub>", $value);
+            }else if($value == "*"){
+                $color = "#6E6E6E";
+            }else{
+                $color = "";
+            }
+                       
+            
+            //foreach($value as $value2){
+            $destine2 .= "<td style='background-color:$color;text-align:center;'>".$value."</td>";
+            //}
+            
+        }
+        $destine2 .= "</tr>";
+        
+    }
+    
+    //$destine2 .= "</table>";
+    
+    
+    //$destine2 .= "<table border=1 style='float:left;width:auto;'>";
+    
+    
+    foreach($rank as $key=>$item){
+        
+        $destine2 .= "<tr>";//<td>". $key . "</td>";
+        
+        
+        
+        //var_dump($rank);exit(); 
+        foreach($item as $value){
+            
+            
+            
+            //foreach($value as $value2){
+            $destine2 .= "<td style='text-align:center;'>".$value."</td>";
+            //}
+            
+        }
+        $destine2 .= "</tr>";
+        
+    }
+    
+    $destine2 .= "</table>";
+    
+    
+    
+    $destine2 = "<div style='float:left;width:auto;'>heatmap<br>". $destine2 . "<br><br>*&Sigma;H<sub>0</sub>: not reject, if reject H<sub>0</sub> then H<sub>1</sub>: <spam style='text-decoration:overline; padding:0px'>X</spam><sub>1</sub> > <spam style='text-decoration:overline; padding:0px'>X</spam><sub>2</sub> or H<sub>2</sub>: <spam style='text-decoration:overline; padding:0px'>X</spam><sub>1</sub> < <spam style='text-decoration:overline; padding:0px'>X</spam><sub>2</sub>... <spam style='text-decoration:overline; padding:0px'>X</spam><sub>1</sub> is equal the first column, <spam style='text-decoration:overline; padding:0px'>X</spam><sub>2</sub> is equal other columns compared.</div>";
+    
+    return $destine2;
+}
+
+function getIndexOfName($value, $list){
+    $result = -1;
+    $index = 0;
+    foreach($list as $key=>$item){
+        if($value == $key){
+            $result = 1;
+            break;
+        }
+        $index++;
+    }
+    if($result > 0){
+        $result = $index;
+    }
+    return $result;
+}
+
+function silas_rank_prepar($values, $delimiter_decimal_from=".", $delimiter_decimal_to=","){
+    
+    $values = str_replace($delimiter_decimal_from, $delimiter_decimal_to, $values);
+    
+    $lines_values = explode("\n", $values);
+    
+   
+    $methods = array();
+    $methods_order = array();
+    $index = 0;
+    
+    for($i=0; $i< count($lines_values); $i++){
+        
+        if(trim($lines_values[$i])!= ""){
+            
+            $lines_values[$i] = trim($lines_values[$i]);
+            
+            $text = substr($lines_values[$i], strlen("Method")+1);
+            $method = trim(substr($text, 0, strpos($text, " ")));
+            
+            $methods[trim($method)] = array();
+            $methods_order[trim($method)] = $index++;
+            
+//             var_dump($method);exit();
+            
+            $text = substr($lines_values[$i], strpos($lines_values[$i], ":")+1);
+            $text = trim($text);
+            
+            //var_dump($text);
+            
+            $methods_inf = array();
+            
+            if(strpos($text, "\t")!==false){
+                $methods_inf = explode("\t", $text);
+            }else{
+                if(strpos($text, " ")!==false){
+//                     $text = str_replace("  ", " ", $text);
+                    $methods_inf = explode(" ", $text);
+                }else{
+                    if($text != ""){
+                        $methods_inf[] = $text;
+                    }                    
+                }                
+            }
+            
+            $methods[$method] = $methods_inf;
+            
+            //var_dump($methods[$method]);
+            
+        }
+    }
+    
+//     var_dump($methods);exit();
+    
+    
+    $result_value = array();
+    
+    foreach($methods as $key=>$value){
+        $result_value["method"][] = $key;
+    }
+    
+    
+    foreach($methods as $key=>$value){
+        foreach($methods as $item){
+            $result_value[$key][] = "";
+        }
+    }
+    
+//     var_dump($methods);exit();
+    
+    
+    // lógica para H1
+    foreach($methods as $key=>$item){
+        if(count($item)>0){
+            foreach($item as $value){
+                $indexOfName = getIndexOfName($value, $methods_order);
+                if($indexOfName > -1){
+                    $result_value[$key][$indexOfName] = "H1";
+                }
+            }
+        }
+    }
+    
+    // lógica para X
+    foreach($methods as $key=>$item){
+        if(count($item)>0){
+            foreach($methods_order as $key2=>$value){
+                $indexOfName1 = getIndexOfName($key, $methods_order);
+                $indexOfName = getIndexOfName($key2, $methods_order);
+                
+                if($indexOfName == $indexOfName1){
+                    $result_value[$key][$indexOfName] = "*";
+                }
+            }
+        }
+    }
+    
+    // lógica para H2
+    foreach($methods as $key=>$item){
+        if(count($item)>0){
+            foreach($methods_order as $key2=>$value){
+                
+                $indexOfName = getIndexOfName($key2, $methods_order);
+                
+                if($result_value[$key][$indexOfName] != "*"
+                    && $result_value[$key][$indexOfName] != "H1"){
+                        
+//                         $mu1 = $key;
+//                         $mu2 = "" ;
+                        //var_dump($mu1);
+                        //var_dump($key2);
+                        
+                        $ok = true;
+                        
+                        foreach($methods[$key2] as $key3=>$value3){
+                            if($key == $value3){
+                                $result_value[$key][$indexOfName] = "H2";
+                                $ok = false;
+                            }
+                        }
+                        
+                        if($ok){
+                            $result_value[$key][$indexOfName] = "H0";
+                        }
+                }
+            }
+        }else{
+            $indexOfName1 = getIndexOfName($key, $methods_order);
+            foreach($methods_order as $key2=>$value){
+                $indexOfName = getIndexOfName($key2, $methods_order);
+                if($indexOfName != $indexOfName1){
+                    $result_value[$key][$indexOfName] = "H2";
+                }else{
+                    $result_value[$key][$indexOfName] = "*";
+                }
+                
+            }
+        }
+    }
+    
+    
+    return $result_value;
+    
+}
 
 if(!empty($filename_autoload))
 {
@@ -388,7 +731,29 @@ if (in_array($task, $statistical_test_array)) {
             
             if($task == "Wilcoxon")
             { 
-                $data_rank = $data_result;
+                
+                $text_hypothesis = "Ways to reject the hypothesis:";
+                
+                if(strpos($data_result, $text_hypothesis) !== false){
+                    
+                    $data_result2 = $data_result;
+                    
+                    $data_result2 = substr($data_result, strpos($data_result, $text_hypothesis)+strlen($text_hypothesis)+1);
+                    $data_result2 = trim($data_result2);
+                    
+                    $data_postos = $text_hypothesis."\n".$data_result2;
+                    
+                    $r = silas_rank_prepar($data_result2);
+                    
+                    $s = silas_rank_hypothesis_prepar($r);     
+                    
+                    $r = silas_rank_tabular_prepar($r, $s);
+                                        
+                    
+                    $data_rank_hypothesis_html = $r;
+                }
+                
+                $data_rank = "";//$data_result;
                 
             }else{
                 $s = explode("\n\n", $data_result);
@@ -405,6 +770,14 @@ if (in_array($task, $statistical_test_array)) {
                 
                 $data_rank = explode("\n", $data_rank);
                 
+                $data_rank_colnames = $data_rank[0];
+                $data_rank_colnames = explode("\t", $data_rank_colnames);
+                foreach($data_rank_colnames as $key=>$item){
+					$data_rank_colnames[$key] = substr($item,0,5);				
+				}
+				
+				$data_rank_colnames = implode("\t", $data_rank_colnames);
+                
                 $data_rank = $data_rank[1];
                 
                 $data_order = explode("\t", $data_rank);
@@ -420,7 +793,7 @@ if (in_array($task, $statistical_test_array)) {
                         if ($item == $item2) {
                             $data_order2[$key2] = array(
                                 "order" => $index,
-                                "value" => $item2
+                                "value" => number_format($item2, 4, ".", ".")
                             );
                             
                             // array_push($test, array("order"=>$index, "value"=>$item2));
@@ -441,11 +814,66 @@ if (in_array($task, $statistical_test_array)) {
                         $data_rank2 = $row["order"];
                     } else {
                         $data_rank .= "\t" . $row["value"];
-                        $data_rank2 .= "\t" . $row["order"];
+                        $data_rank2 .= "\t\t" . $row["order"];
                     }
                 }
                 
-                $data_rank = $data_rank . "\n" . $data_rank2;
+                $data_rank = $data_rank_colnames . "\n". $data_rank . "\n" . $data_rank2;
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                $text_hypothesis = "Ways to reject the hypothesis:";
+                
+                if(strpos($data_result, $text_hypothesis) !== false){
+                    
+                    $data_result2 = $data_result;
+                    
+                    
+                    $data_result2 = substr($data_result, strpos($data_result, $text_hypothesis)+strlen($text_hypothesis)+1);
+                    $data_result2 = trim($data_result2);
+                    $data_result2 = substr($data_result2, strpos($data_result2, "Method"));
+                    
+                    $r = explode("\n", $data_result2);
+                    $r2 = array();
+                    
+                    for($i = 0; $i < count($r); $i++){
+                        
+                        if(strpos($r[$i], "Method") === false){
+                            break;
+                        }
+                        $r2[] = $r[$i];
+                    }
+                    $r2 = implode("\n", $r2);
+                    $data_result2 = trim($r2);
+                    
+                    
+                    
+                    
+                    
+                    $r = silas_rank_prepar($data_result2);
+                    
+//                     var_dump($r);
+// //                     exit();
+                    
+                    $s = silas_rank_hypothesis_prepar($r);
+                    
+                    $r = silas_rank_tabular_prepar($r, $s);
+                    
+                    
+                    $data_rank_hypothesis_html = $r;
+                }
+                
+                
+                
+                
+                
             }
             
             
@@ -554,7 +982,6 @@ function minkowski($x, $y)
 .dataview{font-size:10px}
 
 </style>
-
 							<form method="POST" action="<?php echo $_SERVER['PHP_SELF'];?>">
 								<input type="hidden"
 									value="<?php echo $application->getComponent()?>"
@@ -607,6 +1034,8 @@ function minkowski($x, $y)
 
 										<textarea class="dataview" id="data_rank" style="width: 100%; height: 70px;"
 											name="data_rank"><?php echo $data_rank?></textarea>
+											
+										<?php echo $data_rank_hypothesis_html?>	
 
 										<textarea class="dataview" id="data_diff_statistical" style="width: 100%; height: 400px;"
 											name="data_diff_statistical"><?php echo $data_diff_statistical?></textarea>

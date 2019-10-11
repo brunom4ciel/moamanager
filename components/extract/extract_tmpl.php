@@ -891,7 +891,8 @@ if($task == "folder"){
                                     
                                     if($decimalformat != ".")
                                     {
-                                        $item4 = str_replace(".", $decimalformat, $item4);
+									    $item4 = str_replace(".", "", $item4);
+                                    //    $item4 = str_replace(".", $decimalformat, $item4);
                                     }
                                     $data_values[$lastname][] = $item4;
                                 }

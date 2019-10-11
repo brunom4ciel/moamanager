@@ -943,6 +943,7 @@ class Mining extends EvaluateExtract{
     function numeric_format_option($value, $decimalprecision, $decimalseparator)
     {
         //$result = floatval($value);
+        //$value = "2277,70";
         $result = $value;
         
         if($decimalprecision > 0)
@@ -992,7 +993,7 @@ class Mining extends EvaluateExtract{
                     $n ++;
                 }
                  
-//                 var_dump($result);exit();
+                // var_dump($result);exit();
             }
             
 //             $result = $this->format_number($result, $decimalprecision);
