@@ -589,7 +589,7 @@ class Mining extends EvaluateExtract{
                 {
                     
                     
-                    //                         var_dump($parameters["descriptivestatistics"]);exit("===");
+                   // var_dump($strategy);exit("===");
                     
                     if($strategy == "Error")
                     {
@@ -1052,6 +1052,8 @@ class Mining extends EvaluateExtract{
             
 //             return $json_return;
 //         }
+
+
         
         $handle = fopen($file, "r");
         
@@ -1063,7 +1065,7 @@ class Mining extends EvaluateExtract{
             
             $this->mappingMetrics($strategy);
                         
-            
+            //var_dump($strategy);exit("====");
             
             $fn_fp_tn_tp = "";
             
@@ -1129,6 +1131,7 @@ class Mining extends EvaluateExtract{
             
             try{
                 
+                //var_dump($strategy);
                 
                 while (($buffer = fgets($handle, 512)) !== false) 
                 {
@@ -1147,7 +1150,7 @@ class Mining extends EvaluateExtract{
                     {
                             
                         
-//                         var_dump($parameters["descriptivestatistics"]);exit("===");
+                        //var_dump($strategy);exit("===");
                             
                         if($strategy == "Error")
                         {
@@ -1338,7 +1341,7 @@ class Mining extends EvaluateExtract{
                                         {
                                             
                                             if(!empty($fn_fp_tn_tp)){
-                                                                                                
+                                                
                                                 if($parameters["descriptivestatistics"]== 'mean'
                                                     || $parameters["descriptivestatistics"]== 'meanci')
                                                 {
@@ -1432,9 +1435,10 @@ class Mining extends EvaluateExtract{
                                                         
                                                     }
                                                     
-                                                    
+                                                   
                                                 }else//($parameters["descriptivestatistics"]== 'sum')
                                                 {
+                                                    
                                                     if(strpos($buffer, $metrics) !== FALSE){
                                                         
                                                         break;
@@ -1471,11 +1475,13 @@ class Mining extends EvaluateExtract{
                                                 
                                             }else{
                                                 
+                                                
                                                 $statistical = $descriptive_statistics[$parameters["descriptivestatistics"]] . " =";
                                                 $str_label = substr($buffer, 0, strlen($statistical));
                                                 
+                                                
                                                 if($str_label == $statistical){//strpos($buffer, $statistical) !== FALSE){
-                                                    
+                                                                                                        
                                                     $tmp = $buffer;
                                                     $tmp = substr($tmp,strpos($tmp, $statistical)+strlen($statistical)+1);
                                                     $value_ = trim($tmp);
@@ -1484,10 +1490,21 @@ class Mining extends EvaluateExtract{
                                                         $value_ = $this->numeric_format_option($value_, $decimalprecision, $decimalseparator);
                                                     }
                                                     
+                                                    //var_dump($statistical."=".$buffer);
+                                                    
                                                     array_push($json_return, array(
                                                         $descriptive_statistics[$parameters["descriptivestatistics"]]=>$value_));
                                                     
                                                     $startFind = "";
+                                                }else{
+                                                    
+                                                    
+                                                   // if($value_ == 0){
+                                                       // var_dump($statistical."=".$buffer);
+                                                       // exit("ok--");
+                                                    //}
+                                                    
+                                                    
                                                 }
                                                 
                                             }
@@ -1507,7 +1524,7 @@ class Mining extends EvaluateExtract{
                     
                     }else{
                         //error
-                        
+                       
                         array_push($json_return, array("Accuracy"=>"x"));
                         break;
                     }
@@ -1594,7 +1611,17 @@ function detectStrategy($file){
                     $result = "EvaluatePrequential";
                     break;
                 }else{
-                    $result = "Error";
+                    
+                    if(strpos($buffer, "moa.evaluante.DriftDetectionEvaluationMeasures")>-1){
+                        $result = self::EVALUATE_PREQUENTIAL_UFPE_FOR_DETECTORS;
+                        break;
+                    }else{
+                        $result = "Error";
+                    }
+                    
+                    
+                    //$buffer = fgets($handle, 4096);
+                    //var_dump($buffer);//exit("fim");
                 }
                 
             }

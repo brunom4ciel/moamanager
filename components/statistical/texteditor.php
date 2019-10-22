@@ -127,12 +127,19 @@ function silas_rank_hypothesis_prepar($result_value){
     return $result;
 }
 
+function transpose($array) {
+    $keys = array_keys($array);
+    return array_map(function($array) use ($keys) {
+        return array_combine($keys, $array);
+    }, array_map(null, ...array_values($array)));
+}
+
 
 function silas_rank_tabular_prepar($result_value, $rank){
-
     
     
-    $destine2 = "<table border=1 style='float:left;width:auto;'>";
+    
+    $destine2 = "<table border=1 style='float:left;width:auto;font-size:10px;'>";
     
     
     foreach($result_value as $key=>$item){
@@ -145,13 +152,13 @@ function silas_rank_tabular_prepar($result_value, $rank){
     foreach($rank as $key=>$item){
         
         if($key == "diff"){
-            $key = "&Sigma;H<sub>1</sub> - H<sub>2</sub>";
+            $key = "&Sigma;H<sub>1</sub> - &Sigma;H<sub>2</sub>";
         }else{
             $key = str_replace("H0", "&Sigma;H<sub>0</sub>", $key);
             $key = str_replace("H1", "&Sigma;H<sub>1</sub>", $key);
             $key = str_replace("H2", "&Sigma;H<sub>2</sub>", $key);
             //$key = "".$key;
-        }        
+        }
         
         $destine2 .= "<tr><td>". $key . "</td>";
         $destine2 .= "</tr>";
@@ -161,8 +168,81 @@ function silas_rank_tabular_prepar($result_value, $rank){
     $destine2 .= "</table>";
     
     
-    $destine2 .= "<table border=1 style='float:left;width:auto;'>";
+    $destine2 .= "<table border=1 style='float:left;width:90%;font-size:10px;'>";
     
+    $result_value = transpose($result_value);
+    
+    $result_value2 = array();
+    $index = 0;
+    
+    foreach($result_value as $key=>$item){
+        foreach($item as $k=>$value){                        
+            if($k != "method"){
+                $result_value2[$key][] = $k;
+            }
+        }
+        break;
+    }
+    
+//     var_dump($result_value2);exit();
+    
+    foreach($result_value as $key=>$item){  
+        
+//         var_dump($key);
+//         exit();
+        
+//         if($index++ > 0){
+            foreach($item as $k=>$value){                  
+                if($k != "method"){
+                    $result_value2[$key+1][] = $value;
+                }
+            }
+            
+//             var_dump($result_value2);
+//             exit();
+            
+//             $index=0;
+//         }        
+    }
+    
+    $result_value = $result_value2;
+    
+//     var_dump($result_value2);exit();
+    
+//     $result_value2 = array();
+//     $index = 0;
+//     $index_col=0;
+    
+//     //transpose table
+//     foreach($result_value as $key=>$item){   
+//         if($index++ > 0){            
+            
+//             foreach($result_value as $pos=>$value){   
+                
+//                 var_dump($value);
+// //                 var_dump($item[0]);
+// //                 var_dump($key);
+// //                 exit("fim");
+//                 for($i = 0; $i < count($item); $i++){
+// //                     var_dump($item[$i]);
+//                     $result_value2[$i][$index_col] = $item[$i];
+//                 }
+                
+// //                 $result_value2[$index_col][$key] = $item[$index_col];
+                
+//                 var_dump($result_value2);
+//                 exit("fim");
+//             }
+            
+//             var_dump($result_value2);
+//             exit("fim");
+                        
+//         }
+//         $index_col++;
+//     }
+    
+//     var_dump($result_value2);
+//     exit("fim");
     
     foreach($result_value as $key=>$item){
         
@@ -184,7 +264,7 @@ function silas_rank_tabular_prepar($result_value, $rank){
             }else{
                 $color = "";
             }
-                       
+            
             
             //foreach($value as $value2){
             $destine2 .= "<td style='background-color:$color;text-align:center;'>".$value."</td>";
@@ -207,10 +287,8 @@ function silas_rank_tabular_prepar($result_value, $rank){
         
         
         
-        //var_dump($rank);exit(); 
+        //var_dump($rank);exit();
         foreach($item as $value){
-            
-            
             
             //foreach($value as $value2){
             $destine2 .= "<td style='text-align:center;'>".$value."</td>";
@@ -225,10 +303,118 @@ function silas_rank_tabular_prepar($result_value, $rank){
     
     
     
-    $destine2 = "<div style='float:left;width:auto;'>heatmap<br>". $destine2 . "<br><br>*&Sigma;H<sub>0</sub>: not reject, if reject H<sub>0</sub> then H<sub>1</sub>: <spam style='text-decoration:overline; padding:0px'>X</spam><sub>1</sub> > <spam style='text-decoration:overline; padding:0px'>X</spam><sub>2</sub> or H<sub>2</sub>: <spam style='text-decoration:overline; padding:0px'>X</spam><sub>1</sub> < <spam style='text-decoration:overline; padding:0px'>X</spam><sub>2</sub>... <spam style='text-decoration:overline; padding:0px'>X</spam><sub>1</sub> is equal the first column, <spam style='text-decoration:overline; padding:0px'>X</spam><sub>2</sub> is equal other columns compared.</div>";
+    $destine2 = "<div style='float:left;width:100%;'>heatmap<br>". $destine2 . "</div>";
+//     $destine2 .= "<div style='float:left;width:auto;'>*H<sub>0</sub>: not reject, if reject H<sub>0</sub> then H<sub>1</sub>: <spam style='text-decoration:overline; padding:0px'>X</spam><sub>1</sub> > <spam style='text-decoration:overline; padding:0px'>X</spam><sub>2</sub> or H<sub>2</sub>: <spam style='text-decoration:overline; padding:0px'>X</spam><sub>1</sub> < <spam style='text-decoration:overline; padding:0px'>X</spam><sub>2</sub>... <spam style='text-decoration:overline; padding:0px'>X</spam><sub>1</sub> is equal the first column, <spam style='text-decoration:overline; padding:0px'>X</spam><sub>2</sub> is equal other columns compared.</div>";
+    $destine2 .= "<div style='float:left;width:auto;'>*H<sub>0</sub>: not reject, if reject H<sub>0</sub> then H<sub>1</sub>: <spam style='text-decoration:overline; padding:0px'>X</spam><sub>1</sub> > <spam style='text-decoration:overline; padding:0px'>X</spam><sub>2</sub> or H<sub>2</sub>: <spam style='text-decoration:overline; padding:0px'>X</spam><sub>1</sub> < <spam style='text-decoration:overline; padding:0px'>X</spam><sub>2</sub>... Let the table be a matrix [m][n], where m represents the rows and n the columns. <spam style='text-decoration:overline; padding:0px'>X</spam><sub>1</sub> and <spam style='text-decoration:overline; padding:0px'>X</spam><sub>2</sub> are represented by n and m, respectively.</div>";
+        
     
     return $destine2;
 }
+
+
+// function silas_rank_tabular_prepar($result_value, $rank){
+
+    
+    
+//     $destine2 = "<table border=1 style='float:left;width:auto;font-size:10px;'>";
+    
+    
+//     foreach($result_value as $key=>$item){
+        
+//         $destine2 .= "<tr><td>". $key . "</td>";
+//         $destine2 .= "</tr>";
+        
+//     }
+    
+//     foreach($rank as $key=>$item){
+        
+//         if($key == "diff"){
+//             $key = "&Sigma;H<sub>1</sub> - &Sigma;H<sub>2</sub>";
+//         }else{
+//             $key = str_replace("H0", "&Sigma;H<sub>0</sub>", $key);
+//             $key = str_replace("H1", "&Sigma;H<sub>1</sub>", $key);
+//             $key = str_replace("H2", "&Sigma;H<sub>2</sub>", $key);
+//             //$key = "".$key;
+//         }        
+        
+//         $destine2 .= "<tr><td>". $key . "</td>";
+//         $destine2 .= "</tr>";
+        
+//     }
+    
+//     $destine2 .= "</table>";
+    
+    
+//     $destine2 .= "<table border=1 style='float:left;width:90%;font-size:10px;'>";
+    
+    
+//     foreach($result_value as $key=>$item){
+        
+//         $destine2 .= "<tr>";//<td>". $key . "</td>";
+        
+//         foreach($item as $value){
+            
+//             if($value == "H0"){
+//                 $color = "#F2F5A9";
+//                 $value = str_replace("H0", "H<sub>0</sub>", $value);
+//             }else if($value == "H1"){
+//                 $color = "#81F781";
+//                 $value = str_replace("H1", "H<sub>1</sub>", $value);
+//             }else if($value == "H2"){
+//                 $color = "#F78181";
+//                 $value = str_replace("H2", "H<sub>2</sub>", $value);
+//             }else if($value == "*"){
+//                 $color = "#6E6E6E";
+//             }else{
+//                 $color = "";
+//             }
+                       
+            
+//             //foreach($value as $value2){
+//             $destine2 .= "<td style='background-color:$color;text-align:center;'>".$value."</td>";
+//             //}
+            
+//         }
+//         $destine2 .= "</tr>";
+        
+//     }
+    
+//     //$destine2 .= "</table>";
+    
+    
+//     //$destine2 .= "<table border=1 style='float:left;width:auto;'>";
+    
+    
+//     foreach($rank as $key=>$item){
+        
+//         $destine2 .= "<tr>";//<td>". $key . "</td>";
+        
+        
+        
+//         //var_dump($rank);exit(); 
+//         foreach($item as $value){
+            
+            
+            
+//             //foreach($value as $value2){
+//             $destine2 .= "<td style='text-align:center;'>".$value."</td>";
+//             //}
+            
+//         }
+//         $destine2 .= "</tr>";
+        
+//     }
+    
+//     $destine2 .= "</table>";
+    
+    
+    
+//     $destine2 = "<div style='float:left;width:auto;'>heatmap<br>". $destine2 . "</div><br><br><br><br>*H<sub>0</sub>: not reject, if reject H<sub>0</sub> then H<sub>1</sub>: <spam style='text-decoration:overline; padding:0px'>X</spam><sub>1</sub> > <spam style='text-decoration:overline; padding:0px'>X</spam><sub>2</sub> or H<sub>2</sub>: <spam style='text-decoration:overline; padding:0px'>X</spam><sub>1</sub> < <spam style='text-decoration:overline; padding:0px'>X</spam><sub>2</sub>... <spam style='text-decoration:overline; padding:0px'>X</spam><sub>1</sub> is equal the first column, <spam style='text-decoration:overline; padding:0px'>X</spam><sub>2</sub> is equal other columns compared.";
+    
+//     return $destine2;
+// }
+
+
 
 function getIndexOfName($value, $list){
     $result = -1;
