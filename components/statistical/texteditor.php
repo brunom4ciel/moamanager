@@ -432,6 +432,20 @@ function getIndexOfName($value, $list){
     return $result;
 }
 
+function getNameOfIndex($value, $list){
+    $result = -1;
+    $index = 0;
+    foreach($list as $key=>$item){
+        if($value == $index){
+            $result = $key;
+            break;
+        }
+        $index++;
+    }
+    return $result;
+}
+
+
 function silas_rank_prepar($values, $delimiter_decimal_from=".", $delimiter_decimal_to=","){
     
     $values = str_replace($delimiter_decimal_from, $delimiter_decimal_to, $values);
@@ -529,6 +543,8 @@ function silas_rank_prepar($values, $delimiter_decimal_from=".", $delimiter_deci
         }
     }
     
+//     var_dump($methods);exit();
+    
     // lógica para H2
     foreach($methods as $key=>$item){
         if(count($item)>0){
@@ -539,13 +555,7 @@ function silas_rank_prepar($values, $delimiter_decimal_from=".", $delimiter_deci
                 if($result_value[$key][$indexOfName] != "*"
                     && $result_value[$key][$indexOfName] != "H1"){
                         
-//                         $mu1 = $key;
-//                         $mu2 = "" ;
-                        //var_dump($mu1);
-                        //var_dump($key2);
-                        
-                        $ok = true;
-                        
+                        $ok = true;                        
                         foreach($methods[$key2] as $key3=>$value3){
                             if($key == $value3){
                                 $result_value[$key][$indexOfName] = "H2";
@@ -558,20 +568,45 @@ function silas_rank_prepar($values, $delimiter_decimal_from=".", $delimiter_deci
                         }
                 }
             }
+            
+//             var_dump($result_value);exit();
+            
         }else{
+                        
+            //var_dump(getNameOfIndex(5, $methods_order));exit();
+            
             $indexOfName1 = getIndexOfName($key, $methods_order);
+            
             foreach($methods_order as $key2=>$value){
-                $indexOfName = getIndexOfName($key2, $methods_order);
-                if($indexOfName != $indexOfName1){
-                    $result_value[$key][$indexOfName] = "H2";
+                                
+                
+                if(in_array($key, $methods[$key2])){
+                                        
+                    $indexOfName = getIndexOfName($key2, $methods_order);                    
+                    
+                    if($indexOfName != $indexOfName1){
+                        $result_value[$key][$indexOfName] = "H2";
+                    }else{
+                        $result_value[$key][$indexOfName] = "*";
+                    }
+                    
                 }else{
-                    $result_value[$key][$indexOfName] = "*";
+                    
+                    $indexOfName = getIndexOfName($key2, $methods_order);
+                    
+                    if($indexOfName != $indexOfName1){
+                        $result_value[$key][$indexOfName] = "H0";
+                    }else{
+                        $result_value[$key][$indexOfName] = "*";
+                    }
+
                 }
                 
             }
         }
     }
     
+//     var_dump($result_value);exit();
     
     return $result_value;
     

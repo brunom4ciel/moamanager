@@ -962,13 +962,13 @@ class Mining extends EvaluateExtract{
             
             if($dPrecision > $decimalprecision)
             {
-                $result = number_format($result, $decimalprecision, $decimalseparator, ".");
+                $result = number_format($result, $decimalprecision, $decimalseparator, "");
             }
             else 
             {
                 $result = str_replace(".", $decimalseparator, $result);
             }
-
+                        
             if(strpos($result, $decimalseparator) === false)
             {
 
@@ -1002,6 +1002,12 @@ class Mining extends EvaluateExtract{
         {
             $result = $value;
         }
+        
+//         if($decimalseparator == ","){
+//             if(strpos($result, ".") !== false){
+//                 $result = str_replace(".", "", $result);
+//             }
+//         }        
         
         return $result;
     }
