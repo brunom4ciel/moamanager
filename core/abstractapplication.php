@@ -41,6 +41,9 @@ abstract class AbstractApplication
         if ($menu->count() > 0) {} else {
 
             $language = self::getParameter("language");
+            
+            //$task = (!empty(self::getParameter("task"))? "&task=" . self::getParameter("task"):"");
+            $folder = (!empty(self::getParameter("folder"))? "&folder=" . self::getParameter("folder"):"");
 
             if (! $language == null) {
                 $language = "&language=" . $language;
@@ -51,7 +54,7 @@ abstract class AbstractApplication
             
             $style_active = "background-color:#882b21;color:#ffffff;font-weight: bold;";
             
-            self::$menu->add($path_www . "?component=files" . $language, MENU_FILE_MANAGER,"","","", 
+            self::$menu->add($path_www . "?component=files" . $folder . $language, MENU_FILE_MANAGER,"","","", 
                 (self::getComponent() == 'files'?$style_active:''));
             
             self::$menu->add($path_www . "?component=scripts", MENU_SCRIPT_MANAGER, "","","",
@@ -63,7 +66,7 @@ abstract class AbstractApplication
             self::$menu->add($path_www . "?component=taskreport&controller=report" . $language, MENU_TASK_REPORT, "","","",
                 (self::getComponent() == 'taskreport'?$style_active:''));
             
-            self::$menu->add($path_www . "?component=extract" . $language, MENU_DATA_EXTRACTION, "","","",
+            self::$menu->add($path_www . "?component=extract" . $folder . $language, MENU_DATA_EXTRACTION, "","","",
                 (self::getComponent() == 'extract'?$style_active:''));
             
             self::$menu->add($path_www . "?component=statistical&controller=texteditor" . $language, MENU_DATA_ANALYSIS, "","","",
